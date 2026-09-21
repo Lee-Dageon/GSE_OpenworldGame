@@ -1,0 +1,246 @@
+#include "stdafx.h"
+#include "Monster.h"
+#include "Renderer.h"
+
+#include <algorithm>
+#include <cmath>
+
+namespace
+{
+constexpr int LakeBoarHealth = 12;
+constexpr float LakeBoarHitRange = 1.9f;
+constexpr float LakeBoarDropRange = 1.5f;
+constexpr float LakeBoarChaseRange = 7.0f;
+constexpr float LakeBoarAttackRange = 1.1f;
+constexpr float LakeBoarMoveSpeed = 1.4f;
+constexpr float LakeBoarAttackDamage = 15.0f;
+constexpr float LakeBoarAttackCooldown = 1.25f;
+constexpr float HitFlashTime = .22f;
+
+float Distance(Vec2 a, Vec2 b)
+{
+    const float x = a.x - b.x;
+    const float z = a.z - b.z;
+    return std::sqrt(x * x + z * z);
+}
+
+void DrawDrop(const MonsterState &monster, const MonsterDrawContext &context)
+{
+    const Vec2 item = {monster.position.x + 0.65f, monster.position.z - 0.25f};
+    const Vec2 s = context.worldToScreen(item);
+    const float glow = .55f + std::sin(context.time * 6.0f) * .18f;
+
+    context.renderer->DrawSolidRect(s.x, s.z + 9, 34, 16, context.pi * .25f, .95f, .78f, .22f, .28f);
+    context.renderer->DrawSolidRect(s.x - 7, s.z + 10, 18, 5, -.45f, .82f, .72f, .50f, 1);
+    context.renderer->DrawSolidRect(s.x + 7, s.z + 10, 18, 5, .45f, .82f, .72f, .50f, 1);
+    context.renderer->DrawSolidRect(s.x, s.z + 9, 7, 7, 0, 1.0f, .88f, .38f, glow);
+
+    context.renderer->DrawLabel(context.screenWidth * .5f + s.x - 64,
+                                context.screenHeight * .5f + s.z + 30,
+                                L"드랍: 멧돼지 엄니",
+                                1.0f,
+                                .86f,
+                                .42f);
+}
+
+void DrawInfo(const MonsterState &monster, const MonsterDrawContext &context, const Vec2 &s)
+{
+    const float healthRatio =
+        std::max(0.0f, std::min(1.0f, static_cast<float>(monster.health) / monster.maxHealth));
+
+    context.renderer->DrawLabel(context.screenWidth * .5f + s.x - 76,
+                                context.screenHeight * .5f + s.z + 104,
+                                L"호숫가 멧돼지",
+                                1.0f,
+                                .86f,
+                                .62f);
+    context.renderer->DrawSolidRect(s.x, s.z + 86, 132, 12, 0, .05f, .04f, .03f, .88f);
+    context.renderer->DrawSolidRect(s.x - 66 + healthRatio * 66.0f,
+                                    s.z + 86,
+                                    132.0f * healthRatio,
+                                    6,
+                                    0,
+                                    .78f,
+                                    .12f,
+                                    .08f,
+                                    1);
+}
+
+void DrawBoar(const MonsterState &monster, const MonsterDrawContext &context)
+{
+    const Vec2 s = context.worldToScreen(monster.position);
+    const bool alive = monster.health > 0;
+    const float breath = alive ? std::sin(context.time * 5.0f) * 2.0f : 0.0f;
+    const float lean = alive ? 0.0f : -.22f;
+
+    context.renderer->DrawSolidRect(s.x + 11, s.z - 15, 92, 22, -.10f, .03f, .03f, .02f, .28f);
+    context.renderer->DrawSolidRect(s.x, s.z + 15 + breath, 76, 38, lean, .36f, .23f, .13f, 1);
+    context.renderer->DrawSolidRect(s.x + 36, s.z + 23 + breath, 34, 30, lean, .31f, .19f, .11f, 1);
+    context.renderer->DrawSolidRect(s.x - 35, s.z + 21 + breath, 18, 22, lean, .24f, .15f, .09f, 1);
+
+    for (int leg = -1; leg <= 1; leg += 2)
+    {
+        context.renderer->DrawSolidRect(s.x + leg * 21, s.z - 9, 9, 24, lean, .17f, .10f, .06f, 1);
+        context.renderer->DrawSolidRect(s.x + leg * 8, s.z - 8, 8, 22, lean, .18f, .11f, .06f, 1);
+    }
+
+    context.renderer->DrawSolidRect(s.x + 49, s.z + 31 + breath, 6, 8, 0, .03f, .025f, .02f, 1);
+    context.renderer->DrawSolidRect(s.x + 30, s.z + 37 + breath, 12, 8, .35f, .82f, .68f, .44f, 1);
+    context.renderer->DrawSolidRect(s.x + 48, s.z + 37 + breath, 12, 8, -.35f, .82f, .68f, .44f, 1);
+
+    if (alive)
+    {
+        context.renderer->DrawSolidRect(s.x - 18, s.z + 38 + breath, 48, 6, 0, .49f, .33f, .18f, 1);
+        context.renderer->DrawSolidRect(s.x + 4, s.z + 42 + breath, 42, 5, 0, .18f, .10f, .06f, .8f);
+    }
+}
+
+void DrawHitEffect(const MonsterState &monster, const MonsterDrawContext &context, const Vec2 &s)
+{
+    if (monster.hitFlash <= 0)
+    {
+        return;
+    }
+
+    const float alpha = monster.hitFlash / HitFlashTime;
+    context.renderer->DrawSolidRect(s.x, s.z + 14, 46, 26, 0, 1, .20f, .12f, .36f * alpha);
+
+    for (int i = 0; i < 5; ++i)
+    {
+        const float angle = context.time * 18.0f + i * 1.26f;
+        context.renderer->DrawSolidRect(s.x + std::cos(angle) * 29.0f,
+                                        s.z + 18 + std::sin(angle) * 16.0f,
+                                        8,
+                                        8,
+                                        context.pi * .25f,
+                                        1,
+                                        .82f,
+                                        .28f,
+                                        alpha);
+    }
+}
+
+void DrawDeathEffect(const MonsterState &monster, const MonsterDrawContext &context, const Vec2 &s)
+{
+    if (monster.deathTime <= 0)
+    {
+        return;
+    }
+
+    const float t = std::min(monster.deathTime, 1.0f);
+    const float alpha = std::max(0.0f, 1.0f - t);
+
+    for (int i = 0; i < 6; ++i)
+    {
+        const float angle = i * 1.05f;
+        context.renderer->DrawSolidRect(s.x + std::cos(angle) * (18.0f + t * 34.0f),
+                                        s.z + 8 + std::sin(angle) * (6.0f + t * 18.0f),
+                                        16 + t * 18.0f,
+                                        8,
+                                        context.pi * .25f,
+                                        .38f,
+                                        .28f,
+                                        .16f,
+                                        alpha * .42f);
+    }
+}
+} // namespace
+
+namespace MonsterSystem
+{
+MonsterState CreateLakeBoar()
+{
+    return {{34.0f, 30.0f}, LakeBoarHealth, LakeBoarHealth, 0.0f, 0.0f, 0.0f};
+}
+
+bool IsAlive(const MonsterState &monster)
+{
+    return monster.health > 0;
+}
+
+bool IsInteractableDrop(const MonsterState &monster, Vec2 player)
+{
+    return !IsAlive(monster) && Distance(player, monster.position) < LakeBoarDropRange;
+}
+
+MonsterHitResult Hit(MonsterState &monster, Vec2 player, int attackPower)
+{
+    if (!IsAlive(monster) || Distance(player, monster.position) >= LakeBoarHitRange)
+    {
+        return {false, false};
+    }
+
+    monster.health = std::max(0, monster.health - attackPower);
+    monster.hitFlash = HitFlashTime;
+
+    if (monster.health > 0)
+    {
+        return {true, false};
+    }
+
+    monster.deathTime = .01f;
+    return {true, true};
+}
+
+void UpdateTimers(MonsterState &monster, float deltaTime)
+{
+    monster.attackCooldown = std::max(0.0f, monster.attackCooldown - deltaTime);
+    monster.hitFlash = std::max(0.0f, monster.hitFlash - deltaTime);
+
+    if (monster.deathTime > 0)
+    {
+        monster.deathTime += deltaTime;
+    }
+}
+
+bool UpdateChaseAndAttack(MonsterState &monster,
+                          Vec2 player,
+                          float dodgeTime,
+                          float deltaTime,
+                          float &playerHealth)
+{
+    if (!IsAlive(monster))
+    {
+        return false;
+    }
+
+    const float distance = Distance(player, monster.position);
+
+    if (distance < LakeBoarChaseRange && distance > LakeBoarAttackRange)
+    {
+        monster.position.x += (player.x - monster.position.x) / distance * LakeBoarMoveSpeed * deltaTime;
+        monster.position.z += (player.z - monster.position.z) / distance * LakeBoarMoveSpeed * deltaTime;
+        return false;
+    }
+
+    if (distance <= LakeBoarAttackRange && monster.attackCooldown <= 0 && dodgeTime <= 0)
+    {
+        playerHealth -= LakeBoarAttackDamage;
+        monster.attackCooldown = LakeBoarAttackCooldown;
+        return true;
+    }
+
+    return false;
+}
+
+void Draw(const MonsterState &monster, const MonsterDrawContext &context, bool showDrop)
+{
+    const Vec2 s = context.worldToScreen(monster.position);
+
+    if (IsAlive(monster))
+    {
+        DrawBoar(monster, context);
+        DrawHitEffect(monster, context, s);
+        DrawInfo(monster, context, s);
+        return;
+    }
+
+    DrawBoar(monster, context);
+    DrawDeathEffect(monster, context, s);
+
+    if (showDrop)
+    {
+        DrawDrop(monster, context);
+    }
+}
+} // namespace MonsterSystem
