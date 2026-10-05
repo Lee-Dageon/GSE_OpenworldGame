@@ -1,0 +1,63 @@
+#pragma once
+
+#include "Monster.h"
+
+#include <array>
+#include <string>
+
+enum class QuestStage
+{
+    Elder,
+    Tracks,
+    Herb,
+    Hunt,
+    Trophy,
+    Return,
+    Complete
+};
+
+struct NpcState
+{
+    Vec2 position;
+    int column;
+    int row;
+    float phase;
+};
+struct AnimalState
+{
+    Vec2 position;
+    Vec2 home;
+    int column;
+    int row;
+    float phase;
+    float speed;
+};
+
+struct WorldState
+{
+    Vec2 elder = {0.0f, 1.4f};
+    Vec2 tracks = {13.0f, 13.0f};
+    Vec2 herb = {25.0f, 23.0f};
+    Vec2 lake = {45.0f, 39.0f};
+    float lakeRadius = 12.0f;
+    float minimumCoordinate = -65.0f;
+    float maximumCoordinate = 85.0f;
+};
+
+struct GameState
+{
+    int width = 1280, height = 720, lastTime = 0;
+    std::array<bool, 256> keys = {};
+    bool sprint = false, moving = false;
+    Vec2 player = {0.0f, -2.5f}, facing = {0.707f, 0.707f};
+    MonsterState monster = MonsterSystem::CreateLakeBoar();
+    std::array<NpcState, 20> npcs = {};
+    std::array<AnimalState, 8> animals = {};
+    WorldState world;
+    float health = 100.0f, maxHealth = 100.0f, dodge = 0.0f, attack = 0.0f, messageTime = 7.0f, time = 0.0f;
+    int potions = 2, herbs = 0, trophies = 0, level = 1, experience = 0, experienceToNextLevel = 20, attackPower = 2;
+    QuestStage quest = QuestStage::Elder;
+    std::wstring message;
+};
+
+GameState CreateInitialGameState();

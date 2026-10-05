@@ -1,0 +1,21 @@
+---
+Language: Cpp
+BasedOnStyle: Microsoft
+Standard: Cpp11
+
+IndentWidth: 4
+TabWidth: 4
+UseTab: Never
+ColumnLimit: 120
+
+BreakBeforeBraces: Allman
+PointerAlignment: Right
+ReferenceAlignment: Right
+SpaceBeforeParens: ControlStatements
+AllowShortIfStatementsOnASingleLine: Never
+AllowShortFunctionsOnASingleLine: Empty
+
+# GLEW must be included before FreeGLUT/OpenGL headers.
+SortIncludes: Never
+IncludeBlocks: Preserve
+...

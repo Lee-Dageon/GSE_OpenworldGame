@@ -14,6 +14,8 @@ float randomNoise(vec2 position)
 void main()
 {
 	vec2 texel = 1.0 / u_Resolution;
+	vec2 centered = v_UV * 2.0 - 1.0;
+	float edge = dot(centered, centered);
 	vec3 color = texture(u_Source, v_UV).rgb;
 	vec3 glow = texture(u_Source, v_UV + vec2(texel.x * 2.0, 0.0)).rgb;
 	glow += texture(u_Source, v_UV - vec2(texel.x * 2.0, 0.0)).rgb;
@@ -22,13 +24,14 @@ void main()
 	glow *= 0.25;
 	color += max(glow - 0.72, 0.0) * 0.22;
 
-	color *= vec3(1.04, 1.01, 0.94);
-	color = color / (color + vec3(0.72));
-	color = pow(color, vec3(0.92));
+	color *= vec3(1.08, 1.03, 0.92);
+	color = color / (color + vec3(0.62));
+	color = pow(color, vec3(0.86));
+	float luminance = dot(color, vec3(0.2126, 0.7152, 0.0722));
+	color = mix(vec3(luminance), color, 1.18);
 
-	vec2 centered = v_UV * 2.0 - 1.0;
-	float vignette = 1.0 - smoothstep(0.45, 1.35, dot(centered, centered));
-	color *= mix(0.78, 1.0, vignette);
+	float vignette = 1.0 - smoothstep(0.35, 1.28, edge);
+	color *= mix(0.70, 1.0, vignette);
 	color += (randomNoise(gl_FragCoord.xy) - 0.5) * 0.012;
 	FragColor = vec4(color, 1.0);
 }

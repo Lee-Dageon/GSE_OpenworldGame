@@ -1,5 +1,7 @@
 #pragma once
 
+#include <functional>
+
 class Renderer;
 
 struct Vec2
@@ -24,8 +26,8 @@ struct MonsterHitResult
     bool defeated;
 };
 
-using WorldToScreenFunction = Vec2 (*)(Vec2);
-using DrawSpriteFunction = void (*)(Vec2, int, int, float, float, bool);
+using WorldToScreenFunction = std::function<Vec2(Vec2)>;
+using DrawSpriteFunction = std::function<void(Vec2, int, int, float, float, bool)>;
 
 struct MonsterDrawContext
 {
@@ -47,4 +49,4 @@ MonsterHitResult Hit(MonsterState &monster, Vec2 player, int attackPower);
 void UpdateTimers(MonsterState &monster, float deltaTime);
 bool UpdateChaseAndAttack(MonsterState &monster, Vec2 player, float dodgeTime, float deltaTime, float &playerHealth);
 void Draw(const MonsterState &monster, const MonsterDrawContext &context, bool showDrop);
-}
+} // namespace MonsterSystem
