@@ -12,6 +12,7 @@
 #include "WorldRenderer.h"
 
 #include <algorithm>
+#include <cstdio>
 #include <iostream>
 
 namespace
@@ -27,6 +28,9 @@ Actor g_SceneRoot("SceneRoot");
 
 void RenderScene()
 {
+    static int fpsStartTime = glutGet(GLUT_ELAPSED_TIME);
+    static int frameCount = 0;
+
     g_WorldRenderer->BeginFrame(g_GameState.time);
     g_WorldRenderer->RenderWorld(g_GameState);
     g_WorldRenderer->EndFrame(g_GameState.time);
@@ -50,6 +54,18 @@ void RenderScene()
     uiState.message = g_GameState.message;
     DrawGameUi(*g_Renderer, uiState);
     glutSwapBuffers();
+
+    ++frameCount;
+    const int now = glutGet(GLUT_ELAPSED_TIME);
+    const int elapsed = now - fpsStartTime;
+    if (elapsed >= 1000)
+    {
+        char title[80];
+        std::snprintf(title, sizeof(title), "Greenwake Tutorial | FPS: %.1f", frameCount * 1000.0 / elapsed);
+        glutSetWindowTitle(title);
+        frameCount = 0;
+        fpsStartTime = now;
+    }
 }
 
 void UpdateFrame()

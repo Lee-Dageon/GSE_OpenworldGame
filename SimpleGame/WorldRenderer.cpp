@@ -7,6 +7,8 @@
 #include <algorithm>
 #include <array>
 #include <cmath>
+#include <cstdint>
+#include <vector>
 
 namespace
 {
@@ -14,7 +16,9 @@ constexpr float Pi = 3.14159265f;
 constexpr float TileWidth = 64.0f;
 constexpr float TileHeight = 32.0f;
 constexpr float WorldScale = .72f;
-constexpr int ViewRadius = 20;
+const std::array<Vec2, 8> VillageHouses = {{{-14, 5}, {15, 5}, {-9, 19}, {10, -20},
+                                         {-27, -14}, {27, -14}, {-25, 20}, {26, 19}}};
+constexpr Vec2 NoticeBoardPosition = {2, 1.5f};
 
 float Distance(Vec2 first, Vec2 second)
 {
@@ -35,11 +39,29 @@ float DistanceToSegment(Vec2 position, Vec2 start, Vec2 end)
 
 float RoadDistance(Vec2 position)
 {
-    float distance = DistanceToSegment(position, {0, -34}, {0, 34});
-    distance = std::min(distance, DistanceToSegment(position, {-38, 0}, {38, 0}));
-    distance = std::min(distance, DistanceToSegment(position, {-30, -26}, {30, 26}));
-    distance = std::min(distance, DistanceToSegment(position, {-28, 25}, {28, -24}));
-    return std::min(distance, DistanceToSegment(position, {0, 28}, {36, 34}));
+    const auto mainRoadX = [](float z) { return 3.5f * std::sin(z * .065f); };
+    const float roadZ = std::max(-55.0f, std::min(65.0f, position.z));
+    const float mainWidth = 1.55f + .22f * std::cos(roadZ * .11f);
+    float distance = Distance(position, {mainRoadX(roadZ), roadZ}) - mainWidth;
+
+    // Each lane leaves the main road at a different point and narrows toward its front door.
+    const float junctions[] = {-1, 10, 15, -13, -22, -29, 26, 33};
+    const Vec2 bends[] = {{-8, 0}, {8, 10}, {-4, 18}, {6, -17},
+                          {-16, -21}, {16, -26}, {-14, 28}, {17, 32}};
+    for (size_t index = 0; index < VillageHouses.size(); ++index)
+    {
+        const Vec2 start = {mainRoadX(junctions[index]), junctions[index]};
+        const Vec2 door = {VillageHouses[index].x + .78f, VillageHouses[index].z - .28f};
+        const float taper = std::max(0.0f, std::min(1.0f, Distance(position, door) / Distance(start, door)));
+        const float width = .48f + .44f * taper;
+        distance = std::min(distance, DistanceToSegment(position, start, bends[index]) - width);
+        distance = std::min(distance, DistanceToSegment(position, bends[index], door) - width);
+    }
+
+    const float plazaX = (position.x - NoticeBoardPosition.x) / 3.4f;
+    const float plazaZ = (position.z - (NoticeBoardPosition.z - 2.0f)) / 2.6f;
+    const float plaza = (std::sqrt(plazaX * plazaX + plazaZ * plazaZ) - 1.0f) * 2.6f;
+    return std::min(distance, plaza);
 }
 }
 
@@ -199,59 +221,113 @@ void WorldRenderer::DrawHerbPatch(Vec2 position) const
 
 void WorldRenderer::DrawGround() const
 {
-    m_Renderer.DrawSolidRect(0, 0, static_cast<float>(m_State->width) / WorldScale,
-                             static_cast<float>(m_State->height) / WorldScale, 0, .055f,
-                             .12f, .085f, 1);
-    const int centerX = static_cast<int>(std::floor(m_State->player.x));
-    const int centerZ = static_cast<int>(std::floor(m_State->player.z));
-    for (int z = centerZ - ViewRadius; z <= centerZ + ViewRadius; ++z)
-        for (int x = centerX - ViewRadius; x <= centerX + ViewRadius; ++x)
+    // Keep the texture grid in world space so camera motion cannot reshuffle the ground.
+    constexpr float dotSize = 6.0f;
+    const Vec2 origin = ToScreen({0, 0});
+    const float halfWidth = m_State->width / (2.0f * WorldScale);
+    const float halfHeight = m_State->height / (2.0f * WorldScale);
+    const int minimumX = static_cast<int>(std::floor((-halfWidth - origin.x) / dotSize));
+    const int maximumX = static_cast<int>(std::ceil((halfWidth - origin.x) / dotSize));
+    const int minimumY = static_cast<int>(std::floor((-halfHeight - origin.z) / dotSize));
+    const int maximumY = static_cast<int>(std::ceil((halfHeight - origin.z) / dotSize));
+    const float palette[][3] = {
+        {.105f, .155f, .075f}, {.125f, .180f, .085f}, {.145f, .200f, .095f},
+        {.165f, .220f, .105f}, {.185f, .240f, .115f}, {.225f, .270f, .135f},
+        {.245f, .205f, .135f}, {.270f, .225f, .150f}, {.295f, .245f, .165f},
+        {.320f, .265f, .180f}, {.345f, .290f, .200f}, {.370f, .315f, .220f},
+        {.180f, .190f, .130f}, {.235f, .230f, .160f}, {.290f, .275f, .190f},
+        {.340f, .320f, .230f}, {.060f, .165f, .180f}, {.070f, .190f, .205f},
+        {.085f, .215f, .230f}, {.110f, .245f, .255f}, {.160f, .290f, .290f},
+        {.260f, .355f, .330f}, {.295f, .300f, .235f}, {.400f, .385f, .295f}};
+    std::array<std::vector<float>, 24> batches;
+    const auto noise = [](int x, int y) {
+        std::uint32_t value = static_cast<std::uint32_t>(x) * 374761393u +
+                              static_cast<std::uint32_t>(y) * 668265263u;
+        value = (value ^ (value >> 13)) * 1274126177u;
+        return static_cast<float>((value ^ (value >> 16)) & 65535u) / 65535.0f;
+    };
+    for (int y = minimumY; y < maximumY; ++y)
+        for (int x = minimumX; x < maximumX; ++x)
         {
-            const Vec2 position = {static_cast<float>(x), static_cast<float>(z)};
-            const float meadow = std::sin(position.x * .17f) + std::cos(position.z * .13f) +
-                                 std::sin((position.x + position.z) * .08f);
-            float red = .17f + meadow * .012f;
-            float green = .36f + meadow * .026f;
-            float blue = .18f + meadow * .011f;
-            const float grassVariation = std::sin(position.x * 7.73f + position.z * 4.19f) * .022f;
-            red += grassVariation * .45f;
-            green += grassVariation;
-            blue += grassVariation * .35f;
+            const float projectedX = (x + .5f) * dotSize;
+            const float projectedY = (y + .5f) * dotSize;
+            const Vec2 position = {projectedX / TileWidth + projectedY / TileHeight,
+                                   projectedY / TileHeight - projectedX / TileWidth};
+            const float grain = noise(x, y);
+            const float patch = std::sin(position.x * .31f + std::sin(position.z * .19f)) * .5f +
+                                std::cos(position.z * .37f) * .3f;
+            const float edge = std::sin(position.x * 1.3f + position.z * .7f) * .16f +
+                               std::sin(position.z * 2.1f - position.x * .5f) * .09f;
             const float road = RoadDistance(position);
-            if (Distance(position, m_State->world.lake) < m_State->world.lakeRadius + .5f)
+            const float dirt = std::max(0.0f, std::min(1.0f, (.22f + edge - road) / .44f));
+            const float shore = Distance(position, m_State->world.lake) - m_State->world.lakeRadius + edge;
+            int color = std::max(0, std::min(4, static_cast<int>(2 + patch * 1.5f + (grain - .5f) * 2)));
+            if (grain < dirt)
+                color = 6 + std::max(0, std::min(5, static_cast<int>(2 + patch + grain * 3)));
+            else if (grain > .92f && dirt < .25f)
+                color = 5;
+            if (shore < .65f)
             {
-                red = .10f; green = .38f; blue = .55f;
+                const float wet = std::max(0.0f, std::min(1.0f, (.65f - shore) / .80f));
+                if (grain < wet)
+                    color = 12 + std::min(3, static_cast<int>(grain * 4));
             }
-            else if (road < 2.0f || Distance(position, {0, 0}) < 4.5f)
+            if (shore < -.35f)
             {
-                red = road < .58f ? .43f : .32f;
-                green = road < .58f ? .37f : .28f;
-                blue = road < .58f ? .24f : .18f;
+                const float ripple = std::sin(projectedY * .14f + projectedX * .025f + m_State->time * 1.2f);
+                color = 16 + std::max(0, std::min(4, static_cast<int>(1.5f + ripple + grain)));
+                if (shore > -.70f && grain > .65f)
+                    color = 21;
             }
-            DrawRect(position, TileWidth * .78f, TileHeight * .78f, Pi * .25f, red, green, blue);
-            if (road > 2.0f && !((x * 3 + z * 5) % 4) &&
-                Distance(position, m_State->world.lake) > m_State->world.lakeRadius + 1.0f)
-                DrawRect({position.x + .18f, position.z - .15f}, 6, 15, -.18f, .18f, .46f, .14f, .52f);
+            else if (dirt > .5f && grain > .975f)
+                color = noise(x + 7, y - 3) > .5f ? 22 : 23;
+
+            const float left = (x * dotSize + origin.x) / halfWidth;
+            const float right = ((x + 1) * dotSize + origin.x) / halfWidth;
+            const float bottom = (y * dotSize + origin.z) / halfHeight;
+            const float top = ((y + 1) * dotSize + origin.z) / halfHeight;
+            const float vertices[] = {left, bottom, 0, left, top, 0, right, top, 0,
+                                      left, bottom, 0, right, top, 0, right, bottom, 0};
+            batches[color].insert(batches[color].end(), std::begin(vertices), std::end(vertices));
         }
-    for (int index = 0; index < 8; ++index)
+
+    // Reuse the solid-rectangle shader and submit one batch per palette color instead of per dot.
+    m_Renderer.DrawSolidRect(0, 0, 1, 1, 0, palette[0][0], palette[0][1], palette[0][2], 1);
+    GLint program = 0;
+    glGetIntegerv(GL_CURRENT_PROGRAM, &program);
+    const GLint attribute = glGetAttribLocation(program, "a_Position");
+    const GLint colorUniform = glGetUniformLocation(program, "u_Color");
+    glUniform4f(glGetUniformLocation(program, "u_Trans"), 0, 0, 1, 1);
+    glUniform1i(glGetUniformLocation(program, "u_EffectType"), 0);
+    GLuint buffer = 0;
+    glGenBuffers(1, &buffer);
+    glBindBuffer(GL_ARRAY_BUFFER, buffer);
+    glEnableVertexAttribArray(attribute);
+    glVertexAttribPointer(attribute, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, nullptr);
+    for (size_t index = 0; index < batches.size(); ++index)
     {
-        const float offset = static_cast<float>(index - 4);
-        const Vec2 wave = {m_State->world.lake.x + offset * 1.2f, m_State->world.lake.z + std::sin(m_State->time + offset)};
-        const Vec2 screen = ToScreen(wave);
-        m_Renderer.DrawEffectRect(screen.x, screen.z, 48, 12, 0, .48f, .82f, .92f, .50f, 2);
+        const auto &vertices = batches[index];
+        if (vertices.empty())
+            continue;
+        glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float), vertices.data(), GL_STREAM_DRAW);
+        glUniform4f(colorUniform, palette[index][0], palette[index][1], palette[index][2], 1);
+        glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(vertices.size() / 3));
     }
+    glDisableVertexAttribArray(attribute);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glDeleteBuffers(1, &buffer);
 }
 
 void WorldRenderer::RenderWorld(const GameState &state)
 {
     m_State = &state;
     DrawGround();
-    enum class DrawType { House, Tree, Campfire, Npc, Animal, Tracks, Herb, Monster, Player };
+    enum class DrawType { House, Tree, Campfire, Npc, Animal, Tracks, Herb, Monster, Player, NoticeBoard };
     struct DrawItem { Vec2 position; DrawType type; int index; };
     std::vector<DrawItem> items;
-    const std::array<Vec2, 8> houses = {{{-14, 5}, {15, 5}, {-9, 19}, {10, -20}, {-27, -14}, {27, -14}, {-25, 20}, {26, 19}}};
-    for (const Vec2 &house : houses)
+    for (const Vec2 &house : VillageHouses)
         items.push_back({house, DrawType::House, 0});
+    items.push_back({NoticeBoardPosition, DrawType::NoticeBoard, 0});
     for (int index = 0; index < 32; ++index)
         items.push_back({{4 + std::cos(index * 1.71f) * (43.0f + (index % 6) * 6.5f),
                          7 + std::sin(index * 1.71f) * (43.0f + (index % 6) * 6.5f)}, DrawType::Tree, index});
@@ -299,6 +375,25 @@ void WorldRenderer::RenderWorld(const GameState &state)
             break;
         }
         case DrawType::Player: DrawSprite(state.player, 0, 0, 42, 54); break;
+        case DrawType::NoticeBoard:
+        {
+            const Vec2 screen = ToScreen(item.position);
+            DrawShadow(item.position, 42, 9);
+            for (int side = -1; side <= 1; side += 2)
+            {
+                m_Renderer.DrawSolidRect(screen.x + side * 16, screen.z + 18, 5, 42, 0, .16f, .10f, .045f, 1);
+                m_Renderer.DrawSolidRect(screen.x + side * 16 - 1, screen.z + 18, 2, 42, 0, .29f, .20f, .09f, 1);
+            }
+            m_Renderer.DrawSolidRect(screen.x, screen.z + 30, 44, 27, 0, .12f, .075f, .03f, 1);
+            m_Renderer.DrawSolidRect(screen.x, screen.z + 30, 38, 21, 0, .32f, .22f, .11f, 1);
+            m_Renderer.DrawSolidRect(screen.x, screen.z + 46, 50, 5, 0, .25f, .14f, .065f, 1);
+            for (int note = -1; note <= 1; ++note)
+            {
+                m_Renderer.DrawSolidRect(screen.x + note * 11, screen.z + 30, 8, 13, 0, .73f, .65f, .43f, 1);
+                m_Renderer.DrawSolidRect(screen.x + note * 11, screen.z + 32, 4, 2, 0, .35f, .28f, .16f, 1);
+            }
+            break;
+        }
         }
     }
     m_State = nullptr;
