@@ -117,6 +117,11 @@ void Renderer::EndFrame(float time)
     glEnable(GL_BLEND);
 }
 
+void Renderer::SetWorldScale(float scale)
+{
+    m_DrawScale = std::max(0.1f, scale);
+}
+
 void Renderer::CreateVertexBufferObjects()
 {
     const float rect[] = {
@@ -288,10 +293,10 @@ GLuint Renderer::LoadTexture(const wchar_t *filename)
 void Renderer::DrawSolidRect(float x, float y, float sizeX, float sizeY, float rotation, float r, float g, float b,
                              float a)
 {
-    const float normalizedX = x * 2.0f / static_cast<float>(m_WindowSizeX);
-    const float normalizedY = y * 2.0f / static_cast<float>(m_WindowSizeY);
-    const float normalizedSizeX = sizeX / static_cast<float>(m_WindowSizeX);
-    const float normalizedSizeY = sizeY / static_cast<float>(m_WindowSizeY);
+    const float normalizedX = x * 2.0f * m_DrawScale / static_cast<float>(m_WindowSizeX);
+    const float normalizedY = y * 2.0f * m_DrawScale / static_cast<float>(m_WindowSizeY);
+    const float normalizedSizeX = sizeX * m_DrawScale / static_cast<float>(m_WindowSizeX);
+    const float normalizedSizeY = sizeY * m_DrawScale / static_cast<float>(m_WindowSizeY);
 
     glUseProgram(m_SolidRectShader);
     glUniform4f(glGetUniformLocation(m_SolidRectShader, "u_Trans"), normalizedX, normalizedY, normalizedSizeX,
@@ -310,11 +315,11 @@ void Renderer::DrawSolidRect(float x, float y, float sizeX, float sizeY, float r
 void Renderer::DrawEffectRect(float x, float y, float sizeX, float sizeY, float rotation, float r, float g, float b,
                               float a, int effectType)
 {
-    const float normalizedX = x * 2.0f / static_cast<float>(m_WindowSizeX);
-    const float normalizedY = y * 2.0f / static_cast<float>(m_WindowSizeY);
+    const float normalizedX = x * 2.0f * m_DrawScale / static_cast<float>(m_WindowSizeX);
+    const float normalizedY = y * 2.0f * m_DrawScale / static_cast<float>(m_WindowSizeY);
     glUseProgram(m_SolidRectShader);
     glUniform4f(glGetUniformLocation(m_SolidRectShader, "u_Trans"), normalizedX, normalizedY,
-                sizeX / static_cast<float>(m_WindowSizeX), sizeY / static_cast<float>(m_WindowSizeY));
+                sizeX * m_DrawScale / static_cast<float>(m_WindowSizeX), sizeY * m_DrawScale / static_cast<float>(m_WindowSizeY));
     glUniform1f(glGetUniformLocation(m_SolidRectShader, "u_Rotation"), rotation);
     glUniform4f(glGetUniformLocation(m_SolidRectShader, "u_Color"), r, g, b, a);
     glUniform1f(glGetUniformLocation(m_SolidRectShader, "u_Time"), m_Time);
@@ -336,10 +341,10 @@ void Renderer::DrawSprite(GLuint texture, float x, float y, float sizeX, float s
         return;
     }
 
-    const float normalizedX = x * 2.0f / static_cast<float>(m_WindowSizeX);
-    const float normalizedY = y * 2.0f / static_cast<float>(m_WindowSizeY);
-    const float normalizedSizeX = sizeX / static_cast<float>(m_WindowSizeX);
-    const float normalizedSizeY = sizeY / static_cast<float>(m_WindowSizeY);
+    const float normalizedX = x * 2.0f * m_DrawScale / static_cast<float>(m_WindowSizeX);
+    const float normalizedY = y * 2.0f * m_DrawScale / static_cast<float>(m_WindowSizeY);
+    const float normalizedSizeX = sizeX * m_DrawScale / static_cast<float>(m_WindowSizeX);
+    const float normalizedSizeY = sizeY * m_DrawScale / static_cast<float>(m_WindowSizeY);
     const float u0 = static_cast<float>(column) / columns;
     const float v0 = static_cast<float>(row) / rows;
     const float u1 = static_cast<float>(column + 1) / columns;

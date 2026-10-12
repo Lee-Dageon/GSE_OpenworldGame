@@ -14,13 +14,13 @@ void DrawGameUi(Renderer &renderer, const GameUiState &state)
     const float experienceRatio = std::max(0.0f, std::min(1.0f, static_cast<float>(state.experience) /
                                                                   state.experienceToNextLevel));
 
-    renderer.DrawSolidRect(left + 166, top - 42, 302, 58, 0, .012f, .022f, .018f, .76f);
-    renderer.DrawSolidRect(left + 166, top - 14, 292, 2, 0, .78f, .56f, .16f, .82f);
+    renderer.DrawSolidRect(left + 166, top - 42, 302, 58, 0, .008f, .016f, .013f, .88f);
+    renderer.DrawSolidRect(left + 166, top - 14, 292, 2, 0, .78f, .56f, .16f, .92f);
     renderer.DrawLabel(20, static_cast<float>(state.windowHeight - 28), L"QUEST", 1.0f, .80f,
                        .36f);
     renderer.DrawLabel(78, static_cast<float>(state.windowHeight - 28), state.objective.c_str(), .94f, .96f, .88f);
 
-    renderer.DrawSolidRect(left + 106, top - 82, 174, 66, 0, .012f, .022f, .018f, .76f);
+    renderer.DrawSolidRect(left + 106, top - 82, 174, 66, 0, .008f, .016f, .013f, .88f);
     renderer.DrawSolidRect(left + 91, top - 71, 144, 14, 0, .20f, .035f, .028f, 1);
     renderer.DrawSolidRect(left + 20 + healthRatio * 72.0f, top - 71, healthRatio * 144.0f, 9, 0, .92f, .12f, .07f,
                            1);

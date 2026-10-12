@@ -24,14 +24,14 @@ void main()
 	glow *= 0.25;
 	color += max(glow - 0.72, 0.0) * 0.22;
 
-	color *= vec3(1.08, 1.03, 0.92);
+	color *= vec3(1.04, 1.02, 0.96);
 	color = color / (color + vec3(0.62));
 	color = pow(color, vec3(0.86));
 	float luminance = dot(color, vec3(0.2126, 0.7152, 0.0722));
-	color = mix(vec3(luminance), color, 1.18);
+	color = mix(vec3(luminance), color, 1.08);
 
 	float vignette = 1.0 - smoothstep(0.35, 1.28, edge);
-	color *= mix(0.70, 1.0, vignette);
-	color += (randomNoise(gl_FragCoord.xy) - 0.5) * 0.012;
+	color *= mix(0.82, 1.0, vignette);
+	color += (randomNoise(gl_FragCoord.xy) - 0.5) * 0.006;
 	FragColor = vec4(color, 1.0);
 }

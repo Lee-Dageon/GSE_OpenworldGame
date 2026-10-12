@@ -13,6 +13,8 @@ namespace
 constexpr float Pi = 3.14159265f;
 constexpr float TileWidth = 64.0f;
 constexpr float TileHeight = 32.0f;
+constexpr float WorldScale = .72f;
+constexpr int ViewRadius = 20;
 
 float Distance(Vec2 first, Vec2 second)
 {
@@ -46,6 +48,7 @@ WorldRenderer::WorldRenderer(Renderer &renderer) : m_Renderer(renderer) {}
 void WorldRenderer::BeginFrame(float time)
 {
     m_Renderer.BeginFrame(time);
+    m_Renderer.SetWorldScale(WorldScale);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glDisable(GL_DEPTH_TEST);
@@ -54,6 +57,7 @@ void WorldRenderer::BeginFrame(float time)
 void WorldRenderer::EndFrame(float time)
 {
     m_Renderer.EndFrame(time);
+    m_Renderer.SetWorldScale(1.0f);
 }
 
 Vec2 WorldRenderer::ToScreen(Vec2 position) const
@@ -73,14 +77,14 @@ void WorldRenderer::DrawRect(Vec2 position, float width, float height, float rot
 void WorldRenderer::DrawShadow(Vec2 position, float width, float height) const
 {
     const Vec2 screen = ToScreen(position);
-    m_Renderer.DrawSolidRect(screen.x + 9, screen.z - 13, width, height, -.12f, .02f, .03f, .02f, .22f);
+    m_Renderer.DrawEffectRect(screen.x + 9, screen.z - 13, width, height, -.12f, .02f, .03f, .02f, .32f, 3);
 }
 
 void WorldRenderer::DrawSprite(Vec2 position, int column, int row, float, float, bool shadow) const
 {
     const Vec2 screen = ToScreen(position);
     if (shadow)
-        DrawShadow(position, row >= 2 ? 54.0f : 42.0f, 10.0f);
+        DrawShadow(position, row >= 2 ? 54.0f : 38.0f, 9.0f);
     if (row >= 2)
     {
         const float furRed = column == 0 ? .55f : (column == 1 ? .27f : .64f);
@@ -94,18 +98,23 @@ void WorldRenderer::DrawSprite(Vec2 position, int column, int row, float, float,
         return;
     }
 
-    const float colors[4][3] = {{.14f, .38f, .24f}, {.55f, .22f, .12f}, {.16f, .34f, .58f}, {.48f, .18f, .40f}};
+    const float colors[4][3] = {{.12f, .28f, .16f}, {.48f, .16f, .08f}, {.10f, .24f, .42f}, {.36f, .12f, .30f}};
     const float *cloth = colors[column % 4];
-    const float bob = std::sin(m_State->time * 5.0f + static_cast<float>(column)) * 1.5f;
-    m_Renderer.DrawSolidRect(screen.x, screen.z + 18 + bob, 24, 34, 0, cloth[0], cloth[1], cloth[2], 1);
-    m_Renderer.DrawSolidRect(screen.x, screen.z + 42 + bob, 17, 17, 0, .88f, .67f, .45f, 1);
-    m_Renderer.DrawSolidRect(screen.x, screen.z + 56 + bob, 27, 8, 0, .13f, .08f, .04f, 1);
-    m_Renderer.DrawSolidRect(screen.x - 9, screen.z + 19 + bob, 7, 25, -.20f, cloth[0] * .72f, cloth[1] * .72f,
-                             cloth[2] * .72f, 1);
-    m_Renderer.DrawSolidRect(screen.x + 9, screen.z + 19 + bob, 7, 25, .20f, cloth[0] * .72f, cloth[1] * .72f,
-                             cloth[2] * .72f, 1);
-    m_Renderer.DrawSolidRect(screen.x - 7, screen.z - 4 + bob, 7, 20, 0, .11f, .07f, .04f, 1);
-    m_Renderer.DrawSolidRect(screen.x + 7, screen.z - 4 + bob, 7, 20, 0, .11f, .07f, .04f, 1);
+    const float bob = std::sin(m_State->time * 5.0f + static_cast<float>(column)) * .8f;
+    m_Renderer.DrawSolidRect(screen.x, screen.z + 18 + bob, 22, 29, 0, .025f, .018f, .012f, 1);
+    m_Renderer.DrawSolidRect(screen.x, screen.z + 18 + bob, 16, 24, 0, cloth[0], cloth[1], cloth[2], 1);
+    m_Renderer.DrawSolidRect(screen.x, screen.z + 13 + bob, 17, 3, 0, .24f, .13f, .055f, 1);
+    m_Renderer.DrawSolidRect(screen.x - 12, screen.z + 20 + bob, 5, 16, 0, .035f, .025f, .018f, 1);
+    m_Renderer.DrawSolidRect(screen.x + 12, screen.z + 20 + bob, 5, 16, 0, .035f, .025f, .018f, 1);
+    m_Renderer.DrawSolidRect(screen.x - 12, screen.z + 20 + bob, 3, 13, 0, cloth[0] * .70f, cloth[1] * .70f,
+                             cloth[2] * .70f, 1);
+    m_Renderer.DrawSolidRect(screen.x + 12, screen.z + 20 + bob, 3, 13, 0, cloth[0] * .70f, cloth[1] * .70f,
+                             cloth[2] * .70f, 1);
+    m_Renderer.DrawSolidRect(screen.x, screen.z + 36 + bob, 15, 15, 0, .08f, .045f, .022f, 1);
+    m_Renderer.DrawSolidRect(screen.x, screen.z + 36 + bob, 11, 11, 0, .74f, .52f, .32f, 1);
+    m_Renderer.DrawSolidRect(screen.x, screen.z + 45 + bob, 19, 5, 0, .11f, .065f, .028f, 1);
+    m_Renderer.DrawSolidRect(screen.x - 5, screen.z - 2 + bob, 6, 18, 0, .07f, .045f, .025f, 1);
+    m_Renderer.DrawSolidRect(screen.x + 5, screen.z - 2 + bob, 6, 18, 0, .07f, .045f, .025f, 1);
 }
 
 void WorldRenderer::DrawHouse(Vec2 position, float red, float green, float blue) const
@@ -140,6 +149,9 @@ void WorldRenderer::DrawHouse(Vec2 position, float red, float green, float blue)
     }
     m_Renderer.DrawSolidRect(screen.x + 35, screen.z + 116, 22, 52, .08f, .18f, .16f, .14f, 1);
     m_Renderer.DrawSolidRect(screen.x + 42, screen.z + 151, 25, 22, Pi * .25f, .62f, .64f, .59f, .15f);
+    m_Renderer.DrawSolidRect(screen.x - 48, screen.z + 80, 12, 55, 0, .11f, .065f, .028f, 1);
+    m_Renderer.DrawSolidRect(screen.x - 48, screen.z + 110, 17, 5, 0, .24f, .12f, .045f, 1);
+    m_Renderer.DrawEffectRect(screen.x - 48, screen.z + 143, 14, 26, 0, 1.0f, .42f, .08f, .26f, 3);
 }
 
 void WorldRenderer::DrawTree(Vec2 position, int variant) const
@@ -161,12 +173,16 @@ void WorldRenderer::DrawTree(Vec2 position, int variant) const
                              .25f, .55f, .20f, .92f);
     m_Renderer.DrawSolidRect(screen.x - 20, screen.z + height + 27, model[4] * .42f, model[5] * .38f, Pi * .25f,
                              .36f, .66f, .25f, .72f);
+    m_Renderer.DrawSolidRect(screen.x - 3, screen.z + height + 34, model[4] * .48f, model[5] * .46f, Pi * .25f,
+                             .48f, .72f, .28f, .82f);
 }
 
 void WorldRenderer::DrawCampfire(Vec2 position) const
 {
     const Vec2 screen = ToScreen(position);
-    m_Renderer.DrawSolidRect(screen.x, screen.z + 20, 132, 98, Pi * .25f, 1.0f, .18f, .015f, .075f);
+    const float pulse = .82f + std::sin(m_State->time * 7.0f) * .08f;
+    m_Renderer.DrawEffectRect(screen.x, screen.z + 17, 174, 118, Pi * .25f, 1.0f, .20f, .02f, .17f * pulse, 3);
+    m_Renderer.DrawEffectRect(screen.x, screen.z + 20, 132, 98, Pi * .25f, 1.0f, .18f, .015f, .12f * pulse, 3);
     for (int stone = -1; stone <= 1; ++stone)
         m_Renderer.DrawSolidRect(screen.x + stone * 18, screen.z - 2, 20, 10, Pi * .25f, .24f, .25f, .23f, 1);
     m_Renderer.DrawSolidRect(screen.x, screen.z, 55, 17, 0, .24f, .15f, .08f, 1);
@@ -183,18 +199,21 @@ void WorldRenderer::DrawHerbPatch(Vec2 position) const
 
 void WorldRenderer::DrawGround() const
 {
-    m_Renderer.DrawSolidRect(0, 0, static_cast<float>(m_State->width), static_cast<float>(m_State->height), 0, .18f,
-                             .32f, .22f, 1);
+    m_Renderer.DrawSolidRect(0, 0, static_cast<float>(m_State->width) / WorldScale,
+                             static_cast<float>(m_State->height) / WorldScale, 0, .055f,
+                             .12f, .085f, 1);
     const int centerX = static_cast<int>(std::floor(m_State->player.x));
     const int centerZ = static_cast<int>(std::floor(m_State->player.z));
-    for (int z = centerZ - 14; z <= centerZ + 14; ++z)
-        for (int x = centerX - 14; x <= centerX + 14; ++x)
+    for (int z = centerZ - ViewRadius; z <= centerZ + ViewRadius; ++z)
+        for (int x = centerX - ViewRadius; x <= centerX + ViewRadius; ++x)
         {
             const Vec2 position = {static_cast<float>(x), static_cast<float>(z)};
-            float red = .24f;
-            float green = .47f;
-            float blue = .25f;
-            const float grassVariation = std::sin(position.x * 7.73f + position.z * 4.19f) * .026f;
+            const float meadow = std::sin(position.x * .17f) + std::cos(position.z * .13f) +
+                                 std::sin((position.x + position.z) * .08f);
+            float red = .17f + meadow * .012f;
+            float green = .36f + meadow * .026f;
+            float blue = .18f + meadow * .011f;
+            const float grassVariation = std::sin(position.x * 7.73f + position.z * 4.19f) * .022f;
             red += grassVariation * .45f;
             green += grassVariation;
             blue += grassVariation * .35f;
@@ -205,14 +224,14 @@ void WorldRenderer::DrawGround() const
             }
             else if (road < 2.0f || Distance(position, {0, 0}) < 4.5f)
             {
-                red = road < .58f ? .50f : .39f;
-                green = road < .58f ? .44f : .34f;
-                blue = road < .58f ? .30f : .23f;
+                red = road < .58f ? .43f : .32f;
+                green = road < .58f ? .37f : .28f;
+                blue = road < .58f ? .24f : .18f;
             }
-            DrawRect(position, TileWidth * .72f, TileHeight * .72f, Pi * .25f, red, green, blue);
-            if (road > 2.0f && !((x + z) % 3) &&
+            DrawRect(position, TileWidth * .78f, TileHeight * .78f, Pi * .25f, red, green, blue);
+            if (road > 2.0f && !((x * 3 + z * 5) % 4) &&
                 Distance(position, m_State->world.lake) > m_State->world.lakeRadius + 1.0f)
-                DrawRect({position.x + .18f, position.z - .15f}, 7, 18, -.18f, .20f, .52f, .18f, .38f);
+                DrawRect({position.x + .18f, position.z - .15f}, 6, 15, -.18f, .18f, .46f, .14f, .52f);
         }
     for (int index = 0; index < 8; ++index)
     {
@@ -227,30 +246,60 @@ void WorldRenderer::RenderWorld(const GameState &state)
 {
     m_State = &state;
     DrawGround();
-    for (const Vec2 &house : std::array<Vec2, 8>{{{-14, 5}, {15, 5}, {-9, 19}, {10, -20}, {-27, -14}, {27, -14}, {-25, 20}, {26, 19}}})
-        DrawHouse(house, .42f, .18f, .09f);
+    enum class DrawType { House, Tree, Campfire, Npc, Animal, Tracks, Herb, Monster, Player };
+    struct DrawItem { Vec2 position; DrawType type; int index; };
+    std::vector<DrawItem> items;
+    const std::array<Vec2, 8> houses = {{{-14, 5}, {15, 5}, {-9, 19}, {10, -20}, {-27, -14}, {27, -14}, {-25, 20}, {26, 19}}};
+    for (const Vec2 &house : houses)
+        items.push_back({house, DrawType::House, 0});
     for (int index = 0; index < 32; ++index)
-        DrawTree({4 + std::cos(index * 1.71f) * (43.0f + (index % 6) * 6.5f),
-                  7 + std::sin(index * 1.71f) * (43.0f + (index % 6) * 6.5f)}, index % 4);
+        items.push_back({{4 + std::cos(index * 1.71f) * (43.0f + (index % 6) * 6.5f),
+                         7 + std::sin(index * 1.71f) * (43.0f + (index % 6) * 6.5f)}, DrawType::Tree, index});
     const std::array<Vec2, 10> campfires = {
         {{-3, 0}, {8, 2}, {-9, -8}, {12, -12}, {-13, 12}, {16, 12}, {-24, 0}, {25, 1}, {0, 24}, {1, -25}}};
     for (const Vec2 &campfire : campfires)
-        DrawCampfire(campfire);
-    for (const NpcState &npc : state.npcs)
-        DrawSprite(npc.position, npc.column, npc.row, 88, 112);
-    for (const AnimalState &animal : state.animals)
-        DrawSprite(animal.position, animal.column, animal.row, 105, 82);
+        items.push_back({campfire, DrawType::Campfire, 0});
+    for (int index = 0; index < static_cast<int>(state.npcs.size()); ++index)
+        items.push_back({state.npcs[index].position, DrawType::Npc, index});
+    for (int index = 0; index < static_cast<int>(state.animals.size()); ++index)
+        items.push_back({state.animals[index].position, DrawType::Animal, index});
     if (state.quest == QuestStage::Tracks)
-        DrawRect(state.world.tracks, 30, 9, Pi * .2f, .12f, .07f, .03f);
+        items.push_back({state.world.tracks, DrawType::Tracks, 0});
     if (state.quest == QuestStage::Herb)
-        DrawHerbPatch(state.world.herb);
+        items.push_back({state.world.herb, DrawType::Herb, 0});
     if (state.quest == QuestStage::Hunt || state.quest == QuestStage::Trophy)
+        items.push_back({state.monster.position, DrawType::Monster, 0});
+    items.push_back({state.player, DrawType::Player, 0});
+
+    // Higher screen coordinates are farther away. Draw them first so foreground objects cover them.
+    std::sort(items.begin(), items.end(), [this](const DrawItem &left, const DrawItem &right) {
+        return ToScreen(left.position).z > ToScreen(right.position).z;
+    });
+    for (const DrawItem &item : items)
     {
-        MonsterDrawContext context = {&m_Renderer, [this](Vec2 p) { return ToScreen(p); },
-                                      [this](Vec2 p, int c, int r, float w, float h, bool s) { DrawSprite(p, c, r, w, h, s); },
-                                      state.width, state.height, state.time, Pi};
-        MonsterSystem::Draw(state.monster, context, state.quest == QuestStage::Trophy);
+        switch (item.type)
+        {
+        case DrawType::House: DrawHouse(item.position, .42f, .18f, .09f); break;
+        case DrawType::Tree: DrawTree(item.position, item.index % 4); break;
+        case DrawType::Campfire: DrawCampfire(item.position); break;
+        case DrawType::Npc:
+            DrawSprite(state.npcs[item.index].position, state.npcs[item.index].column, state.npcs[item.index].row, 88, 112);
+            break;
+        case DrawType::Animal:
+            DrawSprite(state.animals[item.index].position, state.animals[item.index].column, state.animals[item.index].row, 105, 82);
+            break;
+        case DrawType::Tracks: DrawRect(item.position, 30, 9, Pi * .2f, .12f, .07f, .03f); break;
+        case DrawType::Herb: DrawHerbPatch(item.position); break;
+        case DrawType::Monster:
+        {
+            MonsterDrawContext context = {&m_Renderer, [this](Vec2 p) { return ToScreen(p); },
+                                          [this](Vec2 p, int c, int r, float w, float h, bool s) { DrawSprite(p, c, r, w, h, s); },
+                                          state.width, state.height, state.time, Pi};
+            MonsterSystem::Draw(state.monster, context, state.quest == QuestStage::Trophy);
+            break;
+        }
+        case DrawType::Player: DrawSprite(state.player, 0, 0, 42, 54); break;
+        }
     }
-    DrawSprite(state.player, 0, 0, 42, 54);
     m_State = nullptr;
 }

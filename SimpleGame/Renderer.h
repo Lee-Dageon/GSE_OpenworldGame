@@ -18,6 +18,7 @@ class Renderer
     void Resize(int windowSizeX, int windowSizeY);
     void BeginFrame(float time);
     void EndFrame(float time);
+    void SetWorldScale(float scale);
 
     GLuint LoadTexture(const wchar_t *filename);
     void DrawSolidRect(float x, float y, float sizeX, float sizeY, float rotation, float r, float g, float b, float a);
@@ -46,6 +47,7 @@ class Renderer
     void DrawTexturedQuad(GLuint shader, GLuint texture, float x, float y, float sizeX, float sizeY);
 
     bool m_Initialized = false;
+    float m_DrawScale = 1.0f;
     int m_WindowSizeX = 1;
     int m_WindowSizeY = 1;
     std::uint64_t m_GdiToken = 0;

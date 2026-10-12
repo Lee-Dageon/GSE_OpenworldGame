@@ -39,5 +39,10 @@ void main()
 		float ring = abs(fract(length(v_LocalPosition) * 4.0 - u_Time * 1.8) - 0.5);
 		color.a *= smoothstep(0.50, 0.18, ring) * 0.65;
 	}
+	else if (u_EffectType == 3)
+	{
+		float distanceToCenter = length(v_LocalPosition);
+		color.a *= 1.0 - smoothstep(0.12, 1.0, distanceToCenter);
+	}
 	FragColor = color;
 }
