@@ -16,6 +16,9 @@ constexpr float Pi = 3.14159265f;
 constexpr float TileWidth = 64.0f;
 constexpr float TileHeight = 32.0f;
 constexpr float WorldScale = .72f;
+constexpr float GroundDotSize = 6.0f;
+constexpr int GroundChunkDots = 48;
+constexpr float GroundChunkSize = GroundDotSize * GroundChunkDots;
 const std::array<Vec2, 8> VillageHouses = {{{-14, 5}, {15, 5}, {-9, 19}, {10, -20},
                                          {-27, -14}, {27, -14}, {-25, 20}, {26, 19}}};
 constexpr Vec2 NoticeBoardPosition = {2, 1.5f};
@@ -66,6 +69,12 @@ float RoadDistance(Vec2 position)
 }
 
 WorldRenderer::WorldRenderer(Renderer &renderer) : m_Renderer(renderer) {}
+
+WorldRenderer::~WorldRenderer()
+{
+    if (m_GroundCache.buffer != 0)
+        glDeleteBuffers(1, &m_GroundCache.buffer);
+}
 
 void WorldRenderer::BeginFrame(float time)
 {
@@ -219,38 +228,23 @@ void WorldRenderer::DrawHerbPatch(Vec2 position) const
     m_Renderer.DrawSolidRect(screen.x, screen.z + 20, 9, 38, -.15f, .28f, .82f, .28f, 1);
 }
 
-void WorldRenderer::DrawGround() const
+WorldRenderer::GroundChunk WorldRenderer::BuildGroundChunk(int chunkX, int chunkY) const
 {
-    // Keep the texture grid in world space so camera motion cannot reshuffle the ground.
-    constexpr float dotSize = 6.0f;
-    const Vec2 origin = ToScreen({0, 0});
-    const float halfWidth = m_State->width / (2.0f * WorldScale);
-    const float halfHeight = m_State->height / (2.0f * WorldScale);
-    const int minimumX = static_cast<int>(std::floor((-halfWidth - origin.x) / dotSize));
-    const int maximumX = static_cast<int>(std::ceil((halfWidth - origin.x) / dotSize));
-    const int minimumY = static_cast<int>(std::floor((-halfHeight - origin.z) / dotSize));
-    const int maximumY = static_cast<int>(std::ceil((halfHeight - origin.z) / dotSize));
-    const float palette[][3] = {
-        {.105f, .155f, .075f}, {.125f, .180f, .085f}, {.145f, .200f, .095f},
-        {.165f, .220f, .105f}, {.185f, .240f, .115f}, {.225f, .270f, .135f},
-        {.245f, .205f, .135f}, {.270f, .225f, .150f}, {.295f, .245f, .165f},
-        {.320f, .265f, .180f}, {.345f, .290f, .200f}, {.370f, .315f, .220f},
-        {.180f, .190f, .130f}, {.235f, .230f, .160f}, {.290f, .275f, .190f},
-        {.340f, .320f, .230f}, {.060f, .165f, .180f}, {.070f, .190f, .205f},
-        {.085f, .215f, .230f}, {.110f, .245f, .255f}, {.160f, .290f, .290f},
-        {.260f, .355f, .330f}, {.295f, .300f, .235f}, {.400f, .385f, .295f}};
-    std::array<std::vector<float>, 24> batches;
+    // Fixed world-space lattice: adjacent chunks share exactly the same edges.
+    const int minimumX = chunkX * GroundChunkDots;
+    const int minimumY = chunkY * GroundChunkDots;
+    GroundChunk chunk;
     const auto noise = [](int x, int y) {
         std::uint32_t value = static_cast<std::uint32_t>(x) * 374761393u +
                               static_cast<std::uint32_t>(y) * 668265263u;
         value = (value ^ (value >> 13)) * 1274126177u;
         return static_cast<float>((value ^ (value >> 16)) & 65535u) / 65535.0f;
     };
-    for (int y = minimumY; y < maximumY; ++y)
-        for (int x = minimumX; x < maximumX; ++x)
+    for (int y = minimumY; y < minimumY + GroundChunkDots; ++y)
+        for (int x = minimumX; x < minimumX + GroundChunkDots; ++x)
         {
-            const float projectedX = (x + .5f) * dotSize;
-            const float projectedY = (y + .5f) * dotSize;
+            const float projectedX = (x + .5f) * GroundDotSize;
+            const float projectedY = (y + .5f) * GroundDotSize;
             const Vec2 position = {projectedX / TileWidth + projectedY / TileHeight,
                                    projectedY / TileHeight - projectedX / TileWidth};
             const float grain = noise(x, y);
@@ -274,7 +268,7 @@ void WorldRenderer::DrawGround() const
             }
             if (shore < -.35f)
             {
-                const float ripple = std::sin(projectedY * .14f + projectedX * .025f + m_State->time * 1.2f);
+                const float ripple = std::sin(projectedY * .14f + projectedX * .025f);
                 color = 16 + std::max(0, std::min(4, static_cast<int>(1.5f + ripple + grain)));
                 if (shore > -.70f && grain > .65f)
                     color = 21;
@@ -282,14 +276,92 @@ void WorldRenderer::DrawGround() const
             else if (dirt > .5f && grain > .975f)
                 color = noise(x + 7, y - 3) > .5f ? 22 : 23;
 
-            const float left = (x * dotSize + origin.x) / halfWidth;
-            const float right = ((x + 1) * dotSize + origin.x) / halfWidth;
-            const float bottom = (y * dotSize + origin.z) / halfHeight;
-            const float top = ((y + 1) * dotSize + origin.z) / halfHeight;
+            const float left = x * GroundDotSize;
+            const float right = (x + 1) * GroundDotSize;
+            const float bottom = y * GroundDotSize;
+            const float top = (y + 1) * GroundDotSize;
             const float vertices[] = {left, bottom, 0, left, top, 0, right, top, 0,
                                       left, bottom, 0, right, top, 0, right, bottom, 0};
-            batches[color].insert(batches[color].end(), std::begin(vertices), std::end(vertices));
+            chunk.batches[color].insert(chunk.batches[color].end(), std::begin(vertices), std::end(vertices));
         }
+    return chunk;
+}
+
+void WorldRenderer::DrawGround() const
+{
+    if (m_State->width <= 0 || m_State->height <= 0)
+        return;
+    const Vec2 origin = ToScreen({0, 0});
+    const float halfWidth = m_State->width / (2.0f * WorldScale);
+    const float halfHeight = m_State->height / (2.0f * WorldScale);
+    const int centerX = static_cast<int>(std::floor(-origin.x / GroundChunkSize));
+    const int centerY = static_cast<int>(std::floor(-origin.z / GroundChunkSize));
+    const int radiusX = static_cast<int>(std::ceil(halfWidth / GroundChunkSize)) + 1;
+    const int radiusY = static_cast<int>(std::ceil(halfHeight / GroundChunkSize)) + 1;
+    const int minimumX = centerX - radiusX, maximumX = centerX + radiusX + 1;
+    const int minimumY = centerY - radiusY, maximumY = centerY + radiusY + 1;
+    auto &cache = m_GroundCache;
+    if (cache.lake.x != m_State->world.lake.x || cache.lake.z != m_State->world.lake.z ||
+        cache.lakeRadius != m_State->world.lakeRadius)
+    {
+        cache.chunks.clear();
+        cache.ready = false;
+        cache.lake = m_State->world.lake;
+        cache.lakeRadius = m_State->world.lakeRadius;
+    }
+    if (!cache.ready || cache.minimumX != minimumX || cache.maximumX != maximumX ||
+        cache.minimumY != minimumY || cache.maximumY != maximumY)
+    {
+        // Keep a bounded margin, evict distant chunks, and calculate only new chunks.
+        for (auto it = cache.chunks.begin(); it != cache.chunks.end();)
+        {
+            const auto &key = it->first;
+            if (key.first < minimumX || key.first >= maximumX || key.second < minimumY || key.second >= maximumY)
+                it = cache.chunks.erase(it);
+            else
+                ++it;
+        }
+        for (int y = minimumY; y < maximumY; ++y)
+            for (int x = minimumX; x < maximumX; ++x)
+                if (cache.chunks.find({x, y}) == cache.chunks.end())
+                    cache.chunks.emplace(std::make_pair(x, y), BuildGroundChunk(x, y));
+
+        // One persistent GPU buffer; regroup/upload only when the chunk window changes.
+        size_t total = 0;
+        for (const auto &entry : cache.chunks)
+            for (const auto &batch : entry.second.batches)
+                total += batch.size();
+        std::vector<float> vertices;
+        vertices.reserve(total);
+        for (size_t color = 0; color < cache.count.size(); ++color)
+        {
+            cache.first[color] = static_cast<int>(vertices.size() / 3);
+            for (const auto &entry : cache.chunks)
+            {
+                const auto &batch = entry.second.batches[color];
+                vertices.insert(vertices.end(), batch.begin(), batch.end());
+            }
+            cache.count[color] = static_cast<int>(vertices.size() / 3) - cache.first[color];
+        }
+        if (cache.buffer == 0)
+            glGenBuffers(1, &cache.buffer);
+        glBindBuffer(GL_ARRAY_BUFFER, cache.buffer);
+        glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float), vertices.data(), GL_STATIC_DRAW);
+        cache.minimumX = minimumX;
+        cache.maximumX = maximumX;
+        cache.minimumY = minimumY;
+        cache.maximumY = maximumY;
+        cache.ready = true;
+    }
+    const float palette[][3] = {
+        {.105f, .155f, .075f}, {.125f, .180f, .085f}, {.145f, .200f, .095f},
+        {.165f, .220f, .105f}, {.185f, .240f, .115f}, {.225f, .270f, .135f},
+        {.245f, .205f, .135f}, {.270f, .225f, .150f}, {.295f, .245f, .165f},
+        {.320f, .265f, .180f}, {.345f, .290f, .200f}, {.370f, .315f, .220f},
+        {.180f, .190f, .130f}, {.235f, .230f, .160f}, {.290f, .275f, .190f},
+        {.340f, .320f, .230f}, {.060f, .165f, .180f}, {.070f, .190f, .205f},
+        {.085f, .215f, .230f}, {.110f, .245f, .255f}, {.160f, .290f, .290f},
+        {.260f, .355f, .330f}, {.295f, .300f, .235f}, {.400f, .385f, .295f}};
 
     // Reuse the solid-rectangle shader and submit one batch per palette color instead of per dot.
     m_Renderer.DrawSolidRect(0, 0, 1, 1, 0, palette[0][0], palette[0][1], palette[0][2], 1);
@@ -297,25 +369,33 @@ void WorldRenderer::DrawGround() const
     glGetIntegerv(GL_CURRENT_PROGRAM, &program);
     const GLint attribute = glGetAttribLocation(program, "a_Position");
     const GLint colorUniform = glGetUniformLocation(program, "u_Color");
-    glUniform4f(glGetUniformLocation(program, "u_Trans"), 0, 0, 1, 1);
+    glUniform4f(glGetUniformLocation(program, "u_Trans"), origin.x / halfWidth, origin.z / halfHeight,
+                1.0f / halfWidth, 1.0f / halfHeight);
     glUniform1i(glGetUniformLocation(program, "u_EffectType"), 0);
-    GLuint buffer = 0;
-    glGenBuffers(1, &buffer);
-    glBindBuffer(GL_ARRAY_BUFFER, buffer);
+    glBindBuffer(GL_ARRAY_BUFFER, cache.buffer);
     glEnableVertexAttribArray(attribute);
     glVertexAttribPointer(attribute, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, nullptr);
-    for (size_t index = 0; index < batches.size(); ++index)
+    for (size_t index = 0; index < cache.count.size(); ++index)
     {
-        const auto &vertices = batches[index];
-        if (vertices.empty())
+        if (cache.count[index] == 0)
             continue;
-        glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float), vertices.data(), GL_STREAM_DRAW);
         glUniform4f(colorUniform, palette[index][0], palette[index][1], palette[index][2], 1);
-        glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(vertices.size() / 3));
+        glDrawArrays(GL_TRIANGLES, cache.first[index], cache.count[index]);
     }
     glDisableVertexAttribArray(attribute);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glDeleteBuffers(1, &buffer);
+    // Animate a few water highlights in the shader, not every terrain dot on the CPU.
+    if (cache.lakeRadius > 0)
+        for (int index = 0; index < 8; ++index)
+        {
+            const float angle = index * 2.4f;
+            const Vec2 screen = ToScreen({cache.lake.x + std::cos(angle) * cache.lakeRadius * .5f,
+                                          cache.lake.z + std::sin(angle) * cache.lakeRadius * .5f});
+            const float width = std::min(48.0f, cache.lakeRadius * 8.0f);
+            if (std::abs(screen.x) > halfWidth + width || std::abs(screen.z) > halfHeight + width)
+                continue;
+            m_Renderer.DrawEffectRect(screen.x, screen.z, width, width * .15f, 0, .26f, .46f, .43f, .20f, 2);
+        }
 }
 
 void WorldRenderer::RenderWorld(const GameState &state)

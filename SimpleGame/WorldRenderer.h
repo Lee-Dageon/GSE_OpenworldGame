@@ -2,6 +2,9 @@
 
 #include "GameState.h"
 #include "ModelCache.h"
+#include <array>
+#include <map>
+#include <vector>
 
 class Renderer;
 
@@ -9,12 +12,30 @@ class WorldRenderer
 {
   public:
     explicit WorldRenderer(Renderer &renderer);
+    ~WorldRenderer();
+    WorldRenderer(const WorldRenderer &) = delete;
+    WorldRenderer &operator=(const WorldRenderer &) = delete;
 
     void BeginFrame(float time);
     void EndFrame(float time);
     void RenderWorld(const GameState &state);
 
   private:
+    struct GroundChunk
+    {
+        std::array<std::vector<float>, 24> batches;
+    };
+    struct GroundCache
+    {
+        std::map<std::pair<int, int>, GroundChunk> chunks;
+        unsigned int buffer = 0;
+        std::array<int, 24> first = {}, count = {};
+        int minimumX = 0, maximumX = 0, minimumY = 0, maximumY = 0;
+        Vec2 lake = {};
+        float lakeRadius = -1;
+        bool ready = false;
+    };
+    GroundChunk BuildGroundChunk(int chunkX, int chunkY) const;
     Vec2 ToScreen(Vec2 position) const;
     void DrawRect(Vec2 position, float width, float height, float rotation, float red, float green, float blue,
                   float alpha = 1.0f) const;
@@ -28,5 +49,6 @@ class WorldRenderer
 
     Renderer &m_Renderer;
     mutable ModelCache m_ModelCache;
+    mutable GroundCache m_GroundCache;
     const GameState *m_State = nullptr;
 };
