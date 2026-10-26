@@ -1,0 +1,9 @@
+{
+  "width": 512,
+  "height": 640,
+  "pivot_x": 0.50000072,
+  "pivot_y_from_bottom": 0.17475277,
+  "camera_elevation_degrees": 26.56505117707799,
+  "ground_shadow": "drawn by game",
+  "source": "../Source/tree.blend"
+}

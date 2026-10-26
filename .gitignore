@@ -479,3 +479,8 @@ EisenValor-Server/docs/rio-ring-buffer-diagram.html
 EisenValor-Server/docs/rio-ring-buffer-preview.png
 *.pptx
 /GSE_MD_codex
+
+# Blender source and runtime sprite used by SimpleGame.
+!/SimpleGame/Assets/Source/tree.blend
+!/SimpleGame/Assets/Textures/tree.png
+!/SimpleGame/Assets/Textures/tree.sprite.json

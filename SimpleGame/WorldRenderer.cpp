@@ -81,10 +81,15 @@ float RoadDistance(Vec2 position)
 }
 }
 
-WorldRenderer::WorldRenderer(Renderer &renderer) : m_Renderer(renderer) {}
+WorldRenderer::WorldRenderer(Renderer &renderer) : m_Renderer(renderer)
+{
+    m_TreeTexture = m_Renderer.LoadTexture(L"./Assets/Textures/tree.png");
+}
 
 WorldRenderer::~WorldRenderer()
 {
+    if (m_TreeTexture != 0)
+        glDeleteTextures(1, &m_TreeTexture);
     if (m_GroundCache.buffer != 0)
         glDeleteBuffers(1, &m_GroundCache.buffer);
 }
@@ -190,8 +195,20 @@ void WorldRenderer::DrawHouse(Vec2 position, float red, float green, float blue)
 
 void WorldRenderer::DrawTree(Vec2 position, int variant) const
 {
-    const std::vector<float> &model = m_ModelCache.LoadOrCreate("tree.v1", {48, 13, 10, 48, 48, 52});
     const Vec2 screen = ToScreen(position);
+    if (m_TreeTexture != 0)
+    {
+        // Export pivot is measured from the image bottom; keep the trunk at the world anchor.
+        // Values come from Assets/Textures/tree.sprite.json (512 x 640).
+        const float spriteHeight = 148.0f + static_cast<float>(variant) * 13.0f;
+        const float spriteWidth = spriteHeight * .8f;
+        DrawShadow(position, spriteWidth * .65f, 17.0f);
+        m_Renderer.DrawSprite(m_TreeTexture, screen.x, screen.z + (.5f - .17475277f) * spriteHeight,
+                              spriteWidth, spriteHeight, 0, 0, 1, 1, 1,
+                              1.0f - variant * .025f, 1.0f, 1.0f - variant * .035f);
+        return;
+    }
+    const std::vector<float> &model = m_ModelCache.LoadOrCreate("tree.v1", {48, 13, 10, 48, 48, 52});
     const float height = 48.0f + static_cast<float>(variant) * 10.0f;
     DrawShadow(position, model[0] * 1.4f, model[1] * 1.6f);
     DrawBlock(m_Renderer, screen.x, screen.z + height * .4f, model[2] * 1.8f, height, .36f, .19f, .08f);

@@ -50,5 +50,6 @@ class WorldRenderer
     Renderer &m_Renderer;
     mutable ModelCache m_ModelCache;
     mutable GroundCache m_GroundCache;
+    unsigned int m_TreeTexture = 0;
     const GameState *m_State = nullptr;
 };
