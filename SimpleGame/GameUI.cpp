@@ -70,14 +70,20 @@ void DrawGameUi(Renderer &renderer, const GameUiState &state)
     for (size_t i=0; i<objective.size(); ++i)
         label(questX+10*s, 20*s+i*questLine, objective[i].c_str(), .52f, 1, .97f, .87f);
 
-    // North-up proximity map: all markers and lake position come from live game state.
+    // Rotate world coordinates to match the quarter-view camera; UI y grows downward.
     const float mx = state.windowWidth - 93*s, my = 94*s, mr = 65*s;
     effect(mx, my, mr+2*s, .57f, .44f, .23f, 1, 7);
     const float mapScale = mr / 35.0f;
-    effect(mx, my, mr, (state.lake.x-state.player.x)/35.0f,
-           (state.lake.z-state.player.z)/35.0f, state.lakeRadius/35.0f, 1, 8);
+    const auto mapOffset = [&](Vec2 position) {
+        const float x = position.x - state.player.x, z = position.z - state.player.z;
+        return Vec2{(x-z)*.70710678f*mapScale, -(x+z)*.70710678f*mapScale};
+    };
+    const Vec2 lake = mapOffset(state.lake);
+    // The shader uses upward-positive local coordinates, unlike the UI.
+    effect(mx, my, mr, lake.x/mr, -lake.z/mr, state.lakeRadius/35.0f, 1, 8);
     const auto marker = [&](Vec2 position, float size, float r, float g, float b) {
-        const float dx=(position.x-state.player.x)*mapScale, dy=-(position.z-state.player.z)*mapScale;
+        const Vec2 offset = mapOffset(position);
+        const float dx = offset.x, dy = offset.z;
         if (dx*dx+dy*dy < (mr-size-3*s)*(mr-size-3*s))
         {
             effect(mx+dx, my+dy, size+s, .03f, .035f, .025f, 1, 7);
@@ -88,7 +94,8 @@ void DrawGameUi(Renderer &renderer, const GameUiState &state)
     if (state.monsterVisible) marker(state.monster, 6*s, .92f, .14f, .045f);
     if (state.hasObjectiveTarget) marker(state.objectiveTarget, 5*s, .90f, .74f, .27f);
     effect(mx, my, 5*s, .41f, .84f, 1, 1, 7);
-    label(mx-5*s, my-mr-22*s, L"N", .57f, .93f, .88f, .66f);
+    label(mx-(mr+16*s)*.70710678f-5*s, my-(mr+16*s)*.70710678f-12*s,
+          L"N", .57f, .93f, .88f, .66f);
     label(mx-45*s, my+mr+7*s, L"그린웨이크", .56f, .88f, .87f, .76f);
 
     // Existing gameplay commands, with the same circles used by HitTestGameUi.
