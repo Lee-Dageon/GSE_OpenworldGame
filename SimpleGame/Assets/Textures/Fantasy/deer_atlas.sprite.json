@@ -1,0 +1,14 @@
+{
+  "asset": "deer",
+  "cell_width": 128,
+  "cell_height": 192,
+  "columns": 8,
+  "rows": 4,
+  "pivot_x": 0.49999997,
+  "pivot_y_from_bottom": 0.2720983,
+  "camera_elevation_degrees": 30,
+  "row_order": "top_to_bottom",
+  "walk_fps": 8,
+  "columns_description": "model rotation Z: 0..315 degrees, step 45; front=-Y",
+  "source": "../../Source/Fantasy/deer.blend"
+}

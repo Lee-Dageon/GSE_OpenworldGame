@@ -26,12 +26,12 @@ void main()
 
 	color *= vec3(1.04, 1.02, 0.96);
 	color = color / (color + vec3(0.62));
-	color = pow(color, vec3(0.86));
+	color = pow(color, vec3(0.95));
 	float luminance = dot(color, vec3(0.2126, 0.7152, 0.0722));
-	color = mix(vec3(luminance), color, 1.08);
+	color = mix(vec3(luminance), color, 1.04);
 
 	float vignette = 1.0 - smoothstep(0.35, 1.28, edge);
-	color *= mix(0.82, 1.0, vignette);
-	color += (randomNoise(gl_FragCoord.xy) - 0.5) * 0.006;
+	color *= mix(0.91, 1.0, vignette);
+	color += (randomNoise(gl_FragCoord.xy) - 0.5) * 0.002;
 	FragColor = vec4(color, 1.0);
 }

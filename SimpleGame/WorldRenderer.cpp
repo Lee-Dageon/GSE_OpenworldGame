@@ -15,13 +15,25 @@ namespace
 constexpr float Pi = 3.14159265f;
 constexpr float TileWidth = 64.0f;
 constexpr float TileHeight = 32.0f;
-constexpr float WorldScale = .72f;
-constexpr float GroundDotSize = 6.0f;
+constexpr float WorldScale = 2.6f;
+constexpr float GroundDotSize = 2.0f;
 constexpr int GroundChunkDots = 48;
 constexpr float GroundChunkSize = GroundDotSize * GroundChunkDots;
+constexpr float HumanPivotY = .19070485f;
+constexpr float AnimalPivotY = .2720983f;
 const std::array<Vec2, 8> VillageHouses = {{{-14, 5}, {15, 5}, {-9, 19}, {10, -20},
                                          {-27, -14}, {27, -14}, {-25, 20}, {26, 19}}};
 constexpr Vec2 NoticeBoardPosition = {2, 1.5f};
+const std::array<float, 8> RoadJunctions = {{-1, 10, 15, -13, -22, -29, 26, 33}};
+const std::array<Vec2, 8> RoadBends = {{{-8, 0}, {8, 10}, {-4, 18}, {6, -17},
+                                     {-16, -21}, {16, -26}, {-14, 28}, {17, 32}}};
+
+unsigned int LoadFantasyTexture(Renderer &renderer, const wchar_t *name)
+{
+    const std::wstring fantasyPath = std::wstring(L"./Assets/Textures/Fantasy/") + name;
+    const unsigned int texture = renderer.LoadTexture(fantasyPath.c_str());
+    return texture != 0 ? texture : renderer.LoadTexture((std::wstring(L"./Assets/Textures/") + name).c_str());
+}
 
 // Local screen geometry keeps the existing quarter-view world projection.
 void DrawBlock(Renderer &renderer, float x, float y, float width, float height,
@@ -61,17 +73,14 @@ float RoadDistance(Vec2 position)
     float distance = Distance(position, {mainRoadX(roadZ), roadZ}) - mainWidth;
 
     // Each lane leaves the main road at a different point and narrows toward its front door.
-    const float junctions[] = {-1, 10, 15, -13, -22, -29, 26, 33};
-    const Vec2 bends[] = {{-8, 0}, {8, 10}, {-4, 18}, {6, -17},
-                          {-16, -21}, {16, -26}, {-14, 28}, {17, 32}};
     for (size_t index = 0; index < VillageHouses.size(); ++index)
     {
-        const Vec2 start = {mainRoadX(junctions[index]), junctions[index]};
+        const Vec2 start = {mainRoadX(RoadJunctions[index]), RoadJunctions[index]};
         const Vec2 door = {VillageHouses[index].x + .78f, VillageHouses[index].z - .28f};
         const float taper = std::max(0.0f, std::min(1.0f, Distance(position, door) / Distance(start, door)));
         const float width = .48f + .44f * taper;
-        distance = std::min(distance, DistanceToSegment(position, start, bends[index]) - width);
-        distance = std::min(distance, DistanceToSegment(position, bends[index], door) - width);
+        distance = std::min(distance, DistanceToSegment(position, start, RoadBends[index]) - width);
+        distance = std::min(distance, DistanceToSegment(position, RoadBends[index], door) - width);
     }
 
     const float plazaX = (position.x - NoticeBoardPosition.x) / 3.4f;
@@ -83,13 +92,33 @@ float RoadDistance(Vec2 position)
 
 WorldRenderer::WorldRenderer(Renderer &renderer) : m_Renderer(renderer)
 {
-    m_TreeTexture = m_Renderer.LoadTexture(L"./Assets/Textures/tree.png");
+    m_TreeTexture = m_Renderer.LoadTexture(L"./Assets/Textures/Fantasy/tree.png");
+    if (m_TreeTexture != 0)
+        m_TreePivotY = .18508148f;
+    else
+        m_TreeTexture = m_Renderer.LoadTexture(L"./Assets/Textures/tree.png");
+    m_TerrainTexture = LoadFantasyTexture(m_Renderer, L"terrain_atlas.png");
+    m_HumanTexture = LoadFantasyTexture(m_Renderer, L"human_atlas.png");
+    m_BoarTexture = LoadFantasyTexture(m_Renderer, L"boar_atlas.png");
+    m_DeerTexture = LoadFantasyTexture(m_Renderer, L"deer_atlas.png");
+    m_SheepTexture = LoadFantasyTexture(m_Renderer, L"sheep_atlas.png");
+    m_HouseTexture = m_Renderer.LoadTexture(L"./Assets/Textures/Fantasy/house.png");
+    m_PlayerTexture = m_Renderer.LoadTexture(L"./Assets/Hero/Textures/human_atlas.png");
+    // Atlas cells share a texture: avoid mipmaps blending neighboring directions/tiles.
+    for (unsigned int texture : {m_TerrainTexture, m_HumanTexture, m_PlayerTexture, m_BoarTexture, m_DeerTexture, m_SheepTexture})
+        if (texture != 0)
+        {
+            glBindTexture(GL_TEXTURE_2D, texture);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        }
+    glBindTexture(GL_TEXTURE_2D, 0);
 }
 
 WorldRenderer::~WorldRenderer()
 {
-    if (m_TreeTexture != 0)
-        glDeleteTextures(1, &m_TreeTexture);
+    for (unsigned int texture : {m_TreeTexture, m_HouseTexture, m_PlayerTexture, m_TerrainTexture, m_HumanTexture, m_BoarTexture, m_DeerTexture, m_SheepTexture})
+        if (texture != 0)
+            glDeleteTextures(1, &texture);
     if (m_GroundCache.buffer != 0)
         glDeleteBuffers(1, &m_GroundCache.buffer);
 }
@@ -113,7 +142,7 @@ Vec2 WorldRenderer::ToScreen(Vec2 position) const
 {
     const float x = position.x - m_State->player.x;
     const float z = position.z - m_State->player.z;
-    return {(x - z) * TileWidth * .5f, (x + z) * TileHeight * .5f - 70.0f};
+    return {(x - z) * TileWidth * .5f, (x + z) * TileHeight * .5f - 86.0f};
 }
 
 void WorldRenderer::DrawRect(Vec2 position, float width, float height, float rotation, float red, float green,
@@ -127,6 +156,23 @@ void WorldRenderer::DrawShadow(Vec2 position, float width, float height) const
 {
     const Vec2 screen = ToScreen(position);
     m_Renderer.DrawEffectRect(screen.x + 9, screen.z - 13, width, height, -.12f, .02f, .03f, .02f, .32f, 3);
+}
+
+bool WorldRenderer::DrawAtlasSprite(Vec2 position, unsigned int texture, Vec2 facing, int frame,
+                                   float height, float pivotY, bool fallen) const
+{
+    if (texture == 0)
+        return false;
+    // Blender (X,Y) maps to game (x,z)=(Y,-X); rotated front -Y becomes (-cos(a),-sin(a)).
+    const int direction = (static_cast<int>(std::lround(std::atan2(-facing.z, -facing.x) / (Pi * .25f))) + 8) % 8;
+    const Vec2 screen = ToScreen(position);
+    const float width = height * (128.0f / 192.0f);
+    const float displayHeight = fallen ? height * .45f : height;
+    DrawShadow(position, width * .6f, fallen ? 12.0f : 9.0f);
+    const float tint = fallen ? .6f : 1.0f;
+    m_Renderer.DrawSprite(texture, screen.x, screen.z + (.5f - pivotY) * displayHeight,
+                          width, displayHeight, direction, fallen ? 0 : frame % 4, 8, 4, 1, tint, tint, tint);
+    return true;
 }
 
 void WorldRenderer::DrawSprite(Vec2 position, int column, int row, float width, float height, bool shadow) const
@@ -178,6 +224,14 @@ void WorldRenderer::DrawSprite(Vec2 position, int column, int row, float width, 
 
 void WorldRenderer::DrawHouse(Vec2 position, float red, float green, float blue) const
 {
+    if (m_HouseTexture != 0)
+    {
+        const Vec2 screen = ToScreen(position);
+        DrawShadow(position, 172, 36);
+        m_Renderer.DrawSprite(m_HouseTexture, screen.x, screen.z + (.5f-.30755001f)*220,
+                              220, 220, 0, 0, 1, 1);
+        return;
+    }
     const std::vector<float> &model = m_ModelCache.LoadOrCreate("house.v1", {158, 48, 88, 76, 103, 58, 23, 43});
     const Vec2 screen = ToScreen(position);
     DrawShadow(position, 172, 36);
@@ -199,11 +253,11 @@ void WorldRenderer::DrawTree(Vec2 position, int variant) const
     if (m_TreeTexture != 0)
     {
         // Export pivot is measured from the image bottom; keep the trunk at the world anchor.
-        // Values come from Assets/Textures/tree.sprite.json (512 x 640).
+        // Each version's pivot comes from its tree.sprite.json (512 x 640).
         const float spriteHeight = 148.0f + static_cast<float>(variant) * 13.0f;
         const float spriteWidth = spriteHeight * .8f;
         DrawShadow(position, spriteWidth * .65f, 17.0f);
-        m_Renderer.DrawSprite(m_TreeTexture, screen.x, screen.z + (.5f - .17475277f) * spriteHeight,
+        m_Renderer.DrawSprite(m_TreeTexture, screen.x, screen.z + (.5f - m_TreePivotY) * spriteHeight,
                               spriteWidth, spriteHeight, 0, 0, 1, 1, 1,
                               1.0f - variant * .025f, 1.0f, 1.0f - variant * .035f);
         return;
@@ -304,8 +358,9 @@ void WorldRenderer::DrawGround() const
     if (m_State->width <= 0 || m_State->height <= 0)
         return;
     const Vec2 origin = ToScreen({0, 0});
-    const float halfWidth = m_State->width / (2.0f * WorldScale);
-    const float halfHeight = m_State->height / (2.0f * WorldScale);
+    const float worldScale = WorldScale * m_State->height / 720.0f;
+    const float halfWidth = m_State->width / (2.0f * worldScale);
+    const float halfHeight = m_State->height / (2.0f * worldScale);
     const int centerX = static_cast<int>(std::floor(-origin.x / GroundChunkSize));
     const int centerY = static_cast<int>(std::floor(-origin.z / GroundChunkSize));
     const int radiusX = static_cast<int>(std::ceil(halfWidth / GroundChunkSize)) + 1;
@@ -384,6 +439,14 @@ void WorldRenderer::DrawGround() const
     glUniform4f(glGetUniformLocation(program, "u_Trans"), origin.x / halfWidth, origin.z / halfHeight,
                 1.0f / halfWidth, 1.0f / halfHeight);
     glUniform1i(glGetUniformLocation(program, "u_EffectType"), 0);
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, m_TerrainTexture);
+    glUniform1i(glGetUniformLocation(program, "u_TerrainTexture"), 0);
+    glUniform2f(glGetUniformLocation(program, "u_TerrainTileSize"), TileWidth, TileHeight);
+    glUniform2fv(glGetUniformLocation(program, "u_RoadHouses[0]"), 8, &VillageHouses[0].x);
+    glUniform2fv(glGetUniformLocation(program, "u_RoadBends[0]"), 8, &RoadBends[0].x);
+    glUniform1fv(glGetUniformLocation(program, "u_RoadJunctions[0]"), 8, RoadJunctions.data());
+    glUniform2f(glGetUniformLocation(program, "u_RoadPlaza"), NoticeBoardPosition.x, NoticeBoardPosition.z-2);
     glBindBuffer(GL_ARRAY_BUFFER, cache.buffer);
     glEnableVertexAttribArray(attribute);
     glVertexAttribPointer(attribute, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, nullptr);
@@ -391,11 +454,15 @@ void WorldRenderer::DrawGround() const
     {
         if (cache.count[index] == 0)
             continue;
+        const bool texturedLand = m_TerrainTexture != 0 && (index < 16 || index >= 22);
+        glUniform1i(glGetUniformLocation(program, "u_EffectType"), texturedLand ? 6 : 0);
+        glUniform1i(glGetUniformLocation(program, "u_TerrainColumn"), index < 6 ? 0 : (index < 12 ? 1 : 2));
         glUniform4f(colorUniform, palette[index][0], palette[index][1], palette[index][2], 1);
         glDrawArrays(GL_TRIANGLES, cache.first[index], cache.count[index]);
     }
     glDisableVertexAttribArray(attribute);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glUniform1i(glGetUniformLocation(program, "u_EffectType"), 0);
     // A world-space circle projects to an ellipse; animate its entire surface on the GPU.
     if (cache.lakeRadius > 0)
     {
@@ -411,6 +478,7 @@ void WorldRenderer::DrawGround() const
 void WorldRenderer::RenderWorld(const GameState &state)
 {
     m_State = &state;
+    m_Renderer.SetWorldScale(WorldScale * state.height / 720.0f);
     DrawGround();
     enum class DrawType { House, Tree, Campfire, Npc, Animal, Tracks, Herb, Monster, Player, NoticeBoard };
     struct DrawItem { Vec2 position; DrawType type; int index; };
@@ -449,22 +517,49 @@ void WorldRenderer::RenderWorld(const GameState &state)
         case DrawType::Tree: DrawTree(item.position, item.index % 4); break;
         case DrawType::Campfire: DrawCampfire(item.position); break;
         case DrawType::Npc:
-            DrawSprite(state.npcs[item.index].position, state.npcs[item.index].column, state.npcs[item.index].row, 88, 112);
+        {
+            const NpcState &npc = state.npcs[item.index];
+            const Vec2 facing = {state.player.x - npc.position.x, state.player.z - npc.position.z};
+            if (!DrawAtlasSprite(npc.position, m_HumanTexture, facing, 0, 100, HumanPivotY))
+                DrawSprite(npc.position, npc.column, npc.row, 88, 112);
             break;
+        }
         case DrawType::Animal:
-            DrawSprite(state.animals[item.index].position, state.animals[item.index].column, state.animals[item.index].row, 105, 82);
+        {
+            const AnimalState &animal = state.animals[item.index];
+            const Vec2 facing = {std::cos(animal.phase) * 2.4f,
+                                  -std::sin(animal.phase * .7f) * 1.8f * .7f};
+            const unsigned int texture = animal.column == 0 ? m_DeerTexture : (animal.column == 1 ? m_BoarTexture : m_SheepTexture);
+            const int frame = static_cast<int>(state.time * 8.0f + animal.phase) % 4;
+            if (!DrawAtlasSprite(animal.position, texture, facing, frame, animal.column == 0 ? 128.0f : 110.0f, AnimalPivotY))
+                DrawSprite(animal.position, animal.column, animal.row, 105, 82);
             break;
+        }
         case DrawType::Tracks: DrawRect(item.position, 30, 9, Pi * .2f, .12f, .07f, .03f); break;
         case DrawType::Herb: DrawHerbPatch(item.position); break;
         case DrawType::Monster:
         {
             MonsterDrawContext context = {&m_Renderer, [this](Vec2 p) { return ToScreen(p); },
-                                          [this](Vec2 p, int c, int r, float w, float h, bool s) { DrawSprite(p, c, r, w, h, s); },
+                                          [this, &state](Vec2 p, int c, int r, float w, float h, bool s) {
+                                              const Vec2 facing = {state.player.x - p.x, state.player.z - p.z};
+                                              const float distance = Distance(p, state.player);
+                                              const bool walking = state.quest == QuestStage::Hunt && distance > 1.1f && distance < 7.0f;
+                                              const int frame = walking ? static_cast<int>(state.time * 8.0f) % 4 : 0;
+                                              if (!DrawAtlasSprite(p, m_BoarTexture, facing, frame, 125, AnimalPivotY, state.monster.health <= 0))
+                                                  DrawSprite(p, c, r, w, h, s);
+                                          },
                                           state.width, state.height, state.time, Pi};
             MonsterSystem::Draw(state.monster, context, state.quest == QuestStage::Trophy);
             break;
         }
-        case DrawType::Player: DrawSprite(state.player, 0, 0, 42, 54); break;
+        case DrawType::Player:
+        {
+            const float fps = state.sprint ? 12.0f : 8.0f;
+            const int frame = state.moving ? static_cast<int>(state.time * fps) % 4 : 0;
+            if (!DrawAtlasSprite(state.player, m_PlayerTexture != 0 ? m_PlayerTexture : m_HumanTexture, state.facing, frame, 88, HumanPivotY))
+                DrawSprite(state.player, 0, 0, 42, 54);
+            break;
+        }
         case DrawType::NoticeBoard:
         {
             const Vec2 screen = ToScreen(item.position);

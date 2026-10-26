@@ -19,6 +19,7 @@ class Renderer
     void BeginFrame(float time);
     void EndFrame(float time);
     void SetWorldScale(float scale);
+    bool SaveScreenshot(const wchar_t *filename);
 
     GLuint LoadTexture(const wchar_t *filename);
     void DrawSolidRect(float x, float y, float sizeX, float sizeY, float rotation, float r, float g, float b, float a);
@@ -26,7 +27,7 @@ class Renderer
                         int effectType);
     void DrawSprite(GLuint texture, float x, float y, float sizeX, float sizeY, int column, int row, int columns,
                     int rows, float alpha = 1.0f, float r = 1.0f, float g = 1.0f, float b = 1.0f);
-    void DrawLabel(float x, float y, const wchar_t *text, float r, float g, float b);
+    void DrawLabel(float x, float y, const wchar_t *text, float r, float g, float b, float scale = 1.0f);
 
   private:
     struct LabelTexture

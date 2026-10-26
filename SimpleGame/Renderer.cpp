@@ -122,6 +122,23 @@ void Renderer::SetWorldScale(float scale)
     m_DrawScale = std::max(0.1f, scale);
 }
 
+bool Renderer::SaveScreenshot(const wchar_t *filename)
+{
+    if (!m_Initialized)
+        return false;
+    std::vector<unsigned char> pixels(static_cast<size_t>(m_WindowSizeX) * m_WindowSizeY * 4);
+    glPixelStorei(GL_PACK_ALIGNMENT, 4);
+    glReadBuffer(GL_BACK);
+    glReadPixels(0, 0, m_WindowSizeX, m_WindowSizeY, GL_BGRA, GL_UNSIGNED_BYTE, pixels.data());
+    if (glGetError() != GL_NO_ERROR)
+        return false;
+    Gdiplus::Bitmap bitmap(m_WindowSizeX, m_WindowSizeY, m_WindowSizeX * 4,
+                           PixelFormat32bppARGB, pixels.data());
+    bitmap.RotateFlip(Gdiplus::RotateNoneFlipY);
+    const CLSID pngEncoder = {0x557cf406, 0x1a04, 0x11d3, {0x9a,0x73,0x00,0x00,0xf8,0x1e,0xf3,0x2e}};
+    return bitmap.Save(filename, &pngEncoder, nullptr) == Gdiplus::Ok;
+}
+
 void Renderer::CreateVertexBufferObjects()
 {
     const float rect[] = {
@@ -404,7 +421,7 @@ Renderer::LabelTexture Renderer::CreateLabelTexture(const wchar_t *text)
     return result;
 }
 
-void Renderer::DrawLabel(float x, float y, const wchar_t *text, float r, float g, float b)
+void Renderer::DrawLabel(float x, float y, const wchar_t *text, float r, float g, float b, float scale)
 {
     const std::wstring key(text);
     auto found = m_LabelCache.find(key);
@@ -418,8 +435,8 @@ void Renderer::DrawLabel(float x, float y, const wchar_t *text, float r, float g
         return;
     }
 
-    const float centerX = x + label.width * 0.5f - m_WindowSizeX * 0.5f;
-    const float centerY = y + label.height * 0.5f - m_WindowSizeY * 0.5f;
-    DrawSprite(label.id, centerX, centerY, static_cast<float>(label.width), static_cast<float>(label.height), 0, 0, 1,
+    const float centerX = x + label.width * scale * 0.5f - m_WindowSizeX * 0.5f;
+    const float centerY = y + label.height * scale * 0.5f - m_WindowSizeY * 0.5f;
+    DrawSprite(label.id, centerX, centerY, label.width * scale, label.height * scale, 0, 0, 1,
                1, 1.0f, r, g, b);
 }

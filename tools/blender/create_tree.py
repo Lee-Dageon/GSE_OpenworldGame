@@ -76,7 +76,7 @@ def main():
     camera = bpy.data.objects.new("QuarterView_2to1", camera_data)
     scene.collection.objects.link(camera)
     target = Vector((0, 0, 2.0))
-    camera.location = target + Vector((8, -8, math.sqrt(32)))
+    camera.location = target + Vector((8, -8, math.sqrt(128 / 3)))
     camera.rotation_euler = (target - camera.location).to_track_quat("-Z", "Y").to_euler()
     camera_data.type = "ORTHO"
     camera_data.ortho_scale = 5.5
@@ -130,7 +130,7 @@ def main():
     assert min(alpha) == 0.0 and max(alpha) > .99, "Sprite must contain both transparent and opaque pixels"
     bpy.data.images.remove(sprite)
     metadata = {"width": 512, "height": 640, "pivot_x": round(pivot.x, 8),
-                "pivot_y_from_bottom": round(pivot.y, 8), "camera_elevation_degrees": math.degrees(math.atan(.5)),
+                "pivot_y_from_bottom": round(pivot.y, 8), "camera_elevation_degrees": 30,
                 "ground_shadow": "drawn by game", "source": "../Source/tree.blend"}
     TEXTURE.with_suffix(".sprite.json").write_text(json.dumps(metadata, indent=2) + "\n", encoding="utf-8")
     print("GSE_TREE_EXPORT " + json.dumps(metadata))

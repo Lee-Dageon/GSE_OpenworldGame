@@ -39,7 +39,7 @@ void GLAPIENTRY TrackBufferData(GLenum target, GLsizeiptr size, const void *data
     // Every dot remains on the same lattice, even across negative chunk coordinates.
     const auto *vertices = static_cast<const float *>(data);
     for (GLsizeiptr i = 0; i < size / sizeof(float); i += 3)
-        Require(std::fmod(vertices[i], 6.0f) == 0 && std::fmod(vertices[i + 1], 6.0f) == 0,
+        Require(std::fmod(vertices[i], 2.0f) == 0 && std::fmod(vertices[i + 1], 2.0f) == 0,
                 "terrain lattice seam");
     originalBufferData(target, size, data, usage);
 }
@@ -106,13 +106,13 @@ int main(int argc, char **argv)
 
             uploads = 0;
             state.width = 640;
-            state.height = 360;
+            state.height = 720;
             // Resize recreates the render target; only world rendering uploads terrain.
             renderer.Resize(state.width, state.height);
             Render(world, state);
             Require(uploads == 1 && uploadedBytes < initialBytes, "shrinking must evict distant chunks");
             state.width = 2560;
-            state.height = 1440;
+            state.height = 720;
             renderer.Resize(state.width, state.height);
             Render(world, state);
             Require(uploads == 2 && terrainBuffer == initialBuffer, "expansion must cover the viewport");

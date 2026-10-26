@@ -26,6 +26,8 @@ WorldRenderer *g_WorldRenderer = nullptr;
 GameState g_GameState = CreateInitialGameState();
 GameManager g_GameManager(g_GameState);
 Actor g_SceneRoot("SceneRoot");
+const char *g_CapturePath = nullptr;
+int g_CaptureFrames = 0;
 
 void RenderScene()
 {
@@ -49,11 +51,36 @@ void RenderScene()
     uiState.health = g_GameState.health;
     uiState.maxHealth = g_GameState.maxHealth;
     uiState.messageTime = g_GameState.messageTime;
+    uiState.attackTime = g_GameState.attack;
+    uiState.dodgeTime = g_GameState.dodge;
+    uiState.player = g_GameState.player;
+    uiState.elder = g_GameState.world.elder;
+    uiState.monster = g_GameState.monster.position;
+    uiState.lake = g_GameState.world.lake;
+    uiState.lakeRadius = g_GameState.world.lakeRadius;
+    uiState.monsterVisible = g_GameState.quest == QuestStage::Hunt || g_GameState.quest == QuestStage::Trophy;
+    uiState.hasObjectiveTarget = g_GameState.quest != QuestStage::Complete;
+    switch (g_GameState.quest)
+    {
+    case QuestStage::Tracks: uiState.objectiveTarget = g_GameState.world.tracks; break;
+    case QuestStage::Herb: uiState.objectiveTarget = g_GameState.world.herb; break;
+    case QuestStage::Hunt:
+    case QuestStage::Trophy: uiState.objectiveTarget = g_GameState.monster.position; break;
+    default: uiState.objectiveTarget = g_GameState.world.elder; break;
+    }
     uiState.objective = QuestSystem::GetObjective(g_GameState.quest);
     if (const wchar_t *hint = g_GameManager.GetHint())
         uiState.hint = hint;
     uiState.message = g_GameState.message;
     DrawGameUi(*g_Renderer, uiState);
+    if (g_CapturePath && ++g_CaptureFrames == 5)
+    {
+        wchar_t filename[MAX_PATH];
+        const bool pathValid = MultiByteToWideChar(CP_UTF8, 0, g_CapturePath, -1, filename, MAX_PATH) != 0;
+        std::cout << (pathValid && g_Renderer->SaveScreenshot(filename) ? "GSE_CAPTURE_OK\n" : "GSE_CAPTURE_FAILED\n");
+        glutLeaveMainLoop();
+        return;
+    }
     glutSwapBuffers();
 
     ++frameCount;
@@ -106,14 +133,34 @@ void KeyUp(unsigned char key, int, int)
     GameInput::OnKeyUp(g_GameState, key);
 }
 
-void MouseInput(int button, int state, int, int)
+void MouseInput(int button, int state, int x, int y)
 {
+    if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN)
+    {
+        const GameCommand command = HitTestGameUi(x, y, g_GameState.width, g_GameState.height);
+        if (command != GameCommand::None)
+        {
+            g_GameManager.HandleCommand(command);
+            return;
+        }
+        if (GameUiPanelContains(x, y, g_GameState.width, g_GameState.height))
+            return;
+    }
     g_GameManager.HandleCommand(GameInput::OnMouseButton(button == GLUT_LEFT_BUTTON, state == GLUT_DOWN));
 }
 } // namespace
 
 int main(int argc, char **argv)
 {
+    for (int index = 1; index + 1 < argc; ++index)
+        if (std::string(argv[index]) == "--capture")
+        {
+            g_CapturePath = argv[index + 1];
+            for (int next = index; next + 2 < argc; ++next)
+                argv[next] = argv[next + 2];
+            argc -= 2;
+            break;
+        }
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA);
     glutInitWindowSize(WindowWidth, WindowHeight);
