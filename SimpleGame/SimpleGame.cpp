@@ -11,6 +11,7 @@
 #include "Renderer.h"
 #include "WorldRenderer.h"
 
+#include <Windows.h>
 #include <algorithm>
 #include <cstdio>
 #include <iostream>
@@ -70,6 +71,10 @@ void RenderScene()
 
 void UpdateFrame()
 {
+    // Poll Shift so pressing/releasing it while moving takes effect without another key event.
+    DWORD foregroundProcess = 0;
+    GetWindowThreadProcessId(GetForegroundWindow(), &foregroundProcess);
+    g_GameState.sprint = foregroundProcess == GetCurrentProcessId() && (GetAsyncKeyState(VK_SHIFT) & 0x8000) != 0;
     const int now = glutGet(GLUT_ELAPSED_TIME);
     const float deltaTime = std::min(.05f, (now - g_GameState.lastTime) / 1000.0f);
     g_GameState.lastTime = now;

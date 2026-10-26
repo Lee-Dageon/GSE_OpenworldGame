@@ -31,8 +31,8 @@ void DrawDrop(const MonsterState &monster, const MonsterDrawContext &context)
     const float glow = .55f + std::sin(context.time * 6.0f) * .18f;
 
     context.renderer->DrawSolidRect(s.x, s.z + 9, 34, 16, context.pi * .25f, .95f, .78f, .22f, .28f);
-    context.renderer->DrawSolidRect(s.x - 7, s.z + 10, 18, 5, -.45f, .82f, .72f, .50f, 1);
-    context.renderer->DrawSolidRect(s.x + 7, s.z + 10, 18, 5, .45f, .82f, .72f, .50f, 1);
+    context.renderer->DrawEffectRect(s.x - 7, s.z + 10, 18, 7, -.45f, .82f, .72f, .50f, 1, 4);
+    context.renderer->DrawEffectRect(s.x + 7, s.z + 10, 18, 7, .45f, .82f, .72f, .50f, 1, 4);
     context.renderer->DrawSolidRect(s.x, s.z + 9, 7, 7, 0, 1.0f, .88f, .38f, glow);
 
     context.renderer->DrawLabel(context.screenWidth * .5f + s.x - 64, context.screenHeight * .5f + s.z + 30,

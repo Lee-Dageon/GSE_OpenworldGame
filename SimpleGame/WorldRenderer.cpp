@@ -23,6 +23,19 @@ const std::array<Vec2, 8> VillageHouses = {{{-14, 5}, {15, 5}, {-9, 19}, {10, -2
                                          {-27, -14}, {27, -14}, {-25, 20}, {26, 19}}};
 constexpr Vec2 NoticeBoardPosition = {2, 1.5f};
 
+// Local screen geometry keeps the existing quarter-view world projection.
+void DrawBlock(Renderer &renderer, float x, float y, float width, float height,
+               float red, float green, float blue)
+{
+    renderer.DrawEffectRect(x, y, width, height, 0, red, green, blue, 1, 4);
+}
+
+void DrawCanopy(Renderer &renderer, float x, float y, float width, float height,
+                float red, float green, float blue)
+{
+    renderer.DrawEffectRect(x, y, width, height, 0, red, green, blue, 1, 5);
+}
+
 float Distance(Vec2 first, Vec2 second)
 {
     const float x = first.x - second.x;
@@ -111,41 +124,51 @@ void WorldRenderer::DrawShadow(Vec2 position, float width, float height) const
     m_Renderer.DrawEffectRect(screen.x + 9, screen.z - 13, width, height, -.12f, .02f, .03f, .02f, .32f, 3);
 }
 
-void WorldRenderer::DrawSprite(Vec2 position, int column, int row, float, float, bool shadow) const
+void WorldRenderer::DrawSprite(Vec2 position, int column, int row, float width, float height, bool shadow) const
 {
     const Vec2 screen = ToScreen(position);
+    const bool animal = row >= 2;
+    const float scale = animal ? std::max(.8f, std::min(1.3f, width / 105.0f))
+                               : std::max(1.0f, std::min(1.25f, height / 72.0f));
     if (shadow)
-        DrawShadow(position, row >= 2 ? 54.0f : 38.0f, 9.0f);
-    if (row >= 2)
+        DrawShadow(position, (animal ? 58.0f : 34.0f) * scale, 12.0f * scale);
+    const auto block = [&](float x, float y, float w, float h, float r, float g, float b)
     {
-        const float furRed = column == 0 ? .55f : (column == 1 ? .27f : .64f);
-        const float furGreen = column == 0 ? .34f : (column == 1 ? .16f : .42f);
-        const float furBlue = column == 2 ? .22f : .09f;
-        m_Renderer.DrawSolidRect(screen.x, screen.z + 9, 44, 23, 0, furRed, furGreen, furBlue, 1);
-        m_Renderer.DrawSolidRect(screen.x + 24, screen.z + 16, 20, 18, 0, furRed * .85f, furGreen * .85f, furBlue, 1);
-        m_Renderer.DrawSolidRect(screen.x + 32, screen.z + 28, 7, 11, .28f, .88f, .75f, .46f, 1);
-        for (int leg = -1; leg <= 1; leg += 2)
-            m_Renderer.DrawSolidRect(screen.x + leg * 14, screen.z - 5, 6, 18, 0, .16f, .09f, .04f, 1);
+        DrawBlock(m_Renderer, screen.x + x * scale, screen.z + y * scale, w * scale, h * scale, r, g, b);
+    };
+    if (animal)
+    {
+        const float red = column == 0 ? .55f : (column == 1 ? .27f : .64f);
+        const float green = column == 0 ? .34f : (column == 1 ? .16f : .42f);
+        const float blue = column == 2 ? .22f : .09f;
+        block(-13, 5, 7, 17, .17f, .10f, .05f);
+        block(12, 6, 7, 17, .17f, .10f, .05f);
+        block(0, 20, 46, 32, red, green, blue);
+        block(-13, 1, 7, 18, .22f, .13f, .06f);
+        block(12, 2, 7, 18, .22f, .13f, .06f);
+        block(23, 22, 21, 24, red * .9f, green * .9f, blue * .9f);
+        block(33, 16, 14, 11, red * .7f, green * .7f, blue * .7f);
+        block(18, 35, 6, 12, red * .7f, green * .7f, blue * .7f);
+        block(29, 35, 6, 12, red * .7f, green * .7f, blue * .7f);
+        block(32, 26, 3, 4, .025f, .02f, .015f);
         return;
     }
-
     const float colors[4][3] = {{.12f, .28f, .16f}, {.48f, .16f, .08f}, {.10f, .24f, .42f}, {.36f, .12f, .30f}};
     const float *cloth = colors[column % 4];
-    const float bob = std::sin(m_State->time * 5.0f + static_cast<float>(column)) * .8f;
-    m_Renderer.DrawSolidRect(screen.x, screen.z + 18 + bob, 22, 29, 0, .025f, .018f, .012f, 1);
-    m_Renderer.DrawSolidRect(screen.x, screen.z + 18 + bob, 16, 24, 0, cloth[0], cloth[1], cloth[2], 1);
-    m_Renderer.DrawSolidRect(screen.x, screen.z + 13 + bob, 17, 3, 0, .24f, .13f, .055f, 1);
-    m_Renderer.DrawSolidRect(screen.x - 12, screen.z + 20 + bob, 5, 16, 0, .035f, .025f, .018f, 1);
-    m_Renderer.DrawSolidRect(screen.x + 12, screen.z + 20 + bob, 5, 16, 0, .035f, .025f, .018f, 1);
-    m_Renderer.DrawSolidRect(screen.x - 12, screen.z + 20 + bob, 3, 13, 0, cloth[0] * .70f, cloth[1] * .70f,
-                             cloth[2] * .70f, 1);
-    m_Renderer.DrawSolidRect(screen.x + 12, screen.z + 20 + bob, 3, 13, 0, cloth[0] * .70f, cloth[1] * .70f,
-                             cloth[2] * .70f, 1);
-    m_Renderer.DrawSolidRect(screen.x, screen.z + 36 + bob, 15, 15, 0, .08f, .045f, .022f, 1);
-    m_Renderer.DrawSolidRect(screen.x, screen.z + 36 + bob, 11, 11, 0, .74f, .52f, .32f, 1);
-    m_Renderer.DrawSolidRect(screen.x, screen.z + 45 + bob, 19, 5, 0, .11f, .065f, .028f, 1);
-    m_Renderer.DrawSolidRect(screen.x - 5, screen.z - 2 + bob, 6, 18, 0, .07f, .045f, .025f, 1);
-    m_Renderer.DrawSolidRect(screen.x + 5, screen.z - 2 + bob, 6, 18, 0, .07f, .045f, .025f, 1);
+    const bool player = position.x == m_State->player.x && position.z == m_State->player.z;
+    const float stride = player && m_State->moving ? std::sin(m_State->time * (m_State->sprint ? 13.0f : 9.0f)) : 0;
+    const float bob = player ? std::abs(stride) * 1.1f : std::sin(m_State->time * 2.0f + column) * .4f;
+    block(-6, 7 + stride * 2, 9, 19, .12f, .08f, .05f);
+    block(6, 7 - stride * 2, 9, 19, .12f, .08f, .05f);
+    block(-13, 22 + bob - stride, 7, 20, cloth[0] * .8f, cloth[1] * .8f, cloth[2] * .8f);
+    block(0, 25 + bob, 23, 30, cloth[0], cloth[1], cloth[2]);
+    block(0, 15 + bob, 24, 7, .27f, .16f, .07f);
+    block(13, 22 + bob + stride, 7, 20, cloth[0], cloth[1], cloth[2]);
+    block(0, 47 + bob, 17, 19, .74f, .52f, .32f);
+    block(0, 55 + bob, 20, 11, .17f, .10f, .05f);
+    const float look = player && m_State->facing.x < m_State->facing.z ? -1.0f : 1.0f;
+    block(look * 4, 47 + bob, 3, 3, .025f, .02f, .015f);
+    block(look * 8, 43 + bob, 4, 4, .62f, .39f, .23f);
 }
 
 void WorldRenderer::DrawHouse(Vec2 position, float red, float green, float blue) const
@@ -153,36 +176,16 @@ void WorldRenderer::DrawHouse(Vec2 position, float red, float green, float blue)
     const std::vector<float> &model = m_ModelCache.LoadOrCreate("house.v1", {158, 48, 88, 76, 103, 58, 23, 43});
     const Vec2 screen = ToScreen(position);
     DrawShadow(position, 172, 36);
-    m_Renderer.DrawSolidRect(screen.x + 8, screen.z - 16, model[0] * 1.05f, model[1] * 1.18f, Pi * .25f, .10f, .09f,
-                             .07f, .58f);
-    m_Renderer.DrawSolidRect(screen.x - 31, screen.z + 27, model[2], model[3], -.18f, .56f, .43f, .27f, 1);
-    m_Renderer.DrawSolidRect(screen.x + 31, screen.z + 27, model[2], model[3], .18f, .33f, .24f, .14f, 1);
-    m_Renderer.DrawSolidRect(screen.x - 28, screen.z + 80, model[4], model[5], -.30f, red * 1.14f, green * 1.10f,
-                             blue * 1.04f, 1);
-    m_Renderer.DrawSolidRect(screen.x + 29, screen.z + 80, model[4], model[5], .30f, red * .58f, green * .56f,
-                             blue * .52f, 1);
-    m_Renderer.DrawSolidRect(screen.x - 28, screen.z + 94, model[4] * .92f, 5, -.30f, red * 1.28f, green * 1.20f,
-                             blue * 1.12f, .78f);
-    m_Renderer.DrawSolidRect(screen.x + 29, screen.z + 94, model[4] * .92f, 5, .30f, red * .78f, green * .70f,
-                             blue * .64f, .78f);
-    m_Renderer.DrawSolidRect(screen.x + 34, screen.z + 8, model[6], model[7], .18f, .12f, .065f, .025f, 1);
-    m_Renderer.DrawSolidRect(screen.x + 34, screen.z + 8, model[6] * .60f, model[7] * .84f, .18f, .26f, .13f, .05f, 1);
-    for (int beam = -1; beam <= 1; ++beam)
-        m_Renderer.DrawSolidRect(screen.x + beam * 25, screen.z + 29, 5, 69, 0, .19f, .10f, .04f, .72f);
-    for (int side = -1; side <= 1; side += 2)
-    {
-        const float windowX = screen.x + side * 35;
-        m_Renderer.DrawSolidRect(windowX, screen.z + 35, 60, 50, 0, .10f, .055f, .02f, 1);
-        m_Renderer.DrawSolidRect(windowX, screen.z + 35, 39, 34, 0, 1, .42f, .08f, .13f);
-        m_Renderer.DrawSolidRect(windowX, screen.z + 35, 25, 24, 0, 1, .80f, .33f, .98f);
-        m_Renderer.DrawSolidRect(windowX, screen.z + 35, 4, 30, 0, .22f, .12f, .04f, .88f);
-        m_Renderer.DrawSolidRect(windowX, screen.z + 35, 31, 4, 0, .22f, .12f, .04f, .88f);
-    }
-    m_Renderer.DrawSolidRect(screen.x + 35, screen.z + 116, 22, 52, .08f, .18f, .16f, .14f, 1);
-    m_Renderer.DrawSolidRect(screen.x + 42, screen.z + 151, 25, 22, Pi * .25f, .62f, .64f, .59f, .15f);
-    m_Renderer.DrawSolidRect(screen.x - 48, screen.z + 80, 12, 55, 0, .11f, .065f, .028f, 1);
-    m_Renderer.DrawSolidRect(screen.x - 48, screen.z + 110, 17, 5, 0, .24f, .12f, .045f, 1);
-    m_Renderer.DrawEffectRect(screen.x - 48, screen.z + 143, 14, 26, 0, 1.0f, .42f, .08f, .26f, 3);
+    DrawBlock(m_Renderer, screen.x, screen.z + 40, model[0], model[3] + 24, .56f, .43f, .27f);
+    DrawCanopy(m_Renderer, screen.x, screen.z + 91, model[0] + 26, model[5] + 26, red, green, blue);
+    DrawBlock(m_Renderer, screen.x + 36, screen.z + 107, 21, 45, .27f, .24f, .20f);
+    DrawBlock(m_Renderer, screen.x + 36, screen.z + 127, 28, 10, .36f, .33f, .29f);
+    DrawBlock(m_Renderer, screen.x + 26, screen.z + 12, model[6], model[7], .23f, .12f, .045f);
+    DrawBlock(m_Renderer, screen.x + 31, screen.z + 11, 3, 4, .70f, .54f, .23f);
+    DrawBlock(m_Renderer, screen.x - 27, screen.z + 42, 26, 28, .18f, .11f, .055f);
+    DrawBlock(m_Renderer, screen.x - 27, screen.z + 43, 19, 19, .86f, .60f, .24f);
+    m_Renderer.DrawSolidRect(screen.x - 27, screen.z + 43, 2, 15, 0, .25f, .14f, .065f, 1);
+    m_Renderer.DrawSolidRect(screen.x - 27, screen.z + 43, 16, 2, 0, .25f, .14f, .065f, 1);
 }
 
 void WorldRenderer::DrawTree(Vec2 position, int variant) const
@@ -190,22 +193,12 @@ void WorldRenderer::DrawTree(Vec2 position, int variant) const
     const std::vector<float> &model = m_ModelCache.LoadOrCreate("tree.v1", {48, 13, 10, 48, 48, 52});
     const Vec2 screen = ToScreen(position);
     const float height = 48.0f + static_cast<float>(variant) * 10.0f;
-    DrawShadow(position, model[0] * 1.25f, model[1] * 1.35f);
-    m_Renderer.DrawSolidRect(screen.x + 5, screen.z + height * .28f, model[2] * 1.5f, height * 1.04f, 0, .12f, .06f,
-                             .02f, 1);
-    m_Renderer.DrawSolidRect(screen.x - 3, screen.z + height * .30f, model[2], height, 0, .36f, .19f, .08f, 1);
-    m_Renderer.DrawSolidRect(screen.x - 17, screen.z + height * .57f, 34, 7, -.48f, .24f, .12f, .04f, 1);
-    m_Renderer.DrawSolidRect(screen.x + 15, screen.z + height * .70f, 30, 7, .42f, .24f, .12f, .04f, 1);
-    m_Renderer.DrawSolidRect(screen.x + 9, screen.z + height + 4, model[4] * 1.22f, model[5] * 1.18f, Pi * .25f, .08f,
-                             .22f, .10f, .88f);
-    m_Renderer.DrawSolidRect(screen.x - 13, screen.z + height + 12, model[4] * .92f, model[5] * .86f, Pi * .25f,
-                             .15f, .42f, .17f, 1);
-    m_Renderer.DrawSolidRect(screen.x + 16, screen.z + height + 21, model[4] * .68f, model[5] * .62f, Pi * .25f,
-                             .25f, .55f, .20f, .92f);
-    m_Renderer.DrawSolidRect(screen.x - 20, screen.z + height + 27, model[4] * .42f, model[5] * .38f, Pi * .25f,
-                             .36f, .66f, .25f, .72f);
-    m_Renderer.DrawSolidRect(screen.x - 3, screen.z + height + 34, model[4] * .48f, model[5] * .46f, Pi * .25f,
-                             .48f, .72f, .28f, .82f);
+    DrawShadow(position, model[0] * 1.4f, model[1] * 1.6f);
+    DrawBlock(m_Renderer, screen.x, screen.z + height * .4f, model[2] * 1.8f, height, .36f, .19f, .08f);
+    const float sway = std::sin(m_State->time * 1.4f + position.x * .2f + position.z * .3f) * 1.2f;
+    DrawCanopy(m_Renderer, screen.x + sway, screen.z + height * .8f, model[4] * 1.6f, model[5], .12f, .34f, .14f);
+    DrawCanopy(m_Renderer, screen.x - 9 + sway, screen.z + height + 12, model[4] * 1.3f, model[5] * .9f, .20f, .46f, .18f);
+    DrawCanopy(m_Renderer, screen.x + 8 + sway, screen.z + height + 31, model[4], model[5] * .75f, .30f, .57f, .22f);
 }
 
 void WorldRenderer::DrawCampfire(Vec2 position) const
@@ -215,17 +208,19 @@ void WorldRenderer::DrawCampfire(Vec2 position) const
     m_Renderer.DrawEffectRect(screen.x, screen.z + 17, 174, 118, Pi * .25f, 1.0f, .20f, .02f, .17f * pulse, 3);
     m_Renderer.DrawEffectRect(screen.x, screen.z + 20, 132, 98, Pi * .25f, 1.0f, .18f, .015f, .12f * pulse, 3);
     for (int stone = -1; stone <= 1; ++stone)
-        m_Renderer.DrawSolidRect(screen.x + stone * 18, screen.z - 2, 20, 10, Pi * .25f, .24f, .25f, .23f, 1);
-    m_Renderer.DrawSolidRect(screen.x, screen.z, 55, 17, 0, .24f, .15f, .08f, 1);
-    m_Renderer.DrawEffectRect(screen.x, screen.z + 20, 30, 52, Pi * .25f, 1, .35f, .05f, .9f, 1);
-    m_Renderer.DrawEffectRect(screen.x, screen.z + 18, 16, 30, Pi * .25f, 1, .88f, .20f, .95f, 1);
+        DrawBlock(m_Renderer, screen.x + stone * 18, screen.z - 2, 20, 14, .24f, .25f, .23f);
+    DrawBlock(m_Renderer, screen.x, screen.z, 55, 17, .24f, .15f, .08f);
+    // Keep flames upright; the shader forms the hot core and rising embers.
+    m_Renderer.DrawEffectRect(screen.x, screen.z + 32, 48, 72, 0, 1, .35f, .05f, .95f, 1);
 }
 
 void WorldRenderer::DrawHerbPatch(Vec2 position) const
 {
     const Vec2 screen = ToScreen(position);
     m_Renderer.DrawSolidRect(screen.x, screen.z + 7, 42, 14, Pi * .25f, .12f, .24f, .09f, .38f);
-    m_Renderer.DrawSolidRect(screen.x, screen.z + 20, 9, 38, -.15f, .28f, .82f, .28f, 1);
+    DrawBlock(m_Renderer, screen.x, screen.z + 14, 6, 23, .20f, .45f, .15f);
+    DrawCanopy(m_Renderer, screen.x - 7, screen.z + 17, 22, 17, .28f, .68f, .22f);
+    DrawCanopy(m_Renderer, screen.x + 6, screen.z + 24, 20, 18, .36f, .78f, .26f);
 }
 
 WorldRenderer::GroundChunk WorldRenderer::BuildGroundChunk(int chunkX, int chunkY) const
@@ -384,18 +379,16 @@ void WorldRenderer::DrawGround() const
     }
     glDisableVertexAttribArray(attribute);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
-    // Animate a few water highlights in the shader, not every terrain dot on the CPU.
+    // A world-space circle projects to an ellipse; animate its entire surface on the GPU.
     if (cache.lakeRadius > 0)
-        for (int index = 0; index < 8; ++index)
-        {
-            const float angle = index * 2.4f;
-            const Vec2 screen = ToScreen({cache.lake.x + std::cos(angle) * cache.lakeRadius * .5f,
-                                          cache.lake.z + std::sin(angle) * cache.lakeRadius * .5f});
-            const float width = std::min(48.0f, cache.lakeRadius * 8.0f);
-            if (std::abs(screen.x) > halfWidth + width || std::abs(screen.z) > halfHeight + width)
-                continue;
-            m_Renderer.DrawEffectRect(screen.x, screen.z, width, width * .15f, 0, .26f, .46f, .43f, .20f, 2);
-        }
+    {
+        const Vec2 screen = ToScreen(cache.lake);
+        const float width = cache.lakeRadius * TileWidth * std::sqrt(2.0f);
+        const float height = cache.lakeRadius * TileHeight * std::sqrt(2.0f);
+        if (std::abs(screen.x) <= halfWidth + width * .5f &&
+            std::abs(screen.z) <= halfHeight + height * .5f)
+            m_Renderer.DrawEffectRect(screen.x, screen.z, width, height, 0, .08f, .24f, .26f, .9f, 2);
+    }
 }
 
 void WorldRenderer::RenderWorld(const GameState &state)
@@ -461,12 +454,12 @@ void WorldRenderer::RenderWorld(const GameState &state)
             DrawShadow(item.position, 42, 9);
             for (int side = -1; side <= 1; side += 2)
             {
-                m_Renderer.DrawSolidRect(screen.x + side * 16, screen.z + 18, 5, 42, 0, .16f, .10f, .045f, 1);
+                DrawBlock(m_Renderer, screen.x + side * 16, screen.z + 18, 7, 42, .22f, .14f, .065f);
                 m_Renderer.DrawSolidRect(screen.x + side * 16 - 1, screen.z + 18, 2, 42, 0, .29f, .20f, .09f, 1);
             }
-            m_Renderer.DrawSolidRect(screen.x, screen.z + 30, 44, 27, 0, .12f, .075f, .03f, 1);
+            DrawBlock(m_Renderer, screen.x, screen.z + 30, 49, 32, .32f, .22f, .11f);
             m_Renderer.DrawSolidRect(screen.x, screen.z + 30, 38, 21, 0, .32f, .22f, .11f, 1);
-            m_Renderer.DrawSolidRect(screen.x, screen.z + 46, 50, 5, 0, .25f, .14f, .065f, 1);
+            DrawCanopy(m_Renderer, screen.x, screen.z + 48, 57, 17, .30f, .17f, .075f);
             for (int note = -1; note <= 1; ++note)
             {
                 m_Renderer.DrawSolidRect(screen.x + note * 11, screen.z + 30, 8, 13, 0, .73f, .65f, .43f, 1);
