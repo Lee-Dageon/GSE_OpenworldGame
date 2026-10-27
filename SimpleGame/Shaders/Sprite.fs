@@ -6,6 +6,8 @@ uniform sampler2D u_Texture;
 uniform float u_Alpha;
 uniform vec3 u_Tint;
 uniform vec4 u_UvRect;
+uniform bool u_WorldLighting;
+uniform vec3 u_LocalLight;
 
 void main()
 {
@@ -16,5 +18,12 @@ void main()
 	{
 		discard;
 	}
-	FragColor = vec4(color.rgb * u_Tint, color.a * u_Alpha);
+	vec3 surface = color.rgb * u_Tint;
+	if (u_WorldLighting)
+	{
+		// Atlas lighting is baked; apply only shared ambient and local illumination.
+		surface = pow(max(surface, vec3(0.0)), vec3(2.2));
+		surface = min(surface * (vec3(.96, .98, 1.0) + u_LocalLight), vec3(.95));
+	}
+	FragColor = vec4(surface, color.a * u_Alpha);
 }

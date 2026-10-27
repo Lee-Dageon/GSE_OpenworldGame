@@ -505,3 +505,12 @@ EisenValor-Server/docs/rio-ring-buffer-preview.png
 !/SimpleGame/Assets/Hero/Source/human.blend
 !/SimpleGame/Assets/Hero/Textures/human_atlas.png
 !/SimpleGame/Assets/Hero/Textures/human_atlas.sprite.json
+!/SimpleGame/Assets/Hero/Source/human_attack.blend
+!/SimpleGame/Assets/Hero/Textures/human_attack_atlas.png
+!/SimpleGame/Assets/Hero/Textures/human_attack_atlas.sprite.json
+!/SimpleGame/Assets/Frontier/Source/human.blend
+!/SimpleGame/Assets/Frontier/Textures/human_atlas.png
+!/SimpleGame/Assets/Frontier/Textures/human_atlas.sprite.json
+!/SimpleGame/Assets/Frontier/Source/props.blend
+!/SimpleGame/Assets/Frontier/Textures/props_atlas.png
+!/SimpleGame/Assets/Frontier/Textures/props_atlas.sprite.json

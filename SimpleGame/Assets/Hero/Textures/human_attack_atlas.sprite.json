@@ -1,0 +1,15 @@
+{
+  "asset": "human_attack",
+  "cell_width": 256,
+  "cell_height": 256,
+  "columns": 8,
+  "rows": 8,
+  "duration_seconds": 0.32,
+  "pivot_x": 0.5,
+  "pivot_y_from_bottom": 0.26802865,
+  "display_height_ratio": 1.3333333333333333,
+  "row_order": "top_to_bottom",
+  "camera_elevation_degrees": 30,
+  "columns_description": "model rotation Z: 0..315 degrees, step 45; front=-Y",
+  "source": "../Source/human_attack.blend"
+}

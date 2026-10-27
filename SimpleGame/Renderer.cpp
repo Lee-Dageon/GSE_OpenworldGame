@@ -86,6 +86,8 @@ void Renderer::Resize(int windowSizeX, int windowSizeY)
 void Renderer::BeginFrame(float time)
 {
     m_Time = time;
+    m_WorldLighting = true;
+    SetLocalLight(0, 0, 0);
     glBindFramebuffer(GL_FRAMEBUFFER, m_Framebuffer);
     glViewport(0, 0, m_WindowSizeX, m_WindowSizeY);
     glClearColor(0.10f, 0.15f, 0.12f, 1.0f);
@@ -94,6 +96,7 @@ void Renderer::BeginFrame(float time)
 
 void Renderer::EndFrame(float time)
 {
+    m_WorldLighting = false;
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
     glViewport(0, 0, m_WindowSizeX, m_WindowSizeY);
     glDisable(GL_DEPTH_TEST);
@@ -120,6 +123,13 @@ void Renderer::EndFrame(float time)
 void Renderer::SetWorldScale(float scale)
 {
     m_DrawScale = std::max(0.1f, scale);
+}
+
+void Renderer::SetLocalLight(float red, float green, float blue)
+{
+    m_LocalLight[0] = red;
+    m_LocalLight[1] = green;
+    m_LocalLight[2] = blue;
 }
 
 bool Renderer::SaveScreenshot(const wchar_t *filename)
@@ -157,7 +167,7 @@ bool Renderer::CreateRenderTarget()
 
     glGenTextures(1, &m_FrameColorTexture);
     glBindTexture(GL_TEXTURE_2D, m_FrameColorTexture);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, m_WindowSizeX, m_WindowSizeY, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, m_WindowSizeX, m_WindowSizeY, 0, GL_RGBA, GL_FLOAT, nullptr);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -316,6 +326,8 @@ void Renderer::DrawSolidRect(float x, float y, float sizeX, float sizeY, float r
     const float normalizedSizeY = sizeY * m_DrawScale / static_cast<float>(m_WindowSizeY);
 
     glUseProgram(m_SolidRectShader);
+    glUniform1i(glGetUniformLocation(m_SolidRectShader, "u_WorldLighting"), m_WorldLighting);
+    glUniform3fv(glGetUniformLocation(m_SolidRectShader, "u_LocalLight"), 1, m_LocalLight);
     glUniform4f(glGetUniformLocation(m_SolidRectShader, "u_Trans"), normalizedX, normalizedY, normalizedSizeX,
                 normalizedSizeY);
     glUniform1f(glGetUniformLocation(m_SolidRectShader, "u_Rotation"), rotation);
@@ -335,6 +347,8 @@ void Renderer::DrawEffectRect(float x, float y, float sizeX, float sizeY, float 
     const float normalizedX = x * 2.0f * m_DrawScale / static_cast<float>(m_WindowSizeX);
     const float normalizedY = y * 2.0f * m_DrawScale / static_cast<float>(m_WindowSizeY);
     glUseProgram(m_SolidRectShader);
+    glUniform1i(glGetUniformLocation(m_SolidRectShader, "u_WorldLighting"), m_WorldLighting);
+    glUniform3fv(glGetUniformLocation(m_SolidRectShader, "u_LocalLight"), 1, m_LocalLight);
     glUniform4f(glGetUniformLocation(m_SolidRectShader, "u_Trans"), normalizedX, normalizedY,
                 sizeX * m_DrawScale / static_cast<float>(m_WindowSizeX), sizeY * m_DrawScale / static_cast<float>(m_WindowSizeY));
     glUniform1f(glGetUniformLocation(m_SolidRectShader, "u_Rotation"), rotation);
@@ -351,7 +365,7 @@ void Renderer::DrawEffectRect(float x, float y, float sizeX, float sizeY, float 
 }
 
 void Renderer::DrawSprite(GLuint texture, float x, float y, float sizeX, float sizeY, int column, int row, int columns,
-                          int rows, float alpha, float r, float g, float b)
+                          int rows, float alpha, float r, float g, float b, float sway, float swayPivot)
 {
     if (texture == 0)
     {
@@ -368,6 +382,10 @@ void Renderer::DrawSprite(GLuint texture, float x, float y, float sizeX, float s
     const float v1 = static_cast<float>(row + 1) / rows;
 
     glUseProgram(m_SpriteShader);
+    glUniform1i(glGetUniformLocation(m_SpriteShader, "u_WorldLighting"), m_WorldLighting);
+    glUniform3fv(glGetUniformLocation(m_SpriteShader, "u_LocalLight"), 1, m_LocalLight);
+    glUniform1f(glGetUniformLocation(m_SpriteShader, "u_Sway"), sway);
+    glUniform1f(glGetUniformLocation(m_SpriteShader, "u_SwayPivot"), swayPivot);
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, texture);
     glUniform1i(glGetUniformLocation(m_SpriteShader, "u_Texture"), 0);

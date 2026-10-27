@@ -39,7 +39,7 @@ class WorldRenderer
     Vec2 ToScreen(Vec2 position) const;
     void DrawRect(Vec2 position, float width, float height, float rotation, float red, float green, float blue,
                   float alpha = 1.0f) const;
-    void DrawShadow(Vec2 position, float width, float height) const;
+    void DrawShadow(Vec2 position, float width, float height, float castHeight = 0) const;
     void DrawSprite(Vec2 position, int column, int row, float width, float height, bool shadow = true) const;
     bool DrawAtlasSprite(Vec2 position, unsigned int texture, Vec2 facing, int frame,
                          float height, float pivotY, bool fallen = false) const;
@@ -54,7 +54,9 @@ class WorldRenderer
     mutable GroundCache m_GroundCache;
     unsigned int m_TreeTexture = 0;
     unsigned int m_HouseTexture = 0;
+    unsigned int m_PropsTexture = 0;
     unsigned int m_PlayerTexture = 0;
+    unsigned int m_PlayerAttackTexture = 0;
     float m_TreePivotY = .17475277f;
     unsigned int m_TerrainTexture = 0, m_HumanTexture = 0;
     unsigned int m_BoarTexture = 0, m_DeerTexture = 0, m_SheepTexture = 0;

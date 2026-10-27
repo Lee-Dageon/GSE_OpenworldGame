@@ -70,13 +70,15 @@ void DrawHitEffect(const MonsterState &monster, const MonsterDrawContext &contex
     }
 
     const float alpha = monster.hitFlash / HitFlashTime;
-    context.renderer->DrawSolidRect(s.x, s.z + 14, 46, 26, 0, 1, .20f, .12f, .36f * alpha);
+    context.renderer->DrawEffectRect(s.x, s.z + 24, 55, 37, -.5f, 1, .67f, .28f, .7f * alpha, 15);
 
     for (int i = 0; i < 5; ++i)
     {
-        const float angle = context.time * 18.0f + i * 1.26f;
-        context.renderer->DrawSolidRect(s.x + std::cos(angle) * 29.0f, s.z + 18 + std::sin(angle) * 16.0f, 8, 8,
-                                        context.pi * .25f, 1, .82f, .28f, alpha);
+        const float angle = i * 1.26f;
+        const float travel = (1.0f - alpha) * 35;
+        context.renderer->DrawEffectRect(s.x + std::cos(angle) * (9 + travel),
+                                        s.z + 22 + std::sin(angle) * (5 + travel * .5f),
+                                        7 * alpha + 1, 7 * alpha + 1, angle, 1, .75f, .30f, alpha, 15);
     }
 }
 

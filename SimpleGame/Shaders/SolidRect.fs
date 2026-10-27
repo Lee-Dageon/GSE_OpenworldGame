@@ -12,6 +12,9 @@ uniform vec2 u_RoadHouses[8];
 uniform vec2 u_RoadBends[8];
 uniform float u_RoadJunctions[8];
 uniform vec2 u_RoadPlaza;
+uniform bool u_WorldLighting;
+uniform vec3 u_LocalLight;
+uniform vec2 u_Campfires[10];
 in vec2 v_LocalPosition;
 
 float Hash(vec2 value)
@@ -58,25 +61,29 @@ void main()
 	{
 		float height = clamp((v_LocalPosition.y + 1.0) * 0.5, 0.0, 1.0);
 		vec2 flow = vec2(v_LocalPosition.x * 3.5, height * 5.0 - u_Time * 2.8);
-		float turbulence = Noise(flow) * .65 + Noise(flow * 2.1) * .35;
-		float sway = sin(u_Time * 3.0 + height * 6.0) * height * .16;
-		float width = mix(.66, .02, height) + (turbulence - .5) * .26;
+		flow.x += (Noise(flow * .65 + vec2(13.7, 5.2)) - .5) * 1.8 * height;
+		float turbulence = Noise(flow) * .55 + Noise(flow * 2.1) * .30 + Noise(flow * 4.3) * .15;
+		float sway = (Noise(vec2(height * 3.0 - u_Time * 1.4, 8.3)) - .5) * height * .5;
+		float width = mix(.66, .0, height) + (turbulence - .5) * mix(.12, .65, height);
 		float distanceToFlame = abs(v_LocalPosition.x + sway);
 		float flame = (1.0 - smoothstep(width - .08, width + .04, distanceToFlame)) *
 			(1.0 - smoothstep(.72 + turbulence * .16, 1.0, height)) * smoothstep(0.0, .08, height);
-		float core = (1.0 - smoothstep(.08, .32, distanceToFlame)) *
-			(1.0 - smoothstep(.18, .62, height)) * flame;
-		float flicker = .88 + .12 * sin(u_Time * 11.0 + turbulence * 3.0);
+		float core = (1.0 - smoothstep(.02, max(.04, width * .70), distanceToFlame)) *
+			(1.0 - smoothstep(.12, .72, height + (turbulence - .5) * .20)) * flame;
+		float flicker = .85 + .15 * Noise(vec2(u_Time * 9.0, 4.7));
 		float sparks = 0.0;
 		for (int index = 0; index < 4; ++index)
 		{
 			float seed = float(index);
 			float rise = fract(u_Time * (.28 + seed * .035) + seed * .27);
-			vec2 spark = vec2(sin(seed * 5.0 + u_Time * 2.0) * (.08 + rise * .28), rise * 1.8 - .8);
+			float cycle = floor(u_Time * (.28 + seed * .035) + seed * .27);
+			float drift = Hash(vec2(seed, cycle)) * 2.0 - 1.0;
+			vec2 spark = vec2(drift * (.12 + rise * .38) + sin(rise * 9.0 + seed) * rise * .06, rise * 1.8 - .8);
 			float distanceToSpark = length((v_LocalPosition - spark) * vec2(1.0, .7));
-			sparks += (1.0 - smoothstep(.008, .035, distanceToSpark)) * (1.0 - rise);
+			sparks += (1.0 - smoothstep(.004, .025, distanceToSpark)) * smoothstep(0.0, .12, rise) * (1.0 - smoothstep(.55, 1.0, rise));
 		}
-		color.rgb = mix(vec3(.95, .14 + turbulence * .17, .012), vec3(1.0, .92, .52), core);
+		vec3 outerFlame = mix(vec3(.65, .055, .006), vec3(1.0, .40, .025), smoothstep(.15, .85, turbulence));
+		color.rgb = mix(outerFlame, vec3(1.0, .95, .70), core);
 		color.rgb = mix(color.rgb, vec3(1.0, .65, .16), clamp(sparks, 0.0, 1.0));
 		color.a *= clamp(flame * flicker + sparks, 0.0, 1.0);
 	}
@@ -86,22 +93,38 @@ void main()
 		float radius = length(p);
 		float edge = max(fwidth(radius), .002);
 		float mask = 1.0 - smoothstep(1.0 - edge, 1.0, radius);
-		float firstWave = dot(p, vec2(19.0, 8.0)) - u_Time * 1.4;
-		float secondWave = dot(p, vec2(-11.0, 23.0)) - u_Time * 1.1;
-		vec2 slope = cos(firstWave) * vec2(.14, .06) + cos(secondWave) * vec2(-.08, .17);
+		// Short, crossing ripples replace lake-sized bands of white reflection.
+		vec2 ripplePosition = p + vec2(.018, .009)*vec2(
+			Noise(p*vec2(18.0, 46.0)+vec2(u_Time*.035, -u_Time*.025)),
+			Noise(p*vec2(31.0, 67.0)+vec2(-u_Time*.025, u_Time*.018)));
+		float firstWave = dot(ripplePosition, vec2(32.0, 280.0)) - u_Time * 1.6;
+		float secondWave = dot(ripplePosition, vec2(-48.0, 430.0)) - u_Time * 1.2;
+		float detailWave = dot(ripplePosition, vec2(75.0, 610.0)) - u_Time * 2.1;
+		float firstFade = 1.0-smoothstep(.6, 2.5, fwidth(firstWave));
+		float secondFade = 1.0-smoothstep(.6, 2.5, fwidth(secondWave));
+		float detailFade = 1.0-smoothstep(.6, 2.5, fwidth(detailWave));
+		float breakup = Noise(p*vec2(36.0, 95.0) + vec2(u_Time*.06, -u_Time*.025));
+		vec2 slope = cos(firstWave)*vec2(.045,.023)*firstFade
+			+ cos(secondWave)*vec2(-.022,.040)*secondFade
+			+ cos(detailWave)*vec2(.016,.012)*detailFade;
+		slope *= mix(.65, 1.65, breakup);
 		vec3 normal = normalize(vec3(-slope, 1.0));
-		vec3 light = normalize(vec3(-.35, .45, 1.0));
+		vec3 light = normalize(vec3(-.12, .55, 1.0));
 		vec3 view = normalize(vec3(0.0, -.55, 1.0));
-		float glint = pow(max(dot(normal, normalize(light + view)), 0.0), 90.0);
-		float shallow = smoothstep(.55, 1.0, radius);
-		vec3 water = mix(u_Color.rgb * .6, vec3(.20, .39, .32), shallow);
-		float ripples = sin(firstWave) * sin(secondWave);
-		water += vec3(.035, .065, .06) * ripples;
-		float reflection = pow(1.0 - max(dot(normal, view), 0.0), 3.0);
-		water = mix(water, vec3(.48, .64, .69), .12 + reflection * .55);
-		float foam = smoothstep(.90, .98, radius) *
-			(1.0 - smoothstep(.985, 1.0, radius)) * (.4 + .6 * Noise(p * 28.0 + u_Time * .35));
-		color.rgb = water + vec3(.72, .78, .66) * foam * .35 + vec3(.85, .87, .72) * glint * .45;
+		float glint = pow(max(dot(normal, normalize(light + view)), 0.0), 600.0)
+			* smoothstep(.42, .82, breakup)*firstFade*secondFade;
+		float shallow = smoothstep(.78, 1.0, radius);
+		vec3 water = mix(u_Color.rgb*vec3(.55,.72,.80), vec3(.15,.31,.25), shallow);
+		float ripples = sin(firstWave)*firstFade*.55 + sin(secondWave)*secondFade*.30
+			+ sin(detailWave)*detailFade*.15;
+		water += vec3(.012,.025,.027)*ripples;
+		float reflection = .02 + .98*pow(1.0 - max(dot(normal, view), 0.0), 5.0);
+		vec3 sky = mix(vec3(.12,.25,.28), vec3(.42,.57,.61), smoothstep(-.06,.08,normal.y));
+		water = mix(water, sky, reflection);
+		float shoreWave = sin(radius*480.0-u_Time*1.6+breakup*3.0);
+		float foam = smoothstep(.965,.987,radius)*(1.0-smoothstep(.993,1.0,radius))
+			* smoothstep(.35,.80,breakup)*smoothstep(.3,.9,shoreWave);
+		color.rgb = water + vec3(.44,.57,.49)*foam*.22 + vec3(.72,.84,.81)*glint*.22;
 		color.a *= mask;
 	}
 	else if (u_EffectType == 3)
@@ -116,7 +139,8 @@ void main()
 		float silhouette = min(1.0 - .24 * abs(p.x) - p.y, p.y + 1.0 - .24 * abs(p.x));
 		float edge = max(fwidth(silhouette), .002);
 		float top = step(.52 + .24 * abs(p.x), p.y);
-		float shade = mix(p.x < 0.0 ? .92 : .64, 1.18, top);
+		float shade = mix(p.x < 0.0 ? .92 : .64, 1.10, top);
+		shade *= .94 + .10 * Noise(p * vec2(4.0, 28.0));
 		color.rgb *= shade;
 		color.a *= smoothstep(0.0, edge, silhouette);
 	}
@@ -135,16 +159,38 @@ void main()
 		// Recover world X/Z from cached positions; texture phase stays fixed as the camera moves.
 		vec2 world = vec2(v_LocalPosition.x / u_TerrainTileSize.x + v_LocalPosition.y / u_TerrainTileSize.y,
 			v_LocalPosition.y / u_TerrainTileSize.y - v_LocalPosition.x / u_TerrainTileSize.x);
-		vec2 local = (fract(world * .5) * 2.0 - 1.0) * .985;
-		vec2 tileUV = vec2(.5 + (local.x - local.y) * .25, .5 - (local.x + local.y) * .25);
+		// Sample the tile's interior color, then add world-space grain instead of warping its baked edges.
+		vec2 tileUV = vec2(.5);
 		vec4 grass = texture(u_TerrainTexture, vec2(tileUV.x / 3.0, tileUV.y));
 		vec4 dirt = texture(u_TerrainTexture, vec2((1.0 + tileUV.x) / 3.0, tileUV.y));
-		float erosion=(Noise(world*5.0)-.5)*.12;
-		float road=1.0-smoothstep(-.12,.18,RoadDistance(world)+erosion);
+		grass.rgb = mix(grass.rgb, vec3(.23, .32, .16), .75);
+		dirt.rgb = mix(dirt.rgb, vec3(.37, .30, .21), .75);
+		vec2 warp = vec2(Noise(world * 1.8), Noise(world * 1.8 + 29.0)) - .5;
+		float erosion = (Noise(world * 7.0) - .5) * .12 + (Noise(world * 1.4) - .5) * .35;
+		float distanceToRoad = RoadDistance(world) + erosion;
+		float road = 1.0 - smoothstep(-.20, .28, distanceToRoad);
 		vec4 tile=mix(grass,dirt,road);
-		if (u_TerrainColumn==2)
-			tile=mix(tile,texture(u_TerrainTexture,vec2((2.0+tileUV.x)/3.0,tileUV.y)),.35);
+		float grain = Noise(world * 37.0);
+		tile.rgb *= .89 + .20 * grain;
+		vec2 pebbleCell = floor(world * 8.0);
+		vec2 pebble = fract(world * 8.0) - vec2(Hash(pebbleCell), Hash(pebbleCell + 17.0));
+		float pebbleMask = (1.0-smoothstep(.03,.13,length(pebble))) * step(.86,Hash(pebbleCell+33.0));
+		tile.rgb = mix(tile.rgb, vec3(.42,.40,.33), pebbleMask * (.12 + road * .25));
+		float patch = Noise(world * .16);
+		tile.rgb *= mix(vec3(.84, .90, .78), vec3(1.08, 1.04, .94), patch);
+		float edgeSoil = (1.0 - smoothstep(.05, .65, abs(distanceToRoad))) * Noise(world * 9.0);
+		tile.rgb = mix(tile.rgb, dirt.rgb * .78, edgeSoil * .24);
+		tile.rgb *= .93 + .12 * Noise(world * 2.2 + warp);
 		color.rgb = mix(color.rgb, tile.rgb, tile.a * .9);
+		vec3 fireLight = vec3(0.0);
+		for (int index = 0; index < 10; ++index)
+		{
+			float distanceToFire = length(world - u_Campfires[index]);
+			float falloff = pow(max(0.0, 1.0 - distanceToFire / 4.5), 2.0);
+			float flicker = .94 + .06 * sin(u_Time * 6.0 + float(index));
+			fireLight += vec3(.90, .28, .055) * falloff * flicker;
+		}
+		color.rgb = min(pow(max(color.rgb, vec3(0)), vec3(2.2)) * (vec3(.96,.98,1) + fireLight), vec3(.95));
 	}
 	else if (u_EffectType >= 7 && u_EffectType <= 9)
 	{
@@ -198,6 +244,58 @@ void main()
 		}
 		color.a *= 1.0-smoothstep(-.02,.02,distanceToIcon);
 		color.rgb *= .85+.25*(1.0+p.y);
+	}
+	else if (u_EffectType == 14)
+	{
+		vec2 p = v_LocalPosition;
+		float blade = 0.0;
+		for (int index = 0; index < 5; ++index)
+		{
+			float seed = float(index);
+			float height = .35 + .6 * Hash(vec2(seed, u_Color.g));
+			float rise = clamp((p.y + 1.0) / (height * 2.0), 0.0, 1.0);
+			float bend = (sin(u_Time * 1.7 + seed * .7 + u_Color.r * 30.0) * .17 + (seed - 2.0) * .10) * rise * rise;
+			float x = -.7 + seed * .35 + bend;
+			float edge = max(fwidth(p.x), .025);
+			blade = max(blade, (1.0 - smoothstep(.015, .015 + edge, abs(p.x - x) - .07 * (1.0-rise)))
+				* (1.0 - smoothstep(height * 2.0 - 1.1, height * 2.0 - 1.0, p.y)));
+		}
+		color.a *= blade;
+		color.rgb *= mix(.65, 1.15, (p.y + 1.0) * .5);
+	}
+	else if (u_EffectType == 15)
+	{
+		vec2 p = v_LocalPosition;
+		float radius = length(p);
+		float arc = smoothstep(.36, .46, p.y) * (1.0 - smoothstep(.88, 1.0, radius));
+		color.a *= arc * smoothstep(.62, .78, radius);
+	}
+	else if (u_EffectType == 16 || u_EffectType == 19)
+	{
+		vec2 p = v_LocalPosition;
+		float density = Noise(p * 3.5 + vec2(0, -u_Time * .3));
+		color.a *= (1.0 - smoothstep(.15, 1.0, length(p))) * (.55 + .45 * density);
+	}
+	else if (u_EffectType == 17)
+	{
+		vec2 p = v_LocalPosition;
+		float edge = 1.0 - abs(p.x) * .78 - abs(p.y) * .64;
+		color.a *= smoothstep(0.0, max(fwidth(edge), .02), edge);
+		color.rgb *= p.y > -.2 + .35 * p.x ? 1.1 : .65;
+	}
+	else if (u_EffectType == 18)
+	{
+		vec2 p = v_LocalPosition;
+		float edge = 1.0 - abs(p.x) - p.y * p.y;
+		color.a *= smoothstep(0.0, max(fwidth(edge), .02), edge);
+		color.rgb *= .8 + .25 * p.x;
+	}
+	if (u_WorldLighting && u_EffectType != 6)
+	{
+		vec3 linearColor = pow(max(color.rgb, vec3(0.0)), vec3(2.2));
+		color.rgb = min(linearColor * (vec3(.96,.98,1) + u_LocalLight), vec3(.95));
+		if (u_EffectType == 1 || u_EffectType == 15)
+			color.rgb = linearColor * 3.5;
 	}
 	FragColor = color;
 }

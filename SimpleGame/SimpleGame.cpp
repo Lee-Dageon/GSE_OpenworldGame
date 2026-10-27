@@ -107,7 +107,11 @@ void UpdateFrame()
     g_GameState.lastTime = now;
     g_GameManager.UpdateGame(deltaTime);
     g_GameManager.UpdateSceneGraph(g_SceneRoot, deltaTime);
-    glutPostRedisplay();
+    // Hidden capture windows do not receive display callbacks.
+    if (g_CapturePath)
+        RenderScene();
+    else
+        glutPostRedisplay();
 }
 
 void ResizeWindow(int width, int height)
@@ -165,6 +169,8 @@ int main(int argc, char **argv)
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA);
     glutInitWindowSize(WindowWidth, WindowHeight);
     glutCreateWindow("Greenwake Tutorial");
+    if (g_CapturePath)
+        glutHideWindow();
     glutSetOption(GLUT_ACTION_ON_WINDOW_CLOSE, GLUT_ACTION_GLUTMAINLOOP_RETURNS);
     if (glewInit() != GLEW_OK || !glewIsSupported("GL_VERSION_3_3"))
     {

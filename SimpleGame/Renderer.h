@@ -19,6 +19,7 @@ class Renderer
     void BeginFrame(float time);
     void EndFrame(float time);
     void SetWorldScale(float scale);
+    void SetLocalLight(float red, float green, float blue);
     bool SaveScreenshot(const wchar_t *filename);
 
     GLuint LoadTexture(const wchar_t *filename);
@@ -26,7 +27,8 @@ class Renderer
     void DrawEffectRect(float x, float y, float sizeX, float sizeY, float rotation, float r, float g, float b, float a,
                         int effectType);
     void DrawSprite(GLuint texture, float x, float y, float sizeX, float sizeY, int column, int row, int columns,
-                    int rows, float alpha = 1.0f, float r = 1.0f, float g = 1.0f, float b = 1.0f);
+                    int rows, float alpha = 1.0f, float r = 1.0f, float g = 1.0f, float b = 1.0f,
+                    float sway = 0.0f, float swayPivot = 0.0f);
     void DrawLabel(float x, float y, const wchar_t *text, float r, float g, float b, float scale = 1.0f);
 
   private:
@@ -53,6 +55,8 @@ class Renderer
     int m_WindowSizeY = 1;
     std::uint64_t m_GdiToken = 0;
     float m_Time = 0.0f;
+    bool m_WorldLighting = false;
+    float m_LocalLight[3] = {};
 
     GLuint m_VBORect = 0;
     GLuint m_SolidRectShader = 0;
