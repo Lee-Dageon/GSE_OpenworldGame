@@ -5,6 +5,8 @@
 #include "Renderer.h"
 #include "WorldRenderer.h"
 #include "GameManager.h"
+#include "GameUI.h"
+#include "CraftingSystem.h"
 #include <algorithm>
 #include <cmath>
 #include <filesystem>
@@ -51,6 +53,10 @@ int main(int argc, char **argv)
         capture(L"forest_wind.png");
         state.player = {43, 33};
         capture(L"lake.png");
+        state.player = {10, 39};
+        capture(L"ruins.png");
+        state.player = {32, 26};
+        capture(L"rockfield.png");
         state.player = {state.world.herb.x, state.world.herb.z - 2};
         state.quest = QuestStage::Herb;
         capture(L"herbs.png");
@@ -67,6 +73,42 @@ int main(int argc, char **argv)
         state.moving = true;
         state.sprint = true;
         capture(L"dust.png");
+
+        state.player = state.world.elder;
+        state.quest = QuestStage::Complete;
+        state.inventory.Add(ItemId::BoarHide);
+        state.inventory.Add(ItemId::BoarTusk);
+        game.HandleCommand(GameCommand::ToggleInventory);
+        const auto inventoryCapture = [&](const wchar_t *name, int width, int height) {
+            renderer.Resize(width, height);
+            state.width = width;
+            state.height = height;
+            world.BeginFrame(state.time);
+            world.RenderWorld(state);
+            world.EndFrame(state.time);
+            GameUiState ui;
+            ui.windowWidth = width; ui.windowHeight = height;
+            ui.health = state.health; ui.maxHealth = state.maxHealth;
+            ui.level = state.level; ui.attackPower = state.attackPower;
+            ui.player = state.player; ui.elder = state.world.elder;
+            ui.lake = state.world.lake; ui.lakeRadius = state.world.lakeRadius;
+            ui.potions = state.inventory.Count(ItemId::Potion);
+            ui.herbs = state.inventory.Count(ItemId::Herb);
+            ui.hides = state.inventory.Count(ItemId::BoarHide);
+            ui.trophies = state.inventory.Count(ItemId::BoarTusk);
+            ui.inventoryOpen = state.inventoryOpen; ui.hunterBladeCrafted = state.hunterBladeCrafted;
+            ui.nearWorkbench = CraftingSystem::IsAtWorkbench(state);
+            ui.huntReported = state.quest == QuestStage::Complete;
+            ui.message = state.message; ui.messageTime = state.messageTime;
+            DrawGameUi(renderer, ui);
+            Check(glGetError() == GL_NO_ERROR, "inventory UI OpenGL error");
+            Check(renderer.SaveScreenshot((output / name).wstring().c_str()), "inventory screenshot failed");
+        };
+        inventoryCapture(L"inventory_before.png", 1280, 720);
+        game.HandleCommand(GameCommand::CraftHunterBlade);
+        inventoryCapture(L"inventory_crafted.png", 1280, 720);
+        inventoryCapture(L"inventory_small.png", 640, 360);
+        renderer.Resize(1280, 720);
 
         // Diffuse white stays below the emission threshold; fire must exceed it.
         renderer.BeginFrame(1);
@@ -103,7 +145,7 @@ int main(int argc, char **argv)
         state.player = {0, -2.5f};
         capture(L"small.png");
         Check(glGetError() == GL_NO_ERROR, "resize OpenGL error");
-        std::cout << "PASS: nine captures, damage, HDR emission, diffuse bloom exclusion, local warm lighting, HUD isolation and resize\n";
+        std::cout << "PASS: fourteen captures including inventory/crafting, damage, HDR emission, diffuse bloom exclusion, local warm lighting, HUD isolation and resize\n";
     }
     catch (const std::exception &error)
     {

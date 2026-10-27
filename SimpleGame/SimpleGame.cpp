@@ -10,10 +10,12 @@
 #include "QuestSystem.h"
 #include "Renderer.h"
 #include "WorldRenderer.h"
+#include "CraftingSystem.h"
 
 #include <Windows.h>
 #include <algorithm>
 #include <cstdio>
+#include <cwchar>
 #include <iostream>
 
 namespace
@@ -45,9 +47,14 @@ void RenderScene()
     uiState.attackPower = g_GameState.attackPower;
     uiState.experience = g_GameState.experience;
     uiState.experienceToNextLevel = g_GameState.experienceToNextLevel;
-    uiState.potions = g_GameState.potions;
-    uiState.herbs = g_GameState.herbs;
-    uiState.trophies = g_GameState.trophies;
+    uiState.potions = g_GameState.inventory.Count(ItemId::Potion);
+    uiState.herbs = g_GameState.inventory.Count(ItemId::Herb);
+    uiState.trophies = g_GameState.inventory.Count(ItemId::BoarTusk);
+    uiState.hides = g_GameState.inventory.Count(ItemId::BoarHide);
+    uiState.inventoryOpen = g_GameState.inventoryOpen;
+    uiState.hunterBladeCrafted = g_GameState.hunterBladeCrafted;
+    uiState.nearWorkbench = CraftingSystem::IsAtWorkbench(g_GameState);
+    uiState.huntReported = g_GameState.quest == QuestStage::Complete;
     uiState.health = g_GameState.health;
     uiState.maxHealth = g_GameState.maxHealth;
     uiState.messageTime = g_GameState.messageTime;
@@ -59,7 +66,7 @@ void RenderScene()
     uiState.lake = g_GameState.world.lake;
     uiState.lakeRadius = g_GameState.world.lakeRadius;
     uiState.monsterVisible = g_GameState.quest == QuestStage::Hunt || g_GameState.quest == QuestStage::Trophy;
-    uiState.hasObjectiveTarget = g_GameState.quest != QuestStage::Complete;
+    uiState.hasObjectiveTarget = true;
     switch (g_GameState.quest)
     {
     case QuestStage::Tracks: uiState.objectiveTarget = g_GameState.world.tracks; break;
@@ -69,6 +76,8 @@ void RenderScene()
     default: uiState.objectiveTarget = g_GameState.world.elder; break;
     }
     uiState.objective = QuestSystem::GetObjective(g_GameState.quest);
+    if (g_GameState.quest == QuestStage::Complete && g_GameState.hunterBladeCrafted)
+        uiState.objective = L"미라 장로에게 다음 사냥 받기";
     if (const wchar_t *hint = g_GameManager.GetHint())
         uiState.hint = hint;
     uiState.message = g_GameState.message;
@@ -88,9 +97,9 @@ void RenderScene()
     const int elapsed = now - fpsStartTime;
     if (elapsed >= 1000)
     {
-        char title[80];
-        std::snprintf(title, sizeof(title), "Greenwake Tutorial | FPS: %.1f", frameCount * 1000.0 / elapsed);
-        glutSetWindowTitle(title);
+        wchar_t title[80];
+        std::swprintf(title, 80, L"그린웨이크 | 초당 프레임: %.1f", frameCount * 1000.0 / elapsed);
+        SetWindowTextW(WindowFromDC(wglGetCurrentDC()), title);
         frameCount = 0;
         fpsStartTime = now;
     }
@@ -141,13 +150,13 @@ void MouseInput(int button, int state, int x, int y)
 {
     if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN)
     {
-        const GameCommand command = HitTestGameUi(x, y, g_GameState.width, g_GameState.height);
+        const GameCommand command = HitTestGameUi(x, y, g_GameState.width, g_GameState.height, g_GameState.inventoryOpen);
         if (command != GameCommand::None)
         {
             g_GameManager.HandleCommand(command);
             return;
         }
-        if (GameUiPanelContains(x, y, g_GameState.width, g_GameState.height))
+        if (g_GameState.inventoryOpen || GameUiPanelContains(x, y, g_GameState.width, g_GameState.height))
             return;
     }
     g_GameManager.HandleCommand(GameInput::OnMouseButton(button == GLUT_LEFT_BUTTON, state == GLUT_DOWN));
@@ -168,7 +177,8 @@ int main(int argc, char **argv)
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA);
     glutInitWindowSize(WindowWidth, WindowHeight);
-    glutCreateWindow("Greenwake Tutorial");
+    glutCreateWindow("");
+    SetWindowTextW(WindowFromDC(wglGetCurrentDC()), L"그린웨이크 - 모험의 시작");
     if (g_CapturePath)
         glutHideWindow();
     glutSetOption(GLUT_ACTION_ON_WINDOW_CLOSE, GLUT_ACTION_GLUTMAINLOOP_RETURNS);

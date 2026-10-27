@@ -3,6 +3,7 @@
 
 #include "Dependencies\\glew.h"
 #include "Renderer.h"
+#include "WorldLayout.h"
 
 #include <algorithm>
 #include <array>
@@ -21,11 +22,10 @@ constexpr int GroundChunkDots = 48;
 constexpr float GroundChunkSize = GroundDotSize * GroundChunkDots;
 constexpr float HumanPivotY = .19070485f;
 constexpr float AnimalPivotY = .2720983f;
-const std::array<Vec2, 8> VillageHouses = {{{-14, 5}, {15, 5}, {-9, 19}, {10, -20},
-                                         {-27, -14}, {27, -14}, {-25, 20}, {26, 19}}};
+const auto &VillageHouses = WorldLayout::Houses;
 constexpr Vec2 NoticeBoardPosition = {2, 1.5f};
 const std::array<float, 8> RoadJunctions = {{-1, 10, 15, -13, -22, -29, 26, 33}};
-const std::array<Vec2, 8> RoadBends = {{{-8, 0}, {8, 10}, {-4, 18}, {6, -17},
+const std::array<Vec2, 8> RoadBends = {{{-2, -1}, {4, 5}, {-4, 18}, {6, -17},
                                      {-16, -21}, {16, -26}, {-14, 28}, {17, 32}}};
 const std::array<Vec2, 10> Campfires = {
     {{-3, 0}, {8, 2}, {-9, -8}, {12, -12}, {-13, 12}, {16, 12}, {-24, 0}, {25, 1}, {0, 24}, {1, -25}}};
@@ -120,10 +120,11 @@ WorldRenderer::WorldRenderer(Renderer &renderer) : m_Renderer(renderer)
     m_SheepTexture = LoadFantasyTexture(m_Renderer, L"sheep_atlas.png");
     m_HouseTexture = m_Renderer.LoadTexture(L"./Assets/Textures/Fantasy/house.png");
     m_PropsTexture = m_Renderer.LoadTexture(L"./Assets/Frontier/Textures/props_atlas.png");
+    m_SceneryTexture = m_Renderer.LoadTexture(L"./Assets/Frontier/Textures/scenery_atlas.png");
     m_PlayerTexture = m_Renderer.LoadTexture(L"./Assets/Hero/Textures/human_atlas.png");
     m_PlayerAttackTexture = m_Renderer.LoadTexture(L"./Assets/Hero/Textures/human_attack_atlas.png");
     // Atlas cells share a texture: avoid mipmaps blending neighboring directions/tiles.
-    for (unsigned int texture : {m_PropsTexture, m_TerrainTexture, m_HumanTexture, m_PlayerTexture, m_PlayerAttackTexture, m_BoarTexture, m_DeerTexture, m_SheepTexture})
+    for (unsigned int texture : {m_SceneryTexture, m_PropsTexture, m_TerrainTexture, m_HumanTexture, m_PlayerTexture, m_PlayerAttackTexture, m_BoarTexture, m_DeerTexture, m_SheepTexture})
         if (texture != 0)
         {
             glBindTexture(GL_TEXTURE_2D, texture);
@@ -134,7 +135,7 @@ WorldRenderer::WorldRenderer(Renderer &renderer) : m_Renderer(renderer)
 
 WorldRenderer::~WorldRenderer()
 {
-    for (unsigned int texture : {m_PropsTexture, m_TreeTexture, m_HouseTexture, m_PlayerTexture, m_PlayerAttackTexture, m_TerrainTexture, m_HumanTexture, m_BoarTexture, m_DeerTexture, m_SheepTexture})
+    for (unsigned int texture : {m_SceneryTexture, m_PropsTexture, m_TreeTexture, m_HouseTexture, m_PlayerTexture, m_PlayerAttackTexture, m_TerrainTexture, m_HumanTexture, m_BoarTexture, m_DeerTexture, m_SheepTexture})
         if (texture != 0)
             glDeleteTextures(1, &texture);
     if (m_GroundCache.buffer != 0)
@@ -527,15 +528,18 @@ void WorldRenderer::RenderWorld(const GameState &state)
     m_State = &state;
     m_Renderer.SetWorldScale(WorldScale * state.height / 720.0f);
     DrawGround();
-    enum class DrawType { House, Tree, Campfire, Npc, Animal, Tracks, Herb, Monster, Player, NoticeBoard, Decoration };
+    enum class DrawType { House, Tree, Campfire, Npc, Animal, Tracks, Herb, Monster, Player, NoticeBoard, Decoration, Scenery };
     struct DrawItem { Vec2 position; DrawType type; int index; };
     std::vector<DrawItem> items;
     for (const Vec2 &house : VillageHouses)
         items.push_back({house, DrawType::House, 0});
     items.push_back({NoticeBoardPosition, DrawType::NoticeBoard, 0});
-    for (int index = 0; index < 32; ++index)
-        items.push_back({{4 + std::cos(index * 1.71f) * (43.0f + (index % 6) * 6.5f),
-                         7 + std::sin(index * 1.71f) * (43.0f + (index % 6) * 6.5f)}, DrawType::Tree, index});
+    for (int index = 0; index < static_cast<int>(WorldLayout::Trees.size()); ++index)
+        if (Distance(WorldLayout::Trees[index], state.world.lake) > state.world.lakeRadius + .5f)
+            items.push_back({WorldLayout::Trees[index], DrawType::Tree, index});
+    for (int index = 0; index < static_cast<int>(WorldLayout::Landmarks.size()); ++index)
+        if (Distance(WorldLayout::Landmarks[index].position, state.world.lake) > state.world.lakeRadius + .5f)
+            items.push_back({WorldLayout::Landmarks[index].position, DrawType::Scenery, index});
     for (const Vec2 &campfire : Campfires)
         items.push_back({campfire, DrawType::Campfire, 0});
     // Stable world cells: camera movement never changes an existing decoration's placement.
@@ -590,6 +594,20 @@ void WorldRenderer::RenderWorld(const GameState &state)
         ApplyLocalLight(m_Renderer, item.position, state.time);
         switch (item.type)
         {
+        case DrawType::Scenery:
+        {
+            const auto &landmark = WorldLayout::Landmarks[item.index];
+            const Vec2 screen = ToScreen(item.position);
+            DrawShadow(item.position, landmark.height * .45f, 10, landmark.height * .2f);
+            if (m_SceneryTexture != 0)
+                m_Renderer.DrawSprite(m_SceneryTexture, screen.x, screen.z + (.5f-.27075773f)*landmark.height,
+                                      landmark.height, landmark.height, static_cast<int>(landmark.kind), 0, 7, 1);
+            else if (landmark.kind == WorldLayout::SceneryKind::Bush)
+                DrawCanopy(m_Renderer, screen.x, screen.z + 10, 30, 26, .16f, .29f, .09f);
+            else
+                DrawBlock(m_Renderer, screen.x, screen.z + 10, 30, 22, .32f, .30f, .24f);
+            break;
+        }
         case DrawType::Decoration:
         {
             const Vec2 p = ToScreen(item.position);
@@ -607,7 +625,19 @@ void WorldRenderer::RenderWorld(const GameState &state)
             break;
         }
         case DrawType::House: DrawHouse(item.position, .42f, .18f, .09f); break;
-        case DrawType::Tree: DrawTree(item.position, item.index % 4); break;
+        case DrawType::Tree:
+            if (item.index % 3 == 1 && m_SceneryTexture != 0)
+            {
+                const Vec2 screen = ToScreen(item.position);
+                const float height = 170.0f + (item.index % 4) * 12;
+                DrawShadow(item.position, height * .4f, 15, height * .7f);
+                m_Renderer.DrawSprite(m_SceneryTexture, screen.x, screen.z + (.5f-.27075773f)*height,
+                                      height, height, 6, 0, 7, 1, 1, 1, 1, 1,
+                                      std::sin(state.time*1.4f + item.position.x)*.02f, .27075773f);
+            }
+            else
+                DrawTree(item.position, item.index % 4);
+            break;
         case DrawType::Campfire: DrawCampfire(item.position); break;
         case DrawType::Npc:
         {

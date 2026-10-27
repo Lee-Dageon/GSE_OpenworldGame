@@ -5,7 +5,7 @@ from PIL import Image
 
 ROOT = Path(__file__).resolve().parents[1]
 ASSETS = ROOT / "SimpleGame/Assets/Frontier"
-for name, columns, rows in (("human", 8, 4), ("props", 2, 1)):
+for name, columns, rows in (("human", 8, 4), ("props", 2, 1), ("scenery", 7, 1)):
     path = ASSETS / "Textures" / (name + "_atlas.png")
     metadata = json.loads(path.with_suffix(".sprite.json").read_text())
     image = Image.open(path)
@@ -28,6 +28,9 @@ for name, columns, rows in (("human", 8, 4), ("props", 2, 1)):
         for column in range(columns):
             assert len({image.crop((column*width,r*height,(column+1)*width,(r+1)*height)).tobytes()
                         for r in range(rows)}) >= 3
-    else:
+    elif name == "props":
         assert abs(metadata["pivot_y_from_bottom"]-.21132453) < 1e-7
+    else:
+        assert abs(metadata["pivot_y_from_bottom"]-.27075773) < 1e-7
+        assert metadata["columns_description"] == ["boulder", "bush", "log", "fence", "cart", "ruin", "pine"]
     print("PASS: frontier", name, "layout, source, alpha, bounds, camera and pivot")

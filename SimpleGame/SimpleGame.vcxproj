@@ -162,11 +162,14 @@
   <ItemGroup>
     <ClInclude Include="Actor.h" />
     <ClInclude Include="GameState.h" />
+    <ClInclude Include="Inventory.h" />
+    <ClInclude Include="CraftingSystem.h" />
     <ClInclude Include="GameInput.h" />
     <ClInclude Include="GameManager.h" />
     <ClInclude Include="PlayerController.h" />
     <ClInclude Include="QuestSystem.h" />
     <ClInclude Include="WorldRenderer.h" />
+    <ClInclude Include="WorldLayout.h" />
     <ClInclude Include="GameUI.h" />
     <ClInclude Include="ModelCache.h" />
     <ClInclude Include="Monster.h" />
@@ -177,6 +180,7 @@
   <ItemGroup>
     <ClCompile Include="Actor.cpp" />
     <ClCompile Include="GameState.cpp" />
+    <ClCompile Include="CraftingSystem.cpp" />
     <ClCompile Include="GameInput.cpp" />
     <ClCompile Include="GameManager.cpp" />
     <ClCompile Include="PlayerController.cpp" />

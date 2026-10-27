@@ -4,6 +4,7 @@
 #include "Monster.h"
 #include "PlayerController.h"
 #include "QuestSystem.h"
+#include "CraftingSystem.h"
 
 #include <algorithm>
 #include <cmath>
@@ -21,6 +22,11 @@ void GameManager::BeginFrame(float deltaTime)
 
 void GameManager::UpdateGame(float deltaTime)
 {
+    if (m_State.inventoryOpen)
+    {
+        m_State.moving = false;
+        return;
+    }
     BeginFrame(deltaTime);
     PlayerController::UpdateMovement(m_State, deltaTime);
     for (AnimalState &animal : m_State.animals)
@@ -31,17 +37,31 @@ void GameManager::UpdateGame(float deltaTime)
     }
     if (m_State.quest == QuestStage::Hunt &&
         MonsterSystem::UpdateChaseAndAttack(m_State.monster, m_State.player, m_State.dodge, deltaTime, m_State.health))
-        ShowMessage(L"The lake boar attacked you. Dodge with Space or heal with Q.");
+        ShowMessage(L"멧돼지에게 공격받았습니다. 공백 키로 회피하거나 Q로 회복하세요.");
     if (m_State.health <= 0.0f)
     {
         m_State.player = {0.0f, -2.5f};
         m_State.health = m_State.maxHealth;
-        ShowMessage(L"The rescue party returned you to the village.");
+        ShowMessage(L"구조대의 도움으로 마을에 돌아왔습니다.");
     }
 }
 
 void GameManager::HandleCommand(GameCommand command)
 {
+    if (command == GameCommand::ToggleInventory)
+    {
+        m_State.inventoryOpen = !m_State.inventoryOpen;
+        m_State.moving = false;
+        return;
+    }
+    if (command == GameCommand::CraftHunterBlade || command == GameCommand::CraftHealingPotion)
+    {
+        ShowMessage(CraftingSystem::TryCraft(m_State, command == GameCommand::CraftHunterBlade
+            ? CraftingSystem::Recipe::HunterBlade : CraftingSystem::Recipe::HealingPotion));
+        return;
+    }
+    if (m_State.inventoryOpen && command != GameCommand::UsePotion)
+        return;
     if (command == GameCommand::Interact)
     {
         const QuestSystem::InteractionResult result =
@@ -52,7 +72,7 @@ void GameManager::HandleCommand(GameCommand command)
     }
     if (command == GameCommand::UsePotion && PlayerController::TryUsePotion(m_State))
     {
-        ShowMessage(L"You used a potion.");
+        ShowMessage(L"회복 물약을 사용했습니다.");
         return;
     }
     if (command == GameCommand::Dodge)
@@ -69,8 +89,8 @@ void GameManager::HandleCommand(GameCommand command)
         if (!result.defeated)
             return;
         m_State.quest = QuestStage::Trophy;
-        ShowMessage(QuestSystem::AddExperience(m_State, 25) ? L"Level up! Your health and attack increased."
-                                                          : L"You defeated the lake boar. Collect its trophy.");
+        ShowMessage(QuestSystem::AddExperience(m_State, 25) ? L"레벨이 올랐습니다! 최대 체력과 공격력이 증가했습니다."
+                                                          : L"멧돼지를 쓰러뜨렸습니다. 전리품을 수집하세요.");
     }
 }
 

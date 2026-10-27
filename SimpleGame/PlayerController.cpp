@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "PlayerController.h"
+#include "WorldLayout.h"
 
 #include <algorithm>
 #include <cmath>
@@ -8,6 +9,11 @@ namespace PlayerController
 {
 void UpdateMovement(GameState &state, float deltaTime)
 {
+    if (state.inventoryOpen)
+    {
+        state.moving = false;
+        return;
+    }
     Vec2 move = {0.0f, 0.0f};
     if (state.keys['w'])
     {
@@ -42,15 +48,15 @@ void UpdateMovement(GameState &state, float deltaTime)
     next.z = std::max(state.world.minimumCoordinate, std::min(state.world.maximumCoordinate, next.z));
     const float dx = next.x - state.world.lake.x;
     const float dz = next.z - state.world.lake.z;
-    if (std::sqrt(dx * dx + dz * dz) > state.world.lakeRadius)
+    if (std::sqrt(dx * dx + dz * dz) > state.world.lakeRadius && !WorldLayout::IsBlocked(next))
         state.player = next;
 }
 
 bool TryUsePotion(GameState &state)
 {
-    if (state.potions <= 0 || state.health >= state.maxHealth)
+    if (state.inventory.Count(ItemId::Potion) <= 0 || state.health >= state.maxHealth)
         return false;
-    --state.potions;
+    state.inventory.Remove(ItemId::Potion);
     state.health = std::min(state.maxHealth, state.health + 45.0f);
     return true;
 }

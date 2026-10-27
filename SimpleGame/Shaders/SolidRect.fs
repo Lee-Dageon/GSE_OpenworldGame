@@ -178,6 +178,13 @@ void main()
 		tile.rgb = mix(tile.rgb, vec3(.42,.40,.33), pebbleMask * (.12 + road * .25));
 		float patch = Noise(world * .16);
 		tile.rgb *= mix(vec3(.84, .90, .78), vec3(1.08, 1.04, .94), patch);
+		float forest = smoothstep(14.0, 40.0, world.y);
+		float rockField = (1.0-smoothstep(3.0, 10.0, length(world-vec2(12,42))))
+			+ (1.0-smoothstep(3.0, 9.0, length(world-vec2(34,28))));
+		vec3 forestSoil = mix(vec3(.19,.23,.115), vec3(.28,.25,.15), Noise(world*.7));
+		tile.rgb = mix(tile.rgb, forestSoil, forest * (1.0-road) * .55);
+		vec3 rockColor = mix(vec3(.28,.29,.26), vec3(.39,.38,.32), Noise(world*2.5));
+		tile.rgb = mix(tile.rgb, rockColor, clamp(rockField,0.0,1.0) * (1.0-road) * .75);
 		float edgeSoil = (1.0 - smoothstep(.05, .65, abs(distanceToRoad))) * Noise(world * 9.0);
 		tile.rgb = mix(tile.rgb, dirt.rgb * .78, edgeSoil * .24);
 		tile.rgb *= .93 + .12 * Noise(world * 2.2 + warp);

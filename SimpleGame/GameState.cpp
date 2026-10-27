@@ -4,7 +4,7 @@
 GameState CreateInitialGameState()
 {
     GameState state;
-    state.message = L"Welcome to Greenwake village. Meet Elder Mira.";
+    state.message = L"그린웨이크에 도착했습니다. 미라 장로를 만나세요.";
     state.npcs = {{{{0.0f, 1.4f}, 1, 0, 0}, {{-14, 1}, 2, 0, 1},   {{14, -2}, 3, 0, 2},   {{-20, 8}, 0, 1, 3},
                    {{20, 8}, 0, 1, 4},      {{-7, -15}, 2, 1, 5},  {{7, -16}, 2, 1, 6},   {{-21, -7}, 1, 1, 7},
                    {{21, -9}, 2, 1, 8},     {{4, 19}, 3, 1, 9},    {{-27, 4}, 3, 0, 10},  {{27, 4}, 0, 1, 11},

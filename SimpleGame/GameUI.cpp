@@ -6,6 +6,8 @@
 #include <cwchar>
 #include <vector>
 
+static void DrawInventoryPanel(Renderer &renderer, const GameUiState &state);
+
 void DrawGameUi(Renderer &renderer, const GameUiState &state)
 {
     const float s = GameUiScale(state.windowWidth, state.windowHeight);
@@ -58,12 +60,12 @@ void DrawGameUi(Renderer &renderer, const GameUiState &state)
     label(28*s, 31*s, text, .60f, 1, .86f, .51f);
     rect(62*s, 27*s, 164*s, 9*s, .09f, .025f, .02f, .80f);
     rect(64*s, 29*s, 160*s*hp, 5*s, .76f, .10f, .055f, .95f);
-    std::swprintf(text, 100, L"HP %.0f / %.0f   공격력 %d", state.health, state.maxHealth, state.attackPower);
+    std::swprintf(text, 100, L"체력 %.0f / %.0f   공격력 %d", state.health, state.maxHealth, state.attackPower);
     label(63*s, 39*s, text, .42f, .91f, .88f, .76f);
     const float questWidth = std::min(340*s, state.windowWidth - 660*s);
     const float questX = (state.windowWidth - questWidth)*.5f;
     const float questLine = std::max(28.0f, 28*s);
-    const size_t questLimit = static_cast<size_t>(std::max(10.0f, (questWidth-20*s)/(12*std::max(1.0f,1.04f*s))));
+    const size_t questLimit = static_cast<size_t>(std::max(6.0f, (questWidth-20*s)/(18*std::max(1.0f,1.04f*s))));
     const auto objective = wrap(state.objective, questLimit);
     panel(questX, 16*s, questWidth, 12*s + objective.size()*questLine, .80f);
 
@@ -95,12 +97,12 @@ void DrawGameUi(Renderer &renderer, const GameUiState &state)
     if (state.hasObjectiveTarget) marker(state.objectiveTarget, 5*s, .90f, .74f, .27f);
     effect(mx, my, 5*s, .41f, .84f, 1, 1, 7);
     label(mx-(mr+16*s)*.70710678f-5*s, my-(mr+16*s)*.70710678f-12*s,
-          L"N", .57f, .93f, .88f, .66f);
+          L"북", .57f, .93f, .88f, .66f);
     label(mx-45*s, my+mr+7*s, L"그린웨이크", .56f, .88f, .87f, .76f);
 
     // Existing gameplay commands, with the same circles used by HitTestGameUi.
     const auto controls = GameUiControls(state.windowWidth, state.windowHeight);
-    const wchar_t *keys[] = {L"LMB", L"Space", L"Q", L"E"};
+    const wchar_t *keys[] = {L"좌클릭", L"공백", L"Q", L"E"};
     const wchar_t *names[] = {L"공격", L"회피", L"물약", L"상호작용"};
     for (size_t i=0; i<controls.size(); ++i)
     {
@@ -114,7 +116,7 @@ void DrawGameUi(Renderer &renderer, const GameUiState &state)
         const float progress = i==0 ? state.attackTime/.32f : (i==1 ? state.dodgeTime/.24f : 0);
         if (progress>0) effect(control.x, control.y, control.radius-3*s, std::min(1.0f, progress), 0, 0, .72f, 9);
         const float keyScale=std::max(1.0f,.84f*s);
-        label(control.x-std::wcslen(keys[i])*5.2f*keyScale, control.y+control.radius*.30f,
+        label(control.x-std::wcslen(keys[i])*(i<2 ? 9.0f : 5.2f)*keyScale, control.y+control.radius*.30f,
               keys[i], .42f, 1, .96f, .81f);
         if (s >= .75f)
             label(control.x-std::wcslen(names[i])*9.0f*std::max(1.0f,.86f*s), control.y-control.radius-27*s,
@@ -126,7 +128,7 @@ void DrawGameUi(Renderer &renderer, const GameUiState &state)
 
     std::swprintf(text, 100, L"약초 %d    전리품 %d    물약 %d", state.herbs, state.trophies, state.potions);
     label(30*s, state.windowHeight-76*s, text, .53f, .88f, .84f, .69f);
-    label(25*s, state.windowHeight-35*s, L"WASD 이동   SHIFT 달리기", .44f, .70f, .73f, .66f);
+    label(25*s, state.windowHeight-35*s, L"WASD 이동   시프트 달리기", .44f, .70f, .73f, .66f);
     rect(0, state.windowHeight-6*s, static_cast<float>(state.windowWidth), 6*s, .035f, .03f, .025f, .9f);
     rect(0, state.windowHeight-5*s, state.windowWidth*xp, 3*s, .75f, .56f, .20f, 1);
     std::swprintf(text, 100, L"경험치 %d / %d", state.experience, state.experienceToNextLevel);
@@ -135,7 +137,7 @@ void DrawGameUi(Renderer &renderer, const GameUiState &state)
     const float toastWidth=std::min(440*s, state.windowWidth-620*s);
     const float toastX=(state.windowWidth-toastWidth)*.5f;
     const float toastLine=std::max(28.0f,28*s);
-    const size_t toastLimit=static_cast<size_t>(std::max(10.0f,(toastWidth-20*s)/(12*std::max(1.0f,1.14f*s))));
+    const size_t toastLimit=static_cast<size_t>(std::max(6.0f,(toastWidth-20*s)/(18*std::max(1.0f,1.14f*s))));
     float toastY=state.windowHeight-std::max(38.0f,38*s);
     if (!state.hint.empty())
     {
@@ -156,4 +158,58 @@ void DrawGameUi(Renderer &renderer, const GameUiState &state)
         for (size_t i=0; i<lines.size(); ++i)
             label(toastX+10*s, toastY+6*s+i*toastLine, lines[i].c_str(), .57f, 1, .96f, .85f);
     }
+    const auto entry = InventoryEntry(state.windowWidth, state.windowHeight);
+    panel(entry.x, entry.y, entry.width, entry.height, .88f);
+    label(entry.x+9*s, entry.y+2*s, L"I  가방 / 제작", .46f, 1, .88f, .60f);
+    if (state.inventoryOpen)
+        DrawInventoryPanel(renderer, state);
+}
+
+static void DrawInventoryPanel(Renderer &renderer, const GameUiState &state)
+{
+    const float s = GameUiScale(state.windowWidth, state.windowHeight);
+    const float textScale = std::max(.65f, s);
+    const auto panel = InventoryPanel(state.windowWidth, state.windowHeight);
+    const auto rect = [&](float x, float y, float width, float height, float r, float g, float b, float alpha) {
+        renderer.DrawSolidRect(x+width*.5f-state.windowWidth*.5f,
+            state.windowHeight*.5f-y-height*.5f, width, height, 0, r, g, b, alpha);
+    };
+    const auto text = [&](float x, float y, const wchar_t *value, float r, float g, float b) {
+        renderer.DrawLabel(x, state.windowHeight-y-28*textScale, value, r, g, b, textScale);
+    };
+    rect(0, 0, static_cast<float>(state.windowWidth), static_cast<float>(state.windowHeight), 0, 0, 0, .62f);
+    rect(panel.x, panel.y, panel.width, panel.height, .58f, .43f, .20f, 1);
+    rect(panel.x+2*s, panel.y+2*s, panel.width-4*s, panel.height-4*s, .045f, .055f, .05f, 1);
+    text(panel.x+20*s, panel.y+20*s, L"가방 · 야영지 제작", 1, .86f, .54f);
+    wchar_t line[120];
+    std::swprintf(line, 120, L"장착: %ls   |   공격력 %d", state.hunterBladeCrafted ? L"엄니 검" : L"기본 검", state.attackPower);
+    text(panel.x+20*s, panel.y+65*s, line, .87f, .90f, .82f);
+    const wchar_t *names[] = {L"회복 물약", L"약초", L"멧돼지 가죽", L"멧돼지 엄니"};
+    const int counts[] = {state.potions, state.herbs, state.hides, state.trophies};
+    for (int row = 0; row < 4; ++row)
+    {
+        std::swprintf(line, 120, L"%ls     %d / 99", names[row], counts[row]);
+        text(panel.x+24*s, panel.y+(105+row*30)*s, line, .90f, .88f, .76f);
+    }
+    text(panel.x+20*s, panel.y+228*s, state.nearWorkbench
+        ? (state.huntReported ? L"엄니 검 재료: 가죽 1 + 엄니 1" : L"엄니 검: 먼저 장로에게 사냥 보고")
+        : L"제작 위치: 장로 근처의 야영지", .95f, .76f, .42f);
+    const auto buttons = InventoryButtons(state.windowWidth, state.windowHeight);
+    const wchar_t *labels[] = {L"C  엄니 검 제작 · 자동 장착 (+3)", L"P  회복 물약 제작 (약초 1)", L"×"};
+    for (size_t index = 0; index < buttons.size(); ++index)
+    {
+        const auto &button = buttons[index];
+        const bool enabled = index == 2 || (state.nearWorkbench && (index == 0
+            ? state.huntReported && !state.hunterBladeCrafted && state.hides > 0 && state.trophies > 0
+            : state.herbs > 0 && state.potions < 99));
+        rect(button.x, button.y, button.width, button.height, .34f, .29f, .16f, 1);
+        rect(button.x+s, button.y+s, button.width-2*s, button.height-2*s,
+             enabled ? .16f : .08f, enabled ? .23f : .09f, .10f, 1);
+        text(button.x+9*s, button.y+6*s, labels[index], enabled ? 1.0f : .58f, enabled ? .92f : .58f, .70f);
+    }
+    const std::wstring status = state.messageTime > 0 ? state.message : L"재료를 모아 장비를 제작하세요.";
+    const size_t limit = static_cast<size_t>(std::max(12.0f, (panel.width-40*s)/(18*textScale)));
+    for (size_t row = 0; row < 3 && row*limit < status.size(); ++row)
+        text(panel.x+20*s, panel.y+(368+row*25)*s, status.substr(row*limit, limit).c_str(), .88f, .86f, .73f);
+    text(panel.x+20*s, panel.y+465*s, L"I / ESC 닫기 · 일시정지 중", .69f, .75f, .67f);
 }

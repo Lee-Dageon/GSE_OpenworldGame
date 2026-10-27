@@ -18,6 +18,8 @@ struct GameUiState
     int potions = 0;
     int herbs = 0;
     int trophies = 0;
+    int hides = 0;
+    bool inventoryOpen = false, hunterBladeCrafted = false, nearWorkbench = false, huntReported = false;
     float health = 0.0f;
     float maxHealth = 1.0f;
     float messageTime = 0.0f;
@@ -50,8 +52,48 @@ inline std::array<GameUiControl, 4> GameUiControls(int width, int height)
              {width - 154 * s, height - 158 * s, 30 * s, GameCommand::Interact}}};
 }
 
-inline GameCommand HitTestGameUi(int x, int y, int width, int height)
+struct GameUiButton
 {
+    float x, y, width, height;
+    GameCommand command;
+    bool Contains(int px, int py) const
+    {
+        return px >= x && px <= x+width && py >= y && py <= y+height;
+    }
+};
+
+inline GameUiButton InventoryPanel(int width, int height)
+{
+    const float s = GameUiScale(width, height);
+    return {(width-660*s)*.5f, (height-500*s)*.5f, 660*s, 500*s, GameCommand::None};
+}
+
+inline std::array<GameUiButton, 3> InventoryButtons(int width, int height)
+{
+    const float s = GameUiScale(width, height);
+    const auto panel = InventoryPanel(width, height);
+    return {{{panel.x+20*s, panel.y+260*s, panel.width-40*s, 42*s, GameCommand::CraftHunterBlade},
+             {panel.x+20*s, panel.y+310*s, panel.width-40*s, 42*s, GameCommand::CraftHealingPotion},
+             {panel.x+panel.width-52*s, panel.y+12*s, 36*s, 32*s, GameCommand::ToggleInventory}}};
+}
+
+inline GameUiButton InventoryEntry(int width, int height)
+{
+    const float s = GameUiScale(width, height);
+    return {18*s, height-118*s, 180*s, 30*s, GameCommand::ToggleInventory};
+}
+
+inline GameCommand HitTestGameUi(int x, int y, int width, int height, bool inventoryOpen = false)
+{
+    if (inventoryOpen)
+    {
+        for (const auto &button : InventoryButtons(width, height))
+            if (button.Contains(x, y))
+                return button.command;
+        return GameCommand::None;
+    }
+    if (InventoryEntry(width, height).Contains(x, y))
+        return GameCommand::ToggleInventory;
     for (const GameUiControl &control : GameUiControls(width, height))
         if ((x - control.x) * (x - control.x) + (y - control.y) * (y - control.y) <= control.radius * control.radius)
             return control.command;

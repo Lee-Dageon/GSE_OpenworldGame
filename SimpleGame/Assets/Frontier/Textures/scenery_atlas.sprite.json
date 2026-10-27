@@ -1,0 +1,18 @@
+{
+  "cell_width": 256,
+  "cell_height": 256,
+  "columns": 7,
+  "rows": 1,
+  "pivot_y_from_bottom": 0.27075773,
+  "camera_elevation_degrees": 30,
+  "columns_description": [
+    "boulder",
+    "bush",
+    "log",
+    "fence",
+    "cart",
+    "ruin",
+    "pine"
+  ],
+  "source": "../Source/scenery.blend"
+}

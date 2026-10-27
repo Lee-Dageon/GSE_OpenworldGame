@@ -9,7 +9,10 @@ enum class GameCommand
     Interact,
     UsePotion,
     Dodge,
-    Attack
+    Attack,
+    ToggleInventory,
+    CraftHunterBlade,
+    CraftHealingPotion
 };
 
 namespace GameInput

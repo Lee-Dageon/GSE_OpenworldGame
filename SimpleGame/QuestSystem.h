@@ -13,7 +13,9 @@ enum class InteractionResult
     TracksInvestigated,
     HerbCollected,
     TrophyCollected,
-    NpcDialogue
+    NpcDialogue,
+    InventoryFull,
+    RepeatHuntStarted
 };
 
 bool AddExperience(GameState &state, int amount);

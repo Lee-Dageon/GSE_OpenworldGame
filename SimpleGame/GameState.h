@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Monster.h"
+#include "Inventory.h"
 
 #include <array>
 #include <string>
@@ -55,7 +56,10 @@ struct GameState
     std::array<AnimalState, 8> animals = {};
     WorldState world;
     float health = 100.0f, maxHealth = 100.0f, dodge = 0.0f, attack = 0.0f, messageTime = 7.0f, time = 0.0f;
-    int potions = 2, herbs = 0, trophies = 0, level = 1, experience = 0, experienceToNextLevel = 20, attackPower = 2;
+    Inventory inventory;
+    bool inventoryOpen = false, hunterBladeCrafted = false;
+    int completedHunts = 0;
+    int level = 1, experience = 0, experienceToNextLevel = 20, attackPower = 2;
     QuestStage quest = QuestStage::Elder;
     std::wstring message;
 };
