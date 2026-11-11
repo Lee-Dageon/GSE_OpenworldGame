@@ -136,6 +136,7 @@ WorldRenderer::WorldRenderer(Renderer &renderer) : m_Renderer(renderer)
     m_PlayerTexture = m_Renderer.LoadTexture(L"./Assets/PixelArt/Characters/hero-walk-v1.png");
     m_GeneralWalkTexture = m_Renderer.LoadTexture(L"./Assets/PixelArt/Characters/hero-general-walk-v2.png");
     m_GeneralRunTexture = m_Renderer.LoadTexture(L"./Assets/PixelArt/Characters/hero-general-v3.png");
+    m_GeneralAttackTexture = m_Renderer.LoadTexture(L"./Assets/PixelArt/Characters/hero-general-attack-v1.png");
     m_PixelPlayer = m_PlayerTexture != 0;
     if (!m_PixelPlayer)
     {
@@ -170,7 +171,7 @@ WorldRenderer::WorldRenderer(Renderer &renderer) : m_Renderer(renderer)
                                  m_PixelTerrain ? m_TerrainTexture : 0u, m_PixelPlayer ? m_PlayerTexture : 0u,
                                  m_ElderTexture, m_NoticeBoardTexture, m_RockTexture, m_PineTexture,
                                  m_NpcTextures[0], m_NpcTextures[1], m_HouseVariants[0], m_HouseVariants[1],
-                                 m_CampfireTexture, m_GeneralWalkTexture, m_GeneralRunTexture})
+                                 m_CampfireTexture, m_GeneralWalkTexture, m_GeneralRunTexture, m_GeneralAttackTexture})
         if (texture != 0)
         {
             glBindTexture(GL_TEXTURE_2D, texture);
@@ -182,7 +183,7 @@ WorldRenderer::WorldRenderer(Renderer &renderer) : m_Renderer(renderer)
 
 WorldRenderer::~WorldRenderer()
 {
-    for (unsigned int texture : {m_GeneralWalkTexture, m_GeneralRunTexture})
+    for (unsigned int texture : {m_GeneralWalkTexture, m_GeneralRunTexture, m_GeneralAttackTexture})
         if (texture != 0)
             glDeleteTextures(1, &texture);
     for (unsigned int texture : {m_NpcTextures[0], m_NpcTextures[1], m_HouseVariants[0], m_HouseVariants[1],
@@ -322,29 +323,41 @@ void WorldRenderer::DrawGeneralPlayer(const GameState &state) const
     const int direction = (10 - worldDirection) % 8;
     const float progress = std::max(0.0f, std::min(1.0f, 1.0f - state.attack / .32f));
     const int frame = state.attack > 0 ? std::min(3, static_cast<int>(progress * 4)) :
-                      (state.moving ? static_cast<int>(state.time * (state.sprint ? 4 : 6)) % 4 : 0);
+                      (state.moving ? static_cast<int>(state.time * (state.sprint ? 8 : 6)) % 4 : 0);
     const bool newSheet = m_GeneralRunTexture != 0 && state.attack <= 0.0f && (running || !state.moving);
     // Atlas row order from general-v3/manifest.json: down,side,up,se,sw,ne,nw,left.
     constexpr int directionRows[8] = {9, 0, 12, 21, 18, 6, 15, 3};
     const int atlasFrame = running ? frame : static_cast<int>(state.time * 4) % 4;
     const int atlasRow = directionRows[direction] + (running ? 2 : 0);
-    const PixelGeneralFrames::Frame region = newSheet ?
+    const bool attacking = state.attack > 0.0f && m_GeneralAttackTexture != 0;
+    const int attackX = frame * 887 / 4, attackY = direction * 1774 / 8;
+    const PixelGeneralFrames::Frame region = attacking ?
+        PixelGeneralFrames::Frame{attackX, attackY, (frame + 1) * 887 / 4 - attackX,
+                                 (direction + 1) * 1774 / 8 - attackY,
+                                 (frame + .5f) * 887 / 4, attackY + 215.0f} : newSheet ?
         PixelGeneralFrames::Frame{atlasFrame * 192, atlasRow * 256, 192, 256,
                                  atlasFrame * 192 + 96.0f, atlasRow * 256 + 236.0f} :
         PixelGeneralFrames::Frames[mode][frame][direction];
-    const float scale = newSheet ? 74.0f / 216.0f : PixelGeneralFrames::Scale[mode];
+    // Measured v3 crown hair area (top 45px, alpha >= .5), median of four poses per direction.
+    // Scale = idle scale * sqrt(idle area / run area); fixed across phases to preserve bent-knee motion.
+    constexpr float runScale[8] = {
+        .293683f, .302495f, .358914f, .338193f,
+        .351701f, .333751f, .369871f, .331619f
+    };
+    const float scale = attacking ? 74.0f / 177.0f : running ? runScale[direction] * (direction % 2 == 0 ? 1.15f : 1.0f) :
+                        newSheet ? 74.0f / 216.0f : PixelGeneralFrames::Scale[mode];
     const Vec2 foot = ToScreen(state.player);
     const float pulse = state.attack > 0 ? std::sin(progress * Pi) : 0;
     const float dx = state.facing.x - state.facing.z, dy = (state.facing.x + state.facing.z) * .5f;
     const float length = std::max(.001f, std::sqrt(dx * dx + dy * dy));
     const float pivotY = (region.y + region.height - region.footY) / region.height;
     DrawShadow(state.player, 35, 9);
-    m_Renderer.DrawSprite(newSheet ? m_GeneralRunTexture : m_GeneralWalkTexture,
+    m_Renderer.DrawSprite(attacking ? m_GeneralAttackTexture : newSheet ? m_GeneralRunTexture : m_GeneralWalkTexture,
                           foot.x + (region.x + region.width * .5f - region.footX) * scale + dx / length * pulse * 3,
                           foot.z + (region.footY - region.y - region.height * .5f) * scale + dy / length * pulse * 3,
                           region.width * scale, region.height * scale, region.x, region.y,
-                          newSheet ? 768 : PixelGeneralFrames::Width[mode],
-                          newSheet ? 6144 : PixelGeneralFrames::Height[mode],
+                          attacking ? 887 : newSheet ? 768 : PixelGeneralFrames::Width[mode],
+                          attacking ? 1774 : newSheet ? 6144 : PixelGeneralFrames::Height[mode],
                           1, 1, 1, 1, pulse * .025f, pivotY, 0,
                           static_cast<float>(region.width), static_cast<float>(region.height), .5f);
 }
