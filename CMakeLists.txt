@@ -68,7 +68,7 @@ set_property(DIRECTORY PROPERTY VS_STARTUP_PROJECT SimpleGame)
 # Building and running tests are separate, explicit actions. Smoke tests can capture images.
 option(GSE_BUILD_TESTS "Build checks and renderer smoke executables (does not run them)" OFF)
 if(GSE_BUILD_TESTS)
-    foreach(check GameContentCheck GlfwWindowCheck HeroAttackSmoke HudLayoutCheck InventoryCraftingCheck
+    foreach(check GameContentCheck GlfwWindowCheck HeroAttackSmoke HudLayoutCheck InventoryCraftingCheck NpcWanderCheck
                   RenderQualitySmoke StoryFlowCheck TerrainCacheSmoke WorldLayoutCheck)
         add_executable(${check} tests/${check}.cpp)
         target_link_libraries(${check} PRIVATE game)

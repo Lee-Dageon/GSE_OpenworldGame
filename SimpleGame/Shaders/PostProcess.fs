@@ -15,9 +15,12 @@ vec3 Emission(vec2 uv)
 void main()
 {
 	vec2 texel = 1.0 / u_Resolution;
+	// Integer screen pixels keep world sprites/effects on one grid; HUD is drawn afterwards.
+	float pixelScale = max(1.0, floor(u_Resolution.y / 360.0));
+	vec2 pixelUV = (floor(v_UV * u_Resolution / pixelScale) * pixelScale + pixelScale * .5) / u_Resolution;
 	vec2 centered = v_UV * 2.0 - 1.0;
 	float edge = dot(centered, centered);
-	vec3 color = texture(u_Source, v_UV).rgb;
+	vec3 color = texture(u_Source, pixelUV).rgb;
 	vec3 glow = vec3(0.0);
 	// Only HDR emission exceeds one; diffuse surfaces cannot feed this bloom.
 	for (int ring = 1; ring <= 3; ++ring)
@@ -26,7 +29,7 @@ void main()
 		for (int direction = 0; direction < 8; ++direction)
 		{
 			float angle = float(direction) * .78539816;
-			glow += Emission(v_UV + vec2(cos(angle), sin(angle)) * radius) / 24.0;
+			glow += Emission(pixelUV + vec2(cos(angle), sin(angle)) * radius) / 24.0;
 		}
 	}
 	color += glow * .22;

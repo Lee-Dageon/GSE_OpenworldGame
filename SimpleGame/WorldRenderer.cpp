@@ -5,6 +5,7 @@
 #include "Renderer.h"
 #include "WorldLayout.h"
 #include "StorySystem.h"
+#include "PixelNpcFrames.h"
 
 #include <algorithm>
 #include <array>
@@ -101,23 +102,59 @@ float RoadDistance(Vec2 position)
 
 WorldRenderer::WorldRenderer(Renderer &renderer) : m_Renderer(renderer)
 {
-    m_TreeTexture = m_Renderer.LoadTexture(L"./Assets/Textures/Fantasy/tree.png");
-    if (m_TreeTexture != 0)
-        m_TreePivotY = .18508148f;
+    m_TreeTexture = m_Renderer.LoadTexture(L"./Assets/PixelArt/World/tree-v1.png");
+    m_PixelTree = m_TreeTexture != 0;
+    if (m_PixelTree)
+        m_TreePivotY = .09344f;
     else
-        m_TreeTexture = m_Renderer.LoadTexture(L"./Assets/Textures/tree.png");
-    m_TerrainTexture = LoadFantasyTexture(m_Renderer, L"terrain_atlas.png");
+    {
+        m_TreeTexture = m_Renderer.LoadTexture(L"./Assets/Textures/Fantasy/tree.png");
+        if (m_TreeTexture != 0)
+            m_TreePivotY = .18508148f;
+        else
+            m_TreeTexture = m_Renderer.LoadTexture(L"./Assets/Textures/tree.png");
+    }
+    m_TerrainTexture = m_Renderer.LoadTexture(L"./Assets/PixelArt/World/terrain-v1.png");
+    m_PixelTerrain = m_TerrainTexture != 0;
+    if (!m_PixelTerrain)
+        m_TerrainTexture = LoadFantasyTexture(m_Renderer, L"terrain_atlas.png");
     m_HumanTexture = m_Renderer.LoadTexture(L"./Assets/Frontier/Textures/human_atlas.png");
     if (m_HumanTexture == 0)
         m_HumanTexture = LoadFantasyTexture(m_Renderer, L"human_atlas.png");
     m_BoarTexture = LoadFantasyTexture(m_Renderer, L"boar_atlas.png");
     m_DeerTexture = LoadFantasyTexture(m_Renderer, L"deer_atlas.png");
     m_SheepTexture = LoadFantasyTexture(m_Renderer, L"sheep_atlas.png");
-    m_HouseTexture = m_Renderer.LoadTexture(L"./Assets/Textures/Fantasy/house.png");
+    m_HouseTexture = m_Renderer.LoadTexture(L"./Assets/PixelArt/World/house-v1.png");
+    const bool pixelHouse = m_HouseTexture != 0;
+    if (pixelHouse)
+        m_HousePivotY = .10f;
+    else
+        m_HouseTexture = m_Renderer.LoadTexture(L"./Assets/Textures/Fantasy/house.png");
     m_PropsTexture = m_Renderer.LoadTexture(L"./Assets/Frontier/Textures/props_atlas.png");
     m_SceneryTexture = m_Renderer.LoadTexture(L"./Assets/Frontier/Textures/scenery_atlas.png");
-    m_PlayerTexture = m_Renderer.LoadTexture(L"./Assets/Hero/Textures/human_atlas.png");
-    m_PlayerAttackTexture = m_Renderer.LoadTexture(L"./Assets/Hero/Textures/human_attack_atlas.png");
+    m_PlayerTexture = m_Renderer.LoadTexture(L"./Assets/PixelArt/Characters/hero-walk-v1.png");
+    m_PixelPlayer = m_PlayerTexture != 0;
+    if (!m_PixelPlayer)
+    {
+        m_PlayerTexture = m_Renderer.LoadTexture(L"./Assets/Hero/Textures/human_atlas.png");
+        m_PlayerAttackTexture = m_Renderer.LoadTexture(L"./Assets/Hero/Textures/human_attack_atlas.png");
+    }
+    m_SwordSlashTexture = m_Renderer.LoadTexture(L"./Assets/PixelArt/Effects/sword-slash.png");
+    m_ElderTexture = m_Renderer.LoadTexture(L"./Assets/PixelArt/Characters/elder-v1.png");
+    m_NoticeBoardTexture = m_Renderer.LoadTexture(L"./Assets/PixelArt/World/notice-board-v1.png");
+    m_RockTexture = m_Renderer.LoadTexture(L"./Assets/PixelArt/World/rock-v1.png");
+    m_PineTexture = m_Renderer.LoadTexture(L"./Assets/PixelArt/World/pine-v1.png");
+    m_NpcTextures[0] = m_Renderer.LoadTexture(L"./Assets/PixelArt/Characters/npc-farmer-v1.png");
+    m_NpcTextures[1] = m_Renderer.LoadTexture(L"./Assets/PixelArt/Characters/npc-merchant-v1.png");
+    m_HouseVariants[0] = m_Renderer.LoadTexture(L"./Assets/PixelArt/World/house-stone-v1.png");
+    m_HouseVariants[1] = m_Renderer.LoadTexture(L"./Assets/PixelArt/World/house-shop-v1.png");
+    m_CampfireTexture = m_Renderer.LoadTexture(L"./Assets/PixelArt/Effects/campfire.png");
+    if (m_SwordSlashTexture != 0)
+    {
+        glBindTexture(GL_TEXTURE_2D, m_SwordSlashTexture);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    }
     // Atlas cells share a texture: avoid mipmaps blending neighboring directions/tiles.
     for (unsigned int texture : {m_SceneryTexture, m_PropsTexture, m_TerrainTexture, m_HumanTexture, m_PlayerTexture, m_PlayerAttackTexture, m_BoarTexture, m_DeerTexture, m_SheepTexture})
         if (texture != 0)
@@ -125,11 +162,32 @@ WorldRenderer::WorldRenderer(Renderer &renderer) : m_Renderer(renderer)
             glBindTexture(GL_TEXTURE_2D, texture);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         }
+    // New pixel assets keep their hard edges at both magnification and minification.
+    for (unsigned int texture : {m_PixelTree ? m_TreeTexture : 0u, pixelHouse ? m_HouseTexture : 0u,
+                                 m_PixelTerrain ? m_TerrainTexture : 0u, m_PixelPlayer ? m_PlayerTexture : 0u,
+                                 m_ElderTexture, m_NoticeBoardTexture, m_RockTexture, m_PineTexture,
+                                 m_NpcTextures[0], m_NpcTextures[1], m_HouseVariants[0], m_HouseVariants[1],
+                                 m_CampfireTexture})
+        if (texture != 0)
+        {
+            glBindTexture(GL_TEXTURE_2D, texture);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        }
     glBindTexture(GL_TEXTURE_2D, 0);
 }
 
 WorldRenderer::~WorldRenderer()
 {
+    for (unsigned int texture : {m_NpcTextures[0], m_NpcTextures[1], m_HouseVariants[0], m_HouseVariants[1],
+                                 m_CampfireTexture})
+        if (texture != 0)
+            glDeleteTextures(1, &texture);
+    for (unsigned int texture : {m_ElderTexture, m_NoticeBoardTexture, m_RockTexture, m_PineTexture})
+        if (texture != 0)
+            glDeleteTextures(1, &texture);
+    if (m_SwordSlashTexture != 0)
+        glDeleteTextures(1, &m_SwordSlashTexture);
     for (unsigned int texture : {m_SceneryTexture, m_PropsTexture, m_TreeTexture, m_HouseTexture, m_PlayerTexture, m_PlayerAttackTexture, m_TerrainTexture, m_HumanTexture, m_BoarTexture, m_DeerTexture, m_SheepTexture})
         if (texture != 0)
             glDeleteTextures(1, &texture);
@@ -226,7 +284,7 @@ void WorldRenderer::DrawSprite(Vec2 position, int column, int row, float width, 
     const float colors[4][3] = {{.12f, .28f, .16f}, {.48f, .16f, .08f}, {.10f, .24f, .42f}, {.36f, .12f, .30f}};
     const float *cloth = colors[column % 4];
     const bool player = position.x == m_State->player.x && position.z == m_State->player.z;
-    const float stride = player && m_State->moving ? std::sin(m_State->time * (m_State->sprint ? 13.0f : 9.0f)) : 0;
+    const float stride = player && m_State->moving ? std::sin(m_State->time * (m_State->sprint ? 9.0f : 6.5f)) : 0;
     const float bob = player ? std::abs(stride) * 1.1f : std::sin(m_State->time * 2.0f + column) * .4f;
     block(-6, 7 + stride * 2, 9, 19, .12f, .08f, .05f);
     block(6, 7 - stride * 2, 9, 19, .12f, .08f, .05f);
@@ -241,13 +299,96 @@ void WorldRenderer::DrawSprite(Vec2 position, int column, int row, float width, 
     block(look * 8, 43 + bob, 4, 4, .62f, .39f, .23f);
 }
 
-void WorldRenderer::DrawHouse(Vec2 position, float red, float green, float blue) const
+void WorldRenderer::DrawPixelSprite(Vec2 position, unsigned int texture, float width, float height,
+                                    float pivotY, float sway) const
 {
+    const Vec2 screen = ToScreen(position);
+    m_Renderer.DrawSprite(texture, screen.x, screen.z + (.5f - pivotY) * height,
+                          width, height, 0, 0, 1, 1, 1, 1, 1, 1, sway, pivotY, 0, 1, 1, .5f);
+}
+
+void WorldRenderer::DrawPixelPlayer(const GameState &state) const
+{
+    const int worldDirection = (static_cast<int>(std::lround(std::atan2(-state.facing.z, -state.facing.x) /
+                                                                        (Pi * .25f))) + 8) % 8;
+    // Pixel sheet runs SE,S,SW,W,NW,N,NE,E; reflect the Blender ordering horizontally.
+    const int direction = (10 - worldDirection) % 8;
+    const float progress = std::max(0.0f, std::min(1.0f, 1.0f - state.attack / .32f));
+    const int frame = state.attack > 0 ? std::min(3, static_cast<int>(progress * 4)) :
+                      (state.moving ? static_cast<int>(state.time * (state.sprint ? 8 : 6)) % 4 : 0);
+    // Alpha-measured foot anchors for the generated 8x4 sheet (top-to-bottom rows).
+    static constexpr Vec2 pivots[4][8] = {
+        {{.5994f,.0664f},{.5000f,.0664f},{.5994f,.0664f},{.5221f,.0664f},
+         {.4641f,.0664f},{.4448f,.0664f},{.4088f,.0664f},{.3729f,.0775f}},
+        {{.5110f,.0809f},{.4945f,.0882f},{.6188f,.0809f},{.5359f,.0809f},
+         {.4890f,.0809f},{.4503f,.0882f},{.3950f,.0882f},{.3674f,.0846f}},
+        {{.5497f,.0664f},{.4530f,.0664f},{.6133f,.0664f},{.5608f,.0664f},
+         {.5276f,.0664f},{.4475f,.0664f},{.3398f,.0664f},{.4061f,.0849f}},
+        {{.4945f,.0956f},{.4890f,.1250f},{.4917f,.0956f},{.5221f,.0956f},
+         {.4724f,.0956f},{.4088f,.1140f},{.3646f,.0956f},{.4448f,.1103f}}
+    };
+    // Individual opaque bounds avoid cape pixels spilling into neighboring directions.
+    static constexpr int regions[4][8][4] = {
+        {{43,28,130,225},{223,26,124,227},{396,29,139,224},{571,29,132,224},
+         {745,27,134,226},{929,26,119,227},{1088,27,146,226},{1267,28,131,222}},
+        {{41,300,126,221},{226,298,121,221},{407,301,132,220},{577,300,123,221},
+         {752,298,125,223},{930,298,112,221},{1088,299,144,220},{1263,300,135,220}},
+        {{41,571,132,225},{222,569,124,227},{397,571,141,225},{578,570,127,226},
+         {750,569,129,227},{929,569,117,227},{1087,570,147,226},{1269,570,129,221}},
+        {{36,843,131,217},{228,841,119,211},{410,843,129,217},{581,843,119,217},
+         {753,841,127,219},{929,841,117,214},{1088,842,145,218},{1263,843,135,213}}
+    };
+    const Vec2 pivot = pivots[frame][direction], foot = ToScreen(state.player);
+    const int *region = regions[frame][direction];
+    constexpr float scale = 88.0f / 271.5f;
+    const float width = region[2] * scale, height = region[3] * scale;
+    const float anchorX = (direction + pivot.x) * 181.0f;
+    const float anchorY = (frame + 1 - pivot.z) * 271.5f;
+    const float pivotFromBottom = (region[1] + region[3] - anchorY) / region[3];
+    const float pulse = state.attack > 0 ? std::sin(progress * Pi) : 0;
+    const float dx = state.facing.x - state.facing.z, dy = (state.facing.x + state.facing.z) * .5f;
+    const float length = std::max(.001f, std::sqrt(dx * dx + dy * dy));
+    DrawShadow(state.player, 35, 9);
+    m_Renderer.DrawSprite(m_PlayerTexture,
+                          foot.x + (region[0] + region[2] * .5f - anchorX) * scale + dx / length * pulse * 3,
+                          foot.z + (anchorY - region[1] - region[3] * .5f) * scale + dy / length * pulse * 3,
+                          width, height, region[0], region[1], 1448, 1086, 1, 1, 1, 1,
+                          pulse * .025f, pivotFromBottom, 0, static_cast<float>(region[2]),
+                          static_cast<float>(region[3]));
+}
+
+void WorldRenderer::DrawPixelNpc(const NpcState &npc, int variant) const
+{
+    const float dx = npc.facing.x - npc.facing.z, dy = (npc.facing.x + npc.facing.z) * .5f;
+    const int direction = std::abs(dx) > std::abs(dy) ? (dx < 0 ? 1 : 2) : (dy < 0 ? 0 : 3);
+    const int frame = npc.moving ? (static_cast<int>(npc.phase) % 4 + 4) % 4 : 1;
+    const auto &region = PixelNpcFrames::Frames[variant][frame][direction];
+    const float scale = PixelNpcFrames::Scale[variant];
+    const Vec2 screen = ToScreen(npc.position);
+    DrawShadow(npc.position, 32, 9);
+    m_Renderer.DrawSprite(m_NpcTextures[variant],
+                          screen.x + (region.x + region.width * .5f - region.footX) * scale,
+                          screen.z + (region.footY - region.y - region.height * .5f) * scale,
+                          region.width * scale, region.height * scale, region.x, region.y,
+                          PixelNpcFrames::Width[variant], PixelNpcFrames::Height[variant],
+                          1, 1, 1, 1, 0, 0, 0, static_cast<float>(region.width),
+                          static_cast<float>(region.height), .5f);
+}
+
+void WorldRenderer::DrawHouse(Vec2 position, float red, float green, float blue, int variant) const
+{
+    const int style = variant % 3;
+    if (style > 0 && m_HouseVariants[style - 1] != 0)
+    {
+        DrawShadow(position, 172, 36, 120);
+        DrawPixelSprite(position, m_HouseVariants[style - 1], 220, 220, .10f);
+        return;
+    }
     if (m_HouseTexture != 0)
     {
         const Vec2 screen = ToScreen(position);
         DrawShadow(position, 172, 36, 120);
-        m_Renderer.DrawSprite(m_HouseTexture, screen.x, screen.z + (.5f-.30755001f)*220,
+        m_Renderer.DrawSprite(m_HouseTexture, screen.x, screen.z + (.5f-m_HousePivotY)*220,
                               220, 220, 0, 0, 1, 1);
         return;
     }
@@ -278,7 +419,8 @@ void WorldRenderer::DrawTree(Vec2 position, int variant) const
         DrawShadow(position, spriteWidth * .65f, 17.0f, spriteHeight * .7f);
         m_Renderer.DrawSprite(m_TreeTexture, screen.x, screen.z + (.5f - m_TreePivotY) * spriteHeight,
                               spriteWidth, spriteHeight, 0, 0, 1, 1, 1,
-                              .76f - variant * .015f, .83f, .68f - variant * .02f,
+                              m_PixelTree ? 1.0f : .76f - variant * .015f,
+                              m_PixelTree ? 1.0f : .83f, m_PixelTree ? 1.0f : .68f - variant * .02f,
                               std::sin(m_State->time * 1.4f + position.x * .2f + position.z * .3f) * .025f,
                               m_TreePivotY);
         return;
@@ -300,6 +442,13 @@ void WorldRenderer::DrawCampfire(Vec2 position) const
     m_Renderer.DrawEffectRect(screen.x, screen.z + 17, 174, 118, Pi * .25f, 1.0f, .20f, .02f, .17f * pulse, 3);
     m_Renderer.DrawEffectRect(screen.x, screen.z + 20, 132, 98, Pi * .25f, 1.0f, .18f, .015f, .12f * pulse, 3);
     m_Renderer.DrawEffectRect(screen.x, screen.z, 62, 24, 0, .09f, .065f, .04f, .7f, 3);
+    if (m_CampfireTexture != 0)
+    {
+        const int frame = static_cast<int>(m_State->time * 12.0f + std::abs(position.x * 3 + position.z * 5)) % 36;
+        m_Renderer.DrawSprite(m_CampfireTexture, screen.x, screen.z + (.5f - .125f) * 160,
+                              160, 160, frame % 6, frame / 6, 6, 6);
+        return;
+    }
     for (int stone = 0; stone < 8; ++stone)
     {
         const float angle = stone * Pi * .25f;
@@ -484,6 +633,7 @@ void WorldRenderer::DrawGround() const
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, m_TerrainTexture);
     glUniform1i(glGetUniformLocation(program, "u_TerrainTexture"), 0);
+    glUniform1i(glGetUniformLocation(program, "u_PixelTerrain"), m_PixelTerrain);
     glUniform2f(glGetUniformLocation(program, "u_TerrainTileSize"), TileWidth, TileHeight);
     std::array<Vec2, GameContent::MaxRoadHouses> houses = {}, bends = {};
     std::array<float, GameContent::MaxRoadHouses> junctions = {};
@@ -554,8 +704,8 @@ void WorldRenderer::RenderWorld(const GameState &state)
     enum class DrawType { House, Tree, Campfire, Npc, Animal, Tracks, Herb, Monster, Player, NoticeBoard, Decoration, Scenery, StoryMarker };
     struct DrawItem { Vec2 position; DrawType type; int index; };
     std::vector<DrawItem> items;
-    for (const auto &house : Map().houses)
-        items.push_back({house.position, DrawType::House, 0});
+    for (int index = 0; index < static_cast<int>(Map().houses.size()); ++index)
+        items.push_back({Map().houses[index].position, DrawType::House, index});
     items.push_back({Map().noticeBoard, DrawType::NoticeBoard, 0});
     for (int index = 0; index < static_cast<int>(WorldLayout::Trees().size()); ++index)
         if (Distance(WorldLayout::Trees()[index].position, state.world.lake) > state.world.lakeRadius + .5f)
@@ -631,6 +781,17 @@ void WorldRenderer::RenderWorld(const GameState &state)
             const auto &landmark = WorldLayout::Landmarks()[item.index];
             const Vec2 screen = ToScreen(item.position);
             DrawShadow(item.position, landmark.height * .45f, 10, landmark.height * .2f);
+            if (landmark.kind == WorldLayout::SceneryKind::Boulder && m_RockTexture != 0)
+            {
+                DrawPixelSprite(item.position, m_RockTexture, landmark.height, landmark.height, .23f);
+                break;
+            }
+            if (landmark.kind == WorldLayout::SceneryKind::Pine && m_PineTexture != 0)
+            {
+                DrawPixelSprite(item.position, m_PineTexture, landmark.height * (2.0f / 3.0f),
+                                landmark.height, .0332f);
+                break;
+            }
             if (m_SceneryTexture != 0)
                 m_Renderer.DrawSprite(m_SceneryTexture, screen.x, screen.z + (.5f-.27075773f)*landmark.height,
                                       landmark.height, landmark.height, static_cast<int>(landmark.kind), 0, 7, 1);
@@ -652,15 +813,25 @@ void WorldRenderer::RenderWorld(const GameState &state)
             else
             {
                 m_Renderer.DrawEffectRect(p.x + 1, p.z - 1, 12, 5, 0, .035f, .04f, .03f, .35f, 3);
-                m_Renderer.DrawEffectRect(p.x, p.z + 1, 9, 6, -.2f, .38f, .37f, .30f, 1, 17);
+                if (m_RockTexture != 0)
+                    DrawPixelSprite(item.position, m_RockTexture, 20, 20, .23f);
+                else
+                    m_Renderer.DrawEffectRect(p.x, p.z + 1, 9, 6, -.2f, .38f, .37f, .30f, 1, 17);
             }
             break;
         }
-        case DrawType::House: DrawHouse(item.position, .42f, .18f, .09f); break;
+        case DrawType::House: DrawHouse(item.position, .42f, .18f, .09f, item.index); break;
         case DrawType::Tree:
         {
             const auto &tree = WorldLayout::Trees()[item.index];
-            if (tree.pine && m_SceneryTexture != 0)
+            if (tree.pine && m_PineTexture != 0)
+            {
+                const float height = 190.0f + tree.variant * 12;
+                DrawShadow(item.position, height * .35f, 15, height * .7f);
+                DrawPixelSprite(item.position, m_PineTexture, height * (2.0f / 3.0f), height, .0332f,
+                                std::sin(state.time * 1.4f + item.position.x) * .02f);
+            }
+            else if (tree.pine && m_SceneryTexture != 0)
             {
                 const Vec2 screen = ToScreen(item.position);
                 const float height = 170.0f + tree.variant * 12;
@@ -677,8 +848,21 @@ void WorldRenderer::RenderWorld(const GameState &state)
         case DrawType::Npc:
         {
             const NpcState &npc = state.npcs[item.index];
-            const Vec2 facing = {state.player.x - npc.position.x, state.player.z - npc.position.z};
-            if (!DrawAtlasSprite(npc.position, m_HumanTexture, facing, 0, 100, HumanPivotY))
+            const bool elder = Distance(npc.wanderSeed != 0 ? npc.home : npc.position, state.world.elder) < .1f;
+            if (m_ElderTexture != 0 && elder)
+            {
+                DrawShadow(npc.position, 35, 9);
+                DrawPixelSprite(npc.position, m_ElderTexture, 100 * (2.0f / 3.0f), 100, .0332f);
+                break;
+            }
+            if (!elder && m_NpcTextures[item.index % 2] != 0)
+            {
+                DrawPixelNpc(npc, item.index % 2);
+                break;
+            }
+            const Vec2 facing = npc.moving ? npc.facing : Vec2{state.player.x - npc.position.x, state.player.z - npc.position.z};
+            const int frame = npc.moving ? (static_cast<int>(npc.phase) % 4 + 4) % 4 : 0;
+            if (!DrawAtlasSprite(npc.position, m_HumanTexture, facing, frame, 100, HumanPivotY))
                 DrawSprite(npc.position, npc.column, npc.row, 88, 112);
             break;
         }
@@ -724,13 +908,34 @@ void WorldRenderer::RenderWorld(const GameState &state)
                                               9 + age * 15, 5 + age * 9, 0, .49f, .42f, .29f,
                                               std::sin(age * Pi) * .18f, 19);
                 }
-            if (state.attack > .035f && state.attack < .25f)
+            const auto drawSwordSlash = [&]()
+            {
+                if (state.attack <= 0.0f || m_SwordSlashTexture == 0)
+                    return;
+                // pixelfx: 24 frames, 5 columns, 136x104 cells; origin is (44, 92) from top-left.
+                const int frame = std::max(0, std::min(23, static_cast<int>((1.0f - state.attack / .32f) * 24)));
+                const float angle = std::atan2((state.facing.x + state.facing.z) * .5f,
+                                               state.facing.x - state.facing.z);
+                constexpr float scale = .8f, offsetX = (68 - 44) * scale, offsetY = (92 - 52) * scale;
+                const float c = std::cos(angle), s = std::sin(angle);
+                m_Renderer.DrawSprite(m_SwordSlashTexture, foot.x + c * offsetX - s * offsetY,
+                                      foot.z + 28 + s * offsetX + c * offsetY,
+                                      136 * scale, 104 * scale, frame % 5, frame / 5, 5, 5,
+                                      1, 1, 1, 1, 0, 0, angle);
+            };
+            if (m_SwordSlashTexture == 0 && state.attack > .035f && state.attack < .25f)
             {
                 const float progress = 1.0f - state.attack / .32f;
                 const float angle = std::atan2(state.facing.x + state.facing.z, state.facing.x - state.facing.z);
                 const float swing = angle - Pi * .5f + (progress - .5f) * 1.8f;
                 m_Renderer.DrawEffectRect(foot.x, foot.z + 28, 92, 55, swing,
                                           .76f, .85f, 1, std::sin(progress * Pi) * .48f, 15);
+            }
+            if (m_PixelPlayer)
+            {
+                DrawPixelPlayer(state);
+                drawSwordSlash();
+                break;
             }
             if (state.attack > 0.0f && m_PlayerAttackTexture != 0)
             {
@@ -742,18 +947,25 @@ void WorldRenderer::RenderWorld(const GameState &state)
                 DrawShadow(state.player, 88.0f*(128.0f/192.0f)*.6f, 9.0f);
                 m_Renderer.DrawSprite(m_PlayerAttackTexture, screen.x, screen.z+(.5f-pivotY)*height,
                                       height, height, direction, frame, 8, 8);
+                drawSwordSlash();
                 break;
             }
-            const float fps = state.sprint ? 12.0f : 8.0f;
+            const float fps = state.sprint ? 8.0f : 6.0f;
             const int frame = state.moving ? static_cast<int>(state.time * fps) % 4 : 0;
             if (!DrawAtlasSprite(state.player, m_PlayerTexture != 0 ? m_PlayerTexture : m_HumanTexture, state.facing, frame, 88, HumanPivotY))
                 DrawSprite(state.player, 0, 0, 42, 54);
+            drawSwordSlash();
             break;
         }
         case DrawType::NoticeBoard:
         {
             const Vec2 screen = ToScreen(item.position);
             DrawShadow(item.position, 42, 9);
+            if (m_NoticeBoardTexture != 0)
+            {
+                DrawPixelSprite(item.position, m_NoticeBoardTexture, 110, 110, .082f);
+                break;
+            }
             if (m_PropsTexture != 0)
             {
                 m_Renderer.DrawSprite(m_PropsTexture, screen.x, screen.z + (.5f - .21132453f) * 110,

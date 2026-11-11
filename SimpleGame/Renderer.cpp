@@ -190,8 +190,8 @@ bool Renderer::CreateRenderTarget()
     glGenTextures(1, &m_FrameColorTexture);
     glBindTexture(GL_TEXTURE_2D, m_FrameColorTexture);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, m_WindowSizeX, m_WindowSizeY, 0, GL_RGBA, GL_FLOAT, nullptr);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_FrameColorTexture, 0);
@@ -387,7 +387,8 @@ void Renderer::DrawEffectRect(float x, float y, float sizeX, float sizeY, float 
 }
 
 void Renderer::DrawSprite(GLuint texture, float x, float y, float sizeX, float sizeY, int column, int row, int columns,
-                          int rows, float alpha, float r, float g, float b, float sway, float swayPivot)
+                            int rows, float alpha, float r, float g, float b, float sway, float swayPivot, float rotation,
+                            float sourceWidth, float sourceHeight, float alphaCutoff)
 {
     if (texture == 0)
     {
@@ -400,14 +401,17 @@ void Renderer::DrawSprite(GLuint texture, float x, float y, float sizeX, float s
     const float normalizedSizeY = sizeY * m_DrawScale / static_cast<float>(m_WindowSizeY);
     const float u0 = static_cast<float>(column) / columns;
     const float v0 = static_cast<float>(row) / rows;
-    const float u1 = static_cast<float>(column + 1) / columns;
-    const float v1 = static_cast<float>(row + 1) / rows;
+    const float u1 = (column + sourceWidth) / columns;
+    const float v1 = (row + sourceHeight) / rows;
 
     glUseProgram(m_SpriteShader);
     glUniform1i(glGetUniformLocation(m_SpriteShader, "u_WorldLighting"), m_WorldLighting);
     glUniform3fv(glGetUniformLocation(m_SpriteShader, "u_LocalLight"), 1, m_LocalLight);
     glUniform1f(glGetUniformLocation(m_SpriteShader, "u_Sway"), sway);
     glUniform1f(glGetUniformLocation(m_SpriteShader, "u_SwayPivot"), swayPivot);
+    glUniform1f(glGetUniformLocation(m_SpriteShader, "u_Rotation"), rotation);
+    glUniform1f(glGetUniformLocation(m_SpriteShader, "u_Aspect"),
+                static_cast<float>(m_WindowSizeX) / static_cast<float>(m_WindowSizeY));
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, texture);
     glUniform1i(glGetUniformLocation(m_SpriteShader, "u_Texture"), 0);
@@ -415,6 +419,7 @@ void Renderer::DrawSprite(GLuint texture, float x, float y, float sizeX, float s
                 normalizedSizeY);
     glUniform4f(glGetUniformLocation(m_SpriteShader, "u_UvRect"), u0, v0, u1, v1);
     glUniform1f(glGetUniformLocation(m_SpriteShader, "u_Alpha"), alpha);
+    glUniform1f(glGetUniformLocation(m_SpriteShader, "u_AlphaCutoff"), alphaCutoff);
     glUniform3f(glGetUniformLocation(m_SpriteShader, "u_Tint"), r, g, b);
 
     const GLint positionAttribute = glGetAttribLocation(m_SpriteShader, "a_Position");

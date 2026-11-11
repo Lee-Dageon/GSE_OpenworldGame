@@ -6,6 +6,7 @@ uniform vec4 u_Color;
 uniform float u_Time;
 uniform int u_EffectType;
 uniform sampler2D u_TerrainTexture;
+uniform bool u_PixelTerrain;
 uniform int u_TerrainColumn;
 uniform vec2 u_TerrainTileSize;
 uniform vec2 u_RoadHouses[32];
@@ -164,12 +165,20 @@ void main()
 		// Recover world X/Z from cached positions; texture phase stays fixed as the camera moves.
 		vec2 world = vec2(v_LocalPosition.x / u_TerrainTileSize.x + v_LocalPosition.y / u_TerrainTileSize.y,
 			v_LocalPosition.y / u_TerrainTileSize.y - v_LocalPosition.x / u_TerrainTileSize.x);
+		if (u_PixelTerrain)
+			world = (floor(world * 16.0) + .5) / 16.0;
 		// Sample the tile's interior color, then add world-space grain instead of warping its baked edges.
 		vec2 tileUV = vec2(.5);
+		// Mirrored repeat joins even imperfect generated tile edges without a hard seam.
+		if (u_PixelTerrain)
+			tileUV = (floor((1.0 - abs(fract(world / 8.0) * 2.0 - 1.0)) * 64.0) + .5) / 64.0;
 		vec4 grass = texture(u_TerrainTexture, vec2(tileUV.x / 3.0, tileUV.y));
 		vec4 dirt = texture(u_TerrainTexture, vec2((1.0 + tileUV.x) / 3.0, tileUV.y));
-		grass.rgb = mix(grass.rgb, vec3(.23, .32, .16), .75);
-		dirt.rgb = mix(dirt.rgb, vec3(.37, .30, .21), .75);
+		if (!u_PixelTerrain)
+		{
+			grass.rgb = mix(grass.rgb, vec3(.23, .32, .16), .75);
+			dirt.rgb = mix(dirt.rgb, vec3(.37, .30, .21), .75);
+		}
 		vec2 warp = vec2(Noise(world * 1.8), Noise(world * 1.8 + 29.0)) - .5;
 		float erosion = (Noise(world * 7.0) - .5) * .12 + (Noise(world * 1.4) - .5) * .35;
 		float distanceToRoad = RoadDistance(world) + erosion;
@@ -187,8 +196,10 @@ void main()
 		float rockField = (1.0-smoothstep(3.0, 10.0, length(world-vec2(12,42))))
 			+ (1.0-smoothstep(3.0, 9.0, length(world-vec2(34,28))));
 		vec3 forestSoil = mix(vec3(.19,.23,.115), vec3(.28,.25,.15), Noise(world*.7));
-		tile.rgb = mix(tile.rgb, forestSoil, forest * (1.0-road) * .55);
+		tile.rgb = mix(tile.rgb, forestSoil, forest * (1.0-road) * (u_PixelTerrain ? .18 : .55));
 		vec3 rockColor = mix(vec3(.28,.29,.26), vec3(.39,.38,.32), Noise(world*2.5));
+		if (u_PixelTerrain)
+			rockColor = texture(u_TerrainTexture, vec2((2.0 + tileUV.x) / 3.0, tileUV.y)).rgb;
 		tile.rgb = mix(tile.rgb, rockColor, clamp(rockField,0.0,1.0) * (1.0-road) * .75);
 		for (int index = 0; index < u_RegionCount; ++index)
 		{
@@ -196,7 +207,7 @@ void main()
 			vec2 edge = min(world-bounds.xy,bounds.zw-world);
 			float coverage = smoothstep(0.0,1.2,min(edge.x,edge.y));
 			vec3 regionColor = u_RegionColors[index] * (.90+.18*grain);
-			tile.rgb = mix(tile.rgb,regionColor,coverage*.85*(1.0-road*.85));
+			tile.rgb = mix(tile.rgb,regionColor,coverage*(u_PixelTerrain ? .25 : .85)*(1.0-road*.85));
 		}
 		float edgeSoil = (1.0 - smoothstep(.05, .65, abs(distanceToRoad))) * Noise(world * 9.0);
 		tile.rgb = mix(tile.rgb, dirt.rgb * .78, edgeSoil * .24);

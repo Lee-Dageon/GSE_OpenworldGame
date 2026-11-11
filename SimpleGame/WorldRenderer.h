@@ -43,8 +43,12 @@ class WorldRenderer
     void DrawSprite(Vec2 position, int column, int row, float width, float height, bool shadow = true) const;
     bool DrawAtlasSprite(Vec2 position, unsigned int texture, Vec2 facing, int frame,
                          float height, float pivotY, bool fallen = false) const;
-    void DrawHouse(Vec2 position, float roofRed, float roofGreen, float roofBlue) const;
+    void DrawHouse(Vec2 position, float roofRed, float roofGreen, float roofBlue, int variant = 0) const;
+    void DrawPixelNpc(const NpcState &npc, int variant) const;
     void DrawTree(Vec2 position, int variant) const;
+    void DrawPixelPlayer(const GameState &state) const;
+    void DrawPixelSprite(Vec2 position, unsigned int texture, float width, float height,
+                         float pivotY, float sway = 0.0f) const;
     void DrawCampfire(Vec2 position) const;
     void DrawHerbPatch(Vec2 position) const;
     void DrawGround() const;
@@ -59,7 +63,17 @@ class WorldRenderer
     unsigned int m_PlayerTexture = 0;
     unsigned int m_PlayerAttackTexture = 0;
     unsigned int m_SwordSlashTexture = 0;
+    unsigned int m_ElderTexture = 0;
+    unsigned int m_NoticeBoardTexture = 0;
+    unsigned int m_RockTexture = 0;
+    unsigned int m_PineTexture = 0;
+    std::array<unsigned int, 2> m_NpcTextures = {}, m_HouseVariants = {};
+    unsigned int m_CampfireTexture = 0;
     float m_TreePivotY = .17475277f;
+    float m_HousePivotY = .30755001f;
+    bool m_PixelPlayer = false;
+    bool m_PixelTree = false;
+    bool m_PixelTerrain = false;
     unsigned int m_TerrainTexture = 0, m_HumanTexture = 0;
     unsigned int m_BoarTexture = 0, m_DeerTexture = 0, m_SheepTexture = 0;
     const GameState *m_State = nullptr;

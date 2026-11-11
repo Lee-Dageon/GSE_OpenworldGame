@@ -122,7 +122,7 @@ npc npc_15 12 23 1 1 15
 npc npc_16 -31 -4 0 1 16
 npc npc_17 31 -6 2 1 17
 npc npc_18 -22 21 3 0 18
-npc npc_19 25 19 0 1 19
+npc npc_19 25 16.8 0 1 19
 animal animal_00 -10 8 -10 8 0 2 0 0.45
 animal animal_01 -14 14 -14 14 2 2 1 0.7
 animal animal_02 20 4 20 4 1 2 2 0.35

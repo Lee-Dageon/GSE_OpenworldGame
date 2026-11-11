@@ -421,6 +421,10 @@ FodyWeavers.xsd
 !**/Resources/**/*.meta
 !**/Assets/**/*.meta
 
+# Game-ready pixel art and its metadata must travel with the renderer changes.
+!/SimpleGame/Assets/PixelArt/**/*.png
+!/SimpleGame/Assets/PixelArt/**/*.json
+
 # Preserve folder structure for ignored folders
 !**/Resources/.gitkeep
 !**/Assets/.gitkeep

@@ -4,6 +4,7 @@
 #include "Inventory.h"
 
 #include <array>
+#include <cstdint>
 #include <string>
 #include <vector>
 
@@ -24,6 +25,10 @@ struct NpcState
     int column;
     int row;
     float phase;
+    Vec2 home = {}, target = {}, facing = {0.0f, -1.0f};
+    float wait = 0.0f;
+    std::uint32_t wanderSeed = 0;
+    bool moving = false;
 };
 struct AnimalState
 {
