@@ -6,6 +6,7 @@
 #include "WorldLayout.h"
 #include "StorySystem.h"
 #include "PixelNpcFrames.h"
+#include "PixelAnimalFrames.h"
 #include "PixelGeneralFrames.h"
 
 #include <algorithm>
@@ -125,6 +126,9 @@ WorldRenderer::WorldRenderer(Renderer &renderer) : m_Renderer(renderer)
     m_BoarTexture = LoadFantasyTexture(m_Renderer, L"boar_atlas.png");
     m_DeerTexture = LoadFantasyTexture(m_Renderer, L"deer_atlas.png");
     m_SheepTexture = LoadFantasyTexture(m_Renderer, L"sheep_atlas.png");
+    m_PixelAnimalTextures[0] = m_Renderer.LoadTexture(L"./Assets/PixelArt/Animals/deer-walk-v1.png");
+    m_PixelAnimalTextures[1] = m_Renderer.LoadTexture(L"./Assets/PixelArt/Animals/boar-walk-v1.png");
+    m_PixelAnimalTextures[2] = m_Renderer.LoadTexture(L"./Assets/PixelArt/Animals/sheep-walk-v1.png");
     m_HouseTexture = m_Renderer.LoadTexture(L"./Assets/PixelArt/World/house-v1.png");
     const bool pixelHouse = m_HouseTexture != 0;
     if (pixelHouse)
@@ -171,7 +175,8 @@ WorldRenderer::WorldRenderer(Renderer &renderer) : m_Renderer(renderer)
                                  m_PixelTerrain ? m_TerrainTexture : 0u, m_PixelPlayer ? m_PlayerTexture : 0u,
                                  m_ElderTexture, m_NoticeBoardTexture, m_RockTexture, m_PineTexture,
                                  m_NpcTextures[0], m_NpcTextures[1], m_HouseVariants[0], m_HouseVariants[1],
-                                 m_CampfireTexture, m_GeneralWalkTexture, m_GeneralRunTexture, m_GeneralAttackTexture})
+                                 m_CampfireTexture, m_GeneralWalkTexture, m_GeneralRunTexture, m_GeneralAttackTexture,
+                                 m_PixelAnimalTextures[0], m_PixelAnimalTextures[1], m_PixelAnimalTextures[2]})
         if (texture != 0)
         {
             glBindTexture(GL_TEXTURE_2D, texture);
@@ -183,6 +188,9 @@ WorldRenderer::WorldRenderer(Renderer &renderer) : m_Renderer(renderer)
 
 WorldRenderer::~WorldRenderer()
 {
+    for (unsigned int texture : m_PixelAnimalTextures)
+        if (texture != 0)
+            glDeleteTextures(1, &texture);
     for (unsigned int texture : {m_GeneralWalkTexture, m_GeneralRunTexture, m_GeneralAttackTexture})
         if (texture != 0)
             glDeleteTextures(1, &texture);
@@ -410,6 +418,27 @@ void WorldRenderer::DrawPixelPlayer(const GameState &state) const
                           width, height, region[0], region[1], 1448, 1086, 1, 1, 1, 1,
                           pulse * .025f, pivotFromBottom, 0, static_cast<float>(region[2]),
                           static_cast<float>(region[3]));
+}
+
+bool WorldRenderer::DrawPixelAnimal(Vec2 position, int species, Vec2 facing, int frame,
+                                    float height, bool fallen) const
+{
+    const unsigned int texture = m_PixelAnimalTextures[species];
+    if (texture == 0)
+        return false;
+    const float dx = facing.x - facing.z, dy = (facing.x + facing.z) * .5f;
+    const int direction = std::abs(dx) > std::abs(dy) ? (dx < 0 ? 1 : 2) : (dy < 0 ? 0 : 3);
+    const Vec2 screen = ToScreen(position);
+    const float displayHeight = fallen ? height * .45f : height;
+    const float tint = fallen ? .6f : 1.0f;
+    DrawShadow(position, height * .55f, fallen ? 12.0f : 9.0f);
+    const int pose = fallen ? 1 : frame % 4;
+    const auto pivot = PixelAnimalFrames::Pivots[species][pose][direction];
+    m_Renderer.DrawSprite(texture, screen.x + (.5f - pivot.x) * height,
+                          screen.z + (pivot.y - .5f) * displayHeight,
+                          height, displayHeight, direction, pose, 4, 4,
+                          1, tint, tint, tint, 0, 0, 0, 1, 1, .5f);
+    return true;
 }
 
 void WorldRenderer::DrawPixelNpc(const NpcState &npc, int variant) const
@@ -928,7 +957,9 @@ void WorldRenderer::RenderWorld(const GameState &state)
                                   -std::sin(animal.phase * .7f) * 1.8f * .7f};
             const unsigned int texture = animal.column == 0 ? m_DeerTexture : (animal.column == 1 ? m_BoarTexture : m_SheepTexture);
             const int frame = static_cast<int>(state.time * 8.0f + animal.phase) % 4;
-            if (!DrawAtlasSprite(animal.position, texture, facing, frame, animal.column == 0 ? 128.0f : 110.0f, AnimalPivotY))
+            if (!DrawPixelAnimal(animal.position, animal.column == 0 ? 0 : (animal.column == 1 ? 1 : 2), facing, frame,
+                                 animal.column == 0 ? 88.0f : (animal.column == 1 ? 110.0f : 72.0f)) &&
+                !DrawAtlasSprite(animal.position, texture, facing, frame, animal.column == 0 ? 128.0f : 110.0f, AnimalPivotY))
                 DrawSprite(animal.position, animal.column, animal.row, 105, 82);
             break;
         }
@@ -943,7 +974,8 @@ void WorldRenderer::RenderWorld(const GameState &state)
                                               const bool walking = (state.quest == QuestStage::Hunt || StorySystem::IsHunting(state)) &&
                                                   distance > state.monster.definition.attackRange && distance < state.monster.definition.chaseRange;
                                               const int frame = walking ? static_cast<int>(state.time * 8.0f) % 4 : 0;
-                                              if (!DrawAtlasSprite(p, m_BoarTexture, facing, frame, state.monster.definition.spriteHeight, AnimalPivotY, state.monster.health <= 0))
+                                              if (!DrawPixelAnimal(p, 1, facing, frame, state.monster.definition.spriteHeight, state.monster.health <= 0) &&
+                                                  !DrawAtlasSprite(p, m_BoarTexture, facing, frame, state.monster.definition.spriteHeight, AnimalPivotY, state.monster.health <= 0))
                                                   DrawSprite(p, c, r, w*(state.monster.definition.spriteHeight/125), h*(state.monster.definition.spriteHeight/125), s);
                                           },
                                           state.width, state.height, state.time, Pi};

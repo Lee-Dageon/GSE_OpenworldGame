@@ -1,86 +1,297 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
   <ItemGroup>
-    <Filter Include="소스 파일">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    <Filter Include="Documents">
+      <UniqueIdentifier>{F1D82E1C-A8FB-5419-92C6-4B2DE22A63E1}</UniqueIdentifier>
     </Filter>
     <Filter Include="헤더 파일">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+      <UniqueIdentifier>{A8FAF5CE-ED4E-5DCE-A208-29E8B531DE99}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="헤더 파일\Content and World">
+      <UniqueIdentifier>{CBB0116C-B0C8-5673-8E73-4F63186920FD}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="헤더 파일\Game State">
+      <UniqueIdentifier>{D2921363-BD03-5BF9-97ED-FB631CB2197A}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="헤더 파일\Gameplay">
+      <UniqueIdentifier>{C9F2AF0B-EDBA-5C7D-9A01-AD5C475076E8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="헤더 파일\Input and Player">
+      <UniqueIdentifier>{BB18CE84-1558-55CE-AE56-D4D963F381C0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="헤더 파일\Rendering">
+      <UniqueIdentifier>{473F87CB-6F5E-5831-AF34-56A16D7F4B18}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="헤더 파일\Scene">
+      <UniqueIdentifier>{98C8E317-6E2C-58B6-B55A-CC30468A1138}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="헤더 파일\Startup">
+      <UniqueIdentifier>{92F252C7-67A8-59E2-BE31-C6E0DF7C30FC}</UniqueIdentifier>
     </Filter>
     <Filter Include="리소스 파일">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+      <UniqueIdentifier>{0B6A01AF-9842-5EB0-BF5F-8720D56E1913}</UniqueIdentifier>
     </Filter>
-    <Filter Include="소스 파일\Shaders">
-      <UniqueIdentifier>{aa86e47f-445f-4440-9a76-173363b46c4e}</UniqueIdentifier>
+    <Filter Include="리소스 파일\Game Data">
+      <UniqueIdentifier>{9EB702DE-ACA6-543F-9CF2-256E0C1D2595}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="리소스 파일\Images">
+      <UniqueIdentifier>{DE2738F5-346E-561B-B2B1-2FC84242C87A}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="리소스 파일\Shaders">
+      <UniqueIdentifier>{77693039-0A95-5E5B-8D17-763B7D0C713A}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일">
+      <UniqueIdentifier>{C81052BC-23FB-5A4F-973C-03B67784C4DB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\C">
+      <UniqueIdentifier>{92B81CB9-1552-58F8-BD46-ACFDDA04B961}</UniqueIdentifier>
+      <Extensions>c</Extensions>
+    </Filter>
+    <Filter Include="소스 파일\CPP">
+      <UniqueIdentifier>{AE23ACB6-F221-59AA-9170-CE2F52492FE9}</UniqueIdentifier>
+      <Extensions>cpp;cc;cxx</Extensions>
+    </Filter>
+    <Filter Include="소스 파일\CPP\Content and World">
+      <UniqueIdentifier>{380ED265-9671-5A74-9ADA-56CF4DEFE2A8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\CPP\Game State">
+      <UniqueIdentifier>{8DB6B2FA-7736-5A77-875D-E487D7F29344}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\CPP\Gameplay">
+      <UniqueIdentifier>{1EB1E257-748B-554D-AE5D-1A194570DE7E}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\CPP\Input and Player">
+      <UniqueIdentifier>{19A947AF-5E18-53B1-8803-5645463952FB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\CPP\Rendering">
+      <UniqueIdentifier>{74F693F4-DE2F-5E64-924A-D92389237CD8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\CPP\Scene">
+      <UniqueIdentifier>{E91E0E3F-41C3-5B8E-AC96-8FDAE3707C92}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\CPP\Startup">
+      <UniqueIdentifier>{5D08B09F-F03F-5865-AB9F-5364A008CDCC}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\C\GLEW">
+      <UniqueIdentifier>{CF0AF88A-0C9C-5978-A0EB-2DBEF5427213}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\C\GLFW">
+      <UniqueIdentifier>{6DBFD2CF-F716-5146-BA89-864C647695D1}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="ReadMe.txt" />
+    <Text Include="ReadMe.txt">
+      <Filter>Documents</Filter>
+    </Text>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Actor.h">
-      <Filter>헤더 파일</Filter>
+      <Filter>헤더 파일\Scene</Filter>
     </ClInclude>
-    <ClInclude Include="stdafx.h">
-      <Filter>헤더 파일</Filter>
+    <ClInclude Include="GlfwSetup.h">
+      <Filter>헤더 파일\Startup</Filter>
     </ClInclude>
-    <ClInclude Include="targetver.h">
-      <Filter>헤더 파일</Filter>
+    <ClInclude Include="GameState.h">
+      <Filter>헤더 파일\Game State</Filter>
     </ClInclude>
-    <ClInclude Include="Renderer.h">
-      <Filter>헤더 파일</Filter>
+    <ClInclude Include="GameContent.h">
+      <Filter>헤더 파일\Content and World</Filter>
     </ClInclude>
-    <ClInclude Include="Monster.h">
-      <Filter>헤더 파일</Filter>
+    <ClInclude Include="StorySystem.h">
+      <Filter>헤더 파일\Gameplay</Filter>
+    </ClInclude>
+    <ClInclude Include="Inventory.h">
+      <Filter>헤더 파일\Gameplay</Filter>
+    </ClInclude>
+    <ClInclude Include="CraftingSystem.h">
+      <Filter>헤더 파일\Gameplay</Filter>
+    </ClInclude>
+    <ClInclude Include="GameInput.h">
+      <Filter>헤더 파일\Input and Player</Filter>
+    </ClInclude>
+    <ClInclude Include="GameManager.h">
+      <Filter>헤더 파일\Game State</Filter>
+    </ClInclude>
+    <ClInclude Include="PlayerController.h">
+      <Filter>헤더 파일\Input and Player</Filter>
+    </ClInclude>
+    <ClInclude Include="QuestSystem.h">
+      <Filter>헤더 파일\Gameplay</Filter>
+    </ClInclude>
+    <ClInclude Include="WorldRenderer.h">
+      <Filter>헤더 파일\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="WorldLayout.h">
+      <Filter>헤더 파일\Content and World</Filter>
+    </ClInclude>
+    <ClInclude Include="GameUI.h">
+      <Filter>헤더 파일\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="ModelCache.h">
-      <Filter>헤더 파일</Filter>
+      <Filter>헤더 파일\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="Monster.h">
+      <Filter>헤더 파일\Gameplay</Filter>
+    </ClInclude>
+    <ClInclude Include="Renderer.h">
+      <Filter>헤더 파일\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="stdafx.h">
+      <Filter>헤더 파일\Startup</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h">
+      <Filter>헤더 파일\Startup</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Actor.cpp">
-      <Filter>소스 파일</Filter>
+      <Filter>소스 파일\CPP\Scene</Filter>
     </ClCompile>
-    <ClCompile Include="stdafx.cpp">
-      <Filter>소스 파일</Filter>
+    <ClCompile Include="GameState.cpp">
+      <Filter>소스 파일\CPP\Game State</Filter>
     </ClCompile>
-    <ClCompile Include="SimpleGame.cpp">
-      <Filter>소스 파일</Filter>
+    <ClCompile Include="GameContent.cpp">
+      <Filter>소스 파일\CPP\Content and World</Filter>
     </ClCompile>
-    <ClCompile Include="Renderer.cpp">
-      <Filter>소스 파일</Filter>
+    <ClCompile Include="StorySystem.cpp">
+      <Filter>소스 파일\CPP\Gameplay</Filter>
     </ClCompile>
-    <ClCompile Include="Monster.cpp">
-      <Filter>소스 파일</Filter>
+    <ClCompile Include="CraftingSystem.cpp">
+      <Filter>소스 파일\CPP\Gameplay</Filter>
+    </ClCompile>
+    <ClCompile Include="GameInput.cpp">
+      <Filter>소스 파일\CPP\Input and Player</Filter>
+    </ClCompile>
+    <ClCompile Include="GameManager.cpp">
+      <Filter>소스 파일\CPP\Game State</Filter>
+    </ClCompile>
+    <ClCompile Include="PlayerController.cpp">
+      <Filter>소스 파일\CPP\Input and Player</Filter>
+    </ClCompile>
+    <ClCompile Include="QuestSystem.cpp">
+      <Filter>소스 파일\CPP\Gameplay</Filter>
+    </ClCompile>
+    <ClCompile Include="WorldRenderer.cpp">
+      <Filter>소스 파일\CPP\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="GameUI.cpp">
+      <Filter>소스 파일\CPP\Rendering</Filter>
     </ClCompile>
     <ClCompile Include="ModelCache.cpp">
-      <Filter>소스 파일</Filter>
+      <Filter>소스 파일\CPP\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="Monster.cpp">
+      <Filter>소스 파일\CPP\Gameplay</Filter>
+    </ClCompile>
+    <ClCompile Include="Renderer.cpp">
+      <Filter>소스 파일\CPP\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="SimpleGame.cpp">
+      <Filter>소스 파일\CPP\Startup</Filter>
+    </ClCompile>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>소스 파일\CPP\Startup</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\glew\src\glew.c">
+      <Filter>소스 파일\C\GLEW</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\glfw\src\context.c">
+      <Filter>소스 파일\C\GLFW</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\glfw\src\init.c">
+      <Filter>소스 파일\C\GLFW</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\glfw\src\input.c">
+      <Filter>소스 파일\C\GLFW</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\glfw\src\monitor.c">
+      <Filter>소스 파일\C\GLFW</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\glfw\src\platform.c">
+      <Filter>소스 파일\C\GLFW</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\glfw\src\vulkan.c">
+      <Filter>소스 파일\C\GLFW</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\glfw\src\window.c">
+      <Filter>소스 파일\C\GLFW</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\glfw\src\egl_context.c">
+      <Filter>소스 파일\C\GLFW</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\glfw\src\osmesa_context.c">
+      <Filter>소스 파일\C\GLFW</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\glfw\src\null_init.c">
+      <Filter>소스 파일\C\GLFW</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\glfw\src\null_monitor.c">
+      <Filter>소스 파일\C\GLFW</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\glfw\src\null_window.c">
+      <Filter>소스 파일\C\GLFW</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\glfw\src\null_joystick.c">
+      <Filter>소스 파일\C\GLFW</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\glfw\src\win32_module.c">
+      <Filter>소스 파일\C\GLFW</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\glfw\src\win32_time.c">
+      <Filter>소스 파일\C\GLFW</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\glfw\src\win32_thread.c">
+      <Filter>소스 파일\C\GLFW</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\glfw\src\win32_init.c">
+      <Filter>소스 파일\C\GLFW</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\glfw\src\win32_joystick.c">
+      <Filter>소스 파일\C\GLFW</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\glfw\src\win32_monitor.c">
+      <Filter>소스 파일\C\GLFW</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\glfw\src\win32_window.c">
+      <Filter>소스 파일\C\GLFW</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\glfw\src\wgl_context.c">
+      <Filter>소스 파일\C\GLFW</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\frontier_characters.png">
-      <Filter>리소스 파일</Filter>
+      <Filter>리소스 파일\Images</Filter>
     </None>
     <None Include="Shaders\PostProcess.fs">
-      <Filter>소스 파일\Shaders</Filter>
+      <Filter>리소스 파일\Shaders</Filter>
+    </None>
+    <None Include="Data\map.gse">
+      <Filter>리소스 파일\Game Data</Filter>
+    </None>
+    <None Include="Data\monsters.gse">
+      <Filter>리소스 파일\Game Data</Filter>
+    </None>
+    <None Include="Data\quests.gse">
+      <Filter>리소스 파일\Game Data</Filter>
+    </None>
+    <None Include="Data\story.gse">
+      <Filter>리소스 파일\Game Data</Filter>
     </None>
     <None Include="Shaders\PostProcess.vs">
-      <Filter>소스 파일\Shaders</Filter>
+      <Filter>리소스 파일\Shaders</Filter>
     </None>
     <None Include="Shaders\Sprite.fs">
-      <Filter>소스 파일\Shaders</Filter>
+      <Filter>리소스 파일\Shaders</Filter>
     </None>
     <None Include="Shaders\Sprite.vs">
-      <Filter>소스 파일\Shaders</Filter>
+      <Filter>리소스 파일\Shaders</Filter>
     </None>
     <None Include="Shaders\SolidRect.fs">
-      <Filter>소스 파일\Shaders</Filter>
+      <Filter>리소스 파일\Shaders</Filter>
     </None>
     <None Include="Shaders\SolidRect.vs">
-      <Filter>소스 파일\Shaders</Filter>
+      <Filter>리소스 파일\Shaders</Filter>
     </None>
   </ItemGroup>
 </Project>
