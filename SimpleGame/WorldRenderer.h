@@ -58,6 +58,7 @@ class WorldRenderer
     unsigned int m_SceneryTexture = 0;
     unsigned int m_PlayerTexture = 0;
     unsigned int m_PlayerAttackTexture = 0;
+    unsigned int m_SwordSlashTexture = 0;
     float m_TreePivotY = .17475277f;
     unsigned int m_TerrainTexture = 0, m_HumanTexture = 0;
     unsigned int m_BoarTexture = 0, m_DeerTexture = 0, m_SheepTexture = 0;
