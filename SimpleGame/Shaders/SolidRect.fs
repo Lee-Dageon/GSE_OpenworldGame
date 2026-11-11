@@ -8,13 +8,18 @@ uniform int u_EffectType;
 uniform sampler2D u_TerrainTexture;
 uniform int u_TerrainColumn;
 uniform vec2 u_TerrainTileSize;
-uniform vec2 u_RoadHouses[8];
-uniform vec2 u_RoadBends[8];
-uniform float u_RoadJunctions[8];
+uniform vec2 u_RoadHouses[32];
+uniform vec2 u_RoadBends[32];
+uniform float u_RoadJunctions[32];
+uniform int u_RoadHouseCount;
 uniform vec2 u_RoadPlaza;
 uniform bool u_WorldLighting;
 uniform vec3 u_LocalLight;
-uniform vec2 u_Campfires[10];
+uniform vec2 u_Campfires[32];
+uniform int u_CampfireCount;
+uniform int u_RegionCount;
+uniform vec4 u_RegionBounds[16];
+uniform vec3 u_RegionColors[16];
 in vec2 v_LocalPosition;
 
 float Hash(vec2 value)
@@ -34,14 +39,14 @@ float Noise(vec2 position)
 float LineDistance(vec2 p, vec2 a, vec2 b)
 {
 	vec2 segment = b - a;
-	return length(p - a - segment * clamp(dot(p-a, segment) / dot(segment, segment), 0.0, 1.0));
+	return length(p - a - segment * clamp(dot(p-a, segment) / max(dot(segment, segment), .0001), 0.0, 1.0));
 }
 
 float RoadDistance(vec2 p)
 {
 	float roadZ=clamp(p.y,-55.0,65.0);
 	float distanceToRoad=length(p-vec2(3.5*sin(roadZ*.065),roadZ))-(1.55+.22*cos(roadZ*.11));
-	for (int index=0;index<8;++index)
+	for (int index=0;index<u_RoadHouseCount;++index)
 	{
 		float junction=u_RoadJunctions[index];
 		vec2 start=vec2(3.5*sin(junction*.065),junction);
@@ -185,12 +190,20 @@ void main()
 		tile.rgb = mix(tile.rgb, forestSoil, forest * (1.0-road) * .55);
 		vec3 rockColor = mix(vec3(.28,.29,.26), vec3(.39,.38,.32), Noise(world*2.5));
 		tile.rgb = mix(tile.rgb, rockColor, clamp(rockField,0.0,1.0) * (1.0-road) * .75);
+		for (int index = 0; index < u_RegionCount; ++index)
+		{
+			vec4 bounds = u_RegionBounds[index];
+			vec2 edge = min(world-bounds.xy,bounds.zw-world);
+			float coverage = smoothstep(0.0,1.2,min(edge.x,edge.y));
+			vec3 regionColor = u_RegionColors[index] * (.90+.18*grain);
+			tile.rgb = mix(tile.rgb,regionColor,coverage*.85*(1.0-road*.85));
+		}
 		float edgeSoil = (1.0 - smoothstep(.05, .65, abs(distanceToRoad))) * Noise(world * 9.0);
 		tile.rgb = mix(tile.rgb, dirt.rgb * .78, edgeSoil * .24);
 		tile.rgb *= .93 + .12 * Noise(world * 2.2 + warp);
 		color.rgb = mix(color.rgb, tile.rgb, tile.a * .9);
 		vec3 fireLight = vec3(0.0);
-		for (int index = 0; index < 10; ++index)
+		for (int index = 0; index < u_CampfireCount; ++index)
 		{
 			float distanceToFire = length(world - u_Campfires[index]);
 			float falloff = pow(max(0.0, 1.0 - distanceToFire / 4.5), 2.0);

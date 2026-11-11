@@ -1,0 +1,24 @@
+gse_story 1 greenwake_main
+intro "미라 장로: 첫 사냥은 잘 해냈어요. 이제 남쪽 길목에서 마을을 위협하는 짐승의 흔적을 찾아주세요."
+ending "미라 장로: 짐승들이 같은 방향을 피해 왔고 유적의 장치도 움직이고 있어요. 다음 조사는 유적 내부입니다."
+chapter unfamiliar "1장: 낯선 땅"
+chapter displaced "2장: 떠나온 몬스터들"
+region village "그린웨이크" -32 -28 32 28 .23 .32 .16
+region south_border "남쪽 길목" 5 -18 20 -4 .30 .29 .16
+region north_forest "북부 숲" -20 28 24 62 .17 .24 .11
+region sand_outpost "모래 폐허" 55 -8 80 20 .51 .42 .25
+region ancient_edge "유적 외곽" 6 34 18 48 .29 .30 .25
+step south_travel unfamiliar travel 8 -7 1.5 none "남쪽 길목으로 이동하기" "목표 표시를 따라 남쪽 길목으로 이동하세요." "울타리 바깥에 낯선 발자국이 이어집니다."
+step south_tracks unfamiliar investigate 12 -10 1.3 none "남쪽 울타리 주변의 흔적 조사하기" "E  남쪽 길목의 흔적 조사" "큰 발자국은 숲에서 마을 쪽으로 향합니다. 먹이를 찾으러 내려온 것 같습니다."
+step border_hunt unfamiliar hunt 15 -8 1.5 rampaging_boar "마을을 위협하는 거대 멧돼지 사냥하기" "좌클릭 공격 · 공백 키 회피 · Q 회복" "거대 멧돼지를 쓰러뜨렸습니다. 몸에 남은 흔적을 확인하세요."
+step border_loot unfamiliar collect 15 -8 1.5 none "거대 멧돼지의 재료와 흔적 수집하기" "E  사냥 재료와 흔적 수집" "가죽에는 오래 굶주린 흔적이 있습니다. 짐승이 원래 서식지를 떠난 이유를 알아야 합니다."
+step border_report unfamiliar report 0 1.4 1.5 none "미라 장로에게 서식지 이탈 보고하기" "E  첫 번째 조사 보고" "미라 장로: 단순한 습격이 아니군요. 모은 가죽으로 방어구를 만들고 북쪽 숲을 조사해 주세요."
+step first_armor unfamiliar craft_armor 0 1.4 1.8 none "야영지에서 가죽 방어구 제작하기" "I  가방 · R  가죽 방어구 제작" "첫 방어구를 갖췄습니다. 북부 숲에 남은 이동 흔적을 추적하세요."
+step forest_travel displaced travel 0 31 1.8 none "북부 숲의 옛길 입구로 이동하기" "목표 표시를 따라 북부 숲으로 이동하세요." "마을과 떨어진 숲에도 같은 방향으로 이동한 짐승의 흔적이 있습니다."
+step forest_tracks displaced investigate 9.5 30 1.3 none "버려진 숲 야영지의 흔적 조사하기" "E  숲 야영지 조사" "짐승뿐 아니라 조사대도 자리를 떠났습니다. 기록에는 동쪽 모래 지대가 표시되어 있습니다."
+step sand_travel displaced travel 60 5 1.8 none "동쪽 모래 지대의 폐허로 이동하기" "목표 표시를 따라 모래 폐허로 이동하세요." "풀밭이 끝나고 모래에 묻힌 건물 흔적이 나타납니다."
+step sand_records displaced investigate 65 10 1.3 none "모래 폐허의 버려진 기록 조사하기" "E  모래 폐허의 기록 조사" "숲과 모래 지대의 짐승들이 모두 북쪽 유적을 피해 이동했습니다. 숲에 남은 난폭한 개체를 추적하세요."
+step forest_hunt displaced hunt 10 38 1.5 displaced_boar "서식지를 잃은 난폭한 멧돼지 사냥하기" "좌클릭 공격 · 공백 키 회피 · Q 회복" "난폭한 개체를 쓰러뜨렸습니다. 몸에 묻은 유적의 흔적을 수집하세요."
+step forest_loot displaced collect 10 38 1.5 none "난폭한 멧돼지의 재료와 유적 흔적 수집하기" "E  재료와 유적 흔적 수집" "가죽에 오래된 돌가루가 묻어 있습니다. 가까운 유적 외곽을 조사할 단서입니다."
+step ruin_signal displaced investigate 10 42 1.3 none "유적 외곽의 이상 징후 조사하기" "E  유적 외곽 조사" "멈춰 있어야 할 장치에서 진동이 느껴집니다. 짐승들의 이동과 관련이 있어 보입니다."
+step second_report displaced report 0 1.4 1.5 none "미라 장로에게 두 지역의 조사 결과 보고하기" "E  두 번째 조사 보고" "미라 장로: 서로 다른 지역에서 같은 흔적이 나왔군요. 이제 유적이 깨어난 원인을 찾아야 합니다."

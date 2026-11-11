@@ -1,9 +1,10 @@
 #include "stdafx.h"
 #include "WorldRenderer.h"
 
-#include "Dependencies\\glew.h"
+#include <GL/glew.h>
 #include "Renderer.h"
 #include "WorldLayout.h"
+#include "StorySystem.h"
 
 #include <algorithm>
 #include <array>
@@ -22,20 +23,14 @@ constexpr int GroundChunkDots = 48;
 constexpr float GroundChunkSize = GroundDotSize * GroundChunkDots;
 constexpr float HumanPivotY = .19070485f;
 constexpr float AnimalPivotY = .2720983f;
-const auto &VillageHouses = WorldLayout::Houses;
-constexpr Vec2 NoticeBoardPosition = {2, 1.5f};
-const std::array<float, 8> RoadJunctions = {{-1, 10, 15, -13, -22, -29, 26, 33}};
-const std::array<Vec2, 8> RoadBends = {{{-2, -1}, {4, 5}, {-4, 18}, {6, -17},
-                                     {-16, -21}, {16, -26}, {-14, 28}, {17, 32}}};
-const std::array<Vec2, 10> Campfires = {
-    {{-3, 0}, {8, 2}, {-9, -8}, {12, -12}, {-13, 12}, {16, 12}, {-24, 0}, {25, 1}, {0, 24}, {1, -25}}};
+const GameContent::MapDefinition &Map() { return GameContent::Get().map; }
 
 void ApplyLocalLight(Renderer &renderer, Vec2 position, float time)
 {
     float strength = 0;
-    for (size_t index = 0; index < Campfires.size(); ++index)
+    for (size_t index = 0; index < Map().campfires.size(); ++index)
     {
-        const float x = position.x - Campfires[index].x, z = position.z - Campfires[index].z;
+        const float x = position.x - Map().campfires[index].position.x, z = position.z - Map().campfires[index].position.z;
         const float falloff = std::max(0.0f, 1.0f - std::sqrt(x*x + z*z) / 4.5f);
         strength += falloff * falloff * (.94f + .06f * std::sin(time * 6 + static_cast<float>(index)));
     }
@@ -73,7 +68,7 @@ float DistanceToSegment(Vec2 position, Vec2 start, Vec2 end)
 {
     const float dx = end.x - start.x;
     const float dz = end.z - start.z;
-    const float lengthSquared = dx * dx + dz * dz;
+    const float lengthSquared = std::max(.0001f, dx * dx + dz * dz);
     const float progress = std::max(0.0f, std::min(1.0f, ((position.x - start.x) * dx + (position.z - start.z) * dz) /
                                                         lengthSquared));
     return Distance(position, {start.x + dx * progress, start.z + dz * progress});
@@ -87,18 +82,18 @@ float RoadDistance(Vec2 position)
     float distance = Distance(position, {mainRoadX(roadZ), roadZ}) - mainWidth;
 
     // Each lane leaves the main road at a different point and narrows toward its front door.
-    for (size_t index = 0; index < VillageHouses.size(); ++index)
+    for (const auto &house : Map().houses)
     {
-        const Vec2 start = {mainRoadX(RoadJunctions[index]), RoadJunctions[index]};
-        const Vec2 door = {VillageHouses[index].x + .78f, VillageHouses[index].z - .28f};
-        const float taper = std::max(0.0f, std::min(1.0f, Distance(position, door) / Distance(start, door)));
+        const Vec2 start = {mainRoadX(house.junction), house.junction};
+        const Vec2 door = {house.position.x + .78f, house.position.z - .28f};
+        const float taper = std::max(0.0f, std::min(1.0f, Distance(position, door) / std::max(.01f, Distance(start, door))));
         const float width = .48f + .44f * taper;
-        distance = std::min(distance, DistanceToSegment(position, start, RoadBends[index]) - width);
-        distance = std::min(distance, DistanceToSegment(position, RoadBends[index], door) - width);
+        distance = std::min(distance, DistanceToSegment(position, start, house.roadBend) - width);
+        distance = std::min(distance, DistanceToSegment(position, house.roadBend, door) - width);
     }
 
-    const float plazaX = (position.x - NoticeBoardPosition.x) / 3.4f;
-    const float plazaZ = (position.z - (NoticeBoardPosition.z - 2.0f)) / 2.6f;
+    const float plazaX = (position.x - Map().noticeBoard.x) / 3.4f;
+    const float plazaZ = (position.z - (Map().noticeBoard.z - 2.0f)) / 2.6f;
     const float plaza = (std::sqrt(plazaX * plazaX + plazaZ * plazaZ) - 1.0f) * 2.6f;
     return std::min(distance, plaza);
 }
@@ -490,11 +485,39 @@ void WorldRenderer::DrawGround() const
     glBindTexture(GL_TEXTURE_2D, m_TerrainTexture);
     glUniform1i(glGetUniformLocation(program, "u_TerrainTexture"), 0);
     glUniform2f(glGetUniformLocation(program, "u_TerrainTileSize"), TileWidth, TileHeight);
-    glUniform2fv(glGetUniformLocation(program, "u_RoadHouses[0]"), 8, &VillageHouses[0].x);
-    glUniform2fv(glGetUniformLocation(program, "u_RoadBends[0]"), 8, &RoadBends[0].x);
-    glUniform1fv(glGetUniformLocation(program, "u_RoadJunctions[0]"), 8, RoadJunctions.data());
-    glUniform2f(glGetUniformLocation(program, "u_RoadPlaza"), NoticeBoardPosition.x, NoticeBoardPosition.z-2);
-    glUniform2fv(glGetUniformLocation(program, "u_Campfires[0]"), 10, &Campfires[0].x);
+    std::array<Vec2, GameContent::MaxRoadHouses> houses = {}, bends = {};
+    std::array<float, GameContent::MaxRoadHouses> junctions = {};
+    for (size_t index = 0; index < Map().houses.size(); ++index)
+    {
+        houses[index] = Map().houses[index].position;
+        bends[index] = Map().houses[index].roadBend;
+        junctions[index] = Map().houses[index].junction;
+    }
+    const int houseCount = static_cast<int>(Map().houses.size());
+    glUniform1i(glGetUniformLocation(program, "u_RoadHouseCount"), houseCount);
+    glUniform2fv(glGetUniformLocation(program, "u_RoadHouses[0]"), houseCount, &houses[0].x);
+    glUniform2fv(glGetUniformLocation(program, "u_RoadBends[0]"), houseCount, &bends[0].x);
+    glUniform1fv(glGetUniformLocation(program, "u_RoadJunctions[0]"), houseCount, junctions.data());
+    glUniform2f(glGetUniformLocation(program, "u_RoadPlaza"), Map().noticeBoard.x, Map().noticeBoard.z-2);
+    std::array<Vec2, GameContent::MaxCampfires> fires = {};
+    for (size_t index = 0; index < Map().campfires.size(); ++index)
+        fires[index] = Map().campfires[index].position;
+    const int fireCount = static_cast<int>(Map().campfires.size());
+    glUniform1i(glGetUniformLocation(program, "u_CampfireCount"), fireCount);
+    glUniform2fv(glGetUniformLocation(program, "u_Campfires[0]"), fireCount, &fires[0].x);
+    std::array<std::array<float,4>, GameContent::MaxStoryRegions> regionBounds = {};
+    std::array<std::array<float,3>, GameContent::MaxStoryRegions> regionColors = {};
+    const auto &regions = GameContent::Get().story.regions;
+    for (size_t index = 0; index < regions.size(); ++index)
+    {
+        const auto &region = regions[index];
+        regionBounds[index] = {{region.minimumX,region.minimumZ,region.maximumX,region.maximumZ}};
+        regionColors[index] = region.color;
+    }
+    const int regionCount = static_cast<int>(regions.size());
+    glUniform1i(glGetUniformLocation(program,"u_RegionCount"),regionCount);
+    glUniform4fv(glGetUniformLocation(program,"u_RegionBounds[0]"),regionCount,regionBounds[0].data());
+    glUniform3fv(glGetUniformLocation(program,"u_RegionColors[0]"),regionCount,regionColors[0].data());
     glBindBuffer(GL_ARRAY_BUFFER, cache.buffer);
     glEnableVertexAttribArray(attribute);
     glVertexAttribPointer(attribute, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, nullptr);
@@ -528,20 +551,20 @@ void WorldRenderer::RenderWorld(const GameState &state)
     m_State = &state;
     m_Renderer.SetWorldScale(WorldScale * state.height / 720.0f);
     DrawGround();
-    enum class DrawType { House, Tree, Campfire, Npc, Animal, Tracks, Herb, Monster, Player, NoticeBoard, Decoration, Scenery };
+    enum class DrawType { House, Tree, Campfire, Npc, Animal, Tracks, Herb, Monster, Player, NoticeBoard, Decoration, Scenery, StoryMarker };
     struct DrawItem { Vec2 position; DrawType type; int index; };
     std::vector<DrawItem> items;
-    for (const Vec2 &house : VillageHouses)
-        items.push_back({house, DrawType::House, 0});
-    items.push_back({NoticeBoardPosition, DrawType::NoticeBoard, 0});
-    for (int index = 0; index < static_cast<int>(WorldLayout::Trees.size()); ++index)
-        if (Distance(WorldLayout::Trees[index], state.world.lake) > state.world.lakeRadius + .5f)
-            items.push_back({WorldLayout::Trees[index], DrawType::Tree, index});
-    for (int index = 0; index < static_cast<int>(WorldLayout::Landmarks.size()); ++index)
-        if (Distance(WorldLayout::Landmarks[index].position, state.world.lake) > state.world.lakeRadius + .5f)
-            items.push_back({WorldLayout::Landmarks[index].position, DrawType::Scenery, index});
-    for (const Vec2 &campfire : Campfires)
-        items.push_back({campfire, DrawType::Campfire, 0});
+    for (const auto &house : Map().houses)
+        items.push_back({house.position, DrawType::House, 0});
+    items.push_back({Map().noticeBoard, DrawType::NoticeBoard, 0});
+    for (int index = 0; index < static_cast<int>(WorldLayout::Trees().size()); ++index)
+        if (Distance(WorldLayout::Trees()[index].position, state.world.lake) > state.world.lakeRadius + .5f)
+            items.push_back({WorldLayout::Trees()[index].position, DrawType::Tree, index});
+    for (int index = 0; index < static_cast<int>(WorldLayout::Landmarks().size()); ++index)
+        if (Distance(WorldLayout::Landmarks()[index].position, state.world.lake) > state.world.lakeRadius + .5f)
+            items.push_back({WorldLayout::Landmarks()[index].position, DrawType::Scenery, index});
+    for (const auto &campfire : Map().campfires)
+        items.push_back({campfire.position, DrawType::Campfire, 0});
     // Stable world cells: camera movement never changes an existing decoration's placement.
     const int centerX = static_cast<int>(std::floor(state.player.x / 1.4f));
     const int centerZ = static_cast<int>(std::floor(state.player.z / 1.4f));
@@ -560,10 +583,10 @@ void WorldRenderer::RenderWorld(const GameState &state)
                 Distance(p, state.world.lake) < state.world.lakeRadius + .35f)
                 continue;
             bool occupied = false;
-            for (const Vec2 &house : VillageHouses)
-                occupied |= Distance(p, house) < 2.1f;
-            for (const Vec2 &fire : Campfires)
-                occupied |= Distance(p, fire) < .7f;
+            for (const auto &house : Map().houses)
+                occupied |= Distance(p, house.position) < 2.1f;
+            for (const auto &fire : Map().campfires)
+                occupied |= Distance(p, fire.position) < .7f;
             if (occupied)
                 continue;
             const float road = RoadDistance(p);
@@ -581,8 +604,10 @@ void WorldRenderer::RenderWorld(const GameState &state)
         items.push_back({state.world.tracks, DrawType::Tracks, 0});
     if (state.quest == QuestStage::Herb)
         items.push_back({state.world.herb, DrawType::Herb, 0});
-    if (state.quest == QuestStage::Hunt || state.quest == QuestStage::Trophy)
+    if (state.quest == QuestStage::Hunt || state.quest == QuestStage::Trophy || StorySystem::IsHunting(state) || StorySystem::HasDrop(state))
         items.push_back({state.monster.position, DrawType::Monster, 0});
+    if (StorySystem::Current(state) && !StorySystem::IsHunting(state) && !StorySystem::HasDrop(state))
+        items.push_back({StorySystem::Target(state),DrawType::StoryMarker,0});
     items.push_back({state.player, DrawType::Player, 0});
 
     // Higher screen coordinates are farther away. Draw them first so foreground objects cover them.
@@ -594,9 +619,16 @@ void WorldRenderer::RenderWorld(const GameState &state)
         ApplyLocalLight(m_Renderer, item.position, state.time);
         switch (item.type)
         {
+        case DrawType::StoryMarker:
+        {
+            const Vec2 p = ToScreen(item.position);
+            m_Renderer.DrawEffectRect(p.x,p.z,28,13,0,.95f,.75f,.25f,.22f,3);
+            m_Renderer.DrawSolidRect(p.x,p.z+15+std::sin(state.time*2)*2,6,6,Pi*.25f,.95f,.78f,.30f,.9f);
+            break;
+        }
         case DrawType::Scenery:
         {
-            const auto &landmark = WorldLayout::Landmarks[item.index];
+            const auto &landmark = WorldLayout::Landmarks()[item.index];
             const Vec2 screen = ToScreen(item.position);
             DrawShadow(item.position, landmark.height * .45f, 10, landmark.height * .2f);
             if (m_SceneryTexture != 0)
@@ -626,18 +658,21 @@ void WorldRenderer::RenderWorld(const GameState &state)
         }
         case DrawType::House: DrawHouse(item.position, .42f, .18f, .09f); break;
         case DrawType::Tree:
-            if (item.index % 3 == 1 && m_SceneryTexture != 0)
+        {
+            const auto &tree = WorldLayout::Trees()[item.index];
+            if (tree.pine && m_SceneryTexture != 0)
             {
                 const Vec2 screen = ToScreen(item.position);
-                const float height = 170.0f + (item.index % 4) * 12;
+                const float height = 170.0f + tree.variant * 12;
                 DrawShadow(item.position, height * .4f, 15, height * .7f);
                 m_Renderer.DrawSprite(m_SceneryTexture, screen.x, screen.z + (.5f-.27075773f)*height,
                                       height, height, 6, 0, 7, 1, 1, 1, 1, 1,
                                       std::sin(state.time*1.4f + item.position.x)*.02f, .27075773f);
             }
             else
-                DrawTree(item.position, item.index % 4);
+                DrawTree(item.position, tree.variant);
             break;
+        }
         case DrawType::Campfire: DrawCampfire(item.position); break;
         case DrawType::Npc:
         {
@@ -666,13 +701,14 @@ void WorldRenderer::RenderWorld(const GameState &state)
                                           [this, &state](Vec2 p, int c, int r, float w, float h, bool s) {
                                               const Vec2 facing = {state.player.x - p.x, state.player.z - p.z};
                                               const float distance = Distance(p, state.player);
-                                              const bool walking = state.quest == QuestStage::Hunt && distance > 1.1f && distance < 7.0f;
+                                              const bool walking = (state.quest == QuestStage::Hunt || StorySystem::IsHunting(state)) &&
+                                                  distance > state.monster.definition.attackRange && distance < state.monster.definition.chaseRange;
                                               const int frame = walking ? static_cast<int>(state.time * 8.0f) % 4 : 0;
-                                              if (!DrawAtlasSprite(p, m_BoarTexture, facing, frame, 125, AnimalPivotY, state.monster.health <= 0))
-                                                  DrawSprite(p, c, r, w, h, s);
+                                              if (!DrawAtlasSprite(p, m_BoarTexture, facing, frame, state.monster.definition.spriteHeight, AnimalPivotY, state.monster.health <= 0))
+                                                  DrawSprite(p, c, r, w*(state.monster.definition.spriteHeight/125), h*(state.monster.definition.spriteHeight/125), s);
                                           },
                                           state.width, state.height, state.time, Pi};
-            MonsterSystem::Draw(state.monster, context, state.quest == QuestStage::Trophy);
+            MonsterSystem::Draw(state.monster, context, state.quest == QuestStage::Trophy || StorySystem::HasDrop(state));
             break;
         }
         case DrawType::Player:

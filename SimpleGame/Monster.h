@@ -1,6 +1,7 @@
 #pragma once
 
 #include <functional>
+#include <string>
 
 class Renderer;
 
@@ -8,6 +9,17 @@ struct Vec2
 {
     float x;
     float z;
+};
+
+struct MonsterDefinition
+{
+    std::string id;
+    std::wstring name;
+    int health = 0;
+    float hitRange = 0, dropRange = 0, chaseRange = 0, attackRange = 0;
+    float speed = 0, damage = 0, cooldown = 0;
+    int experience = 0, hideDrop = 0, tuskDrop = 0;
+    float spriteHeight = 125;
 };
 
 struct MonsterState
@@ -18,6 +30,7 @@ struct MonsterState
     float attackCooldown;
     float hitFlash;
     float deathTime;
+    MonsterDefinition definition;
 };
 
 struct MonsterHitResult
@@ -42,11 +55,12 @@ struct MonsterDrawContext
 
 namespace MonsterSystem
 {
-MonsterState CreateLakeBoar();
+MonsterState CreateEncounter();
+MonsterState Create(const MonsterDefinition &definition, Vec2 position);
 bool IsAlive(const MonsterState &monster);
 bool IsInteractableDrop(const MonsterState &monster, Vec2 player);
 MonsterHitResult Hit(MonsterState &monster, Vec2 player, int attackPower);
 void UpdateTimers(MonsterState &monster, float deltaTime);
-bool UpdateChaseAndAttack(MonsterState &monster, Vec2 player, float dodgeTime, float deltaTime, float &playerHealth);
+bool UpdateChaseAndAttack(MonsterState &monster, Vec2 player, float dodgeTime, float deltaTime, float &playerHealth, int defense = 0);
 void Draw(const MonsterState &monster, const MonsterDrawContext &context, bool showDrop);
 } // namespace MonsterSystem

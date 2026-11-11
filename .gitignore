@@ -517,3 +517,9 @@ EisenValor-Server/docs/rio-ring-buffer-preview.png
 !/SimpleGame/Assets/Frontier/Source/scenery.blend
 !/SimpleGame/Assets/Frontier/Textures/scenery_atlas.png
 !/SimpleGame/Assets/Frontier/Textures/scenery_atlas.sprite.json
+
+# Offline GLFW/GLEW builds: keep upstream source trees, ignore only our root output.
+/build/
+!/SimpleGame/Dependencies/glfw/**
+!/SimpleGame/Dependencies/glew/**
+!/SimpleGame/Fonts/**

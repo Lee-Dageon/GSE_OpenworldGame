@@ -1,22 +1,19 @@
 #include "stdafx.h"
 #include "GameState.h"
+#include "GameContent.h"
 
 GameState CreateInitialGameState()
 {
+    const auto &content = GameContent::Get();
     GameState state;
-    state.message = L"그린웨이크에 도착했습니다. 미라 장로를 만나세요.";
-    state.npcs = {{{{0.0f, 1.4f}, 1, 0, 0}, {{-14, 1}, 2, 0, 1},   {{14, -2}, 3, 0, 2},   {{-20, 8}, 0, 1, 3},
-                   {{20, 8}, 0, 1, 4},      {{-7, -15}, 2, 1, 5},  {{7, -16}, 2, 1, 6},   {{-21, -7}, 1, 1, 7},
-                   {{21, -9}, 2, 1, 8},     {{4, 19}, 3, 1, 9},    {{-27, 4}, 3, 0, 10},  {{27, 4}, 0, 1, 11},
-                   {{-23, -19}, 1, 1, 12},  {{23, -19}, 2, 1, 13}, {{-11, 23}, 3, 1, 14}, {{12, 23}, 1, 1, 15},
-                   {{-31, -4}, 0, 1, 16},   {{31, -6}, 2, 1, 17},  {{-22, 21}, 3, 0, 18}, {{25, 19}, 0, 1, 19}}};
-    state.animals = {{{{-10, 8}, {-10, 8}, 0, 2, 0, 0.45f},
-                      {{-14, 14}, {-14, 14}, 2, 2, 1, 0.7f},
-                      {{20, 4}, {20, 4}, 1, 2, 2, 0.35f},
-                      {{24, 18}, {24, 18}, 0, 2, 3, 0.5f},
-                      {{5, 22}, {5, 22}, 2, 2, 4, 0.8f},
-                      {{30, 10}, {30, 10}, 1, 2, 5, 0.4f},
-                      {{-8, 28}, {-8, 28}, 0, 2, 6, 0.45f},
-                      {{28, 30}, {28, 30}, 2, 2, 7, 0.75f}}};
+    state.world = content.map.world;
+    state.player = state.world.spawn;
+    state.quest = content.quest.start;
+    state.message = content.quest.welcome;
+    state.monster = MonsterSystem::CreateEncounter();
+    for (const auto &npc : content.map.npcs)
+        state.npcs.push_back(npc.initial);
+    for (const auto &animal : content.map.animals)
+        state.animals.push_back(animal.initial);
     return state;
 }

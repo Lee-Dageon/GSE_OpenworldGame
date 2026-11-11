@@ -12,7 +12,8 @@ enum class GameCommand
     Attack,
     ToggleInventory,
     CraftHunterBlade,
-    CraftHealingPotion
+    CraftHealingPotion,
+    CraftHunterArmor
 };
 
 namespace GameInput

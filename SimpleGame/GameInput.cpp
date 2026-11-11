@@ -22,6 +22,8 @@ GameCommand OnKeyDown(GameState &state, unsigned char key, bool shiftHeld)
         return repeated ? GameCommand::None : GameCommand::CraftHunterBlade;
     case 'p':
         return repeated ? GameCommand::None : GameCommand::CraftHealingPotion;
+    case 'r':
+        return repeated ? GameCommand::None : GameCommand::CraftHunterArmor;
     case 'e':
         return GameCommand::Interact;
     case 'q':

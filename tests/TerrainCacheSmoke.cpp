@@ -1,8 +1,7 @@
 // Run from SimpleGame so the existing shader paths resolve.
 // Link against WorldRenderer, Renderer, ModelCache and Monster (not the game's main).
 #include "stdafx.h"
-#include "Dependencies/glew.h"
-#include "Dependencies/freeglut.h"
+#include "GlfwTestContext.h"
 #include "WorldRenderer.h"
 #include "Renderer.h"
 #include <chrono>
@@ -55,19 +54,14 @@ void Render(WorldRenderer &world, const GameState &state)
 
 int main(int argc, char **argv)
 {
-    glutInit(&argc, argv);
-    glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA);
-    glutInitWindowSize(1920, 1080);
-    const int window = glutCreateWindow("Terrain cache smoke test");
-    glutHideWindow();
-    if (glewInit() != GLEW_OK)
+    GlfwTestContext context(1920, 1080, "Terrain cache smoke test");
+    if (!context.IsReady())
         return 1;
-    while (glGetError() != GL_NO_ERROR) {}
     try
     {
         Renderer renderer(1920, 1080);
         Require(renderer.IsInitialized(), "renderer initialization failed");
-        GameState state;
+        GameState state = CreateInitialGameState();
         state.width = 1920;
         state.height = 1080;
         originalBufferData = __glewBufferData;
@@ -141,6 +135,5 @@ int main(int argc, char **argv)
         std::cerr << "FAIL: " << error.what() << '\n';
         return 1;
     }
-    glutDestroyWindow(window);
     return 0;
 }

@@ -14,6 +14,18 @@ const wchar_t *TryCraft(GameState &state, Recipe recipe)
 {
     if (!IsAtWorkbench(state))
         return L"장로 근처의 야영지 제작소에서 제작할 수 있습니다.";
+    if (recipe == Recipe::HunterArmor)
+    {
+        if (state.hunterArmorCrafted) return L"가죽 방어구는 이미 장착 중입니다.";
+        if (!state.armorRecipeUnlocked) return L"첫 본 이야기 사냥을 보고하면 방어구 제작법을 배웁니다.";
+        if (state.inventory.Count(ItemId::BoarHide) < 2 || state.inventory.Count(ItemId::BoarTusk) < 1)
+            return L"가죽 방어구 제작에는 가죽 2개와 엄니 1개가 필요합니다.";
+        state.inventory.Remove(ItemId::BoarHide,2);
+        state.inventory.Remove(ItemId::BoarTusk);
+        state.hunterArmorCrafted = true;
+        state.defense += 3;
+        return L"가죽 방어구를 제작해 장착했습니다. 받는 피해가 3 감소합니다.";
+    }
     if (recipe == Recipe::HealingPotion)
     {
         if (state.inventory.Count(ItemId::Herb) < 1)

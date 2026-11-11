@@ -20,6 +20,9 @@ struct GameUiState
     int trophies = 0;
     int hides = 0;
     bool inventoryOpen = false, hunterBladeCrafted = false, nearWorkbench = false, huntReported = false;
+    bool armorRecipeUnlocked = false, hunterArmorCrafted = false;
+    int defense = 0;
+    std::wstring locationName = L"그린웨이크";
     float health = 0.0f;
     float maxHealth = 1.0f;
     float messageTime = 0.0f;
@@ -68,12 +71,13 @@ inline GameUiButton InventoryPanel(int width, int height)
     return {(width-660*s)*.5f, (height-500*s)*.5f, 660*s, 500*s, GameCommand::None};
 }
 
-inline std::array<GameUiButton, 3> InventoryButtons(int width, int height)
+inline std::array<GameUiButton, 4> InventoryButtons(int width, int height)
 {
     const float s = GameUiScale(width, height);
     const auto panel = InventoryPanel(width, height);
     return {{{panel.x+20*s, panel.y+260*s, panel.width-40*s, 42*s, GameCommand::CraftHunterBlade},
              {panel.x+20*s, panel.y+310*s, panel.width-40*s, 42*s, GameCommand::CraftHealingPotion},
+             {panel.x+20*s, panel.y+360*s, panel.width-40*s, 42*s, GameCommand::CraftHunterArmor},
              {panel.x+panel.width-52*s, panel.y+12*s, 36*s, 32*s, GameCommand::ToggleInventory}}};
 }
 

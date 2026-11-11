@@ -4,9 +4,12 @@
 #include <fstream>
 #include <iostream>
 #include <map>
+#include <memory>
 #include <string>
 
-#include "Dependencies\\glew.h"
+#include <GL/glew.h>
+
+namespace Gdiplus { class PrivateFontCollection; }
 
 class Renderer
 {
@@ -54,6 +57,8 @@ class Renderer
     int m_WindowSizeX = 1;
     int m_WindowSizeY = 1;
     std::uint64_t m_GdiToken = 0;
+    std::unique_ptr<Gdiplus::PrivateFontCollection> m_Fonts;
+    std::wstring m_FontFamilyName = L"Malgun Gothic";
     float m_Time = 0.0f;
     bool m_WorldLighting = false;
     float m_LocalLight[3] = {};

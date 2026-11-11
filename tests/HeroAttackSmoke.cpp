@@ -1,7 +1,6 @@
 // Run from SimpleGame; optionally pass a directory for actual renderer captures.
 #include "stdafx.h"
-#include "Dependencies/glew.h"
-#include "Dependencies/freeglut.h"
+#include "GlfwTestContext.h"
 #include "GameManager.h"
 #include "WorldRenderer.h"
 #include "Renderer.h"
@@ -18,20 +17,14 @@ void Require(bool value, const char *message)
 int main(int argc, char **argv)
 {
     const std::filesystem::path output = argc > 1 ? argv[1] : "";
-    int glutArgc = 1;
-    glutInit(&glutArgc, argv);
-    glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA);
-    glutInitWindowSize(1280, 720);
-    glutCreateWindow("Hero attack verification");
-    glutHideWindow();
-    if (glewInit() != GLEW_OK) return 1;
-    while (glGetError() != GL_NO_ERROR) {}
+    GlfwTestContext context(1280, 720, "Hero attack verification");
+    if (!context.IsReady()) return 1;
     try
     {
         Renderer renderer(1280, 720);
         Require(renderer.IsInitialized(), "renderer initialization");
         WorldRenderer world(renderer);
-        GameState state;
+        GameState state = CreateInitialGameState();
         GameManager game(state);
         const auto render = [&](int capture) {
             world.BeginFrame(state.time);

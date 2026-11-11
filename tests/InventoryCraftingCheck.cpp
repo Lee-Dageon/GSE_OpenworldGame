@@ -110,6 +110,7 @@ int main()
     assert(GameInput::OnKeyDown(state, 27, false) == GameCommand::None);
     GameInput::OnKeyUp(state, 27);
     assert(GameInput::OnKeyDown(state, 27, false) == GameCommand::Quit);
+    state.storyFinished = true; // This check covers post-story repeat hunts; StoryFlowCheck covers the campaign.
     game.HandleCommand(GameCommand::Interact);
     assert(state.quest == QuestStage::Hunt && state.monster.health == 18);
     assert(kill() == 3);

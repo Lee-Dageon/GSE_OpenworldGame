@@ -1,0 +1,133 @@
+# UTF-8, one record per line.
+gse_map 1 greenwake
+bounds -65 85
+spawn 0 -2.5
+lake 45 39 12
+notice_board 2 1.5
+quest_point elder 0 1.4
+quest_point tracks 13 13
+quest_point herb 25 23
+encounter lake_boar 34 30
+landmark south_border_fence fence 10.5 -10.5 100 .4
+landmark sand_ruin_01 ruin 63 9 155 .75
+landmark sand_ruin_02 ruin 67 12 140 .7
+landmark sand_cart cart 66 11 115 .65
+landmark sand_boulder_01 boulder 61 8 145 .8
+landmark sand_boulder_02 boulder 69 7 130 .7
+landmark sand_log log 64 13 100 .4
+house house_00 -6 -1.7 -2 -1 -1 1.55 1.4
+house house_01 6 4 4 5 10 1.55 1.4
+house house_02 -9 19 -4 18 15 1.55 1.4
+house house_03 10 -20 6 -17 -13 1.55 1.4
+house house_04 -27 -14 -16 -21 -22 1.55 1.4
+house house_05 27 -14 16 -26 -29 1.55 1.4
+house house_06 -25 20 -14 28 26 1.55 1.4
+house house_07 26 19 17 32 33 1.55 1.4
+tree tree_00 -3.7 2.8 broadleaf 0 .42
+tree tree_01 3.5 -2.7 pine 1 .42
+tree tree_02 4 7 broadleaf 2 .42
+tree tree_03 -8 1 broadleaf 3 .42
+tree tree_04 8 1 pine 0 .42
+tree tree_05 -6 7 broadleaf 1 .42
+tree tree_06 6 9 broadleaf 2 .42
+tree tree_07 -9 8 pine 3 .42
+tree tree_08 11 7 broadleaf 0 .42
+tree tree_09 -10 -4 broadleaf 1 .42
+tree tree_10 10 -6 pine 2 .42
+tree tree_11 -4 -9 broadleaf 3 .42
+tree tree_12 5 -11 broadleaf 0 .42
+tree tree_13 -12 12 pine 1 .42
+tree tree_14 14 12 broadleaf 2 .42
+tree tree_15 -15 18 broadleaf 3 .42
+tree tree_16 -5 24 pine 0 .42
+tree tree_17 5 26 broadleaf 1 .42
+tree tree_18 16 24 broadleaf 2 .42
+tree tree_19 -18 28 pine 3 .42
+tree tree_20 -11 32 broadleaf 0 .42
+tree tree_21 -4 34 broadleaf 1 .42
+tree tree_22 6 36 pine 2 .42
+tree tree_23 12 33 broadleaf 3 .42
+tree tree_24 20 32 broadleaf 0 .42
+tree tree_25 -24 36 pine 1 .42
+tree tree_26 -18 41 broadleaf 2 .42
+tree tree_27 -10 44 broadleaf 3 .42
+tree tree_28 -3 45 pine 0 .42
+tree tree_29 5 46 broadleaf 1 .42
+tree tree_30 13 44 broadleaf 2 .42
+tree tree_31 22 43 pine 3 .42
+tree tree_32 -20 50 broadleaf 0 .42
+tree tree_33 -12 53 broadleaf 1 .42
+tree tree_34 -3 56 pine 2 .42
+tree tree_35 7 55 broadleaf 3 .42
+tree tree_36 17 54 broadleaf 0 .42
+tree tree_37 28 54 pine 1 .42
+tree tree_38 34 48 broadleaf 2 .42
+tree tree_39 31 31 broadleaf 3 .42
+landmark landmark_00 boulder 3.3 1 110 .65
+landmark landmark_01 bush -2.8 -.5 80 0
+landmark landmark_02 cart 4 -1.2 115 .65
+landmark landmark_03 fence -4 1.5 105 .45
+landmark landmark_04 fence -4.8 2.1 105 .45
+landmark landmark_05 log -2.8 4.9 105 .4
+landmark landmark_06 bush 6.5 7.5 95 0
+landmark landmark_07 bush -7 5 95 0
+landmark landmark_08 boulder 7 6 130 .8
+landmark landmark_09 log -10 10 110 .45
+landmark landmark_10 fence -12 17 105 .45
+landmark landmark_11 fence -13 18 105 .45
+landmark landmark_12 cart 12 -17 115 .65
+landmark landmark_13 boulder -8 26 145 .9
+landmark landmark_14 bush 4 27 95 0
+landmark landmark_15 ruin 8 31 150 .8
+landmark landmark_16 boulder 10 32 125 .75
+landmark landmark_17 log -5 37 125 .5
+landmark landmark_18 bush -13 39 105 0
+landmark landmark_19 ruin 12 42 165 .9
+landmark landmark_20 ruin 14 44 130 .7
+landmark landmark_21 boulder -6 50 160 1.0
+landmark landmark_22 log 3 52 125 .5
+landmark landmark_23 boulder 33 27 165 1.0
+landmark landmark_24 bush 35 28 100 0
+landmark landmark_25 boulder 36 30 150 .9
+landmark landmark_26 ruin 48 25 175 1
+landmark landmark_27 boulder 50 26 150 .9
+landmark landmark_28 bush 56 42 110 0
+landmark landmark_29 boulder 57 45 160 1
+campfire campfire_00 -3 0
+campfire campfire_01 8 2
+campfire campfire_02 -9 -8
+campfire campfire_03 12 -12
+campfire campfire_04 -13 12
+campfire campfire_05 16 12
+campfire campfire_06 -24 0
+campfire campfire_07 25 1
+campfire campfire_08 0 24
+campfire campfire_09 1 -25
+npc npc_00 0.0 1.4 1 0 0
+npc npc_01 -14 1 2 0 1
+npc npc_02 14 -2 3 0 2
+npc npc_03 -20 8 0 1 3
+npc npc_04 20 8 0 1 4
+npc npc_05 -7 -15 2 1 5
+npc npc_06 7 -16 2 1 6
+npc npc_07 -21 -7 1 1 7
+npc npc_08 21 -9 2 1 8
+npc npc_09 4 19 3 1 9
+npc npc_10 -27 4 3 0 10
+npc npc_11 27 4 0 1 11
+npc npc_12 -23 -19 1 1 12
+npc npc_13 23 -19 2 1 13
+npc npc_14 -11 23 3 1 14
+npc npc_15 12 23 1 1 15
+npc npc_16 -31 -4 0 1 16
+npc npc_17 31 -6 2 1 17
+npc npc_18 -22 21 3 0 18
+npc npc_19 25 19 0 1 19
+animal animal_00 -10 8 -10 8 0 2 0 0.45
+animal animal_01 -14 14 -14 14 2 2 1 0.7
+animal animal_02 20 4 20 4 1 2 2 0.35
+animal animal_03 24 18 24 18 0 2 3 0.5
+animal animal_04 5 22 5 22 2 2 4 0.8
+animal animal_05 30 10 30 10 1 2 5 0.4
+animal animal_06 -8 28 -8 28 0 2 6 0.45
+animal animal_07 28 30 28 30 2 2 7 0.75

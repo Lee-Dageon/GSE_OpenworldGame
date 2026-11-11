@@ -1,7 +1,6 @@
 // Run from SimpleGame; output directory must already exist.
 #include "stdafx.h"
-#include "Dependencies/glew.h"
-#include "Dependencies/freeglut.h"
+#include "GlfwTestContext.h"
 #include "Renderer.h"
 #include "WorldRenderer.h"
 #include "GameManager.h"
@@ -22,14 +21,8 @@ void Check(bool value, const char *message)
 int main(int argc, char **argv)
 {
     const std::filesystem::path output = argc > 1 ? argv[1] : ".";
-    int glutArgc = 1;
-    glutInit(&glutArgc, argv);
-    glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA);
-    glutInitWindowSize(1280, 720);
-    glutCreateWindow("Render quality verification");
-    glutHideWindow();
-    Check(glewInit() == GLEW_OK, "GLEW initialization");
-    while (glGetError() != GL_NO_ERROR) {}
+    GlfwTestContext context(1280, 720, "Render quality verification");
+    if (!context.IsReady()) return 1;
     try
     {
         Renderer renderer(1280, 720);

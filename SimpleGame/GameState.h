@@ -5,6 +5,7 @@
 
 #include <array>
 #include <string>
+#include <vector>
 
 enum class QuestStage
 {
@@ -36,6 +37,7 @@ struct AnimalState
 
 struct WorldState
 {
+    Vec2 spawn = {0.0f, -2.5f};
     Vec2 elder = {0.0f, 1.4f};
     Vec2 tracks = {13.0f, 13.0f};
     Vec2 herb = {25.0f, 23.0f};
@@ -51,13 +53,15 @@ struct GameState
     std::array<bool, 256> keys = {};
     bool sprint = false, moving = false;
     Vec2 player = {0.0f, -2.5f}, facing = {0.707f, 0.707f};
-    MonsterState monster = MonsterSystem::CreateLakeBoar();
-    std::array<NpcState, 20> npcs = {};
-    std::array<AnimalState, 8> animals = {};
+    MonsterState monster = {};
+    std::vector<NpcState> npcs;
+    std::vector<AnimalState> animals;
     WorldState world;
     float health = 100.0f, maxHealth = 100.0f, dodge = 0.0f, attack = 0.0f, messageTime = 7.0f, time = 0.0f;
     Inventory inventory;
     bool inventoryOpen = false, hunterBladeCrafted = false;
+    bool armorRecipeUnlocked = false, hunterArmorCrafted = false, storyFinished = false;
+    int defense = 0, storyStep = -1;
     int completedHunts = 0;
     int level = 1, experience = 0, experienceToNextLevel = 20, attackPower = 2;
     QuestStage quest = QuestStage::Elder;

@@ -1,0 +1,11 @@
+gse_quests 1 greenwake_hunt
+start elder "그린웨이크에 도착했습니다. 미라 장로를 만나세요."
+repeat 6 48 "미라 장로에게 다음 사냥 받기" "E  다음 사냥 받기" "다음 사냥을 받았습니다. 호숫가의 더 튼튼한 멧돼지를 사냥하세요."
+dialogue "E  미라 장로와 대화 / I  가방" "미라 장로: 호숫가에서는 조심하세요." "마을 주민: 호수 쪽에서 이상한 소리가 들려요."
+stage elder elder tracks "미라 장로와 대화하기" "E  미라 장로와 대화 / I  가방" "미라 장로: 호숫가에 남은 흔적을 조사해 주세요."
+stage tracks tracks herb "멧돼지 흔적 조사하기" "E  흔적 조사" "멧돼지 흔적이 호수 쪽으로 이어집니다."
+stage herb herb hunt "회복 약초 채집하기" "E  약초 채집" "회복 약초를 채집했습니다."
+stage hunt hunt trophy "호숫가 멧돼지 사냥하기" "마우스 좌클릭으로 공격" "멧돼지를 쓰러뜨렸습니다. 전리품을 수집하세요."
+stage trophy trophy return "멧돼지 전리품 수집하기" "E  전리품 수집" "사냥 재료를 획득했습니다. 장로에게 돌아가세요."
+stage return return complete "미라 장로에게 사냥 보고하기" "E  미라 장로에게 사냥 보고" "사냥 보고 완료! 장로 근처에서 I로 가방을 열고 C로 엄니 검을 제작하세요."
+stage complete complete hunt "엄니 검 제작 후 미라 장로 만나기" "I  가방 / C  엄니 검 제작" "사냥과 제작을 계속하세요."

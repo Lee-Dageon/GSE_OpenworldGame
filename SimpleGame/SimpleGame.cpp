@@ -1,7 +1,7 @@
 #include "stdafx.h"
 
-#include "Dependencies\\glew.h"
-#include "Dependencies\\freeglut.h"
+#include <GL/glew.h>
+#include "GlfwSetup.h"
 #include "Actor.h"
 #include "GameInput.h"
 #include "GameManager.h"
@@ -11,12 +11,18 @@
 #include "Renderer.h"
 #include "WorldRenderer.h"
 #include "CraftingSystem.h"
+#include "GameContent.h"
+#include "StorySystem.h"
 
 #include <Windows.h>
 #include <algorithm>
 #include <cstdio>
 #include <cwchar>
+#include <exception>
+#include <filesystem>
 #include <iostream>
+#include <iterator>
+#include <memory>
 
 namespace
 {
@@ -25,15 +31,22 @@ constexpr int WindowHeight = 720;
 
 Renderer *g_Renderer = nullptr;
 WorldRenderer *g_WorldRenderer = nullptr;
-GameState g_GameState = CreateInitialGameState();
+GameState g_GameState;
 GameManager g_GameManager(g_GameState);
 Actor g_SceneRoot("SceneRoot");
 const char *g_CapturePath = nullptr;
+std::string g_CaptureFilename;
 int g_CaptureFrames = 0;
+GLFWwindow *g_Window = nullptr;
+
+int ElapsedMilliseconds()
+{
+    return static_cast<int>(glfwGetTime() * 1000.0);
+}
 
 void RenderScene()
 {
-    static int fpsStartTime = glutGet(GLUT_ELAPSED_TIME);
+    static int fpsStartTime = ElapsedMilliseconds();
     static int frameCount = 0;
 
     g_WorldRenderer->BeginFrame(g_GameState.time);
@@ -53,6 +66,10 @@ void RenderScene()
     uiState.hides = g_GameState.inventory.Count(ItemId::BoarHide);
     uiState.inventoryOpen = g_GameState.inventoryOpen;
     uiState.hunterBladeCrafted = g_GameState.hunterBladeCrafted;
+    uiState.hunterArmorCrafted = g_GameState.hunterArmorCrafted;
+    uiState.armorRecipeUnlocked = g_GameState.armorRecipeUnlocked;
+    uiState.defense = g_GameState.defense;
+    uiState.locationName = StorySystem::RegionName(g_GameState.player);
     uiState.nearWorkbench = CraftingSystem::IsAtWorkbench(g_GameState);
     uiState.huntReported = g_GameState.quest == QuestStage::Complete;
     uiState.health = g_GameState.health;
@@ -65,7 +82,8 @@ void RenderScene()
     uiState.monster = g_GameState.monster.position;
     uiState.lake = g_GameState.world.lake;
     uiState.lakeRadius = g_GameState.world.lakeRadius;
-    uiState.monsterVisible = g_GameState.quest == QuestStage::Hunt || g_GameState.quest == QuestStage::Trophy;
+    uiState.monsterVisible = g_GameState.quest == QuestStage::Hunt || g_GameState.quest == QuestStage::Trophy ||
+        StorySystem::IsHunting(g_GameState) || StorySystem::HasDrop(g_GameState);
     uiState.hasObjectiveTarget = true;
     switch (g_GameState.quest)
     {
@@ -77,7 +95,13 @@ void RenderScene()
     }
     uiState.objective = QuestSystem::GetObjective(g_GameState.quest);
     if (g_GameState.quest == QuestStage::Complete && g_GameState.hunterBladeCrafted)
-        uiState.objective = L"미라 장로에게 다음 사냥 받기";
+        uiState.objective = GameContent::Get().quest.repeatObjective;
+    if (StorySystem::Current(g_GameState) || StorySystem::CanStart(g_GameState) ||
+        (g_GameState.storyFinished && g_GameState.quest == QuestStage::Complete))
+    {
+        uiState.objective = StorySystem::Objective(g_GameState);
+        uiState.objectiveTarget = StorySystem::Target(g_GameState);
+    }
     if (const wchar_t *hint = g_GameManager.GetHint())
         uiState.hint = hint;
     uiState.message = g_GameState.message;
@@ -87,19 +111,21 @@ void RenderScene()
         wchar_t filename[MAX_PATH];
         const bool pathValid = MultiByteToWideChar(CP_UTF8, 0, g_CapturePath, -1, filename, MAX_PATH) != 0;
         std::cout << (pathValid && g_Renderer->SaveScreenshot(filename) ? "GSE_CAPTURE_OK\n" : "GSE_CAPTURE_FAILED\n");
-        glutLeaveMainLoop();
+        glfwSetWindowShouldClose(g_Window, GLFW_TRUE);
         return;
     }
-    glutSwapBuffers();
+    glfwSwapBuffers(g_Window);
 
     ++frameCount;
-    const int now = glutGet(GLUT_ELAPSED_TIME);
+    const int now = ElapsedMilliseconds();
     const int elapsed = now - fpsStartTime;
     if (elapsed >= 1000)
     {
         wchar_t title[80];
         std::swprintf(title, 80, L"그린웨이크 | 초당 프레임: %.1f", frameCount * 1000.0 / elapsed);
-        SetWindowTextW(WindowFromDC(wglGetCurrentDC()), title);
+        char utf8Title[256];
+        if (WideCharToMultiByte(CP_UTF8, 0, title, -1, utf8Title, sizeof(utf8Title), nullptr, nullptr))
+            glfwSetWindowTitle(g_Window, utf8Title);
         frameCount = 0;
         fpsStartTime = now;
     }
@@ -108,22 +134,17 @@ void RenderScene()
 void UpdateFrame()
 {
     // Poll Shift so pressing/releasing it while moving takes effect without another key event.
-    DWORD foregroundProcess = 0;
-    GetWindowThreadProcessId(GetForegroundWindow(), &foregroundProcess);
-    g_GameState.sprint = foregroundProcess == GetCurrentProcessId() && (GetAsyncKeyState(VK_SHIFT) & 0x8000) != 0;
-    const int now = glutGet(GLUT_ELAPSED_TIME);
+    g_GameState.sprint = glfwGetWindowAttrib(g_Window, GLFW_FOCUSED) &&
+        (glfwGetKey(g_Window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS ||
+         glfwGetKey(g_Window, GLFW_KEY_RIGHT_SHIFT) == GLFW_PRESS);
+    const int now = ElapsedMilliseconds();
     const float deltaTime = std::min(.05f, (now - g_GameState.lastTime) / 1000.0f);
     g_GameState.lastTime = now;
     g_GameManager.UpdateGame(deltaTime);
     g_GameManager.UpdateSceneGraph(g_SceneRoot, deltaTime);
-    // Hidden capture windows do not receive display callbacks.
-    if (g_CapturePath)
-        RenderScene();
-    else
-        glutPostRedisplay();
 }
 
-void ResizeWindow(int width, int height)
+void ResizeWindow(GLFWwindow *, int width, int height)
 {
     g_GameState.width = std::max(640, width);
     g_GameState.height = std::max(360, height);
@@ -131,24 +152,46 @@ void ResizeWindow(int width, int height)
         g_Renderer->Resize(g_GameState.width, g_GameState.height);
 }
 
-void KeyDown(unsigned char key, int, int)
+void KeyInput(GLFWwindow *, int key, int, int action, int modifiers)
 {
-    const bool shiftHeld = (glutGetModifiers() & GLUT_ACTIVE_SHIFT) != 0;
-    const GameCommand command = GameInput::OnKeyDown(g_GameState, key, shiftHeld);
+    // GameInput accepts ASCII; GLFW Escape is outside that range.
+    if (key == GLFW_KEY_ESCAPE)
+        key = 27;
+    else if (key < GLFW_KEY_SPACE || key > GLFW_KEY_GRAVE_ACCENT)
+        return;
+    if (action == GLFW_RELEASE)
+    {
+        GameInput::OnKeyUp(g_GameState, static_cast<unsigned char>(key));
+        return;
+    }
+    const GameCommand command = GameInput::OnKeyDown(g_GameState, static_cast<unsigned char>(key),
+                                                    (modifiers & GLFW_MOD_SHIFT) != 0);
     if (command == GameCommand::Quit)
-        glutLeaveMainLoop();
+        glfwSetWindowShouldClose(g_Window, GLFW_TRUE);
     else
         g_GameManager.HandleCommand(command);
 }
 
-void KeyUp(unsigned char key, int, int)
+void FocusChanged(GLFWwindow *, int focused)
 {
-    GameInput::OnKeyUp(g_GameState, key);
+    if (!focused)
+    {
+        std::fill(std::begin(g_GameState.keys), std::end(g_GameState.keys), false);
+        g_GameState.sprint = false;
+    }
 }
 
-void MouseInput(int button, int state, int x, int y)
+void MouseInput(GLFWwindow *window, int button, int action, int)
 {
-    if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN)
+    double cursorX, cursorY;
+    int width, height;
+    glfwGetCursorPos(window, &cursorX, &cursorY);
+    glfwGetWindowSize(window, &width, &height);
+    if (width <= 0 || height <= 0)
+        return;
+    const int x = static_cast<int>(cursorX * g_GameState.width / width);
+    const int y = static_cast<int>(cursorY * g_GameState.height / height);
+    if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS)
     {
         const GameCommand command = HitTestGameUi(x, y, g_GameState.width, g_GameState.height, g_GameState.inventoryOpen);
         if (command != GameCommand::None)
@@ -159,52 +202,101 @@ void MouseInput(int button, int state, int x, int y)
         if (g_GameState.inventoryOpen || GameUiPanelContains(x, y, g_GameState.width, g_GameState.height))
             return;
     }
-    g_GameManager.HandleCommand(GameInput::OnMouseButton(button == GLUT_LEFT_BUTTON, state == GLUT_DOWN));
+    g_GameManager.HandleCommand(GameInput::OnMouseButton(button == GLFW_MOUSE_BUTTON_LEFT, action == GLFW_PRESS));
 }
 } // namespace
 
 int main(int argc, char **argv)
 {
+    std::filesystem::path launchDirectory;
+    try
+    {
+        launchDirectory = std::filesystem::current_path();
+        wchar_t executable[32768];
+        const DWORD length = GetModuleFileNameW(nullptr, executable, static_cast<DWORD>(std::size(executable)));
+        if (length == 0 || length >= std::size(executable))
+            throw std::runtime_error("Cannot locate executable directory.");
+        std::filesystem::current_path(std::filesystem::path(executable).parent_path());
+        g_GameState = CreateInitialGameState();
+    }
+    catch (const std::exception &error)
+    {
+        std::cerr << "게임 데이터 로드 실패: " << error.what() << '\n';
+        return 1;
+    }
     for (int index = 1; index + 1 < argc; ++index)
         if (std::string(argv[index]) == "--capture")
         {
-            g_CapturePath = argv[index + 1];
+            g_CaptureFilename = (launchDirectory / std::filesystem::u8path(argv[index + 1])).u8string();
+            g_CapturePath = g_CaptureFilename.c_str();
             for (int next = index; next + 2 < argc; ++next)
                 argv[next] = argv[next + 2];
             argc -= 2;
             break;
         }
-    glutInit(&argc, argv);
-    glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA);
-    glutInitWindowSize(WindowWidth, WindowHeight);
-    glutCreateWindow("");
-    SetWindowTextW(WindowFromDC(wglGetCurrentDC()), L"그린웨이크 - 모험의 시작");
-    if (g_CapturePath)
-        glutHideWindow();
-    glutSetOption(GLUT_ACTION_ON_WINDOW_CLOSE, GLUT_ACTION_GLUTMAINLOOP_RETURNS);
+    glfwSetErrorCallback([](int code, const char *message) {
+        std::cerr << "GLFW " << code << ": " << message << '\n';
+    });
+    if (!InitializeGlfwWindow(g_CapturePath == nullptr))
+        return 1;
+    g_Window = glfwCreateWindow(WindowWidth, WindowHeight, "그린웨이크 - 모험의 시작", nullptr, nullptr);
+    if (!g_Window)
+    {
+        glfwTerminate();
+        return 1;
+    }
+    glfwMakeContextCurrent(g_Window);
+    // Preserve the previous path's driver-controlled swap interval.
     if (glewInit() != GLEW_OK || !glewIsSupported("GL_VERSION_3_3"))
     {
         std::cerr << "OpenGL 3.3 initialization failed.\n";
+        glfwDestroyWindow(g_Window);
+        glfwTerminate();
         return 1;
     }
 
-    g_Renderer = new Renderer(WindowWidth, WindowHeight);
-    if (!g_Renderer->IsInitialized())
+    int result = 0;
+    try
     {
-        delete g_Renderer;
-        return 1;
+        int width, height;
+        glfwGetFramebufferSize(g_Window, &width, &height);
+        ResizeWindow(g_Window, width, height);
+        auto renderer = std::make_unique<Renderer>(g_GameState.width, g_GameState.height);
+        if (!renderer->IsInitialized())
+            throw std::runtime_error("Renderer initialization failed.");
+        g_Renderer = renderer.get();
+        auto world = std::make_unique<WorldRenderer>(*g_Renderer);
+        g_WorldRenderer = world.get();
+        g_GameState.lastTime = ElapsedMilliseconds();
+        glfwSetFramebufferSizeCallback(g_Window, ResizeWindow);
+        glfwSetKeyCallback(g_Window, KeyInput);
+        glfwSetWindowFocusCallback(g_Window, FocusChanged);
+        glfwSetMouseButtonCallback(g_Window, MouseInput);
+        while (!glfwWindowShouldClose(g_Window))
+        {
+            glfwPollEvents();
+            if (glfwWindowShouldClose(g_Window))
+                break;
+            glfwGetFramebufferSize(g_Window, &width, &height);
+            if (width <= 0 || height <= 0)
+            {
+                glfwWaitEvents();
+                continue;
+            }
+            UpdateFrame();
+            RenderScene();
+        }
+        // Local owners release GPU resources before destroying the current context.
     }
-    g_WorldRenderer = new WorldRenderer(*g_Renderer);
-    g_GameState.lastTime = glutGet(GLUT_ELAPSED_TIME);
-    glutDisplayFunc(RenderScene);
-    glutIdleFunc(UpdateFrame);
-    glutReshapeFunc(ResizeWindow);
-    glutKeyboardFunc(KeyDown);
-    glutKeyboardUpFunc(KeyUp);
-    glutMouseFunc(MouseInput);
-    glutMainLoop();
-
-    delete g_WorldRenderer;
-    delete g_Renderer;
-    return 0;
+    catch (const std::exception &error)
+    {
+        std::cerr << error.what() << '\n';
+        result = 1;
+    }
+    g_WorldRenderer = nullptr;
+    g_Renderer = nullptr;
+    glfwDestroyWindow(g_Window);
+    g_Window = nullptr;
+    glfwTerminate();
+    return result;
 }

@@ -7,20 +7,20 @@ int main()
 {
     assert(!WorldLayout::IsBlocked({0, -2.5f}));
     assert(!WorldLayout::IsBlocked({0, 1.4f}));
-    for (const Vec2 &house : WorldLayout::Houses)
-        assert(WorldLayout::IsBlocked(house));
-    for (const Vec2 &tree : WorldLayout::Trees)
-        assert(WorldLayout::IsBlocked(tree));
-    for (const auto &item : WorldLayout::Landmarks)
+    for (const auto &house : WorldLayout::Houses())
+        assert(WorldLayout::IsBlocked(house.position));
+    for (const auto &tree : WorldLayout::Trees())
+        assert(WorldLayout::IsBlocked(tree.position));
+    for (const auto &item : WorldLayout::Landmarks())
         if (item.radius > 0)
             assert(WorldLayout::IsBlocked(item.position));
 
-    GameState state;
+    GameState state = CreateInitialGameState();
     state.keys['w'] = state.keys['a'] = true; // Along world +Z toward the elder.
     for (int i = 0; i < 11; ++i)
         PlayerController::UpdateMovement(state, .1f);
     assert(std::abs(state.player.x) < .001f && state.player.z > 1.2f);
-    const Vec2 house = WorldLayout::Houses[0];
+    const Vec2 house = WorldLayout::Houses()[0].position;
     state.keys = {};
     state.keys['w'] = state.keys['d'] = true;
     state.player = {house.x-1.8f, house.z};

@@ -83,22 +83,27 @@ void DrawGameUi(Renderer &renderer, const GameUiState &state)
     const Vec2 lake = mapOffset(state.lake);
     // The shader uses upward-positive local coordinates, unlike the UI.
     effect(mx, my, mr, lake.x/mr, -lake.z/mr, state.lakeRadius/35.0f, 1, 8);
-    const auto marker = [&](Vec2 position, float size, float r, float g, float b) {
+    const auto marker = [&](Vec2 position, float size, float r, float g, float b, bool clampToEdge) {
         const Vec2 offset = mapOffset(position);
-        const float dx = offset.x, dy = offset.z;
-        if (dx*dx+dy*dy < (mr-size-3*s)*(mr-size-3*s))
+        float dx = offset.x, dy = offset.z;
+        const float limit = mr-size-3*s, distance = std::sqrt(dx*dx+dy*dy);
+        if (distance >= limit && clampToEdge && distance > 0)
+        {
+            dx *= limit/distance; dy *= limit/distance;
+        }
+        if (clampToEdge || distance < limit)
         {
             effect(mx+dx, my+dy, size+s, .03f, .035f, .025f, 1, 7);
             effect(mx+dx, my+dy, size, r, g, b, 1, 7);
         }
     };
-    marker(state.elder, 4*s, 1, .78f, .24f);
-    if (state.monsterVisible) marker(state.monster, 6*s, .92f, .14f, .045f);
-    if (state.hasObjectiveTarget) marker(state.objectiveTarget, 5*s, .90f, .74f, .27f);
+    marker(state.elder, 4*s, 1, .78f, .24f, false);
+    if (state.monsterVisible) marker(state.monster, 6*s, .92f, .14f, .045f, false);
+    if (state.hasObjectiveTarget) marker(state.objectiveTarget, 5*s, .90f, .74f, .27f, true);
     effect(mx, my, 5*s, .41f, .84f, 1, 1, 7);
     label(mx-(mr+16*s)*.70710678f-5*s, my-(mr+16*s)*.70710678f-12*s,
           L"북", .57f, .93f, .88f, .66f);
-    label(mx-45*s, my+mr+7*s, L"그린웨이크", .56f, .88f, .87f, .76f);
+    label(mx-45*s, my+mr+7*s, state.locationName.c_str(), .56f, .88f, .87f, .76f);
 
     // Existing gameplay commands, with the same circles used by HitTestGameUi.
     const auto controls = GameUiControls(state.windowWidth, state.windowHeight);
@@ -182,7 +187,8 @@ static void DrawInventoryPanel(Renderer &renderer, const GameUiState &state)
     rect(panel.x+2*s, panel.y+2*s, panel.width-4*s, panel.height-4*s, .045f, .055f, .05f, 1);
     text(panel.x+20*s, panel.y+20*s, L"가방 · 야영지 제작", 1, .86f, .54f);
     wchar_t line[120];
-    std::swprintf(line, 120, L"장착: %ls   |   공격력 %d", state.hunterBladeCrafted ? L"엄니 검" : L"기본 검", state.attackPower);
+    std::swprintf(line, 120, L"%ls / %ls | 공격 %d · 방어 %d", state.hunterBladeCrafted ? L"엄니 검" : L"기본 검",
+                  state.hunterArmorCrafted ? L"가죽 방어구" : L"기본 의상", state.attackPower, state.defense);
     text(panel.x+20*s, panel.y+65*s, line, .87f, .90f, .82f);
     const wchar_t *names[] = {L"회복 물약", L"약초", L"멧돼지 가죽", L"멧돼지 엄니"};
     const int counts[] = {state.potions, state.herbs, state.hides, state.trophies};
@@ -192,16 +198,18 @@ static void DrawInventoryPanel(Renderer &renderer, const GameUiState &state)
         text(panel.x+24*s, panel.y+(105+row*30)*s, line, .90f, .88f, .76f);
     }
     text(panel.x+20*s, panel.y+228*s, state.nearWorkbench
-        ? (state.huntReported ? L"엄니 검 재료: 가죽 1 + 엄니 1" : L"엄니 검: 먼저 장로에게 사냥 보고")
+        ? (state.armorRecipeUnlocked ? L"가죽 방어구: 가죽 2 + 엄니 1" :
+           (state.huntReported ? L"엄니 검 재료: 가죽 1 + 엄니 1" : L"엄니 검: 먼저 장로에게 사냥 보고"))
         : L"제작 위치: 장로 근처의 야영지", .95f, .76f, .42f);
     const auto buttons = InventoryButtons(state.windowWidth, state.windowHeight);
-    const wchar_t *labels[] = {L"C  엄니 검 제작 · 자동 장착 (+3)", L"P  회복 물약 제작 (약초 1)", L"×"};
+    const wchar_t *labels[] = {L"C  엄니 검 제작 · 자동 장착 (+3)", L"P  회복 물약 제작 (약초 1)", L"R  가죽 방어구 제작 (받는 피해 -3)", L"×"};
     for (size_t index = 0; index < buttons.size(); ++index)
     {
         const auto &button = buttons[index];
-        const bool enabled = index == 2 || (state.nearWorkbench && (index == 0
+        const bool enabled = index == 3 || (state.nearWorkbench && (index == 0
             ? state.huntReported && !state.hunterBladeCrafted && state.hides > 0 && state.trophies > 0
-            : state.herbs > 0 && state.potions < 99));
+            : (index == 1 ? state.herbs > 0 && state.potions < 99 :
+               state.armorRecipeUnlocked && !state.hunterArmorCrafted && state.hides >= 2 && state.trophies >= 1)));
         rect(button.x, button.y, button.width, button.height, .34f, .29f, .16f, 1);
         rect(button.x+s, button.y+s, button.width-2*s, button.height-2*s,
              enabled ? .16f : .08f, enabled ? .23f : .09f, .10f, 1);
@@ -209,7 +217,7 @@ static void DrawInventoryPanel(Renderer &renderer, const GameUiState &state)
     }
     const std::wstring status = state.messageTime > 0 ? state.message : L"재료를 모아 장비를 제작하세요.";
     const size_t limit = static_cast<size_t>(std::max(12.0f, (panel.width-40*s)/(18*textScale)));
-    for (size_t row = 0; row < 3 && row*limit < status.size(); ++row)
-        text(panel.x+20*s, panel.y+(368+row*25)*s, status.substr(row*limit, limit).c_str(), .88f, .86f, .73f);
-    text(panel.x+20*s, panel.y+465*s, L"I / ESC 닫기 · 일시정지 중", .69f, .75f, .67f);
+    for (size_t row = 0; row < 2 && row*limit < status.size(); ++row)
+        text(panel.x+20*s, panel.y+(411+row*25)*s, status.substr(row*limit, limit).c_str(), .88f, .86f, .73f);
+    text(panel.x+20*s, panel.y+470*s, L"I / ESC 닫기 · 일시정지 중", .69f, .75f, .67f);
 }

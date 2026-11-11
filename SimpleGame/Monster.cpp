@@ -1,20 +1,13 @@
 #include "stdafx.h"
 #include "Monster.h"
 #include "Renderer.h"
+#include "GameContent.h"
 
 #include <algorithm>
 #include <cmath>
 
 namespace
 {
-constexpr int LakeBoarHealth = 12;
-constexpr float LakeBoarHitRange = 1.9f;
-constexpr float LakeBoarDropRange = 1.5f;
-constexpr float LakeBoarChaseRange = 7.0f;
-constexpr float LakeBoarAttackRange = 1.1f;
-constexpr float LakeBoarMoveSpeed = 1.4f;
-constexpr float LakeBoarAttackDamage = 15.0f;
-constexpr float LakeBoarAttackCooldown = 1.25f;
 constexpr float HitFlashTime = .22f;
 
 float Distance(Vec2 a, Vec2 b)
@@ -36,17 +29,18 @@ void DrawDrop(const MonsterState &monster, const MonsterDrawContext &context)
     context.renderer->DrawSolidRect(s.x, s.z + 9, 7, 7, 0, 1.0f, .88f, .38f, glow);
 
     context.renderer->DrawLabel(context.screenWidth * .5f + s.x - 64, context.screenHeight * .5f + s.z + 30,
-                                L"드랍: 멧돼지 엄니", 1.0f, .86f, .42f);
+                                L"전리품: 가죽·엄니", 1.0f, .86f, .42f);
 }
 
 void DrawInfo(const MonsterState &monster, const MonsterDrawContext &context, const Vec2 &s)
 {
     const float healthRatio = std::max(0.0f, std::min(1.0f, static_cast<float>(monster.health) / monster.maxHealth));
 
-    context.renderer->DrawLabel(context.screenWidth * .5f + s.x - 76, context.screenHeight * .5f + s.z + 104,
-                                L"호숫가 멧돼지", 1.0f, .86f, .62f);
-    context.renderer->DrawSolidRect(s.x, s.z + 86, 132, 12, 0, .05f, .04f, .03f, .88f);
-    context.renderer->DrawSolidRect(s.x - 66 + healthRatio * 66.0f, s.z + 86, 132.0f * healthRatio, 6, 0, .78f, .12f,
+    const float top = monster.definition.spriteHeight * .75f;
+    context.renderer->DrawLabel(context.screenWidth * .5f + s.x - 76, context.screenHeight * .5f + s.z + top + 10,
+                                monster.definition.name.c_str(), 1.0f, .86f, .62f);
+    context.renderer->DrawSolidRect(s.x, s.z + top - 8, 132, 12, 0, .05f, .04f, .03f, .88f);
+    context.renderer->DrawSolidRect(s.x - 66 + healthRatio * 66.0f, s.z + top - 8, 132.0f * healthRatio, 6, 0, .78f, .12f,
                                     .08f, 1);
 }
 
@@ -104,9 +98,19 @@ void DrawDeathEffect(const MonsterState &monster, const MonsterDrawContext &cont
 
 namespace MonsterSystem
 {
-MonsterState CreateLakeBoar()
+MonsterState CreateEncounter()
 {
-    return {{34.0f, 30.0f}, LakeBoarHealth, LakeBoarHealth, 0.0f, 0.0f, 0.0f};
+    const auto &content = GameContent::Get();
+    return Create(content.monsters.at(content.map.monsterId),content.map.monsterSpawn);
+}
+
+MonsterState Create(const MonsterDefinition &definition, Vec2 position)
+{
+    MonsterState monster = {};
+    monster.definition = definition;
+    monster.position = position;
+    monster.maxHealth = monster.health = monster.definition.health;
+    return monster;
 }
 
 bool IsAlive(const MonsterState &monster)
@@ -116,12 +120,12 @@ bool IsAlive(const MonsterState &monster)
 
 bool IsInteractableDrop(const MonsterState &monster, Vec2 player)
 {
-    return !IsAlive(monster) && Distance(player, monster.position) < LakeBoarDropRange;
+    return !IsAlive(monster) && Distance(player, monster.position) < monster.definition.dropRange;
 }
 
 MonsterHitResult Hit(MonsterState &monster, Vec2 player, int attackPower)
 {
-    if (!IsAlive(monster) || Distance(player, monster.position) >= LakeBoarHitRange)
+    if (!IsAlive(monster) || Distance(player, monster.position) >= monster.definition.hitRange)
     {
         return {false, false};
     }
@@ -149,7 +153,7 @@ void UpdateTimers(MonsterState &monster, float deltaTime)
     }
 }
 
-bool UpdateChaseAndAttack(MonsterState &monster, Vec2 player, float dodgeTime, float deltaTime, float &playerHealth)
+bool UpdateChaseAndAttack(MonsterState &monster, Vec2 player, float dodgeTime, float deltaTime, float &playerHealth, int defense)
 {
     if (!IsAlive(monster))
     {
@@ -158,17 +162,17 @@ bool UpdateChaseAndAttack(MonsterState &monster, Vec2 player, float dodgeTime, f
 
     const float distance = Distance(player, monster.position);
 
-    if (distance < LakeBoarChaseRange && distance > LakeBoarAttackRange)
+    if (distance < monster.definition.chaseRange && distance > monster.definition.attackRange)
     {
-        monster.position.x += (player.x - monster.position.x) / distance * LakeBoarMoveSpeed * deltaTime;
-        monster.position.z += (player.z - monster.position.z) / distance * LakeBoarMoveSpeed * deltaTime;
+        monster.position.x += (player.x - monster.position.x) / distance * monster.definition.speed * deltaTime;
+        monster.position.z += (player.z - monster.position.z) / distance * monster.definition.speed * deltaTime;
         return false;
     }
 
-    if (distance <= LakeBoarAttackRange && monster.attackCooldown <= 0 && dodgeTime <= 0)
+    if (distance <= monster.definition.attackRange && monster.attackCooldown <= 0 && dodgeTime <= 0)
     {
-        playerHealth -= LakeBoarAttackDamage;
-        monster.attackCooldown = LakeBoarAttackCooldown;
+        playerHealth -= monster.definition.damage <= 0 ? 0 : std::max(1.0f,monster.definition.damage-std::max(0,defense));
+        monster.attackCooldown = monster.definition.cooldown;
         return true;
     }
 

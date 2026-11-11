@@ -1,6 +1,5 @@
 #include "stdafx.h"
 #include "Renderer.h"
-#include "Dependencies\\freeglut.h"
 
 #include <Windows.h>
 #include <objidl.h>
@@ -40,6 +39,7 @@ Renderer::~Renderer()
     }
     if (m_GdiToken != 0)
     {
+        m_Fonts.reset();
         Gdiplus::GdiplusShutdown(static_cast<ULONG_PTR>(m_GdiToken));
     }
 }
@@ -55,6 +55,28 @@ void Renderer::Initialize(int windowSizeX, int windowSizeY)
     if (Gdiplus::GdiplusStartup(&token, &startupInput, nullptr) == Gdiplus::Ok)
     {
         m_GdiToken = static_cast<std::uint64_t>(token);
+    }
+    if (m_GdiToken == 0)
+        return;
+    Gdiplus::FontFamily systemFont(m_FontFamilyName.c_str());
+    if (systemFont.GetLastStatus() != Gdiplus::Ok)
+    {
+        m_Fonts = std::make_unique<Gdiplus::PrivateFontCollection>();
+        if (m_Fonts->AddFontFile(L"./Fonts/NanumGothic-Regular.ttf") != Gdiplus::Ok)
+        {
+            std::cerr << "Cannot load Korean font: Fonts/NanumGothic-Regular.ttf\n";
+            return;
+        }
+        Gdiplus::FontFamily fallback;
+        int count = 0;
+        WCHAR name[LF_FACESIZE] = {};
+        if (m_Fonts->GetFamilies(1, &fallback, &count) != Gdiplus::Ok || count != 1 ||
+            fallback.GetFamilyName(name) != Gdiplus::Ok)
+        {
+            std::cerr << "Cannot read bundled Korean font family.\n";
+            return;
+        }
+        m_FontFamilyName = name;
     }
 
     m_SolidRectShader = CompileShaders("./Shaders/SolidRect.vs", "./Shaders/SolidRect.fs");
@@ -406,7 +428,7 @@ void Renderer::DrawSprite(GLuint texture, float x, float y, float sizeX, float s
 Renderer::LabelTexture Renderer::CreateLabelTexture(const wchar_t *text)
 {
     LabelTexture result;
-    Gdiplus::FontFamily family(L"Malgun Gothic");
+    Gdiplus::FontFamily family(m_FontFamilyName.c_str(), m_Fonts.get());
     Gdiplus::Font font(&family, 18.0f, Gdiplus::FontStyleRegular, Gdiplus::UnitPixel);
     Gdiplus::Bitmap measuringBitmap(1, 1, PixelFormat32bppARGB);
     Gdiplus::Graphics measuringGraphics(&measuringBitmap);
