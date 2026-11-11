@@ -47,6 +47,7 @@ class WorldRenderer
     void DrawPixelNpc(const NpcState &npc, int variant) const;
     void DrawTree(Vec2 position, int variant) const;
     void DrawPixelPlayer(const GameState &state) const;
+    void DrawGeneralPlayer(const GameState &state) const;
     void DrawPixelSprite(Vec2 position, unsigned int texture, float width, float height,
                          float pivotY, float sway = 0.0f) const;
     void DrawCampfire(Vec2 position) const;
@@ -62,6 +63,7 @@ class WorldRenderer
     unsigned int m_SceneryTexture = 0;
     unsigned int m_PlayerTexture = 0;
     unsigned int m_PlayerAttackTexture = 0;
+    unsigned int m_GeneralWalkTexture = 0, m_GeneralRunTexture = 0;
     unsigned int m_SwordSlashTexture = 0;
     unsigned int m_ElderTexture = 0;
     unsigned int m_NoticeBoardTexture = 0;

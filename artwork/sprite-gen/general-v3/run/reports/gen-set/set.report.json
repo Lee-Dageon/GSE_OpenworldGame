@@ -1,0 +1,236 @@
+{
+  "kind": "sprite-gen-gen-set-report",
+  "run_dir": "C:\\GameSoftwareEngineering\\BaseProject_SE\\artwork\\sprite-gen\\general-v3\\run",
+  "states": [
+    "down_walk",
+    "down_run",
+    "side_walk",
+    "up_walk",
+    "up_run",
+    "se_walk",
+    "se_run",
+    "sw_walk",
+    "sw_run",
+    "ne_walk",
+    "ne_run",
+    "nw_walk",
+    "nw_run",
+    "left_walk",
+    "left_run"
+  ],
+  "ok": 15,
+  "failed": [],
+  "not_started": [],
+  "items": [
+    {
+      "state": "down_walk",
+      "out": "C:\\GameSoftwareEngineering\\BaseProject_SE\\artwork\\sprite-gen\\general-v3\\run\\raw\\down\\walk.png",
+      "report": "C:\\GameSoftwareEngineering\\BaseProject_SE\\artwork\\sprite-gen\\general-v3\\run\\reports\\gen-set\\down_walk.json",
+      "refs": [
+        "C:\\GameSoftwareEngineering\\BaseProject_SE\\artwork\\sprite-gen\\general-v3\\run\\references\\anchors\\down-anchor-x8.png",
+        "C:\\GameSoftwareEngineering\\BaseProject_SE\\artwork\\sprite-gen\\general-v3\\run\\references\\layout-guides\\down\\walk.png"
+      ],
+      "provider": "codex",
+      "provider_resolved_from": "explicit",
+      "auth_source": "codex-login",
+      "elapsed_seconds": 56.3,
+      "ok": true
+    },
+    {
+      "state": "down_run",
+      "out": "C:\\GameSoftwareEngineering\\BaseProject_SE\\artwork\\sprite-gen\\general-v3\\run\\raw\\down\\run.png",
+      "report": "C:\\GameSoftwareEngineering\\BaseProject_SE\\artwork\\sprite-gen\\general-v3\\run\\reports\\gen-set\\down_run.json",
+      "refs": [
+        "C:\\GameSoftwareEngineering\\BaseProject_SE\\artwork\\sprite-gen\\general-v3\\run\\references\\anchors\\down-anchor-x8.png",
+        "C:\\GameSoftwareEngineering\\BaseProject_SE\\artwork\\sprite-gen\\general-v3\\run\\references\\layout-guides\\down\\run.png"
+      ],
+      "provider": "codex",
+      "provider_resolved_from": "explicit",
+      "auth_source": "codex-login",
+      "elapsed_seconds": 57.8,
+      "ok": true
+    },
+    {
+      "state": "side_walk",
+      "out": "C:\\GameSoftwareEngineering\\BaseProject_SE\\artwork\\sprite-gen\\general-v3\\run\\raw\\side\\walk.png",
+      "report": "C:\\GameSoftwareEngineering\\BaseProject_SE\\artwork\\sprite-gen\\general-v3\\run\\reports\\gen-set\\side_walk.json",
+      "refs": [
+        "C:\\GameSoftwareEngineering\\BaseProject_SE\\artwork\\sprite-gen\\general-v3\\run\\references\\anchors\\side-anchor-x8.png",
+        "C:\\GameSoftwareEngineering\\BaseProject_SE\\artwork\\sprite-gen\\general-v3\\run\\references\\layout-guides\\side\\walk.png"
+      ],
+      "provider": "codex",
+      "provider_resolved_from": "explicit",
+      "auth_source": "codex-login",
+      "elapsed_seconds": 47.0,
+      "ok": true
+    },
+    {
+      "state": "up_walk",
+      "out": "C:\\GameSoftwareEngineering\\BaseProject_SE\\artwork\\sprite-gen\\general-v3\\run\\raw\\up\\walk.png",
+      "report": "C:\\GameSoftwareEngineering\\BaseProject_SE\\artwork\\sprite-gen\\general-v3\\run\\reports\\gen-set\\up_walk.json",
+      "refs": [
+        "C:\\GameSoftwareEngineering\\BaseProject_SE\\artwork\\sprite-gen\\general-v3\\run\\references\\anchors\\up-anchor-x8.png",
+        "C:\\GameSoftwareEngineering\\BaseProject_SE\\artwork\\sprite-gen\\general-v3\\run\\references\\layout-guides\\up\\walk.png"
+      ],
+      "provider": "codex",
+      "provider_resolved_from": "explicit",
+      "auth_source": "codex-login",
+      "elapsed_seconds": 53.4,
+      "ok": true
+    },
+    {
+      "state": "up_run",
+      "out": "C:\\GameSoftwareEngineering\\BaseProject_SE\\artwork\\sprite-gen\\general-v3\\run\\raw\\up\\run.png",
+      "report": "C:\\GameSoftwareEngineering\\BaseProject_SE\\artwork\\sprite-gen\\general-v3\\run\\reports\\gen-set\\up_run.json",
+      "refs": [
+        "C:\\GameSoftwareEngineering\\BaseProject_SE\\artwork\\sprite-gen\\general-v3\\run\\references\\anchors\\up-anchor-x8.png",
+        "C:\\GameSoftwareEngineering\\BaseProject_SE\\artwork\\sprite-gen\\general-v3\\run\\references\\layout-guides\\up\\run.png"
+      ],
+      "provider": "codex",
+      "provider_resolved_from": "explicit",
+      "auth_source": "codex-login",
+      "elapsed_seconds": 54.9,
+      "ok": true
+    },
+    {
+      "state": "se_walk",
+      "out": "C:\\GameSoftwareEngineering\\BaseProject_SE\\artwork\\sprite-gen\\general-v3\\run\\raw\\se\\walk.png",
+      "report": "C:\\GameSoftwareEngineering\\BaseProject_SE\\artwork\\sprite-gen\\general-v3\\run\\reports\\gen-set\\se_walk.json",
+      "refs": [
+        "C:\\GameSoftwareEngineering\\BaseProject_SE\\artwork\\sprite-gen\\general-v3\\run\\references\\anchors\\se-anchor-x8.png",
+        "C:\\GameSoftwareEngineering\\BaseProject_SE\\artwork\\sprite-gen\\general-v3\\run\\references\\layout-guides\\se\\walk.png"
+      ],
+      "provider": "codex",
+      "provider_resolved_from": "explicit",
+      "auth_source": "codex-login",
+      "elapsed_seconds": 55.1,
+      "ok": true
+    },
+    {
+      "state": "se_run",
+      "out": "C:\\GameSoftwareEngineering\\BaseProject_SE\\artwork\\sprite-gen\\general-v3\\run\\raw\\se\\run.png",
+      "report": "C:\\GameSoftwareEngineering\\BaseProject_SE\\artwork\\sprite-gen\\general-v3\\run\\reports\\gen-set\\se_run.json",
+      "refs": [
+        "C:\\GameSoftwareEngineering\\BaseProject_SE\\artwork\\sprite-gen\\general-v3\\run\\references\\anchors\\se-anchor-x8.png",
+        "C:\\GameSoftwareEngineering\\BaseProject_SE\\artwork\\sprite-gen\\general-v3\\run\\references\\layout-guides\\se\\run.png"
+      ],
+      "provider": "codex",
+      "provider_resolved_from": "explicit",
+      "auth_source": "codex-login",
+      "elapsed_seconds": 55.6,
+      "ok": true
+    },
+    {
+      "state": "sw_walk",
+      "out": "C:\\GameSoftwareEngineering\\BaseProject_SE\\artwork\\sprite-gen\\general-v3\\run\\raw\\sw\\walk.png",
+      "report": "C:\\GameSoftwareEngineering\\BaseProject_SE\\artwork\\sprite-gen\\general-v3\\run\\reports\\gen-set\\sw_walk.json",
+      "refs": [
+        "C:\\GameSoftwareEngineering\\BaseProject_SE\\artwork\\sprite-gen\\general-v3\\run\\references\\anchors\\sw-anchor-x8.png",
+        "C:\\GameSoftwareEngineering\\BaseProject_SE\\artwork\\sprite-gen\\general-v3\\run\\references\\layout-guides\\sw\\walk.png"
+      ],
+      "provider": "codex",
+      "provider_resolved_from": "explicit",
+      "auth_source": "codex-login",
+      "elapsed_seconds": 42.8,
+      "ok": true
+    },
+    {
+      "state": "sw_run",
+      "out": "C:\\GameSoftwareEngineering\\BaseProject_SE\\artwork\\sprite-gen\\general-v3\\run\\raw\\sw\\run.png",
+      "report": "C:\\GameSoftwareEngineering\\BaseProject_SE\\artwork\\sprite-gen\\general-v3\\run\\reports\\gen-set\\sw_run.json",
+      "refs": [
+        "C:\\GameSoftwareEngineering\\BaseProject_SE\\artwork\\sprite-gen\\general-v3\\run\\references\\anchors\\sw-anchor-x8.png",
+        "C:\\GameSoftwareEngineering\\BaseProject_SE\\artwork\\sprite-gen\\general-v3\\run\\references\\layout-guides\\sw\\run.png"
+      ],
+      "provider": "codex",
+      "provider_resolved_from": "explicit",
+      "auth_source": "codex-login",
+      "elapsed_seconds": 50.5,
+      "ok": true
+    },
+    {
+      "state": "ne_walk",
+      "out": "C:\\GameSoftwareEngineering\\BaseProject_SE\\artwork\\sprite-gen\\general-v3\\run\\raw\\ne\\walk.png",
+      "report": "C:\\GameSoftwareEngineering\\BaseProject_SE\\artwork\\sprite-gen\\general-v3\\run\\reports\\gen-set\\ne_walk.json",
+      "refs": [
+        "C:\\GameSoftwareEngineering\\BaseProject_SE\\artwork\\sprite-gen\\general-v3\\run\\references\\anchors\\ne-anchor-x8.png",
+        "C:\\GameSoftwareEngineering\\BaseProject_SE\\artwork\\sprite-gen\\general-v3\\run\\references\\layout-guides\\ne\\walk.png"
+      ],
+      "provider": "codex",
+      "provider_resolved_from": "explicit",
+      "auth_source": "codex-login",
+      "elapsed_seconds": 49.7,
+      "ok": true
+    },
+    {
+      "state": "ne_run",
+      "out": "C:\\GameSoftwareEngineering\\BaseProject_SE\\artwork\\sprite-gen\\general-v3\\run\\raw\\ne\\run.png",
+      "report": "C:\\GameSoftwareEngineering\\BaseProject_SE\\artwork\\sprite-gen\\general-v3\\run\\reports\\gen-set\\ne_run.json",
+      "refs": [
+        "C:\\GameSoftwareEngineering\\BaseProject_SE\\artwork\\sprite-gen\\general-v3\\run\\references\\anchors\\ne-anchor-x8.png",
+        "C:\\GameSoftwareEngineering\\BaseProject_SE\\artwork\\sprite-gen\\general-v3\\run\\references\\layout-guides\\ne\\run.png"
+      ],
+      "provider": "codex",
+      "provider_resolved_from": "explicit",
+      "auth_source": "codex-login",
+      "elapsed_seconds": 42.3,
+      "ok": true
+    },
+    {
+      "state": "nw_walk",
+      "out": "C:\\GameSoftwareEngineering\\BaseProject_SE\\artwork\\sprite-gen\\general-v3\\run\\raw\\nw\\walk.png",
+      "report": "C:\\GameSoftwareEngineering\\BaseProject_SE\\artwork\\sprite-gen\\general-v3\\run\\reports\\gen-set\\nw_walk.json",
+      "refs": [
+        "C:\\GameSoftwareEngineering\\BaseProject_SE\\artwork\\sprite-gen\\general-v3\\run\\references\\anchors\\nw-anchor-x8.png",
+        "C:\\GameSoftwareEngineering\\BaseProject_SE\\artwork\\sprite-gen\\general-v3\\run\\references\\layout-guides\\nw\\walk.png"
+      ],
+      "provider": "codex",
+      "provider_resolved_from": "explicit",
+      "auth_source": "codex-login",
+      "elapsed_seconds": 56.1,
+      "ok": true
+    },
+    {
+      "state": "nw_run",
+      "out": "C:\\GameSoftwareEngineering\\BaseProject_SE\\artwork\\sprite-gen\\general-v3\\run\\raw\\nw\\run.png",
+      "report": "C:\\GameSoftwareEngineering\\BaseProject_SE\\artwork\\sprite-gen\\general-v3\\run\\reports\\gen-set\\nw_run.json",
+      "refs": [
+        "C:\\GameSoftwareEngineering\\BaseProject_SE\\artwork\\sprite-gen\\general-v3\\run\\references\\anchors\\nw-anchor-x8.png",
+        "C:\\GameSoftwareEngineering\\BaseProject_SE\\artwork\\sprite-gen\\general-v3\\run\\references\\layout-guides\\nw\\run.png"
+      ],
+      "provider": "codex",
+      "provider_resolved_from": "explicit",
+      "auth_source": "codex-login",
+      "elapsed_seconds": 54.2,
+      "ok": true
+    },
+    {
+      "state": "left_walk",
+      "out": "C:\\GameSoftwareEngineering\\BaseProject_SE\\artwork\\sprite-gen\\general-v3\\run\\raw\\left\\walk.png",
+      "report": "C:\\GameSoftwareEngineering\\BaseProject_SE\\artwork\\sprite-gen\\general-v3\\run\\reports\\gen-set\\left_walk.json",
+      "refs": [
+        "C:\\GameSoftwareEngineering\\BaseProject_SE\\artwork\\sprite-gen\\general-v3\\run\\references\\anchors\\left-anchor-x8.png",
+        "C:\\GameSoftwareEngineering\\BaseProject_SE\\artwork\\sprite-gen\\general-v3\\run\\references\\layout-guides\\left\\walk.png"
+      ],
+      "provider": "codex",
+      "provider_resolved_from": "explicit",
+      "auth_source": "codex-login",
+      "elapsed_seconds": 54.8,
+      "ok": true
+    },
+    {
+      "state": "left_run",
+      "out": "C:\\GameSoftwareEngineering\\BaseProject_SE\\artwork\\sprite-gen\\general-v3\\run\\raw\\left\\run.png",
+      "report": "C:\\GameSoftwareEngineering\\BaseProject_SE\\artwork\\sprite-gen\\general-v3\\run\\reports\\gen-set\\left_run.json",
+      "refs": [
+        "C:\\GameSoftwareEngineering\\BaseProject_SE\\artwork\\sprite-gen\\general-v3\\run\\references\\anchors\\left-anchor-x8.png",
+        "C:\\GameSoftwareEngineering\\BaseProject_SE\\artwork\\sprite-gen\\general-v3\\run\\references\\layout-guides\\left\\run.png"
+      ],
+      "provider": "codex",
+      "provider_resolved_from": "explicit",
+      "auth_source": "codex-login",
+      "elapsed_seconds": 52.6,
+      "ok": true
+    }
+  ]
+}

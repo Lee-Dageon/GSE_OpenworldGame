@@ -6,6 +6,7 @@
 #include "WorldLayout.h"
 #include "StorySystem.h"
 #include "PixelNpcFrames.h"
+#include "PixelGeneralFrames.h"
 
 #include <algorithm>
 #include <array>
@@ -133,6 +134,8 @@ WorldRenderer::WorldRenderer(Renderer &renderer) : m_Renderer(renderer)
     m_PropsTexture = m_Renderer.LoadTexture(L"./Assets/Frontier/Textures/props_atlas.png");
     m_SceneryTexture = m_Renderer.LoadTexture(L"./Assets/Frontier/Textures/scenery_atlas.png");
     m_PlayerTexture = m_Renderer.LoadTexture(L"./Assets/PixelArt/Characters/hero-walk-v1.png");
+    m_GeneralWalkTexture = m_Renderer.LoadTexture(L"./Assets/PixelArt/Characters/hero-general-walk-v2.png");
+    m_GeneralRunTexture = m_Renderer.LoadTexture(L"./Assets/PixelArt/Characters/hero-general-v3.png");
     m_PixelPlayer = m_PlayerTexture != 0;
     if (!m_PixelPlayer)
     {
@@ -167,7 +170,7 @@ WorldRenderer::WorldRenderer(Renderer &renderer) : m_Renderer(renderer)
                                  m_PixelTerrain ? m_TerrainTexture : 0u, m_PixelPlayer ? m_PlayerTexture : 0u,
                                  m_ElderTexture, m_NoticeBoardTexture, m_RockTexture, m_PineTexture,
                                  m_NpcTextures[0], m_NpcTextures[1], m_HouseVariants[0], m_HouseVariants[1],
-                                 m_CampfireTexture})
+                                 m_CampfireTexture, m_GeneralWalkTexture, m_GeneralRunTexture})
         if (texture != 0)
         {
             glBindTexture(GL_TEXTURE_2D, texture);
@@ -179,6 +182,9 @@ WorldRenderer::WorldRenderer(Renderer &renderer) : m_Renderer(renderer)
 
 WorldRenderer::~WorldRenderer()
 {
+    for (unsigned int texture : {m_GeneralWalkTexture, m_GeneralRunTexture})
+        if (texture != 0)
+            glDeleteTextures(1, &texture);
     for (unsigned int texture : {m_NpcTextures[0], m_NpcTextures[1], m_HouseVariants[0], m_HouseVariants[1],
                                  m_CampfireTexture})
         if (texture != 0)
@@ -305,6 +311,42 @@ void WorldRenderer::DrawPixelSprite(Vec2 position, unsigned int texture, float w
     const Vec2 screen = ToScreen(position);
     m_Renderer.DrawSprite(texture, screen.x, screen.z + (.5f - pivotY) * height,
                           width, height, 0, 0, 1, 1, 1, 1, 1, 1, sway, pivotY, 0, 1, 1, .5f);
+}
+
+void WorldRenderer::DrawGeneralPlayer(const GameState &state) const
+{
+    const bool running = state.moving && state.sprint && state.attack <= 0.0f && m_GeneralRunTexture != 0;
+    const int mode = running ? 1 : 0;
+    const int worldDirection = (static_cast<int>(std::lround(std::atan2(-state.facing.z, -state.facing.x) /
+                                                                        (Pi * .25f))) + 8) % 8;
+    const int direction = (10 - worldDirection) % 8;
+    const float progress = std::max(0.0f, std::min(1.0f, 1.0f - state.attack / .32f));
+    const int frame = state.attack > 0 ? std::min(3, static_cast<int>(progress * 4)) :
+                      (state.moving ? static_cast<int>(state.time * (state.sprint ? 4 : 6)) % 4 : 0);
+    const bool newSheet = m_GeneralRunTexture != 0 && state.attack <= 0.0f && (running || !state.moving);
+    // Atlas row order from general-v3/manifest.json: down,side,up,se,sw,ne,nw,left.
+    constexpr int directionRows[8] = {9, 0, 12, 21, 18, 6, 15, 3};
+    const int atlasFrame = running ? frame : static_cast<int>(state.time * 4) % 4;
+    const int atlasRow = directionRows[direction] + (running ? 2 : 0);
+    const PixelGeneralFrames::Frame region = newSheet ?
+        PixelGeneralFrames::Frame{atlasFrame * 192, atlasRow * 256, 192, 256,
+                                 atlasFrame * 192 + 96.0f, atlasRow * 256 + 236.0f} :
+        PixelGeneralFrames::Frames[mode][frame][direction];
+    const float scale = newSheet ? 74.0f / 216.0f : PixelGeneralFrames::Scale[mode];
+    const Vec2 foot = ToScreen(state.player);
+    const float pulse = state.attack > 0 ? std::sin(progress * Pi) : 0;
+    const float dx = state.facing.x - state.facing.z, dy = (state.facing.x + state.facing.z) * .5f;
+    const float length = std::max(.001f, std::sqrt(dx * dx + dy * dy));
+    const float pivotY = (region.y + region.height - region.footY) / region.height;
+    DrawShadow(state.player, 35, 9);
+    m_Renderer.DrawSprite(newSheet ? m_GeneralRunTexture : m_GeneralWalkTexture,
+                          foot.x + (region.x + region.width * .5f - region.footX) * scale + dx / length * pulse * 3,
+                          foot.z + (region.footY - region.y - region.height * .5f) * scale + dy / length * pulse * 3,
+                          region.width * scale, region.height * scale, region.x, region.y,
+                          newSheet ? 768 : PixelGeneralFrames::Width[mode],
+                          newSheet ? 6144 : PixelGeneralFrames::Height[mode],
+                          1, 1, 1, 1, pulse * .025f, pivotY, 0,
+                          static_cast<float>(region.width), static_cast<float>(region.height), .5f);
 }
 
 void WorldRenderer::DrawPixelPlayer(const GameState &state) const
@@ -930,6 +972,12 @@ void WorldRenderer::RenderWorld(const GameState &state)
                 const float swing = angle - Pi * .5f + (progress - .5f) * 1.8f;
                 m_Renderer.DrawEffectRect(foot.x, foot.z + 28, 92, 55, swing,
                                           .76f, .85f, 1, std::sin(progress * Pi) * .48f, 15);
+            }
+            if (m_GeneralWalkTexture != 0)
+            {
+                DrawGeneralPlayer(state);
+                drawSwordSlash();
+                break;
             }
             if (m_PixelPlayer)
             {

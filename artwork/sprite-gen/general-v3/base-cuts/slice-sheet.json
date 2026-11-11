@@ -1,0 +1,918 @@
+{
+  "kind": "sprite-gen-slice-sheet",
+  "version": 1,
+  "sheet": "hero-general-walk-v2.png",
+  "grid": [
+    8,
+    4
+  ],
+  "canvas": {
+    "w": 192,
+    "h": 256
+  },
+  "baseline_y": 226.0,
+  "target_height": 180.0,
+  "scale": "cell",
+  "fit": "contain",
+  "factor": null,
+  "factor_from": null,
+  "alpha_cleanup": "alpha-cleanup.json",
+  "cells": [
+    {
+      "name": "cell-0",
+      "file": "cell-0.png",
+      "factor": 0.759493670886076,
+      "factor_from": "target_height",
+      "subject": {
+        "sheet": {
+          "w": 123,
+          "h": 237
+        },
+        "canvas": {
+          "w": 93,
+          "h": 180
+        }
+      },
+      "box": {
+        "x": 50,
+        "y": 46,
+        "w": 93,
+        "h": 180
+      },
+      "anchor": [
+        96.5,
+        226.0
+      ],
+      "clipped_px": 0,
+      "parts": 1
+    },
+    {
+      "name": "cell-1",
+      "file": "cell-1.png",
+      "factor": 0.7627118644067796,
+      "factor_from": "target_height",
+      "subject": {
+        "sheet": {
+          "w": 121,
+          "h": 236
+        },
+        "canvas": {
+          "w": 92,
+          "h": 180
+        }
+      },
+      "box": {
+        "x": 50,
+        "y": 46,
+        "w": 92,
+        "h": 180
+      },
+      "anchor": [
+        96.0,
+        226.0
+      ],
+      "clipped_px": 0,
+      "parts": 1
+    },
+    {
+      "name": "cell-2",
+      "file": "cell-2.png",
+      "factor": 0.7692307692307693,
+      "factor_from": "target_height",
+      "subject": {
+        "sheet": {
+          "w": 135,
+          "h": 234
+        },
+        "canvas": {
+          "w": 104,
+          "h": 180
+        }
+      },
+      "box": {
+        "x": 44,
+        "y": 46,
+        "w": 104,
+        "h": 180
+      },
+      "anchor": [
+        96.0,
+        226.0
+      ],
+      "clipped_px": 0,
+      "parts": 1
+    },
+    {
+      "name": "cell-3",
+      "file": "cell-3.png",
+      "factor": 0.782608695652174,
+      "factor_from": "target_height",
+      "subject": {
+        "sheet": {
+          "w": 133,
+          "h": 230
+        },
+        "canvas": {
+          "w": 104,
+          "h": 180
+        }
+      },
+      "box": {
+        "x": 44,
+        "y": 46,
+        "w": 104,
+        "h": 180
+      },
+      "anchor": [
+        96.0,
+        226.0
+      ],
+      "clipped_px": 0,
+      "parts": 1
+    },
+    {
+      "name": "cell-4",
+      "file": "cell-4.png",
+      "factor": 0.7692307692307693,
+      "factor_from": "target_height",
+      "subject": {
+        "sheet": {
+          "w": 133,
+          "h": 234
+        },
+        "canvas": {
+          "w": 102,
+          "h": 180
+        }
+      },
+      "box": {
+        "x": 45,
+        "y": 46,
+        "w": 102,
+        "h": 180
+      },
+      "anchor": [
+        96.0,
+        226.0
+      ],
+      "clipped_px": 0,
+      "parts": 1
+    },
+    {
+      "name": "cell-5",
+      "file": "cell-5.png",
+      "factor": 0.7792207792207793,
+      "factor_from": "target_height",
+      "subject": {
+        "sheet": {
+          "w": 120,
+          "h": 231
+        },
+        "canvas": {
+          "w": 94,
+          "h": 180
+        }
+      },
+      "box": {
+        "x": 50,
+        "y": 46,
+        "w": 94,
+        "h": 180
+      },
+      "anchor": [
+        97.0,
+        226.0
+      ],
+      "clipped_px": 0,
+      "parts": 1
+    },
+    {
+      "name": "cell-6",
+      "file": "cell-6.png",
+      "factor": 0.7725321888412017,
+      "factor_from": "target_height",
+      "subject": {
+        "sheet": {
+          "w": 141,
+          "h": 233
+        },
+        "canvas": {
+          "w": 109,
+          "h": 180
+        }
+      },
+      "box": {
+        "x": 42,
+        "y": 46,
+        "w": 109,
+        "h": 180
+      },
+      "anchor": [
+        96.5,
+        226.0
+      ],
+      "clipped_px": 0,
+      "parts": 1
+    },
+    {
+      "name": "cell-7",
+      "file": "cell-7.png",
+      "factor": 0.7725321888412017,
+      "factor_from": "target_height",
+      "subject": {
+        "sheet": {
+          "w": 113,
+          "h": 233
+        },
+        "canvas": {
+          "w": 87,
+          "h": 180
+        }
+      },
+      "box": {
+        "x": 53,
+        "y": 46,
+        "w": 87,
+        "h": 180
+      },
+      "anchor": [
+        96.5,
+        226.0
+      ],
+      "clipped_px": 0,
+      "parts": 1
+    },
+    {
+      "name": "cell-8",
+      "file": "cell-8.png",
+      "factor": 0.7792207792207793,
+      "factor_from": "target_height",
+      "subject": {
+        "sheet": {
+          "w": 122,
+          "h": 231
+        },
+        "canvas": {
+          "w": 95,
+          "h": 180
+        }
+      },
+      "box": {
+        "x": 49,
+        "y": 46,
+        "w": 95,
+        "h": 180
+      },
+      "anchor": [
+        96.5,
+        226.0
+      ],
+      "clipped_px": 0,
+      "parts": 1
+    },
+    {
+      "name": "cell-9",
+      "file": "cell-9.png",
+      "factor": 0.7725321888412017,
+      "factor_from": "target_height",
+      "subject": {
+        "sheet": {
+          "w": 121,
+          "h": 233
+        },
+        "canvas": {
+          "w": 93,
+          "h": 180
+        }
+      },
+      "box": {
+        "x": 50,
+        "y": 46,
+        "w": 93,
+        "h": 180
+      },
+      "anchor": [
+        96.5,
+        226.0
+      ],
+      "clipped_px": 0,
+      "parts": 1
+    },
+    {
+      "name": "cell-10",
+      "file": "cell-10.png",
+      "factor": 0.7929515418502202,
+      "factor_from": "target_height",
+      "subject": {
+        "sheet": {
+          "w": 132,
+          "h": 227
+        },
+        "canvas": {
+          "w": 105,
+          "h": 180
+        }
+      },
+      "box": {
+        "x": 44,
+        "y": 46,
+        "w": 105,
+        "h": 180
+      },
+      "anchor": [
+        96.5,
+        226.0
+      ],
+      "clipped_px": 0,
+      "parts": 1
+    },
+    {
+      "name": "cell-11",
+      "file": "cell-11.png",
+      "factor": 0.8035714285714286,
+      "factor_from": "target_height",
+      "subject": {
+        "sheet": {
+          "w": 119,
+          "h": 224
+        },
+        "canvas": {
+          "w": 96,
+          "h": 180
+        }
+      },
+      "box": {
+        "x": 49,
+        "y": 46,
+        "w": 96,
+        "h": 180
+      },
+      "anchor": [
+        97.0,
+        226.0
+      ],
+      "clipped_px": 0,
+      "parts": 1
+    },
+    {
+      "name": "cell-12",
+      "file": "cell-12.png",
+      "factor": 0.7964601769911505,
+      "factor_from": "target_height",
+      "subject": {
+        "sheet": {
+          "w": 126,
+          "h": 226
+        },
+        "canvas": {
+          "w": 100,
+          "h": 180
+        }
+      },
+      "box": {
+        "x": 46,
+        "y": 46,
+        "w": 100,
+        "h": 180
+      },
+      "anchor": [
+        96.0,
+        226.0
+      ],
+      "clipped_px": 0,
+      "parts": 1
+    },
+    {
+      "name": "cell-13",
+      "file": "cell-13.png",
+      "factor": 0.782608695652174,
+      "factor_from": "target_height",
+      "subject": {
+        "sheet": {
+          "w": 119,
+          "h": 230
+        },
+        "canvas": {
+          "w": 93,
+          "h": 180
+        }
+      },
+      "box": {
+        "x": 50,
+        "y": 46,
+        "w": 93,
+        "h": 180
+      },
+      "anchor": [
+        96.5,
+        226.0
+      ],
+      "clipped_px": 0,
+      "parts": 1
+    },
+    {
+      "name": "cell-14",
+      "file": "cell-14.png",
+      "factor": 0.8,
+      "factor_from": "target_height",
+      "subject": {
+        "sheet": {
+          "w": 131,
+          "h": 225
+        },
+        "canvas": {
+          "w": 105,
+          "h": 180
+        }
+      },
+      "box": {
+        "x": 44,
+        "y": 46,
+        "w": 105,
+        "h": 180
+      },
+      "anchor": [
+        96.5,
+        226.0
+      ],
+      "clipped_px": 0,
+      "parts": 1
+    },
+    {
+      "name": "cell-15",
+      "file": "cell-15.png",
+      "factor": 0.7894736842105263,
+      "factor_from": "target_height",
+      "subject": {
+        "sheet": {
+          "w": 100,
+          "h": 228
+        },
+        "canvas": {
+          "w": 79,
+          "h": 180
+        }
+      },
+      "box": {
+        "x": 57,
+        "y": 46,
+        "w": 79,
+        "h": 180
+      },
+      "anchor": [
+        96.5,
+        226.0
+      ],
+      "clipped_px": 0,
+      "parts": 1
+    },
+    {
+      "name": "cell-16",
+      "file": "cell-16.png",
+      "factor": 0.7627118644067796,
+      "factor_from": "target_height",
+      "subject": {
+        "sheet": {
+          "w": 128,
+          "h": 236
+        },
+        "canvas": {
+          "w": 98,
+          "h": 180
+        }
+      },
+      "box": {
+        "x": 48,
+        "y": 46,
+        "w": 98,
+        "h": 180
+      },
+      "anchor": [
+        97.0,
+        226.0
+      ],
+      "clipped_px": 0,
+      "parts": 1
+    },
+    {
+      "name": "cell-17",
+      "file": "cell-17.png",
+      "factor": 0.7725321888412017,
+      "factor_from": "target_height",
+      "subject": {
+        "sheet": {
+          "w": 115,
+          "h": 233
+        },
+        "canvas": {
+          "w": 89,
+          "h": 180
+        }
+      },
+      "box": {
+        "x": 52,
+        "y": 46,
+        "w": 89,
+        "h": 180
+      },
+      "anchor": [
+        96.5,
+        226.0
+      ],
+      "clipped_px": 0,
+      "parts": 1
+    },
+    {
+      "name": "cell-18",
+      "file": "cell-18.png",
+      "factor": 0.7792207792207793,
+      "factor_from": "target_height",
+      "subject": {
+        "sheet": {
+          "w": 136,
+          "h": 231
+        },
+        "canvas": {
+          "w": 106,
+          "h": 180
+        }
+      },
+      "box": {
+        "x": 43,
+        "y": 46,
+        "w": 106,
+        "h": 180
+      },
+      "anchor": [
+        96.0,
+        226.0
+      ],
+      "clipped_px": 0,
+      "parts": 1
+    },
+    {
+      "name": "cell-19",
+      "file": "cell-19.png",
+      "factor": 0.8256880733944955,
+      "factor_from": "target_height",
+      "subject": {
+        "sheet": {
+          "w": 126,
+          "h": 218
+        },
+        "canvas": {
+          "w": 104,
+          "h": 180
+        }
+      },
+      "box": {
+        "x": 44,
+        "y": 46,
+        "w": 104,
+        "h": 180
+      },
+      "anchor": [
+        96.0,
+        226.0
+      ],
+      "clipped_px": 0,
+      "parts": 1
+    },
+    {
+      "name": "cell-20",
+      "file": "cell-20.png",
+      "factor": 0.7860262008733624,
+      "factor_from": "target_height",
+      "subject": {
+        "sheet": {
+          "w": 127,
+          "h": 229
+        },
+        "canvas": {
+          "w": 100,
+          "h": 180
+        }
+      },
+      "box": {
+        "x": 46,
+        "y": 46,
+        "w": 100,
+        "h": 180
+      },
+      "anchor": [
+        96.0,
+        226.0
+      ],
+      "clipped_px": 0,
+      "parts": 1
+    },
+    {
+      "name": "cell-21",
+      "file": "cell-21.png",
+      "factor": 0.7792207792207793,
+      "factor_from": "target_height",
+      "subject": {
+        "sheet": {
+          "w": 122,
+          "h": 231
+        },
+        "canvas": {
+          "w": 95,
+          "h": 180
+        }
+      },
+      "box": {
+        "x": 49,
+        "y": 46,
+        "w": 95,
+        "h": 180
+      },
+      "anchor": [
+        96.5,
+        226.0
+      ],
+      "clipped_px": 0,
+      "parts": 1
+    },
+    {
+      "name": "cell-22",
+      "file": "cell-22.png",
+      "factor": 0.7894736842105263,
+      "factor_from": "target_height",
+      "subject": {
+        "sheet": {
+          "w": 139,
+          "h": 228
+        },
+        "canvas": {
+          "w": 110,
+          "h": 180
+        }
+      },
+      "box": {
+        "x": 42,
+        "y": 46,
+        "w": 110,
+        "h": 180
+      },
+      "anchor": [
+        97.0,
+        226.0
+      ],
+      "clipped_px": 0,
+      "parts": 1
+    },
+    {
+      "name": "cell-23",
+      "file": "cell-23.png",
+      "factor": 0.7860262008733624,
+      "factor_from": "target_height",
+      "subject": {
+        "sheet": {
+          "w": 112,
+          "h": 229
+        },
+        "canvas": {
+          "w": 88,
+          "h": 180
+        }
+      },
+      "box": {
+        "x": 52,
+        "y": 46,
+        "w": 88,
+        "h": 180
+      },
+      "anchor": [
+        96.0,
+        226.0
+      ],
+      "clipped_px": 0,
+      "parts": 1
+    },
+    {
+      "name": "cell-24",
+      "file": "cell-24.png",
+      "factor": 0.8108108108108109,
+      "factor_from": "target_height",
+      "subject": {
+        "sheet": {
+          "w": 126,
+          "h": 222
+        },
+        "canvas": {
+          "w": 102,
+          "h": 180
+        }
+      },
+      "box": {
+        "x": 45,
+        "y": 46,
+        "w": 102,
+        "h": 180
+      },
+      "anchor": [
+        96.0,
+        226.0
+      ],
+      "clipped_px": 0,
+      "parts": 1
+    },
+    {
+      "name": "cell-25",
+      "file": "cell-25.png",
+      "factor": 0.8071748878923767,
+      "factor_from": "target_height",
+      "subject": {
+        "sheet": {
+          "w": 110,
+          "h": 223
+        },
+        "canvas": {
+          "w": 89,
+          "h": 180
+        }
+      },
+      "box": {
+        "x": 52,
+        "y": 46,
+        "w": 89,
+        "h": 180
+      },
+      "anchor": [
+        96.5,
+        226.0
+      ],
+      "clipped_px": 0,
+      "parts": 1
+    },
+    {
+      "name": "cell-26",
+      "file": "cell-26.png",
+      "factor": 0.8411214953271028,
+      "factor_from": "target_height",
+      "subject": {
+        "sheet": {
+          "w": 125,
+          "h": 214
+        },
+        "canvas": {
+          "w": 105,
+          "h": 180
+        }
+      },
+      "box": {
+        "x": 44,
+        "y": 46,
+        "w": 105,
+        "h": 180
+      },
+      "anchor": [
+        96.5,
+        226.0
+      ],
+      "clipped_px": 0,
+      "parts": 1
+    },
+    {
+      "name": "cell-27",
+      "file": "cell-27.png",
+      "factor": 0.8181818181818182,
+      "factor_from": "target_height",
+      "subject": {
+        "sheet": {
+          "w": 121,
+          "h": 220
+        },
+        "canvas": {
+          "w": 99,
+          "h": 180
+        }
+      },
+      "box": {
+        "x": 47,
+        "y": 46,
+        "w": 99,
+        "h": 180
+      },
+      "anchor": [
+        96.5,
+        226.0
+      ],
+      "clipped_px": 0,
+      "parts": 1
+    },
+    {
+      "name": "cell-28",
+      "file": "cell-28.png",
+      "factor": 0.821917808219178,
+      "factor_from": "target_height",
+      "subject": {
+        "sheet": {
+          "w": 129,
+          "h": 219
+        },
+        "canvas": {
+          "w": 106,
+          "h": 180
+        }
+      },
+      "box": {
+        "x": 43,
+        "y": 46,
+        "w": 106,
+        "h": 180
+      },
+      "anchor": [
+        96.0,
+        226.0
+      ],
+      "clipped_px": 0,
+      "parts": 1
+    },
+    {
+      "name": "cell-29",
+      "file": "cell-29.png",
+      "factor": 0.8256880733944955,
+      "factor_from": "target_height",
+      "subject": {
+        "sheet": {
+          "w": 117,
+          "h": 218
+        },
+        "canvas": {
+          "w": 97,
+          "h": 180
+        }
+      },
+      "box": {
+        "x": 48,
+        "y": 46,
+        "w": 97,
+        "h": 180
+      },
+      "anchor": [
+        96.5,
+        226.0
+      ],
+      "clipped_px": 0,
+      "parts": 1
+    },
+    {
+      "name": "cell-30",
+      "file": "cell-30.png",
+      "factor": 0.8144796380090498,
+      "factor_from": "target_height",
+      "subject": {
+        "sheet": {
+          "w": 135,
+          "h": 221
+        },
+        "canvas": {
+          "w": 110,
+          "h": 180
+        }
+      },
+      "box": {
+        "x": 41,
+        "y": 46,
+        "w": 110,
+        "h": 180
+      },
+      "anchor": [
+        96.0,
+        226.0
+      ],
+      "clipped_px": 0,
+      "parts": 1
+    },
+    {
+      "name": "cell-31",
+      "file": "cell-31.png",
+      "factor": 0.8256880733944955,
+      "factor_from": "target_height",
+      "subject": {
+        "sheet": {
+          "w": 98,
+          "h": 218
+        },
+        "canvas": {
+          "w": 81,
+          "h": 180
+        }
+      },
+      "box": {
+        "x": 56,
+        "y": 46,
+        "w": 81,
+        "h": 180
+      },
+      "anchor": [
+        96.5,
+        226.0
+      ],
+      "clipped_px": 0,
+      "parts": 1
+    }
+  ]
+}

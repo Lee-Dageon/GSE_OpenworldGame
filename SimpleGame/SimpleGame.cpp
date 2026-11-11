@@ -133,10 +133,14 @@ void RenderScene()
 
 void UpdateFrame()
 {
-    // Poll Shift so pressing/releasing it while moving takes effect without another key event.
-    g_GameState.sprint = glfwGetWindowAttrib(g_Window, GLFW_FOCUSED) &&
-        (glfwGetKey(g_Window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS ||
-         glfwGetKey(g_Window, GLFW_KEY_RIGHT_SHIFT) == GLFW_PRESS);
+    // Restore held movement keys after focus changes or missed key events.
+    const bool focused = glfwGetWindowAttrib(g_Window, GLFW_FOCUSED) == GLFW_TRUE;
+    const auto down = [focused](int key) { return focused && (GetAsyncKeyState(key) & 0x8000) != 0; };
+    g_GameState.keys['w'] = down('W') || down(VK_UP);
+    g_GameState.keys['s'] = down('S') || down(VK_DOWN);
+    g_GameState.keys['a'] = down('A') || down(VK_LEFT);
+    g_GameState.keys['d'] = down('D') || down(VK_RIGHT);
+    g_GameState.sprint = down(VK_SHIFT);
     const int now = ElapsedMilliseconds();
     const float deltaTime = std::min(.05f, (now - g_GameState.lastTime) / 1000.0f);
     g_GameState.lastTime = now;

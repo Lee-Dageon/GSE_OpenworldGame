@@ -1,0 +1,200 @@
+{
+  "version": 1,
+  "kind": "sprite-gen-request",
+  "engine": "component-row",
+  "character": {
+    "id": "pink-general",
+    "description": "Adult pink bob female general, teal/navy armor, silver pauldrons, crimson cape, right-hand sword",
+    "base_image": "base-source.png"
+  },
+  "cell": {
+    "shape": "rect",
+    "width": 192,
+    "height": 256,
+    "safe_margin_x": 20,
+    "safe_margin_y": 20
+  },
+  "chroma_key": {
+    "name": "green",
+    "hex": "#00FF00",
+    "rgb": [
+      0,
+      255,
+      0
+    ],
+    "selection": "manual"
+  },
+  "states": {
+    "down_idle": {
+      "frames": 4,
+      "fps": 4,
+      "loop": true,
+      "action": "facing screen down, front view; identical pink bob female general, hold a stable full-body stance, same right-hand sword, subtle breathing only; do not change orientation"
+    },
+    "down_walk": {
+      "frames": 4,
+      "fps": 6,
+      "loop": true,
+      "action": "facing screen down, front view; camera and torso facing locked throughout; four chronological distinct phases: left-foot contact, left push-off with right knee driving forward, right-foot contact with left leg behind, right push-off with left knee driving forward; alternate anatomical near/far legs and opposite arms, never duplicate phases 1/3 or 2/4; upright short stride walking, no flight"
+    },
+    "down_run": {
+      "frames": 4,
+      "fps": 4,
+      "loop": true,
+      "action": "facing screen down, front view; camera and torso facing locked throughout; four chronological distinct phases: left-foot contact, left push-off with right knee driving forward, right-foot contact with left leg behind, right push-off with left knee driving forward; alternate anatomical near/far legs and opposite arms, never duplicate phases 1/3 or 2/4; forward lean, long stride, bent knees in airborne phases, one second total cycle"
+    },
+    "side_idle": {
+      "frames": 4,
+      "fps": 4,
+      "loop": true,
+      "action": "facing screen right, full right profile; identical pink bob female general, hold a stable full-body stance, same right-hand sword, subtle breathing only; do not change orientation"
+    },
+    "side_walk": {
+      "frames": 4,
+      "fps": 6,
+      "loop": true,
+      "action": "facing screen right, full right profile; camera and torso facing locked throughout; four chronological distinct phases: left-foot contact, left push-off with right knee driving forward, right-foot contact with left leg behind, right push-off with left knee driving forward; alternate anatomical near/far legs and opposite arms, never duplicate phases 1/3 or 2/4; upright short stride walking, no flight"
+    },
+    "side_run": {
+      "frames": 4,
+      "fps": 4,
+      "loop": true,
+      "action": "facing screen right, full right profile; camera and torso facing locked throughout; four chronological distinct phases: left-foot contact, left push-off with right knee driving forward, right-foot contact with left leg behind, right push-off with left knee driving forward; alternate anatomical near/far legs and opposite arms, never duplicate phases 1/3 or 2/4; forward lean, long stride, bent knees in airborne phases, one second total cycle"
+    },
+    "up_idle": {
+      "frames": 4,
+      "fps": 4,
+      "loop": true,
+      "action": "facing screen up, rear view; identical pink bob female general, hold a stable full-body stance, same right-hand sword, subtle breathing only; do not change orientation"
+    },
+    "up_walk": {
+      "frames": 4,
+      "fps": 6,
+      "loop": true,
+      "action": "facing screen up, rear view; camera and torso facing locked throughout; four chronological distinct phases: left-foot contact, left push-off with right knee driving forward, right-foot contact with left leg behind, right push-off with left knee driving forward; alternate anatomical near/far legs and opposite arms, never duplicate phases 1/3 or 2/4; upright short stride walking, no flight"
+    },
+    "up_run": {
+      "frames": 4,
+      "fps": 4,
+      "loop": true,
+      "action": "facing screen up, rear view; camera and torso facing locked throughout; four chronological distinct phases: left-foot contact, left push-off with right knee driving forward, right-foot contact with left leg behind, right push-off with left knee driving forward; alternate anatomical near/far legs and opposite arms, never duplicate phases 1/3 or 2/4; forward lean, long stride, bent knees in airborne phases, one second total cycle"
+    },
+    "se_idle": {
+      "frames": 4,
+      "fps": 4,
+      "loop": true,
+      "action": "facing southeast, front-right three-quarter; identical pink bob female general, hold a stable full-body stance, same right-hand sword, subtle breathing only; do not change orientation"
+    },
+    "se_walk": {
+      "frames": 4,
+      "fps": 6,
+      "loop": true,
+      "action": "facing southeast, front-right three-quarter; camera and torso facing locked throughout; four chronological distinct phases: left-foot contact, left push-off with right knee driving forward, right-foot contact with left leg behind, right push-off with left knee driving forward; alternate anatomical near/far legs and opposite arms, never duplicate phases 1/3 or 2/4; upright short stride walking, no flight"
+    },
+    "se_run": {
+      "frames": 4,
+      "fps": 4,
+      "loop": true,
+      "action": "facing southeast, front-right three-quarter; camera and torso facing locked throughout; four chronological distinct phases: left-foot contact, left push-off with right knee driving forward, right-foot contact with left leg behind, right push-off with left knee driving forward; alternate anatomical near/far legs and opposite arms, never duplicate phases 1/3 or 2/4; forward lean, long stride, bent knees in airborne phases, one second total cycle"
+    },
+    "sw_idle": {
+      "frames": 4,
+      "fps": 4,
+      "loop": true,
+      "action": "facing southwest, front-left three-quarter; identical pink bob female general, hold a stable full-body stance, same right-hand sword, subtle breathing only; do not change orientation"
+    },
+    "sw_walk": {
+      "frames": 4,
+      "fps": 6,
+      "loop": true,
+      "action": "facing southwest, front-left three-quarter; camera and torso facing locked throughout; four chronological distinct phases: left-foot contact, left push-off with right knee driving forward, right-foot contact with left leg behind, right push-off with left knee driving forward; alternate anatomical near/far legs and opposite arms, never duplicate phases 1/3 or 2/4; upright short stride walking, no flight"
+    },
+    "sw_run": {
+      "frames": 4,
+      "fps": 4,
+      "loop": true,
+      "action": "facing southwest, front-left three-quarter; camera and torso facing locked throughout; four chronological distinct phases: left-foot contact, left push-off with right knee driving forward, right-foot contact with left leg behind, right push-off with left knee driving forward; alternate anatomical near/far legs and opposite arms, never duplicate phases 1/3 or 2/4; forward lean, long stride, bent knees in airborne phases, one second total cycle"
+    },
+    "ne_idle": {
+      "frames": 4,
+      "fps": 4,
+      "loop": true,
+      "action": "facing northeast, rear-right three-quarter; identical pink bob female general, hold a stable full-body stance, same right-hand sword, subtle breathing only; do not change orientation"
+    },
+    "ne_walk": {
+      "frames": 4,
+      "fps": 6,
+      "loop": true,
+      "action": "facing northeast, rear-right three-quarter; camera and torso facing locked throughout; four chronological distinct phases: left-foot contact, left push-off with right knee driving forward, right-foot contact with left leg behind, right push-off with left knee driving forward; alternate anatomical near/far legs and opposite arms, never duplicate phases 1/3 or 2/4; upright short stride walking, no flight"
+    },
+    "ne_run": {
+      "frames": 4,
+      "fps": 4,
+      "loop": true,
+      "action": "facing northeast, rear-right three-quarter; camera and torso facing locked throughout; four chronological distinct phases: left-foot contact, left push-off with right knee driving forward, right-foot contact with left leg behind, right push-off with left knee driving forward; alternate anatomical near/far legs and opposite arms, never duplicate phases 1/3 or 2/4; forward lean, long stride, bent knees in airborne phases, one second total cycle"
+    },
+    "nw_idle": {
+      "frames": 4,
+      "fps": 4,
+      "loop": true,
+      "action": "facing northwest, rear-left three-quarter; identical pink bob female general, hold a stable full-body stance, same right-hand sword, subtle breathing only; do not change orientation"
+    },
+    "nw_walk": {
+      "frames": 4,
+      "fps": 6,
+      "loop": true,
+      "action": "facing northwest, rear-left three-quarter; camera and torso facing locked throughout; four chronological distinct phases: left-foot contact, left push-off with right knee driving forward, right-foot contact with left leg behind, right push-off with left knee driving forward; alternate anatomical near/far legs and opposite arms, never duplicate phases 1/3 or 2/4; upright short stride walking, no flight"
+    },
+    "nw_run": {
+      "frames": 4,
+      "fps": 4,
+      "loop": true,
+      "action": "facing northwest, rear-left three-quarter; camera and torso facing locked throughout; four chronological distinct phases: left-foot contact, left push-off with right knee driving forward, right-foot contact with left leg behind, right push-off with left knee driving forward; alternate anatomical near/far legs and opposite arms, never duplicate phases 1/3 or 2/4; forward lean, long stride, bent knees in airborne phases, one second total cycle"
+    },
+    "left_idle": {
+      "frames": 4,
+      "fps": 4,
+      "loop": true,
+      "action": "facing screen left, full left profile; identical pink bob female general, hold a stable full-body stance, same right-hand sword, subtle breathing only; do not change orientation"
+    },
+    "left_walk": {
+      "frames": 4,
+      "fps": 6,
+      "loop": true,
+      "action": "facing screen left, full left profile; camera and torso facing locked throughout; four chronological distinct phases: left-foot contact, left push-off with right knee driving forward, right-foot contact with left leg behind, right push-off with left knee driving forward; alternate anatomical near/far legs and opposite arms, never duplicate phases 1/3 or 2/4; upright short stride walking, no flight"
+    },
+    "left_run": {
+      "frames": 4,
+      "fps": 4,
+      "loop": true,
+      "action": "facing screen left, full left profile; camera and torso facing locked throughout; four chronological distinct phases: left-foot contact, left push-off with right knee driving forward, right-foot contact with left leg behind, right push-off with left knee driving forward; alternate anatomical near/far legs and opposite arms, never duplicate phases 1/3 or 2/4; forward lean, long stride, bent knees in airborne phases, one second total cycle"
+    }
+  },
+  "style": "crisp pixel art, orthographic camera elevated 30 degrees",
+  "directions": {
+    "set": [
+      "down",
+      "side",
+      "up",
+      "se",
+      "sw",
+      "ne",
+      "nw",
+      "left"
+    ],
+    "mirror": {},
+    "anchor_suffix": "idle"
+  },
+  "layout": "taxonomy/v1",
+  "fit": {
+    "resample": "nearest",
+    "align_x": "centroid",
+    "align_y": "bottom",
+    "pixel_unfake": false
+  },
+  "chroma": {
+    "mode": "rgb",
+    "unmix_reach": 4,
+    "spill_max_fraction": 0.005
+  }
+}
