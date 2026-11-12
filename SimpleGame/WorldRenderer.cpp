@@ -163,6 +163,8 @@ WorldRenderer::WorldRenderer(Renderer &renderer) : m_Renderer(renderer)
     m_CampfireTexture = m_Renderer.LoadTexture(L"./Assets/PixelArt/Effects/campfire.png");
     m_PlayerHitTexture = m_Renderer.LoadTexture(L"./Assets/PixelArt/Effects/boar-player-hit.png");
     m_BoarLootTexture = m_Renderer.LoadTexture(L"./Assets/PixelArt/Items/boar-loot-v1.png");
+    m_AnimalCarcassTexture = m_Renderer.LoadTexture(L"./Assets/PixelArt/Animals/carcasses-v1.png");
+    m_AncientGuardianTexture = m_Renderer.LoadTexture(L"./Assets/PixelArt/Monsters/Chapter3/guardian-walk-v1.png");
     m_SearchTexture = m_Renderer.LoadTexture(L"./Assets/PixelArt/Characters/hero-search-v1.png");
     m_AttackHitTextures[0] = m_Renderer.LoadTexture(L"./Assets/PixelArt/Effects/attack-hit-spark.png");
     m_AttackHitTextures[1] = m_Renderer.LoadTexture(L"./Assets/PixelArt/Effects/attack-hit-heavy.png");
@@ -191,7 +193,7 @@ WorldRenderer::WorldRenderer(Renderer &renderer) : m_Renderer(renderer)
                                  m_CampfireTexture, m_GeneralWalkTexture, m_GeneralRunTexture, m_GeneralAttackTexture,
                                  m_PixelAnimalTextures[0], m_PixelAnimalTextures[1], m_PixelAnimalTextures[2],
                                  m_Chapter1BoarTextures[0], m_Chapter1BoarTextures[1], m_Chapter1BoarTextures[2], m_PlayerHitTexture,
-                                 m_AttackHitTextures[0], m_AttackHitTextures[1], m_AttackHitTextures[2], m_BoarLootTexture, m_SearchTexture})
+                                 m_AttackHitTextures[0], m_AttackHitTextures[1], m_AttackHitTextures[2], m_BoarLootTexture, m_SearchTexture, m_AnimalCarcassTexture, m_AncientGuardianTexture})
         if (texture != 0)
         {
             glBindTexture(GL_TEXTURE_2D, texture);
@@ -204,6 +206,8 @@ WorldRenderer::WorldRenderer(Renderer &renderer) : m_Renderer(renderer)
 WorldRenderer::~WorldRenderer()
 {
     if (m_PlayerHitTexture != 0) glDeleteTextures(1, &m_PlayerHitTexture);
+    if (m_AnimalCarcassTexture != 0) glDeleteTextures(1, &m_AnimalCarcassTexture);
+    if (m_AncientGuardianTexture != 0) glDeleteTextures(1, &m_AncientGuardianTexture);
     for (unsigned int texture : {m_BoarLootTexture, m_SearchTexture})
         if (texture != 0) glDeleteTextures(1, &texture);
     for (unsigned int texture : m_AttackHitTextures)
@@ -896,7 +900,8 @@ void WorldRenderer::RenderWorld(const GameState &state)
         items.push_back({state.animals[index].position, DrawType::Animal, index});
     if (state.quest == QuestStage::Tracks)
         items.push_back({state.world.tracks, DrawType::Tracks, 0});
-    if (state.quest == QuestStage::Herb)
+    if (state.quest == QuestStage::Herb || (state.herbRegrowTime <= 0 &&
+        state.quest != QuestStage::Elder && state.quest != QuestStage::Tracks))
         items.push_back({state.world.herb, DrawType::Herb, 0});
     if (state.quest == QuestStage::Hunt || state.quest == QuestStage::Trophy || StorySystem::IsHunting(state) || StorySystem::HasDrop(state))
         items.push_back({state.monster.position, DrawType::Monster, 0});
@@ -1013,6 +1018,20 @@ void WorldRenderer::RenderWorld(const GameState &state)
         case DrawType::Animal:
         {
             const AnimalState &animal = state.animals[item.index];
+            if (animal.collected) break;
+            if (animal.health <= 0)
+            {
+                const Vec2 p=ToScreen(animal.position);
+                if (m_AnimalCarcassTexture)
+                    m_Renderer.DrawSprite(m_AnimalCarcassTexture,p.x,p.z+18,90,90,animal.column,0,3,1);
+                else DrawPixelAnimal(animal.position,animal.column,{1,0},1,90,true);
+                const float bob=std::sin(state.time*3)*3;
+                m_Renderer.DrawEffectRect(p.x,p.z+20,60,35,0,1,.76f,.2f,.5f,15);
+                m_Renderer.DrawSprite(m_BoarLootTexture,p.x,p.z+40+bob,32,32,1,0,2,1);
+                if (animal.column==1) m_Renderer.DrawSprite(m_BoarLootTexture,p.x+25,p.z+40+bob,32,32,0,0,2,1);
+                break;
+            }
+            m_Renderer.SetSpriteFlash(animal.hitFlash/GameConstants::Feedback::MonsterFlashDuration);
             const Vec2 facing = {std::cos(animal.phase) * 2.4f,
                                   -std::sin(animal.phase * .7f) * 1.8f * .7f};
             const unsigned int texture = animal.column == 0 ? m_DeerTexture : (animal.column == 1 ? m_BoarTexture : m_SheepTexture);
@@ -1022,6 +1041,13 @@ void WorldRenderer::RenderWorld(const GameState &state)
                                      (animal.column == 1 ? GameConstants::World::BoarSpriteSize : GameConstants::World::SheepSpriteSize)) &&
                 !DrawAtlasSprite(animal.position, texture, facing, frame, animal.column == 0 ? 128.0f : 110.0f, AnimalPivotY))
                 DrawSprite(animal.position, animal.column, animal.row, 105, 82);
+            m_Renderer.SetSpriteFlash(0);
+            if (animal.health < GameConstants::World::AnimalHealth)
+            {
+                const Vec2 p=ToScreen(animal.position);
+                m_Renderer.DrawSolidRect(p.x,p.z+85,45,4,0,.12f,.08f,.05f,1);
+                m_Renderer.DrawSolidRect(p.x,p.z+85,45*animal.health/GameConstants::World::AnimalHealth,4,0,.9f,.25f,.15f,1);
+            }
             break;
         }
         case DrawType::Tracks: DrawRect(item.position, 30, 9, Pi * .2f, .12f, .07f, .03f); break;
@@ -1036,6 +1062,19 @@ void WorldRenderer::RenderWorld(const GameState &state)
                                                   distance > state.monster.definition.attackRange && distance < state.monster.definition.chaseRange;
                                               const bool chapterAnimation = state.monster.health <= 0 ||
                                                   state.monster.hitAnimation > 0 || state.monster.attackAnimation > 0;
+                                              if (state.monster.definition.id == "ancient_guardian" && m_AncientGuardianTexture)
+                                              {
+                                                  const float dx=facing.x-facing.z,dy=(facing.x+facing.z)*.5f;
+                                                  const int direction=std::abs(dx)>std::abs(dy) ? (dx<0 ? 1 : 2) : (dy<0 ? 0 : 3);
+                                                  const int pose=walking && state.monster.health>0 ? static_cast<int>(state.time*6)%4 : 0;
+                                                  const Vec2 screen=ToScreen(p);
+                                                  const float height=state.monster.definition.spriteHeight;
+                                                  const float displayHeight=state.monster.health<=0 ? height*.45f : height;
+                                                  DrawShadow(p,height*.55f,12);
+                                                  m_Renderer.DrawSprite(m_AncientGuardianTexture,screen.x,screen.z+.38f*displayHeight,
+                                                      height,displayHeight,direction,pose,4,4);
+                                                  return;
+                                              }
                                               if ((!walking || chapterAnimation) && DrawChapter1Boar(state.monster)) return;
                                               const int frame = walking ? static_cast<int>(state.time * 8.0f) % 4 : 0;
                                               if (!DrawPixelAnimal(p, 1, facing, frame, state.monster.definition.spriteHeight, state.monster.health <= 0) &&
@@ -1236,12 +1275,21 @@ void WorldRenderer::RenderWorld(const GameState &state)
         const Vec2 screen = ToScreen(state.player);
         const std::wstring text = state.lootTime > 0
             ? L"수집 중 " + std::to_wstring(static_cast<int>((1 - state.lootTime / GameConstants::Loot::Duration) * 100)) + L"%"
-            : L"이빨 · 가죽 획득!";
+            : L"전리품 획득!";
         m_Renderer.DrawLabel(state.width * .5f + screen.x, state.height * .5f + screen.z + 110,
             text.c_str(), 1, .87f, .4f, .65f, 1, true);
         if (state.lootPickupTime > 0)
             m_Renderer.DrawEffectRect(screen.x, screen.z + 40, 100, 80, state.time,
                 1, .8f, .25f, state.lootPickupTime, 15);
     }
+    for (const auto &step : GameContent::Get().story.steps)
+        if (step.id == "ruin_control")
+        {
+            const Vec2 p=ToScreen(step.position);
+            const float power=state.ruinDeviceDisabled ? .15f : .65f+.2f*std::sin(state.time*4);
+            m_Renderer.DrawEffectRect(p.x,p.z+45,60,110,0,.25f,.85f,1,power,15);
+            if (!state.ruinDeviceDisabled)
+                m_Renderer.DrawSolidRect(p.x,p.z+65,7,120,0,.25f,.85f,1,.3f);
+        }
     m_State = nullptr;
 }

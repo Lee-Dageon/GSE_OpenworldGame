@@ -67,7 +67,7 @@ int main()
     assert(!GameContent::IsBlocked(live.map,live.map.world.spawn));
     assert(GameContent::IsBlocked(live.map,live.map.houses[0].position));
     assert(GameContent::Step(QuestStage::Hunt).next == QuestStage::Trophy);
-    assert(live.story.chapters.size() == 2 && live.story.steps.size() == 14);
+    assert(live.story.chapters.size() == 3 && live.story.steps.size() == 22);
     assert(live.monsters.at("rampaging_boar").spriteHeight == 170);
     Fixture fixture;
     const auto &map = fixture.originals.at("map.gse");

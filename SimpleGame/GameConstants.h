@@ -8,6 +8,7 @@ namespace GameConstants
 {
 namespace Loot
 {
+constexpr float HerbRegrowSeconds = 30.0f, HerbRange = 1.3f;
 constexpr float Duration = 1.5f;
 constexpr float SpriteSize = 90.34f;
 constexpr int FrameCount = 4;
@@ -64,6 +65,8 @@ constexpr int MaxStack = 99;
 }
 namespace World
 {
+constexpr int AnimalHealth = 12, AnimalExperience = 3;
+constexpr float AnimalHitRange = 1.9f, AnimalLootRange = 1.5f, AnimalRespawnSeconds = 60.0f;
 constexpr float Scale = 2.6f;
 constexpr float DeerSpriteSize = 88.0f, BoarSpriteSize = 110.0f, SheepSpriteSize = 72.0f;
 }

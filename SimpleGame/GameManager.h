@@ -17,6 +17,7 @@ class GameManager
 
   private:
     void ShowMessage(const wchar_t *message);
+    void RecordHit(Vec2 position, int damage);
     void UpdateNpcs(float deltaTime);
 
     GameState &m_State;

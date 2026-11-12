@@ -105,6 +105,18 @@ void GameManager::UpdateNpcs(float deltaTime)
     }
 }
 
+void GameManager::RecordHit(Vec2 position, int damage)
+{
+    if (damage <= 0) return;
+    m_State.combo = m_State.comboTime > 0 ? m_State.combo + 1 : 1;
+    m_State.comboTime = GameConstants::Combo::Window;
+    m_State.attackHitTime = DamageFeedback::Duration;
+    m_State.hitStop = std::max(m_State.hitStop, m_State.combo % GameConstants::Combo::HeavyInterval == 0 ?
+        GameConstants::Feedback::HeavyHitStop : GameConstants::Feedback::AttackHitStop);
+    if (m_State.damageNumbers.size() >= GameConstants::HitEffect::MaxNumbers) m_State.damageNumbers.erase(m_State.damageNumbers.begin());
+    m_State.damageNumbers.push_back({position, damage, m_State.combo, GameConstants::HitEffect::NumberDuration});
+}
+
 void GameManager::UpdateGame(float deltaTime)
 {
     if (m_State.inventoryOpen)
@@ -120,12 +132,32 @@ void GameManager::UpdateGame(float deltaTime)
     deltaTime -= frozen;
     if (deltaTime <= 0.0f && (frozen > 0.0f || m_State.hitStop > 0.0f)) return;
     BeginFrame(deltaTime);
+    m_State.herbRegrowTime = std::max(0.0f, m_State.herbRegrowTime - deltaTime);
     m_State.lootPickupTime = std::max(0.0f, m_State.lootPickupTime - deltaTime);
     if (m_State.lootTime > 0)
     {
         m_State.moving = false;
         m_State.lootTime = std::max(0.0f, m_State.lootTime - deltaTime);
-        if (m_State.lootTime == 0 && MonsterSystem::IsInteractableDrop(m_State.monster, m_State.player))
+        if (m_State.lootTime == 0 && m_State.lootAnimal >= 0)
+        {
+            const size_t index = static_cast<size_t>(m_State.lootAnimal);
+            m_State.lootAnimal = -1;
+            if (index >= m_State.animals.size()) return;
+            auto &animal = m_State.animals[index];
+            const float x = animal.position.x - m_State.player.x, z = animal.position.z - m_State.player.z;
+            if (animal.health > 0 || animal.collected || x*x+z*z >= GameConstants::World::AnimalLootRange*GameConstants::World::AnimalLootRange) return;
+            const int teeth = animal.column == 1 ? 1 : 0;
+            if (m_State.inventory.Count(ItemId::BoarHide) >= Inventory::MaxStack ||
+                m_State.inventory.Count(ItemId::BoarTusk) > Inventory::MaxStack - teeth)
+            { ShowMessage(L"가방이 가득 찼습니다. 전리품은 남아 있습니다."); return; }
+            m_State.inventory.Add(ItemId::BoarHide);
+            if (teeth) m_State.inventory.Add(ItemId::BoarTusk);
+            animal.collected = true;
+            animal.respawnTime = GameConstants::World::AnimalRespawnSeconds;
+            m_State.lootPickupTime = GameConstants::Loot::PickupDuration;
+            ShowMessage(teeth ? L"가죽 · 이빨 획득!" : L"가죽 획득!");
+        }
+        else if (m_State.lootTime == 0 && MonsterSystem::IsInteractableDrop(m_State.monster, m_State.player))
         {
             const int hunts = m_State.completedHunts;
             if (StorySystem::HasDrop(m_State))
@@ -151,6 +183,15 @@ void GameManager::UpdateGame(float deltaTime)
     StorySystem::Update(m_State);
     for (AnimalState &animal : m_State.animals)
     {
+        animal.hitFlash = std::max(0.0f, animal.hitFlash - deltaTime);
+        if (animal.collected)
+        {
+            animal.respawnTime = std::max(0.0f, animal.respawnTime - deltaTime);
+            if (animal.respawnTime == 0)
+            { animal.health = GameConstants::World::AnimalHealth; animal.collected = false; animal.position = animal.home; }
+            continue;
+        }
+        if (animal.health <= 0) continue;
         animal.phase += deltaTime * animal.speed;
         animal.position.x = animal.home.x + std::sin(animal.phase) * 2.4f;
         animal.position.z = animal.home.z + std::cos(animal.phase * .7f) * 1.8f;
@@ -203,10 +244,39 @@ void GameManager::HandleCommand(GameCommand command)
             MonsterSystem::IsInteractableDrop(m_State.monster, m_State.player))
         {
             m_State.lootTime = GameConstants::Loot::Duration;
+            m_State.lootAnimal = -1;
             m_State.moving = false;
             const Vec2 direction = {m_State.monster.position.x - m_State.player.x, m_State.monster.position.z - m_State.player.z};
             if (std::abs(direction.x) + std::abs(direction.z) > .001f) m_State.facing = direction;
             ShowMessage(L"전리품을 뒤지는 중...");
+            return;
+        }
+        int closest = -1;
+        float distance = GameConstants::World::AnimalLootRange * GameConstants::World::AnimalLootRange;
+        for (size_t i=0; i<m_State.animals.size(); ++i)
+        {
+            const auto &animal = m_State.animals[i];
+            const float x=animal.position.x-m_State.player.x, z=animal.position.z-m_State.player.z;
+            if (animal.health <= 0 && !animal.collected && x*x+z*z < distance)
+            { distance=x*x+z*z; closest=static_cast<int>(i); }
+        }
+        if (closest >= 0)
+        {
+            m_State.lootAnimal = closest;
+            m_State.lootTime = GameConstants::Loot::Duration;
+            m_State.moving = false;
+            const auto p=m_State.animals[closest].position;
+            m_State.facing = {p.x-m_State.player.x,p.z-m_State.player.z};
+            ShowMessage(L"동물 전리품을 수집합니다.");
+            return;
+        }
+        const float herbX=m_State.player.x-m_State.world.herb.x, herbZ=m_State.player.z-m_State.world.herb.z;
+        if (m_State.quest != QuestStage::Elder && m_State.quest != QuestStage::Tracks && m_State.quest != QuestStage::Herb &&
+            herbX*herbX+herbZ*herbZ<GameConstants::Loot::HerbRange*GameConstants::Loot::HerbRange)
+        {
+            if (m_State.herbRegrowTime>0) ShowMessage(L"약초가 다시 자라는 중입니다.");
+            else if (!m_State.inventory.Add(ItemId::Herb)) ShowMessage(L"약초 보관 한도에 도달했습니다.");
+            else { m_State.herbRegrowTime=GameConstants::Loot::HerbRegrowSeconds; ShowMessage(L"약초 1개 획득! 야영지에서 물약을 제작할 수 있습니다."); }
             return;
         }
         if (StorySystem::Current(m_State) || StorySystem::CanStart(m_State))
@@ -233,6 +303,30 @@ void GameManager::HandleCommand(GameCommand command)
     if (command == GameCommand::Attack && m_State.attack <= 0.0f)
     {
         m_State.attack = GameConstants::Player::AttackDuration;
+        const bool activeMonster = (m_State.quest == QuestStage::Hunt || StorySystem::IsHunting(m_State)) &&
+            m_State.monster.health > 0;
+        const float mx=m_State.monster.position.x-m_State.player.x, mz=m_State.monster.position.z-m_State.player.z;
+        float nearest = activeMonster ? std::min(GameConstants::World::AnimalHitRange*GameConstants::World::AnimalHitRange,
+            mx*mx+mz*mz) : GameConstants::World::AnimalHitRange*GameConstants::World::AnimalHitRange;
+        int animalIndex = -1;
+        for (size_t i=0;i<m_State.animals.size();++i)
+        {
+            const auto &animal=m_State.animals[i];
+            const float x=animal.position.x-m_State.player.x,z=animal.position.z-m_State.player.z;
+            if (animal.health>0 && !animal.collected && x*x+z*z<nearest)
+            { nearest=x*x+z*z; animalIndex=static_cast<int>(i); }
+        }
+        if (animalIndex>=0)
+        {
+            auto &animal=m_State.animals[animalIndex];
+            const int damage=std::min(animal.health,std::max(GameConstants::Player::MinimumDamage,m_State.attackPower/GameConstants::Player::DamageDivisor));
+            animal.health-=damage;
+            animal.hitFlash=GameConstants::Feedback::MonsterFlashDuration;
+            RecordHit(animal.position,damage);
+            if (animal.health==0)
+            { QuestSystem::AddExperience(m_State,GameConstants::World::AnimalExperience); ShowMessage(L"동물을 사냥했습니다. E로 전리품을 수집하세요."); }
+            return;
+        }
         if (m_State.quest != QuestStage::Hunt && !StorySystem::IsHunting(m_State))
             return;
         const int healthBefore = m_State.monster.health;
@@ -240,12 +334,7 @@ void GameManager::HandleCommand(GameCommand command)
         const int damage = healthBefore - m_State.monster.health;
         if (result.hit && damage > 0)
         {
-            m_State.combo = m_State.comboTime > 0 ? m_State.combo + 1 : 1;
-            m_State.comboTime = GameConstants::Combo::Window;
-            m_State.attackHitTime = DamageFeedback::Duration;
-            m_State.hitStop = std::max(m_State.hitStop, m_State.combo % GameConstants::Combo::HeavyInterval == 0 ? GameConstants::Feedback::HeavyHitStop : GameConstants::Feedback::AttackHitStop);
-            if (m_State.damageNumbers.size() >= GameConstants::HitEffect::MaxNumbers) m_State.damageNumbers.erase(m_State.damageNumbers.begin());
-            m_State.damageNumbers.push_back({m_State.monster.position, damage, m_State.combo, GameConstants::HitEffect::NumberDuration});
+            RecordHit(m_State.monster.position, damage);
         }
         if (!result.defeated)
             return;
@@ -263,6 +352,16 @@ void GameManager::HandleCommand(GameCommand command)
 
 const wchar_t *GameManager::GetHint() const
 {
+    const float herbX=m_State.player.x-m_State.world.herb.x, herbZ=m_State.player.z-m_State.world.herb.z;
+    if (m_State.quest != QuestStage::Elder && m_State.quest != QuestStage::Tracks && m_State.quest != QuestStage::Herb &&
+        herbX*herbX+herbZ*herbZ<GameConstants::Loot::HerbRange*GameConstants::Loot::HerbRange)
+        return m_State.herbRegrowTime>0 ? L"약초 재생 중" : L"E  약초 채집";
+    for (const auto &animal : m_State.animals)
+    {
+        const float x=animal.position.x-m_State.player.x,z=animal.position.z-m_State.player.z;
+        if (animal.health<=0 && !animal.collected && x*x+z*z<GameConstants::World::AnimalLootRange*GameConstants::World::AnimalLootRange)
+            return L"E  동물 전리품 수집";
+    }
     if (StorySystem::Current(m_State) || StorySystem::CanStart(m_State)) return StorySystem::Hint(m_State);
     return QuestSystem::GetHint(m_State);
 }

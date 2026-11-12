@@ -39,6 +39,9 @@ struct AnimalState
     int row;
     float phase;
     float speed;
+    int health = GameConstants::World::AnimalHealth;
+    float hitFlash = 0.0f, respawnTime = 0.0f;
+    bool collected = false;
 };
 
 struct WorldState
@@ -74,6 +77,8 @@ struct GameState
     Inventory inventory;
     bool inventoryOpen = false, hunterBladeCrafted = false;
     bool armorRecipeUnlocked = false, hunterArmorCrafted = false, storyFinished = false;
+    bool ruinDeviceDisabled = false;
+    float herbRegrowTime = 0.0f;
     int defense = 0, storyStep = -1;
     float playerHitTime = 0.0f, hitStop = 0.0f;
     Vec2 playerHitPosition = {};
@@ -81,6 +86,7 @@ struct GameState
     float attackHitTime = 0.0f, comboTime = 0.0f;
     int combo = 0;
     float lootTime = 0.0f, lootPickupTime = 0.0f;
+    int lootAnimal = -1;
     int completedHunts = 0;
     int level = 1, experience = 0, experienceToNextLevel = 20, attackPower = 2;
     QuestStage quest = QuestStage::Elder;

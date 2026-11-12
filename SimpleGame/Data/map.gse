@@ -8,6 +8,11 @@ quest_point elder 0 1.4
 quest_point tracks 13 13
 quest_point herb 25 23
 encounter lake_boar 34 30
+landmark expedition_cart cart -47 35 110 .65
+landmark expedition_debris log -39 36 90 .4
+landmark ancient_gate ruin -46 48 150 .75
+landmark ancient_console ruin -49 54 110 .6
+landmark ancient_nest boulder -44 63 120 .7
 landmark south_border_fence fence 10.5 -10.5 100 .4
 landmark sand_ruin_01 ruin 63 9 155 .75
 landmark sand_ruin_02 ruin 67 12 140 .7

@@ -47,10 +47,20 @@ void UpdateMovement(GameState &state, float deltaTime)
     Vec2 next = {state.player.x + move.x * speed * deltaTime, state.player.z + move.z * speed * deltaTime};
     next.x = std::max(state.world.minimumCoordinate, std::min(state.world.maximumCoordinate, next.x));
     next.z = std::max(state.world.minimumCoordinate, std::min(state.world.maximumCoordinate, next.z));
-    const float dx = next.x - state.world.lake.x;
-    const float dz = next.z - state.world.lake.z;
-    if (std::sqrt(dx * dx + dz * dz) > state.world.lakeRadius && !WorldLayout::IsBlocked(next))
-        state.player = next;
+    const auto canMove = [&](Vec2 position) {
+        const float dx = position.x - state.world.lake.x, dz = position.z - state.world.lake.z;
+        return dx*dx + dz*dz > state.world.lakeRadius*state.world.lakeRadius && !WorldLayout::IsBlocked(position);
+    };
+    const Vec2 previous = state.player;
+    if (canMove(next)) state.player = next;
+    else
+    {
+        const Vec2 alongX = {next.x, previous.z};
+        if (canMove(alongX)) state.player = alongX;
+        const Vec2 alongZ = {state.player.x, next.z};
+        if (canMove(alongZ)) state.player = alongZ;
+    }
+    state.moving = state.player.x != previous.x || state.player.z != previous.z;
 }
 
 bool TryUsePotion(GameState &state)

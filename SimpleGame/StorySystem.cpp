@@ -77,6 +77,7 @@ bool DebugEnterStep(GameState &state, const std::string &stepId)
     for (size_t index = 0; index < target; ++index)
     {
         const auto &previous = steps[index];
+        if (previous.id == "ruin_control") prepared.ruinDeviceDisabled = true;
         if (previous.action == GameContent::StoryAction::Hunt)
             QuestSystem::AddExperience(prepared, content.monsters.at(previous.monsterId).experience);
         if (previous.action == GameContent::StoryAction::Collect)
@@ -188,7 +189,10 @@ const wchar_t *Interact(GameState &state)
     }
     if ((step->action == GameContent::StoryAction::Investigate || step->action == GameContent::StoryAction::Report)
         && Near(state.player,step->position,step->radius))
+    {
+        if (step->id == "ruin_control") state.ruinDeviceDisabled = true;
         return Advance(state);
+    }
     return Near(state.player,state.world.elder,1.5f) ? step->hint.c_str() : nullptr;
 }
 const wchar_t *EnemyDefeated(GameState &state)

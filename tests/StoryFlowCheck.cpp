@@ -278,7 +278,8 @@ int main()
         }
         assert(state.storyStep == before+1);
     }
-    assert(steps == 14 && hunts == 2 && state.storyFinished && !StorySystem::CanStart(state));
+    assert(steps == 22 && hunts == 3 && state.storyFinished && !StorySystem::CanStart(state));
+    assert(state.ruinDeviceDisabled);
     const auto profile = GameContent::Get().monsters.at("displaced_boar");
     auto enemy = MonsterSystem::Create(profile,state.player);
     float health = 100;
