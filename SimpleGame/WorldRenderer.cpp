@@ -13,6 +13,7 @@
 #include "SearchSpriteFrames.h"
 #include "PixelPropFrames.h"
 #include "GuardianFrames.h"
+#include "ChatacabraFrames.h"
 #include "PixelGeneralFrames.h"
 
 #include <algorithm>
@@ -167,6 +168,11 @@ WorldRenderer::WorldRenderer(Renderer &renderer) : m_Renderer(renderer)
     m_BoarLootTexture = m_Renderer.LoadTexture(L"./Assets/PixelArt/Items/boar-loot-v1.png");
     m_AnimalCarcassTexture = m_Renderer.LoadTexture(L"./Assets/PixelArt/Animals/carcasses-v1.png");
     m_AncientGuardianTexture = m_Renderer.LoadTexture(L"./Assets/PixelArt/Monsters/Chapter3/guardian-walk-v1.png");
+    m_ChatAttackTextures[0] = m_Renderer.LoadTexture(L"./Assets/PixelArt/Monsters/Chapter3/chatacabra-tongue-v1.png");
+    m_ChatAttackTextures[1] = m_Renderer.LoadTexture(L"./Assets/PixelArt/Monsters/Chapter3/chatacabra-slam-v1.png");
+    m_ChatAttackTextures[2] = m_Renderer.LoadTexture(L"./Assets/PixelArt/Monsters/Chapter3/chatacabra-coat-v1.png");
+    m_ChatImpactTextures[0] = m_Renderer.LoadTexture(L"./Assets/PixelArt/Effects/chatacabra-saliva.png");
+    m_ChatImpactTextures[1] = m_Renderer.LoadTexture(L"./Assets/PixelArt/Effects/chatacabra-slam.png");
     m_PixelSceneryTexture = m_Renderer.LoadTexture(L"./Assets/PixelArt/World/frontier-props-v1.png");
     m_SearchTexture = m_Renderer.LoadTexture(L"./Assets/PixelArt/Characters/hero-search-v1.png");
     m_AttackHitTextures[0] = m_Renderer.LoadTexture(L"./Assets/PixelArt/Effects/attack-hit-spark.png");
@@ -196,7 +202,8 @@ WorldRenderer::WorldRenderer(Renderer &renderer) : m_Renderer(renderer)
                                  m_CampfireTexture, m_GeneralWalkTexture, m_GeneralRunTexture, m_GeneralAttackTexture,
                                  m_PixelAnimalTextures[0], m_PixelAnimalTextures[1], m_PixelAnimalTextures[2],
                                  m_Chapter1BoarTextures[0], m_Chapter1BoarTextures[1], m_Chapter1BoarTextures[2], m_PlayerHitTexture,
-                                 m_AttackHitTextures[0], m_AttackHitTextures[1], m_AttackHitTextures[2], m_BoarLootTexture, m_SearchTexture, m_AnimalCarcassTexture, m_AncientGuardianTexture, m_PixelSceneryTexture})
+                                 m_AttackHitTextures[0], m_AttackHitTextures[1], m_AttackHitTextures[2], m_BoarLootTexture, m_SearchTexture, m_AnimalCarcassTexture, m_AncientGuardianTexture, m_PixelSceneryTexture,
+                                 m_ChatAttackTextures[0], m_ChatAttackTextures[1], m_ChatAttackTextures[2], m_ChatImpactTextures[0], m_ChatImpactTextures[1]})
         if (texture != 0)
         {
             glBindTexture(GL_TEXTURE_2D, texture);
@@ -208,6 +215,10 @@ WorldRenderer::WorldRenderer(Renderer &renderer) : m_Renderer(renderer)
 
 WorldRenderer::~WorldRenderer()
 {
+    for (auto texture : m_ChatAttackTextures)
+        if (texture) glDeleteTextures(1, &texture);
+    for (auto texture : m_ChatImpactTextures)
+        if (texture) glDeleteTextures(1, &texture);
     if (m_PlayerHitTexture != 0) glDeleteTextures(1, &m_PlayerHitTexture);
     if (m_AnimalCarcassTexture != 0) glDeleteTextures(1, &m_AnimalCarcassTexture);
     if (m_AncientGuardianTexture != 0) glDeleteTextures(1, &m_AncientGuardianTexture);
@@ -1083,15 +1094,29 @@ void WorldRenderer::RenderWorld(const GameState &state)
                                                   state.monster.hitAnimation > 0 || state.monster.attackAnimation > 0;
                                               if (state.monster.definition.id == "ancient_guardian" && m_AncientGuardianTexture)
                                               {
-                                                  const float dx=facing.x-facing.z,dy=(facing.x+facing.z)*.5f;
+                                                  const auto &monster=state.monster;
+                                                  const Vec2 aim=monster.chatPattern>=0 ? monster.animationFacing : facing;
+                                                  const float dx=aim.x-aim.z,dy=(aim.x+aim.z)*.5f;
                                                   const int direction=std::abs(dx)>std::abs(dy) ? (dx<0 ? 1 : 2) : (dy<0 ? 0 : 3);
-                                                  const int pose=walking && state.monster.health>0 ? static_cast<int>(state.time*6)%4 : 0;
+                                                  const bool guardianWalking=walking && distance>GameConstants::Chatacabra::EngageRange && monster.chatPattern<0;
+                                                  int pose=guardianWalking && monster.health>0 && monster.chatStagger<=0 ? static_cast<int>(state.time*6)%4 : 0;
                                                   const Vec2 screen=ToScreen(p);
-                                                  const float height=state.monster.definition.spriteHeight;
+                                                  float height=state.monster.definition.spriteHeight;
+                                                  auto pivot=GuardianFrames::Pivots[pose*4+direction];
+                                                  auto texture=m_AncientGuardianTexture;
+                                                  const int action=monster.health>0 ? (monster.chatPattern>=0 ? monster.chatPattern :
+                                                      (monster.chatArmorHits>0 ? 2 : -1)) : -1;
+                                                  if (action>=0 && m_ChatAttackTextures[action])
+                                                  {
+                                                      pose=monster.chatPattern<0 ? 3 : ChatacabraFrames::Pose(action,monster.chatElapsed);
+                                                      const auto anchor=ChatacabraFrames::Pivots[action][pose*4+direction];
+                                                      pivot={anchor.x,anchor.y};
+                                                      texture=m_ChatAttackTextures[action];
+                                                      height*=GameConstants::Chatacabra::ActionSpriteScale[action];
+                                                  }
                                                   const float displayHeight=state.monster.health<=0 ? height*.45f : height;
-                                                  const auto pivot=GuardianFrames::Pivots[pose*4+direction];
                                                   DrawShadow(p,height*.55f,12);
-                                                  m_Renderer.DrawSprite(m_AncientGuardianTexture,screen.x+(.5f-pivot.x)*height,
+                                                  m_Renderer.DrawSprite(texture,screen.x+(.5f-pivot.x)*height,
                                                       screen.z+(pivot.y-.5f)*displayHeight,
                                                       height,displayHeight,direction,pose,4,4,1,1,1,1,0,0,0,1,1,.5f);
                                                   return;
@@ -1105,6 +1130,17 @@ void WorldRenderer::RenderWorld(const GameState &state)
                                           state.width, state.height, state.time, Pi};
             m_Renderer.SetSpriteFlash(state.monster.health > 0 ? state.monster.hitFlash / GameConstants::Feedback::MonsterFlashDuration : 0);
             const bool hasLoot = state.quest == QuestStage::Trophy || StorySystem::HasDrop(state);
+            if (state.monster.definition.id=="ancient_guardian" && state.monster.health>0 &&
+                state.monster.chatPattern>=0 && state.monster.chatPattern<2)
+            {
+                using namespace GameConstants::Chatacabra;
+                const auto &monster=state.monster;
+                const bool pending=monster.chatElapsed<(monster.chatPattern==0 ? FirstImpact : SecondImpact);
+                const float radius=monster.chatPattern==0 ? TongueHalfWidth : (monster.chatArmorHits>0 ? ArmoredSlamRadius : SlamRadius);
+                const Vec2 target=ToScreen(monster.chatTarget);
+                if (pending) m_Renderer.DrawEffectRect(target.x,target.z,TelegraphWidthPerUnit*radius,
+                    TelegraphHeightPerUnit*radius,0,1,.38f,.12f,.4f,3);
+            }
             MonsterSystem::Draw(state.monster, context, hasLoot && m_BoarLootTexture == 0);
             if (hasLoot && m_BoarLootTexture != 0)
             {
@@ -1242,6 +1278,22 @@ void WorldRenderer::RenderWorld(const GameState &state)
             break;
         }
         }
+    }
+    if (state.monster.definition.id=="ancient_guardian" && state.monster.chatImpactTime>0)
+    {
+        using namespace GameConstants::Chatacabra;
+        const int effect=state.monster.chatImpactType==0 ? 0 : 1;
+        const float age=ImpactDuration-state.monster.chatImpactTime;
+        const int columns=effect==0 ? 7 : 9, count=effect==0 ? 76 : 97;
+        const int frame=std::min(count-1,static_cast<int>(age*GameConstants::HitEffect::FramesPerSecond));
+        const Vec2 point=ToScreen(state.monster.chatImpactPosition);
+        const float scale=state.monster.chatArmorHits>0 ? ArmoredImpactScale : ImpactScale;
+        const float width=(effect==0 ? 176.0f : 288.0f)*scale, height=(effect==0 ? 100.0f : 208.0f)*scale;
+        const float pivot=(effect==0 ? 78.0f : 164.0f)*scale;
+        m_Renderer.SetLocalLight(0,0,0);
+        if (m_ChatImpactTextures[effect] && age<=(effect==0 ? SalivaDuration : ImpactDuration))
+            m_Renderer.DrawSprite(m_ChatImpactTextures[effect],point.x,point.z+pivot-height*.5f,
+                width,height,frame%columns,frame/columns,columns,11);
     }
     if (state.playerHitTime > 0 && m_PlayerHitTexture != 0)
     {

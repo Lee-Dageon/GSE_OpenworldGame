@@ -208,7 +208,8 @@ void GameManager::UpdateGame(float deltaTime)
             m_State.combo = 0;
             m_State.comboTime = 0;
         }
-        ShowMessage(L"멧돼지에게 공격받았습니다. 공백 키로 회피하거나 Q로 회복하세요.");
+        const auto message = m_State.monster.definition.name + L"에게 공격받았습니다. 공백 회피 · Q 회복";
+        ShowMessage(message.c_str());
     }
     if (m_State.health <= 0.0f)
     {

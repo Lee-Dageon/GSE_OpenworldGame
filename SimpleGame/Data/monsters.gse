@@ -6,5 +6,5 @@ monster rampaging_boar "떠도는 거대 멧돼지" 48 1.9 1.5 8 1.1 1.25 16 1.4
 appearance rampaging_boar 170
 monster displaced_boar "숲의 난폭한 멧돼지" 72 1.9 1.5 8 1.1 1.4 20 1.25 45 2 2
 appearance displaced_boar 155
-monster ancient_guardian "유적에 둥지 튼 고대종" 90 2.1 1.6 9 1.2 1.0 22 1.6 65 4 3
+monster ancient_guardian "차타카브라" 90 2.1 1.6 9 1.2 1.0 22 1.6 65 4 3
 appearance ancient_guardian 175

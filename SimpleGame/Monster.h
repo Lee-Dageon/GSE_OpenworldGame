@@ -33,6 +33,9 @@ struct MonsterState
     MonsterDefinition definition;
     float attackAnimation = 0.0f, hitAnimation = 0.0f;
     Vec2 animationFacing = {1.0f, 0.0f};
+    int chatPattern = -1, chatNext = 0, chatHitMask = 0, chatArmorHits = 0, chatImpactType = 0;
+    float chatElapsed = 0, chatStagger = 0, chatImpactTime = 0;
+    Vec2 chatTarget = {}, chatImpactPosition = {};
 };
 
 struct MonsterHitResult

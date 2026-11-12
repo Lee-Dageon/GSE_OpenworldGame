@@ -44,6 +44,15 @@ void DrawInfo(const MonsterState &monster, const MonsterDrawContext &context, co
     context.renderer->DrawSolidRect(s.x, s.z + top - 8, 132, 12, 0, .05f, .04f, .03f, .88f);
     context.renderer->DrawSolidRect(s.x - 66 + healthRatio * 66.0f, s.z + top - 8, 132.0f * healthRatio, 6, 0, .78f, .12f,
                                     .08f, 1);
+    if (monster.definition.id == "ancient_guardian")
+    {
+        const wchar_t *status = monster.chatStagger > 0 ? L"돌 파괴 · 경직" :
+            monster.chatPattern == 1 && monster.chatElapsed >= GameConstants::Chatacabra::SecondImpact ? L"혀 노출 · 피해 2배" :
+            monster.chatPattern == 0 ? L"혀 공격" : monster.chatPattern == 1 ? L"연속 내려찍기" :
+            monster.chatPattern == 2 ? L"돌 부착" : monster.chatArmorHits > 0 ? L"앞다리 강화" : L"";
+        context.renderer->DrawLabel(context.screenWidth*.5f+s.x-76,context.screenHeight*.5f+s.z+top+36,
+            status,1,.72f,.32f,.8f);
+    }
 }
 
 void DrawBoar(const MonsterState &monster, const MonsterDrawContext &context)
@@ -51,7 +60,7 @@ void DrawBoar(const MonsterState &monster, const MonsterDrawContext &context)
     const Vec2 s = context.worldToScreen(monster.position);
     const bool alive = monster.health > 0;
     context.drawSprite(monster.position, 1, 2, 128, 96, true);
-    if (alive)
+    if (alive && monster.definition.id != "ancient_guardian")
     {
         const float glow = .55f + std::sin(context.time * 8.0f) * .18f;
         context.renderer->DrawSolidRect(s.x + 25, s.z + 28, 14, 8, 0, .95f, .16f, .04f, glow);
@@ -132,6 +141,20 @@ MonsterHitResult Hit(MonsterState &monster, Vec2 player, int attackPower)
         return {false, false};
     }
 
+    if (monster.definition.id == "ancient_guardian")
+    {
+        if (monster.chatPattern == 1 && monster.chatElapsed >= GameConstants::Chatacabra::SecondImpact)
+            attackPower *= GameConstants::Chatacabra::WeakDamageMultiplier;
+        if (monster.chatArmorHits > 0 && --monster.chatArmorHits == 0)
+        {
+            monster.chatStagger = GameConstants::Chatacabra::StaggerDuration;
+            monster.chatPattern = -1;
+            monster.attackCooldown = monster.chatStagger;
+            monster.chatImpactTime = GameConstants::Chatacabra::ImpactDuration;
+            monster.chatImpactPosition = monster.position;
+            monster.chatImpactType = 1;
+        }
+    }
     monster.health = std::max(0, monster.health - attackPower);
     monster.hitFlash = HitFlashTime;
     if (monster.definition.id == "rampaging_boar")
@@ -157,11 +180,73 @@ void UpdateTimers(MonsterState &monster, float deltaTime)
     monster.hitFlash = std::max(0.0f, monster.hitFlash - deltaTime);
     monster.attackAnimation = std::max(0.0f, monster.attackAnimation - deltaTime);
     monster.hitAnimation = std::max(0.0f, monster.hitAnimation - deltaTime);
+    monster.chatStagger = std::max(0.0f, monster.chatStagger - deltaTime);
+    monster.chatImpactTime = std::max(0.0f, monster.chatImpactTime - deltaTime);
 
     if (monster.deathTime > 0)
     {
         monster.deathTime += deltaTime;
     }
+}
+
+bool UpdateChatacabra(MonsterState &monster, Vec2 player, float dodgeTime, float dt, float &health, int defense)
+{
+    using namespace GameConstants::Chatacabra;
+    if (monster.chatStagger > 0) return false;
+    const float distance=Distance(player,monster.position);
+    if (monster.chatPattern < 0)
+    {
+        if (distance > EngageRange && distance < monster.definition.chaseRange)
+        {
+            monster.position.x+=(player.x-monster.position.x)/distance*monster.definition.speed*dt;
+            monster.position.z+=(player.z-monster.position.z)/distance*monster.definition.speed*dt;
+        }
+        else if (distance <= EngageRange && monster.attackCooldown <= 0)
+        {
+            monster.chatPattern=monster.chatNext;
+            monster.chatNext=(monster.chatNext+1)%3;
+            monster.chatElapsed=0; monster.chatHitMask=0;
+            monster.chatTarget=player;
+            if (distance > .001f) monster.animationFacing={player.x-monster.position.x,player.z-monster.position.z};
+        }
+        return false;
+    }
+    monster.chatElapsed+=dt;
+    if (monster.chatPattern==2)
+    {
+        if (monster.chatElapsed>=CoatTime && monster.chatHitMask==0)
+        {
+            monster.chatArmorHits=ArmorBreakHits; monster.chatHitMask=1;
+            monster.chatImpactTime=ImpactDuration; monster.chatImpactPosition=monster.position; monster.chatImpactType=1;
+        }
+    }
+    bool damaged=false;
+    const int impacts=monster.chatPattern==1 ? 2 : (monster.chatPattern==0 ? 1 : 0);
+    for (int event=0;event<impacts;++event)
+    {
+        if (monster.chatElapsed<(event==0 ? FirstImpact : SecondImpact) || (monster.chatHitMask&(1<<event))) continue;
+        monster.chatHitMask|=1<<event;
+        monster.chatImpactTime=ImpactDuration; monster.chatImpactType=monster.chatPattern;
+        monster.chatImpactPosition=monster.chatTarget;
+        bool inRange=false;
+        if (monster.chatPattern==0)
+        {
+            const float length=std::sqrt(monster.animationFacing.x*monster.animationFacing.x+monster.animationFacing.z*monster.animationFacing.z);
+            const float x=player.x-monster.position.x,z=player.z-monster.position.z;
+            const float forward=(x*monster.animationFacing.x+z*monster.animationFacing.z)/std::max(.001f,length);
+            const float side=std::abs(x*monster.animationFacing.z-z*monster.animationFacing.x)/std::max(.001f,length);
+            inRange=forward>=0 && forward<=TongueRange && side<=TongueHalfWidth;
+        }
+        else inRange=Distance(player,monster.chatTarget)<=(monster.chatArmorHits>0 ? ArmoredSlamRadius : SlamRadius);
+        if (inRange && dodgeTime<=0 && monster.definition.damage>0)
+        {
+            health-=std::max(1.0f,monster.definition.damage*(monster.chatArmorHits>0 ? ArmoredDamageMultiplier : 1.0f)-std::max(0,defense));
+            damaged=true;
+        }
+    }
+    const float duration=monster.chatPattern==0 ? TongueDuration : (monster.chatPattern==1 ? SlamDuration : CoatDuration);
+    if (monster.chatElapsed>=duration) { monster.chatPattern=-1; monster.attackCooldown=Recovery; }
+    return damaged;
 }
 
 bool UpdateChaseAndAttack(MonsterState &monster, Vec2 player, float dodgeTime, float deltaTime, float &playerHealth, int defense)
@@ -172,6 +257,8 @@ bool UpdateChaseAndAttack(MonsterState &monster, Vec2 player, float dodgeTime, f
     }
 
     const float distance = Distance(player, monster.position);
+    if (monster.definition.id == "ancient_guardian")
+        return UpdateChatacabra(monster,player,dodgeTime,std::max(0.0f,deltaTime),playerHealth,defense);
 
     if (monster.definition.id == "rampaging_boar" && distance > .001f &&
         monster.attackAnimation <= 0.0f && monster.hitAnimation <= 0.0f)

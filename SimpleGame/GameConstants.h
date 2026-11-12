@@ -59,6 +59,22 @@ constexpr std::array<std::array<int, 6>, 3> FrameMilliseconds = {{
     {{120, 140, 160, 160, 180, 240}}
 }};
 }
+namespace Chatacabra
+{
+constexpr float EngageRange = 3.8f, TongueRange = 4.0f, TongueHalfWidth = .75f;
+constexpr float SlamRadius = 1.6f, ArmoredSlamRadius = 2.2f;
+constexpr float FirstImpact = .55f, SecondImpact = 1.0f;
+constexpr float TongueDuration = 1.6f, SlamDuration = 2.1f, CoatDuration = 1.4f;
+constexpr float CoatTime = .8f, Recovery = .8f, StaggerDuration = 1.0f;
+constexpr int ArmorBreakHits = 3, WeakDamageMultiplier = 2;
+constexpr float ImpactDuration = 3.2f;
+constexpr float SalivaDuration = 2.5f, ArmoredDamageMultiplier = 1.25f;
+constexpr float TongueSweepTime = .75f, TongueRetractTime = 1.2f, SlamRaiseTime = .8f;
+constexpr float CoatLickTime = .4f, CoatReadyTime = 1.1f;
+constexpr float TelegraphWidthPerUnit = 90.51f, TelegraphHeightPerUnit = 45.25f;
+constexpr float ImpactScale = 1.15f, ArmoredImpactScale = 1.5f;
+constexpr std::array<float,3> ActionSpriteScale = {{1.25f,1.0f,1.15f}};
+}
 namespace Inventory
 {
 constexpr int MaxStack = 99;
