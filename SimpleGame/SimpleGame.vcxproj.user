@@ -4,8 +4,8 @@
     <LocalDebuggerWorkingDirectory>$(ProjectDir)</LocalDebuggerWorkingDirectory>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <LocalDebuggerCommandArguments>--debug-step border_hunt</LocalDebuggerCommandArguments>
+    <LocalDebuggerCommandArguments>--debug-chapter awakened</LocalDebuggerCommandArguments>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
-    <LocalDebuggerCommandArgumentsHistory>--debug-chapter displaced|--debug-step border_hunt|</LocalDebuggerCommandArgumentsHistory>
+    <LocalDebuggerCommandArgumentsHistory>--debug-chapter displaced|--debug-step border_hunt|--debug-chapter awakened|</LocalDebuggerCommandArgumentsHistory>
   </PropertyGroup>
 </Project>

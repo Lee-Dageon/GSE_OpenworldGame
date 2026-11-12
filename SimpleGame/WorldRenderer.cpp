@@ -11,6 +11,8 @@
 #include "Chapter1BoarAnimation.h"
 #include "DamageFeedback.h"
 #include "SearchSpriteFrames.h"
+#include "PixelPropFrames.h"
+#include "GuardianFrames.h"
 #include "PixelGeneralFrames.h"
 
 #include <algorithm>
@@ -165,6 +167,7 @@ WorldRenderer::WorldRenderer(Renderer &renderer) : m_Renderer(renderer)
     m_BoarLootTexture = m_Renderer.LoadTexture(L"./Assets/PixelArt/Items/boar-loot-v1.png");
     m_AnimalCarcassTexture = m_Renderer.LoadTexture(L"./Assets/PixelArt/Animals/carcasses-v1.png");
     m_AncientGuardianTexture = m_Renderer.LoadTexture(L"./Assets/PixelArt/Monsters/Chapter3/guardian-walk-v1.png");
+    m_PixelSceneryTexture = m_Renderer.LoadTexture(L"./Assets/PixelArt/World/frontier-props-v1.png");
     m_SearchTexture = m_Renderer.LoadTexture(L"./Assets/PixelArt/Characters/hero-search-v1.png");
     m_AttackHitTextures[0] = m_Renderer.LoadTexture(L"./Assets/PixelArt/Effects/attack-hit-spark.png");
     m_AttackHitTextures[1] = m_Renderer.LoadTexture(L"./Assets/PixelArt/Effects/attack-hit-heavy.png");
@@ -193,7 +196,7 @@ WorldRenderer::WorldRenderer(Renderer &renderer) : m_Renderer(renderer)
                                  m_CampfireTexture, m_GeneralWalkTexture, m_GeneralRunTexture, m_GeneralAttackTexture,
                                  m_PixelAnimalTextures[0], m_PixelAnimalTextures[1], m_PixelAnimalTextures[2],
                                  m_Chapter1BoarTextures[0], m_Chapter1BoarTextures[1], m_Chapter1BoarTextures[2], m_PlayerHitTexture,
-                                 m_AttackHitTextures[0], m_AttackHitTextures[1], m_AttackHitTextures[2], m_BoarLootTexture, m_SearchTexture, m_AnimalCarcassTexture, m_AncientGuardianTexture})
+                                 m_AttackHitTextures[0], m_AttackHitTextures[1], m_AttackHitTextures[2], m_BoarLootTexture, m_SearchTexture, m_AnimalCarcassTexture, m_AncientGuardianTexture, m_PixelSceneryTexture})
         if (texture != 0)
         {
             glBindTexture(GL_TEXTURE_2D, texture);
@@ -208,6 +211,7 @@ WorldRenderer::~WorldRenderer()
     if (m_PlayerHitTexture != 0) glDeleteTextures(1, &m_PlayerHitTexture);
     if (m_AnimalCarcassTexture != 0) glDeleteTextures(1, &m_AnimalCarcassTexture);
     if (m_AncientGuardianTexture != 0) glDeleteTextures(1, &m_AncientGuardianTexture);
+    if (m_PixelSceneryTexture != 0) glDeleteTextures(1, &m_PixelSceneryTexture);
     for (unsigned int texture : {m_BoarLootTexture, m_SearchTexture})
         if (texture != 0) glDeleteTextures(1, &texture);
     for (unsigned int texture : m_AttackHitTextures)
@@ -941,6 +945,21 @@ void WorldRenderer::RenderWorld(const GameState &state)
                                 landmark.height, .0332f);
                 break;
             }
+            const int pixelFrame = landmark.kind == WorldLayout::SceneryKind::Bush ? 0 :
+                landmark.kind == WorldLayout::SceneryKind::Log ? 1 :
+                landmark.kind == WorldLayout::SceneryKind::Fence ? 2 :
+                landmark.kind == WorldLayout::SceneryKind::Cart ? 3 :
+                landmark.kind == WorldLayout::SceneryKind::Ruin ? 4 : -1;
+            if (m_PixelSceneryTexture != 0 && pixelFrame >= 0)
+            {
+                const auto pivot=PixelPropFrames::Pivots[pixelFrame];
+                m_Renderer.DrawSprite(m_PixelSceneryTexture,
+                    screen.x+(.5f-pivot.x)*landmark.height,
+                    screen.z+(pivot.y-.5f)*landmark.height,
+                    landmark.height,landmark.height,pixelFrame%3,pixelFrame/3,3,2,
+                    1,1,1,1,0,0,0,1,1,.5f);
+                break;
+            }
             if (m_SceneryTexture != 0)
                 m_Renderer.DrawSprite(m_SceneryTexture, screen.x, screen.z + (.5f-.27075773f)*landmark.height,
                                       landmark.height, landmark.height, static_cast<int>(landmark.kind), 0, 7, 1);
@@ -1070,9 +1089,11 @@ void WorldRenderer::RenderWorld(const GameState &state)
                                                   const Vec2 screen=ToScreen(p);
                                                   const float height=state.monster.definition.spriteHeight;
                                                   const float displayHeight=state.monster.health<=0 ? height*.45f : height;
+                                                  const auto pivot=GuardianFrames::Pivots[pose*4+direction];
                                                   DrawShadow(p,height*.55f,12);
-                                                  m_Renderer.DrawSprite(m_AncientGuardianTexture,screen.x,screen.z+.38f*displayHeight,
-                                                      height,displayHeight,direction,pose,4,4);
+                                                  m_Renderer.DrawSprite(m_AncientGuardianTexture,screen.x+(.5f-pivot.x)*height,
+                                                      screen.z+(pivot.y-.5f)*displayHeight,
+                                                      height,displayHeight,direction,pose,4,4,1,1,1,1,0,0,0,1,1,.5f);
                                                   return;
                                               }
                                               if ((!walking || chapterAnimation) && DrawChapter1Boar(state.monster)) return;

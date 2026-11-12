@@ -61,6 +61,8 @@ stage id elder|tracks|herb|hunt|trophy|return|complete next_id "목표" "힌트"
 
 ## 디버그 장·목표 진입
 
+추가된 3장은 `--debug-chapter awakened`로 진입한다. 목표 ID는 ancient_fragment, expedition_travel, expedition_records, ruin_entrance, ruin_control, ancient_hunt, ancient_loot, third_report 순서이다. 예: `--debug-step ancient_hunt`. 현재 데이터는 3장·22목표이며 아래 기존 1·2장 ID 목록도 유지한다.
+
 실행 인자에서 장 또는 목표 하나를 지정한다. Visual Studio에서는 프로젝트 속성의 디버깅 → 명령 인수에 같은 옵션을 입력한다.
 
 ```text

@@ -12,6 +12,18 @@
 
 int main()
 {
+    auto gatherer=CreateInitialGameState();
+    gatherer.quest=QuestStage::Complete;
+    gatherer.player=gatherer.world.herb;
+    GameManager gathering(gatherer);
+    gathering.HandleCommand(GameCommand::Interact);
+    assert(gatherer.inventory.Count(ItemId::Herb)==1 && gatherer.herbRegrowTime>0);
+    gathering.HandleCommand(GameCommand::Interact);
+    assert(gatherer.inventory.Count(ItemId::Herb)==1);
+    gathering.UpdateGame(GameConstants::Loot::HerbRegrowSeconds+.1f);
+    gatherer.player=gatherer.world.herb;
+    gathering.HandleCommand(GameCommand::Interact);
+    assert(gatherer.inventory.Count(ItemId::Herb)==2);
     GameState looter = CreateInitialGameState();
     looter.quest = QuestStage::Trophy;
     looter.monster.health = 0;
@@ -301,5 +313,5 @@ int main()
     if (state.lootTime > 0) game.UpdateGame(GameConstants::Loot::Duration + .01f);
     assert(state.quest == QuestStage::Hunt && !StorySystem::IsHunting(state));
     assert(state.monster.definition.id == GameContent::Get().map.monsterId);
-    std::cout << "PASS: two chapters/14 objectives, prerequisites, clues, loot once/capacity, armor/pause, defense, button mapping and post-story repeat hunt\n";
+    std::cout << "PASS: three chapters/22 objectives, device state, renewable herbs, loot/armor/pause and repeat hunt\n";
 }
