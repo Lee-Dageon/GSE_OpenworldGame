@@ -141,6 +141,20 @@ void RenderScene()
         uiState.hint = hint;
     uiState.message = g_GameState.message;
     DrawGameUi(*g_Renderer, uiState);
+    if (g_GameState.combo > 1 && g_GameState.comboTime > 0)
+    {
+        const std::wstring comboText = std::to_wstring(g_GameState.combo) + L" COMBO";
+        const float pop = std::max(0.0f, 1.0f - (2.0f - g_GameState.comboTime) / .22f);
+        const float scale = GameUiScale(g_GameState.width, g_GameState.height) * 3.0f * (1 + .4f * pop);
+        const float alpha = std::min(1.0f, g_GameState.comboTime / .3f);
+        const float x = g_GameState.width * .5f, y = g_GameState.height * .72f + pop * 12;
+        for (int trail = 3; trail > 0; --trail)
+            g_Renderer->DrawLabel(x - trail * 10 * pop, y - trail * 3 * pop, comboText.c_str(),
+                1, .3f, .08f, scale, alpha * pop * .15f, true);
+        for (int side : {-1, 1})
+            g_Renderer->DrawLabel(x + side * 3, y - 3, comboText.c_str(), .15f, .04f, .02f, scale, alpha, true);
+        g_Renderer->DrawLabel(x, y, comboText.c_str(), 1, .78f + .22f * pop, .3f + .7f * pop, scale, alpha, true);
+    }
     DrawChapterIntro();
     if (g_CapturePath && ++g_CaptureFrames == 5)
     {
@@ -180,8 +194,9 @@ void UpdateFrame()
     const int now = ElapsedMilliseconds();
     const float deltaTime = std::min(.05f, (now - g_GameState.lastTime) / 1000.0f);
     g_GameState.lastTime = now;
+    const float previousTime = g_GameState.time;
     g_GameManager.UpdateGame(deltaTime);
-    g_GameManager.UpdateSceneGraph(g_SceneRoot, deltaTime);
+    g_GameManager.UpdateSceneGraph(g_SceneRoot, g_GameState.time - previousTime);
 }
 
 void ResizeWindow(GLFWwindow *, int width, int height)

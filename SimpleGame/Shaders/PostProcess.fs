@@ -5,6 +5,8 @@ layout(location = 0) out vec4 FragColor;
 uniform sampler2D u_Source;
 uniform vec2 u_Resolution;
 uniform float u_Time;
+uniform vec2 u_CameraShake;
+uniform float u_DamageFlash;
 
 vec3 Emission(vec2 uv)
 {
@@ -17,7 +19,8 @@ void main()
 	vec2 texel = 1.0 / u_Resolution;
 	// Integer screen pixels keep world sprites/effects on one grid; HUD is drawn afterwards.
 	float pixelScale = max(1.0, floor(u_Resolution.y / 360.0));
-	vec2 pixelUV = (floor(v_UV * u_Resolution / pixelScale) * pixelScale + pixelScale * .5) / u_Resolution;
+	vec2 shakenUV = clamp(v_UV + u_CameraShake / u_Resolution, vec2(0.0), vec2(1.0));
+	vec2 pixelUV = (floor(shakenUV * u_Resolution / pixelScale) * pixelScale + pixelScale * .5) / u_Resolution;
 	vec2 centered = v_UV * 2.0 - 1.0;
 	float edge = dot(centered, centered);
 	vec3 color = texture(u_Source, pixelUV).rgb;
@@ -41,5 +44,7 @@ void main()
 
 	float vignette = 1.0 - smoothstep(0.35, 1.28, edge);
 	color *= mix(0.97, 1.0, vignette);
+	float border = smoothstep(.55, 1.0, max(abs(centered.x), abs(centered.y)));
+	color = mix(color, vec3(.72, .025, .015), border * clamp(u_DamageFlash, 0.0, 1.0) * .65);
 	FragColor = vec4(color, 1.0);
 }

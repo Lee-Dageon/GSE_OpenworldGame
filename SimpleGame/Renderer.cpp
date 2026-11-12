@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "Renderer.h"
+#include "DamageFeedback.h"
 
 #include <Windows.h>
 #include <objidl.h>
@@ -130,6 +131,15 @@ void Renderer::EndFrame(float time)
     glBindTexture(GL_TEXTURE_2D, m_FrameColorTexture);
     glUniform1i(glGetUniformLocation(m_PostProcessShader, "u_Source"), 0);
     glUniform1f(glGetUniformLocation(m_PostProcessShader, "u_Time"), time);
+    const float playerShake = DamageFeedback::Fade(m_DamageFeedback, DamageFeedback::ShakeDuration);
+    const float attackShake = DamageFeedback::Fade(m_AttackFeedback, .16f) * .65f;
+    const float hitAge = DamageFeedback::Elapsed(playerShake >= attackShake ? m_DamageFeedback : m_AttackFeedback);
+    const float shake = std::max(playerShake, attackShake);
+    glUniform2f(glGetUniformLocation(m_PostProcessShader, "u_CameraShake"),
+                std::sin(hitAge * 131.0f + 1.2f) * 6.0f * shake,
+                std::cos(hitAge * 173.0f) * 4.0f * shake);
+    glUniform1f(glGetUniformLocation(m_PostProcessShader, "u_DamageFlash"),
+                DamageFeedback::Fade(m_DamageFeedback, DamageFeedback::BorderDuration));
     glUniform2f(glGetUniformLocation(m_PostProcessShader, "u_Resolution"), static_cast<float>(m_WindowSizeX),
                 static_cast<float>(m_WindowSizeY));
 
@@ -420,6 +430,7 @@ void Renderer::DrawSprite(GLuint texture, float x, float y, float sizeX, float s
     glUniform4f(glGetUniformLocation(m_SpriteShader, "u_UvRect"), u0, v0, u1, v1);
     glUniform1f(glGetUniformLocation(m_SpriteShader, "u_Alpha"), alpha);
     glUniform1f(glGetUniformLocation(m_SpriteShader, "u_AlphaCutoff"), alphaCutoff);
+    glUniform1f(glGetUniformLocation(m_SpriteShader, "u_HitFlash"), m_SpriteFlash);
     glUniform3f(glGetUniformLocation(m_SpriteShader, "u_Tint"), r, g, b);
 
     const GLint positionAttribute = glGetAttribLocation(m_SpriteShader, "a_Position");

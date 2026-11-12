@@ -1,8 +1,8 @@
 gse_monsters 1
 # id name hp hit drop chase attack speed damage cooldown xp hide tusk
-monster lake_boar "호숫가 멧돼지" 12 1.9 1.5 7 1.1 1.4 15 1.25 25 1 1
-monster forest_boar "숲의 큰 멧돼지" 18 1.9 1.5 8 1.1 1.3 18 1.4 35 2 1
-monster rampaging_boar "떠도는 거대 멧돼지" 24 1.9 1.5 8 1.1 1.25 16 1.4 35 3 2
+monster lake_boar "호숫가 멧돼지" 24 1.9 1.5 7 1.1 1.4 15 1.25 25 1 1
+monster forest_boar "숲의 큰 멧돼지" 36 1.9 1.5 8 1.1 1.3 18 1.4 35 2 1
+monster rampaging_boar "떠도는 거대 멧돼지" 48 1.9 1.5 8 1.1 1.25 16 1.4 35 3 2
 appearance rampaging_boar 170
-monster displaced_boar "숲의 난폭한 멧돼지" 36 1.9 1.5 8 1.1 1.4 20 1.25 45 2 2
+monster displaced_boar "숲의 난폭한 멧돼지" 72 1.9 1.5 8 1.1 1.4 20 1.25 45 2 2
 appearance displaced_boar 155

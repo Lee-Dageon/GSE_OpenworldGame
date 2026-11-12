@@ -22,6 +22,9 @@ class Renderer
     void BeginFrame(float time);
     void EndFrame(float time);
     void SetWorldScale(float scale);
+    void SetDamageFeedback(float remaining) { m_DamageFeedback = remaining; }
+    void SetAttackFeedback(float remaining) { m_AttackFeedback = remaining; }
+    void SetSpriteFlash(float strength) { m_SpriteFlash = strength; }
     void SetLocalLight(float red, float green, float blue);
     bool SaveScreenshot(const wchar_t *filename);
 
@@ -56,6 +59,8 @@ class Renderer
 
     bool m_Initialized = false;
     float m_DrawScale = 1.0f;
+    float m_DamageFeedback = 0.0f, m_SpriteFlash = 0.0f;
+    float m_AttackFeedback = 0.0f;
     int m_WindowSizeX = 1;
     int m_WindowSizeY = 1;
     std::uint64_t m_GdiToken = 0;

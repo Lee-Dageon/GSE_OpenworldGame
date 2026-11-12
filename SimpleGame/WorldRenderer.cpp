@@ -8,6 +8,7 @@
 #include "PixelNpcFrames.h"
 #include "PixelAnimalFrames.h"
 #include "Chapter1BoarAnimation.h"
+#include "DamageFeedback.h"
 #include "PixelGeneralFrames.h"
 
 #include <algorithm>
@@ -158,6 +159,10 @@ WorldRenderer::WorldRenderer(Renderer &renderer) : m_Renderer(renderer)
     m_HouseVariants[0] = m_Renderer.LoadTexture(L"./Assets/PixelArt/World/house-stone-v1.png");
     m_HouseVariants[1] = m_Renderer.LoadTexture(L"./Assets/PixelArt/World/house-shop-v1.png");
     m_CampfireTexture = m_Renderer.LoadTexture(L"./Assets/PixelArt/Effects/campfire.png");
+    m_PlayerHitTexture = m_Renderer.LoadTexture(L"./Assets/PixelArt/Effects/boar-player-hit.png");
+    m_AttackHitTextures[0] = m_Renderer.LoadTexture(L"./Assets/PixelArt/Effects/attack-hit-spark.png");
+    m_AttackHitTextures[1] = m_Renderer.LoadTexture(L"./Assets/PixelArt/Effects/attack-hit-heavy.png");
+    m_AttackHitTextures[2] = m_Renderer.LoadTexture(L"./Assets/PixelArt/Effects/attack-hit-gold.png");
     m_Chapter1BoarTextures[0] = m_Renderer.LoadTexture(L"./Assets/PixelArt/Monsters/Chapter1/great-boar-attack-v1.png");
     m_Chapter1BoarTextures[1] = m_Renderer.LoadTexture(L"./Assets/PixelArt/Monsters/Chapter1/great-boar-hit-v1.png");
     m_Chapter1BoarTextures[2] = m_Renderer.LoadTexture(L"./Assets/PixelArt/Monsters/Chapter1/great-boar-death-v1.png");
@@ -181,7 +186,8 @@ WorldRenderer::WorldRenderer(Renderer &renderer) : m_Renderer(renderer)
                                  m_NpcTextures[0], m_NpcTextures[1], m_HouseVariants[0], m_HouseVariants[1],
                                  m_CampfireTexture, m_GeneralWalkTexture, m_GeneralRunTexture, m_GeneralAttackTexture,
                                  m_PixelAnimalTextures[0], m_PixelAnimalTextures[1], m_PixelAnimalTextures[2],
-                                 m_Chapter1BoarTextures[0], m_Chapter1BoarTextures[1], m_Chapter1BoarTextures[2]})
+                                 m_Chapter1BoarTextures[0], m_Chapter1BoarTextures[1], m_Chapter1BoarTextures[2], m_PlayerHitTexture,
+                                 m_AttackHitTextures[0], m_AttackHitTextures[1], m_AttackHitTextures[2]})
         if (texture != 0)
         {
             glBindTexture(GL_TEXTURE_2D, texture);
@@ -193,6 +199,9 @@ WorldRenderer::WorldRenderer(Renderer &renderer) : m_Renderer(renderer)
 
 WorldRenderer::~WorldRenderer()
 {
+    if (m_PlayerHitTexture != 0) glDeleteTextures(1, &m_PlayerHitTexture);
+    for (unsigned int texture : m_AttackHitTextures)
+        if (texture != 0) glDeleteTextures(1, &texture);
     for (unsigned int texture : m_Chapter1BoarTextures)
         if (texture != 0)
             glDeleteTextures(1, &texture);
@@ -825,6 +834,8 @@ void WorldRenderer::DrawGround() const
 
 void WorldRenderer::RenderWorld(const GameState &state)
 {
+    m_Renderer.SetDamageFeedback(state.playerHitTime);
+    m_Renderer.SetAttackFeedback(state.attackHitTime);
     m_State = &state;
     m_Renderer.SetWorldScale(WorldScale * state.height / 720.0f);
     DrawGround();
@@ -1025,7 +1036,9 @@ void WorldRenderer::RenderWorld(const GameState &state)
                                                   DrawSprite(p, c, r, w*(state.monster.definition.spriteHeight/125), h*(state.monster.definition.spriteHeight/125), s);
                                           },
                                           state.width, state.height, state.time, Pi};
+            m_Renderer.SetSpriteFlash(state.monster.health > 0 ? state.monster.hitFlash / .22f : 0);
             MonsterSystem::Draw(state.monster, context, state.quest == QuestStage::Trophy || StorySystem::HasDrop(state));
+            m_Renderer.SetSpriteFlash(0);
             break;
         }
         case DrawType::Player:
@@ -1066,13 +1079,17 @@ void WorldRenderer::RenderWorld(const GameState &state)
             }
             if (m_GeneralWalkTexture != 0)
             {
+                m_Renderer.SetSpriteFlash(DamageFeedback::Fade(state.playerHitTime, DamageFeedback::FlashDuration));
                 DrawGeneralPlayer(state);
+                m_Renderer.SetSpriteFlash(0);
                 drawSwordSlash();
                 break;
             }
             if (m_PixelPlayer)
             {
+                m_Renderer.SetSpriteFlash(DamageFeedback::Fade(state.playerHitTime, DamageFeedback::FlashDuration));
                 DrawPixelPlayer(state);
+                m_Renderer.SetSpriteFlash(0);
                 drawSwordSlash();
                 break;
             }
@@ -1084,15 +1101,19 @@ void WorldRenderer::RenderWorld(const GameState &state)
                 // A wider attack canvas preserves the walking sprite's body scale and foot position.
                 constexpr float height = 88.0f * (256.0f/192.0f), pivotY = .26802864f;
                 DrawShadow(state.player, 88.0f*(128.0f/192.0f)*.6f, 9.0f);
+                m_Renderer.SetSpriteFlash(DamageFeedback::Fade(state.playerHitTime, DamageFeedback::FlashDuration));
                 m_Renderer.DrawSprite(m_PlayerAttackTexture, screen.x, screen.z+(.5f-pivotY)*height,
                                       height, height, direction, frame, 8, 8);
+                m_Renderer.SetSpriteFlash(0);
                 drawSwordSlash();
                 break;
             }
             const float fps = state.sprint ? 8.0f : 6.0f;
             const int frame = state.moving ? static_cast<int>(state.time * fps) % 4 : 0;
+            m_Renderer.SetSpriteFlash(DamageFeedback::Fade(state.playerHitTime, DamageFeedback::FlashDuration));
             if (!DrawAtlasSprite(state.player, m_PlayerTexture != 0 ? m_PlayerTexture : m_HumanTexture, state.facing, frame, 88, HumanPivotY))
                 DrawSprite(state.player, 0, 0, 42, 54);
+            m_Renderer.SetSpriteFlash(0);
             drawSwordSlash();
             break;
         }
@@ -1127,6 +1148,54 @@ void WorldRenderer::RenderWorld(const GameState &state)
             break;
         }
         }
+    }
+    if (state.playerHitTime > 0 && m_PlayerHitTexture != 0)
+    {
+        const float age = std::max(0.0f, DamageFeedback::Elapsed(state.playerHitTime) - DamageFeedback::HitStop);
+        const int frame = std::min(27, static_cast<int>(age * 30));
+        const Vec2 screen = ToScreen(state.playerHitPosition);
+        m_Renderer.SetLocalLight(0, 0, 0);
+        m_Renderer.DrawSprite(m_PlayerHitTexture, screen.x, screen.z + 28,
+                              128, 88, frame % 5, frame / 5, 5, 6);
+    }
+    m_Renderer.SetLocalLight(0, 0, 0);
+    for (const auto &number : state.damageNumbers)
+    {
+        const float age = .9f - number.remaining;
+        const bool heavy = number.combo % 3 == 0;
+        const int frames = heavy ? 28 : 16, columns = heavy ? 5 : 4, rows = heavy ? 6 : 4;
+        const float width = heavy ? 216.0f : 136.0f, height = heavy ? 136.0f : 80.0f;
+        const Vec2 screen = ToScreen(number.position);
+        const int frame = std::min(frames - 1, static_cast<int>(age * 30));
+        if (age <= (frames - 1) / 30.0f)
+            m_Renderer.DrawSprite(m_AttackHitTextures[heavy ? 1 : 0],
+                screen.x + (width * .5f - (heavy ? 84 : 44)) * 2,
+                screen.z + 35 + ((heavy ? 106 : 64) - height * .5f) * 2,
+                width * 2, height * 2, frame % columns, frame / columns, columns, rows);
+        const int extraSparks = std::min(3, number.combo / 3);
+        for (int extra = 0; extra < extraSparks; ++extra)
+        {
+            const float delayedAge = age - .035f * (extra + 1);
+            if (delayedAge < 0 || delayedAge >= .5f) continue;
+            const int sparkFrame = std::min(15, static_cast<int>(delayedAge * 30));
+            const float angle = extra * 2.094f + number.combo * .65f;
+            m_Renderer.DrawSprite(m_AttackHitTextures[0],
+                screen.x + std::cos(angle) * 35 + 24,
+                screen.z + 55 + std::sin(angle) * 20 + 24,
+                136, 80, sparkFrame % 4, sparkFrame / 4, 4, 4, .85f);
+        }
+        if (number.combo >= 3)
+        {
+            const int goldFrame = std::min(30, static_cast<int>(age * 36));
+            m_Renderer.DrawSprite(m_AttackHitTextures[2], screen.x, screen.z + 35 + 40 * 1.6f,
+                320, 179.2f, goldFrame % 5, goldFrame / 5, 5, 7, .7f);
+        }
+        const std::wstring text = L"-" + std::to_wstring(number.damage);
+        const float spread = static_cast<float>(number.combo % 3 - 1) * 12;
+        m_Renderer.DrawLabel(state.width * .5f + screen.x + spread,
+            state.height * .5f + screen.z + 80 + age * 35, text.c_str(),
+            1, heavy ? .72f : .96f, .35f, heavy ? 1.5f : 1.2f,
+            std::min(1.0f, number.remaining / .2f), true);
     }
     m_State = nullptr;
 }

@@ -8,6 +8,7 @@
 #include "GameContent.h"
 #include "StorySystem.h"
 #include "WorldLayout.h"
+#include "DamageFeedback.h"
 
 #include <algorithm>
 #include <cmath>
@@ -110,7 +111,19 @@ void GameManager::UpdateGame(float deltaTime)
         m_State.moving = false;
         return;
     }
+    deltaTime = std::max(0.0f, deltaTime);
+    m_State.playerHitTime = std::max(0.0f, m_State.playerHitTime - deltaTime);
+    m_State.attackHitTime = std::max(0.0f, m_State.attackHitTime - deltaTime);
+    const float frozen = std::min(deltaTime, m_State.hitStop);
+    m_State.hitStop -= frozen;
+    deltaTime -= frozen;
+    if (deltaTime <= 0.0f && (frozen > 0.0f || m_State.hitStop > 0.0f)) return;
     BeginFrame(deltaTime);
+    m_State.comboTime = std::max(0.0f, m_State.comboTime - deltaTime);
+    if (m_State.comboTime <= 0) m_State.combo = 0;
+    for (auto &number : m_State.damageNumbers) number.remaining -= deltaTime;
+    m_State.damageNumbers.erase(std::remove_if(m_State.damageNumbers.begin(), m_State.damageNumbers.end(),
+        [](const DamageNumber &number) { return number.remaining <= 0; }), m_State.damageNumbers.end());
     PlayerController::UpdateMovement(m_State, deltaTime);
     UpdateNpcs(deltaTime);
     StorySystem::Update(m_State);
@@ -120,9 +133,20 @@ void GameManager::UpdateGame(float deltaTime)
         animal.position.x = animal.home.x + std::sin(animal.phase) * 2.4f;
         animal.position.z = animal.home.z + std::cos(animal.phase * .7f) * 1.8f;
     }
+    const float previousHealth = m_State.health;
     if ((m_State.quest == QuestStage::Hunt || StorySystem::IsHunting(m_State)) &&
         MonsterSystem::UpdateChaseAndAttack(m_State.monster, m_State.player, m_State.dodge, deltaTime, m_State.health, m_State.defense))
+    {
+        if (m_State.health < previousHealth)
+        {
+            m_State.playerHitTime = DamageFeedback::Duration;
+            m_State.hitStop = DamageFeedback::HitStop;
+            m_State.playerHitPosition = m_State.player;
+            m_State.combo = 0;
+            m_State.comboTime = 0;
+        }
         ShowMessage(L"멧돼지에게 공격받았습니다. 공백 키로 회피하거나 Q로 회복하세요.");
+    }
     if (m_State.health <= 0.0f)
     {
         m_State.player = m_State.world.spawn;
@@ -139,6 +163,7 @@ void GameManager::HandleCommand(GameCommand command)
         m_State.moving = false;
         return;
     }
+    if (m_State.hitStop > 0.0f) return;
     if (command == GameCommand::CraftHunterBlade || command == GameCommand::CraftHealingPotion || command == GameCommand::CraftHunterArmor)
     {
         const auto recipe = command == GameCommand::CraftHunterArmor ? CraftingSystem::Recipe::HunterArmor :
@@ -177,7 +202,18 @@ void GameManager::HandleCommand(GameCommand command)
         m_State.attack = .32f;
         if (m_State.quest != QuestStage::Hunt && !StorySystem::IsHunting(m_State))
             return;
-        const MonsterHitResult result = MonsterSystem::Hit(m_State.monster, m_State.player, m_State.attackPower);
+        const int healthBefore = m_State.monster.health;
+        const MonsterHitResult result = MonsterSystem::Hit(m_State.monster, m_State.player, std::max(1, m_State.attackPower / 2));
+        const int damage = healthBefore - m_State.monster.health;
+        if (result.hit && damage > 0)
+        {
+            m_State.combo = m_State.comboTime > 0 ? m_State.combo + 1 : 1;
+            m_State.comboTime = 2.0f;
+            m_State.attackHitTime = DamageFeedback::Duration;
+            m_State.hitStop = std::max(m_State.hitStop, m_State.combo % 3 == 0 ? .08f : .05f);
+            if (m_State.damageNumbers.size() >= 16) m_State.damageNumbers.erase(m_State.damageNumbers.begin());
+            m_State.damageNumbers.push_back({m_State.monster.position, damage, m_State.combo, .9f});
+        }
         if (!result.defeated)
             return;
         if (StorySystem::IsHunting(m_State))

@@ -52,6 +52,13 @@ struct WorldState
     float maximumCoordinate = 85.0f;
 };
 
+struct DamageNumber
+{
+    Vec2 position = {};
+    int damage = 0, combo = 0;
+    float remaining = .9f;
+};
+
 struct GameState
 {
     int width = 1280, height = 720, lastTime = 0;
@@ -68,6 +75,10 @@ struct GameState
     bool armorRecipeUnlocked = false, hunterArmorCrafted = false, storyFinished = false;
     int defense = 0, storyStep = -1;
     float playerHitTime = 0.0f, hitStop = 0.0f;
+    Vec2 playerHitPosition = {};
+    std::vector<DamageNumber> damageNumbers;
+    float attackHitTime = 0.0f, comboTime = 0.0f;
+    int combo = 0;
     int completedHunts = 0;
     int level = 1, experience = 0, experienceToNextLevel = 20, attackPower = 2;
     QuestStage quest = QuestStage::Elder;

@@ -5,11 +5,71 @@
 #include "../SimpleGame/CraftingSystem.h"
 #include "../SimpleGame/GameUI.h"
 #include "../SimpleGame/Chapter1BoarAnimation.h"
+#include "../SimpleGame/DamageFeedback.h"
 #include <cassert>
 #include <iostream>
 
 int main()
 {
+    GameState attacker = CreateInitialGameState();
+    attacker.quest = QuestStage::Hunt;
+    attacker.monster.position = attacker.player;
+    attacker.monster.health = attacker.monster.maxHealth = 100;
+    attacker.attackPower = 7;
+    attacker.monster.definition.damage = 0;
+    GameManager attackerGame(attacker);
+    for (int count = 1; count <= 3; ++count)
+    {
+        attackerGame.HandleCommand(GameCommand::Attack);
+        assert(attacker.combo == count && attacker.damageNumbers.back().damage == 3);
+        assert(attacker.hitStop > 0 && attacker.attackHitTime > 0);
+        attackerGame.UpdateGame(.5f);
+    }
+    const int comboBeforeMiss = attacker.combo;
+    attacker.player.x += 50;
+    attackerGame.HandleCommand(GameCommand::Attack);
+    assert(attacker.combo == comboBeforeMiss);
+    attackerGame.UpdateGame(2.1f);
+    assert(attacker.combo == 0 && attacker.damageNumbers.empty());
+    attacker.player = attacker.monster.position;
+    attacker.monster.health = 3;
+    attacker.attackPower = 100;
+    attackerGame.HandleCommand(GameCommand::Attack);
+    assert(attacker.damageNumbers.back().damage == 3 && attacker.combo == 1);
+    attacker.quest = QuestStage::Hunt;
+    attacker.monster.health = 10;
+    attacker.attackPower = 1;
+    attacker.attack = attacker.hitStop = 0;
+    attackerGame.HandleCommand(GameCommand::Attack);
+    assert(attacker.damageNumbers.back().damage == 1);
+
+    GameState victim = CreateInitialGameState();
+    victim.quest = QuestStage::Hunt;
+    victim.monster.position = victim.player;
+    GameManager victimGame(victim);
+    victimGame.UpdateGame(0);
+    assert(victim.playerHitTime == DamageFeedback::Duration && victim.hitStop == DamageFeedback::HitStop);
+    const float frozenTime = victim.time, frozenHealth = victim.health;
+    victimGame.UpdateGame(.03f);
+    assert(victim.time == frozenTime && victim.health == frozenHealth && victim.hitStop > 0);
+    victimGame.UpdateGame(.05f);
+    assert(victim.time > frozenTime && victim.hitStop == 0);
+    victim.inventoryOpen = true;
+    const float pausedFeedback = victim.playerHitTime;
+    victimGame.UpdateGame(1);
+    assert(victim.playerHitTime == pausedFeedback);
+    for (bool dodge : {false, true})
+    {
+        GameState safe = CreateInitialGameState();
+        safe.quest = QuestStage::Hunt;
+        safe.monster.position = safe.player;
+        if (dodge) safe.dodge = 1;
+        else safe.monster.definition.damage = 0;
+        GameManager(safe).UpdateGame(0);
+        assert(safe.playerHitTime == 0 && safe.hitStop == 0);
+    }
+    assert(DamageFeedback::Fade(0, DamageFeedback::BorderDuration) == 0);
+    assert(DamageFeedback::Fade(DamageFeedback::Duration, DamageFeedback::BorderDuration) == 1);
     using namespace Chapter1BoarAnimation;
     for (Action action : {Attack, Hit, Death})
     {
@@ -122,6 +182,7 @@ int main()
     int steps = 0, hunts = 0;
     while (const auto *step = StorySystem::Current(state))
     {
+        state.hitStop = 0; // This existing state-flow test skips presentation delays.
         assert(++steps <= 128);
         const int before = state.storyStep;
         state.player = StorySystem::Target(state);
@@ -143,6 +204,7 @@ int main()
             {
                 assert(attack < 100);
                 game.BeginFrame(.33f);
+                state.hitStop = 0;
                 game.HandleCommand(GameCommand::Attack);
             }
             assert(StorySystem::HasDrop(state));
