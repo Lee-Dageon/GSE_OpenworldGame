@@ -10,6 +10,7 @@
 #include "StorySystem.h"
 #include "WorldLayout.h"
 #include "DamageFeedback.h"
+#include "NpcSystem.h"
 
 #include <algorithm>
 #include <cmath>
@@ -280,6 +281,13 @@ void GameManager::HandleCommand(GameCommand command)
             else { m_State.herbRegrowTime=GameConstants::Loot::HerbRegrowSeconds; ShowMessage(L"약초 1개 획득! 야영지에서 물약을 제작할 수 있습니다."); }
             return;
         }
+        if (const int npc=NpcSystem::Nearby(m_State); npc>=0)
+        {
+            const auto message=NpcSystem::Interact(m_State,m_State.npcs[npc]);
+            ShowMessage(message.c_str());
+            StorySystem::Update(m_State);
+            return;
+        }
         if (StorySystem::Current(m_State) || StorySystem::CanStart(m_State))
         {
             if (const wchar_t *message = StorySystem::Interact(m_State)) ShowMessage(message);
@@ -363,6 +371,7 @@ const wchar_t *GameManager::GetHint() const
         if (animal.health<=0 && !animal.collected && x*x+z*z<GameConstants::World::AnimalLootRange*GameConstants::World::AnimalLootRange)
             return L"E  동물 전리품 수집";
     }
+    if (const int npc=NpcSystem::Nearby(m_State); npc>=0) return NpcSystem::Hint(m_State.npcs[npc]);
     if (StorySystem::Current(m_State) || StorySystem::CanStart(m_State)) return StorySystem::Hint(m_State);
     return QuestSystem::GetHint(m_State);
 }

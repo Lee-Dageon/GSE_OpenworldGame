@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "GameConstants.h"
+#include "NpcSystem.h"
 #include "WorldRenderer.h"
 
 #include <GL/glew.h>
@@ -528,12 +529,15 @@ void WorldRenderer::DrawPixelNpc(const NpcState &npc, int variant) const
     const float scale = PixelNpcFrames::Scale[variant];
     const Vec2 screen = ToScreen(npc.position);
     DrawShadow(npc.position, 32, 9);
+    const int role=NpcSystem::Role(npc);
+    static constexpr float tint[8][3]={{1,1,1},{.85f,.8f,.75f},{.8f,1,.85f},{1,.85f,.65f},
+        {.8f,.9f,.7f},{.8f,.85f,1},{1,1,.85f},{.85f,.8f,1}};
     m_Renderer.DrawSprite(m_NpcTextures[variant],
                           screen.x + (region.x + region.width * .5f - region.footX) * scale,
                           screen.z + (region.footY - region.y - region.height * .5f) * scale,
                           region.width * scale, region.height * scale, region.x, region.y,
                           PixelNpcFrames::Width[variant], PixelNpcFrames::Height[variant],
-                          1, 1, 1, 1, 0, 0, 0, static_cast<float>(region.width),
+                          1, tint[role][0], tint[role][1], tint[role][2], 0, 0, 0, static_cast<float>(region.width),
                           static_cast<float>(region.height), .5f);
 }
 
@@ -1028,6 +1032,13 @@ void WorldRenderer::RenderWorld(const GameState &state)
         case DrawType::Npc:
         {
             const NpcState &npc = state.npcs[item.index];
+            if (Distance(npc.position,state.player)<GameConstants::Npc::LabelRange)
+            {
+                const Vec2 label=ToScreen(npc.position);
+                const auto name=std::wstring(NpcSystem::Name(npc))+L" · "+NpcSystem::Job(npc);
+                m_Renderer.DrawLabel(state.width*.5f+label.x,state.height*.5f+label.z+108,
+                    name.c_str(),1,.9f,.65f,.75f,1,true);
+            }
             const bool elder = Distance(npc.wanderSeed != 0 ? npc.home : npc.position, state.world.elder) < .1f;
             if (m_ElderTexture != 0 && elder)
             {
@@ -1035,9 +1046,10 @@ void WorldRenderer::RenderWorld(const GameState &state)
                 DrawPixelSprite(npc.position, m_ElderTexture, 100 * (2.0f / 3.0f), 100, .0332f);
                 break;
             }
-            if (!elder && m_NpcTextures[item.index % 2] != 0)
+            const int variant=(NpcSystem::Role(npc)==3 || NpcSystem::Role(npc)==5) ? 1 : 0;
+            if (!elder && m_NpcTextures[variant] != 0)
             {
-                DrawPixelNpc(npc, item.index % 2);
+                DrawPixelNpc(npc, variant);
                 break;
             }
             const Vec2 facing = npc.moving ? npc.facing : Vec2{state.player.x - npc.position.x, state.player.z - npc.position.z};

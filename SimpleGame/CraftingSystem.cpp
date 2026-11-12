@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "CraftingSystem.h"
+#include "NpcSystem.h"
 #include <cmath>
 
 namespace CraftingSystem
@@ -7,13 +8,15 @@ namespace CraftingSystem
 bool IsAtWorkbench(const GameState &state)
 {
     const float x = state.player.x - state.world.elder.x, z = state.player.z - state.world.elder.z;
-    return x*x + z*z < 1.8f*1.8f;
+    if (x*x + z*z < 1.8f*1.8f) return true;
+    const int index=NpcSystem::Nearby(state);
+    return index>=0 && (NpcSystem::Role(state.npcs[index])==1 || NpcSystem::Role(state.npcs[index])==2);
 }
 
 const wchar_t *TryCraft(GameState &state, Recipe recipe)
 {
     if (!IsAtWorkbench(state))
-        return L"장로 근처의 야영지 제작소에서 제작할 수 있습니다.";
+        return L"야영지·대장장이·약사 근처에서 제작할 수 있습니다.";
     if (recipe == Recipe::HunterArmor)
     {
         if (state.hunterArmorCrafted) return L"가죽 방어구는 이미 장착 중입니다.";

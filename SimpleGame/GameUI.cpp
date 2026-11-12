@@ -256,7 +256,7 @@ static void DrawInventoryPanel(Renderer &renderer, const GameUiState &state)
     }
     rect(24,475,712,1,.18f,.24f,.25f);
     std::wstring status=state.messageTime>0 ? state.message :
-        (state.nearWorkbench ? L"제작하면 자동 장착됩니다." : L"장로 근처에서 제작할 수 있습니다.");
+        (state.nearWorkbench ? L"제작하면 자동 장착됩니다." : L"야영지·대장장이·약사에게 가세요.");
     const size_t statusLimit = static_cast<size_t>(712*s/(18*std::max(GameConstants::Ui::MinimumFontScale,.65f*s)));
     if (status.size()>statusLimit) status=status.substr(0,statusLimit-1)+L"…";
     text(24,486,status.c_str(),.65f,.74f,.79f,.72f);

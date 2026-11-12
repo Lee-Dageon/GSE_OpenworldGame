@@ -30,6 +30,7 @@ struct NpcState
     float wait = 0.0f;
     std::uint32_t wanderSeed = 0;
     bool moving = false;
+    int identity = -1, conversations = 0;
 };
 struct AnimalState
 {
