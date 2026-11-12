@@ -68,16 +68,16 @@ struct GameUiButton
 inline GameUiButton InventoryPanel(int width, int height)
 {
     const float s = GameUiScale(width, height);
-    return {(width-660*s)*.5f, (height-500*s)*.5f, 660*s, 500*s, GameCommand::None};
+    return {(width-760*s)*.5f, (height-540*s)*.5f, 760*s, 540*s, GameCommand::None};
 }
 
 inline std::array<GameUiButton, 4> InventoryButtons(int width, int height)
 {
     const float s = GameUiScale(width, height);
     const auto panel = InventoryPanel(width, height);
-    return {{{panel.x+20*s, panel.y+260*s, panel.width-40*s, 42*s, GameCommand::CraftHunterBlade},
-             {panel.x+20*s, panel.y+310*s, panel.width-40*s, 42*s, GameCommand::CraftHealingPotion},
-             {panel.x+20*s, panel.y+360*s, panel.width-40*s, 42*s, GameCommand::CraftHunterArmor},
+    return {{{panel.x+318*s, panel.y+174*s, 418*s, 78*s, GameCommand::CraftHunterBlade},
+             {panel.x+318*s, panel.y+264*s, 418*s, 78*s, GameCommand::CraftHealingPotion},
+             {panel.x+318*s, panel.y+354*s, 418*s, 78*s, GameCommand::CraftHunterArmor},
              {panel.x+panel.width-52*s, panel.y+12*s, 36*s, 32*s, GameCommand::ToggleInventory}}};
 }
 

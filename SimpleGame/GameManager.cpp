@@ -119,6 +119,27 @@ void GameManager::UpdateGame(float deltaTime)
     deltaTime -= frozen;
     if (deltaTime <= 0.0f && (frozen > 0.0f || m_State.hitStop > 0.0f)) return;
     BeginFrame(deltaTime);
+    m_State.lootPickupTime = std::max(0.0f, m_State.lootPickupTime - deltaTime);
+    if (m_State.lootTime > 0)
+    {
+        m_State.moving = false;
+        m_State.lootTime = std::max(0.0f, m_State.lootTime - deltaTime);
+        if (m_State.lootTime == 0 && MonsterSystem::IsInteractableDrop(m_State.monster, m_State.player))
+        {
+            const int hunts = m_State.completedHunts;
+            if (StorySystem::HasDrop(m_State))
+            {
+                if (const wchar_t *message = StorySystem::Interact(m_State)) ShowMessage(message);
+            }
+            else if (m_State.quest == QuestStage::Trophy)
+            {
+                const auto result = QuestSystem::TryInteract(m_State, m_State.world.elder, m_State.world.tracks, m_State.world.herb);
+                if (const wchar_t *message = QuestSystem::GetInteractionMessage(result)) ShowMessage(message);
+            }
+            if (m_State.completedHunts > hunts) m_State.lootPickupTime = .6f;
+        }
+        return;
+    }
     m_State.comboTime = std::max(0.0f, m_State.comboTime - deltaTime);
     if (m_State.comboTime <= 0) m_State.combo = 0;
     for (auto &number : m_State.damageNumbers) number.remaining -= deltaTime;
@@ -164,6 +185,7 @@ void GameManager::HandleCommand(GameCommand command)
         return;
     }
     if (m_State.hitStop > 0.0f) return;
+    if (m_State.lootTime > 0.0f) return;
     if (command == GameCommand::CraftHunterBlade || command == GameCommand::CraftHealingPotion || command == GameCommand::CraftHunterArmor)
     {
         const auto recipe = command == GameCommand::CraftHunterArmor ? CraftingSystem::Recipe::HunterArmor :
@@ -176,6 +198,16 @@ void GameManager::HandleCommand(GameCommand command)
         return;
     if (command == GameCommand::Interact)
     {
+        if ((m_State.quest == QuestStage::Trophy || StorySystem::HasDrop(m_State)) &&
+            MonsterSystem::IsInteractableDrop(m_State.monster, m_State.player))
+        {
+            m_State.lootTime = 1.2f;
+            m_State.moving = false;
+            const Vec2 direction = {m_State.monster.position.x - m_State.player.x, m_State.monster.position.z - m_State.player.z};
+            if (std::abs(direction.x) + std::abs(direction.z) > .001f) m_State.facing = direction;
+            ShowMessage(L"전리품을 뒤지는 중...");
+            return;
+        }
         if (StorySystem::Current(m_State) || StorySystem::CanStart(m_State))
         {
             if (const wchar_t *message = StorySystem::Interact(m_State)) ShowMessage(message);

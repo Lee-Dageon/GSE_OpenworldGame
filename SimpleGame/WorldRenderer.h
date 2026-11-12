@@ -76,6 +76,7 @@ class WorldRenderer
     std::array<unsigned int, 2> m_NpcTextures = {}, m_HouseVariants = {};
     unsigned int m_CampfireTexture = 0;
     unsigned int m_PlayerHitTexture = 0;
+    unsigned int m_BoarLootTexture = 0, m_SearchTexture = 0;
     std::array<unsigned int, 3> m_AttackHitTextures = {};
     std::array<unsigned int, 3> m_PixelAnimalTextures = {};
     std::array<unsigned int, 3> m_Chapter1BoarTextures = {};

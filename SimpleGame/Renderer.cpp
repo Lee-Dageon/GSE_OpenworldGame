@@ -21,6 +21,8 @@ Renderer::Renderer(int windowSizeX, int windowSizeY)
 
 Renderer::~Renderer()
 {
+    for (const auto &entry : m_UiTextures)
+        if (entry.second != 0) glDeleteTextures(1, &entry.second);
     for (const auto &entry : m_LabelCache)
     {
         glDeleteTextures(1, &entry.second.id);
@@ -318,6 +320,22 @@ GLuint Renderer::CompileShaders(const char *filenameVS, const char *filenameFS)
         return 0;
     }
     return shaderProgram;
+}
+
+GLuint Renderer::UiTexture(const wchar_t *filename)
+{
+    const auto found = m_UiTextures.find(filename);
+    if (found != m_UiTextures.end()) return found->second;
+    const GLuint texture = LoadTexture(filename);
+    if (texture != 0)
+    {
+        glBindTexture(GL_TEXTURE_2D, texture);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        glBindTexture(GL_TEXTURE_2D, 0);
+    }
+    m_UiTextures.emplace(filename, texture);
+    return texture;
 }
 
 GLuint Renderer::LoadTexture(const wchar_t *filename)

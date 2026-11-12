@@ -79,6 +79,7 @@ struct GameState
     std::vector<DamageNumber> damageNumbers;
     float attackHitTime = 0.0f, comboTime = 0.0f;
     int combo = 0;
+    float lootTime = 0.0f, lootPickupTime = 0.0f;
     int completedHunts = 0;
     int level = 1, experience = 0, experienceToNextLevel = 20, attackPower = 2;
     QuestStage quest = QuestStage::Elder;

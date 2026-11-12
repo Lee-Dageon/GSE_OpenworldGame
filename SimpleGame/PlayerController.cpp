@@ -9,7 +9,7 @@ namespace PlayerController
 {
 void UpdateMovement(GameState &state, float deltaTime)
 {
-    if (state.inventoryOpen)
+    if (state.inventoryOpen || state.lootTime > 0)
     {
         state.moving = false;
         return;

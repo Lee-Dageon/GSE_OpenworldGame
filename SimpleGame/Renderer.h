@@ -29,6 +29,7 @@ class Renderer
     bool SaveScreenshot(const wchar_t *filename);
 
     GLuint LoadTexture(const wchar_t *filename);
+    GLuint UiTexture(const wchar_t *filename);
     void DrawSolidRect(float x, float y, float sizeX, float sizeY, float rotation, float r, float g, float b, float a);
     void DrawEffectRect(float x, float y, float sizeX, float sizeY, float rotation, float r, float g, float b, float a,
                         int effectType);
@@ -78,4 +79,5 @@ class Renderer
     GLuint m_FrameColorTexture = 0;
     GLuint m_DepthRenderbuffer = 0;
     std::map<std::wstring, LabelTexture> m_LabelCache;
+    std::map<std::wstring, GLuint> m_UiTextures;
 };

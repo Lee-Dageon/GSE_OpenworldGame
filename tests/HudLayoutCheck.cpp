@@ -22,6 +22,22 @@ int main()
         }
         assert(HitTestGameUi(size[0]/2,size[1]/2,size[0],size[1])==GameCommand::None);
         const float s = GameUiScale(size[0],size[1]);
+        const auto inventory = InventoryPanel(size[0],size[1]);
+        assert(inventory.x >= 0 && inventory.y >= 0);
+        assert(inventory.x + inventory.width <= size[0] && inventory.y + inventory.height <= size[1]);
+        const auto buttons = InventoryButtons(size[0],size[1]);
+        for (size_t i=0; i<buttons.size(); ++i)
+        {
+            const auto &button = buttons[i];
+            assert(button.x >= inventory.x && button.y >= inventory.y);
+            assert(button.x + button.width <= inventory.x + inventory.width);
+            assert(button.y + button.height <= inventory.y + inventory.height);
+            assert(HitTestGameUi(static_cast<int>(button.x+button.width/2),
+                static_cast<int>(button.y+button.height/2),size[0],size[1],true)==button.command);
+            for (size_t j=i+1;j<buttons.size();++j)
+                assert(button.x+button.width<=buttons[j].x || buttons[j].x+buttons[j].width<=button.x ||
+                    button.y+button.height<=buttons[j].y || buttons[j].y+buttons[j].height<=button.y);
+        }
         assert(GameUiPanelContains(static_cast<int>(50*s),static_cast<int>(50*s),size[0],size[1]));
         assert(!GameUiPanelContains(size[0]/2,size[1]/2,size[0],size[1]));
     }

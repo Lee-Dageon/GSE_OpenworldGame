@@ -9,6 +9,7 @@
 #include "PixelAnimalFrames.h"
 #include "Chapter1BoarAnimation.h"
 #include "DamageFeedback.h"
+#include "SearchSpriteFrames.h"
 #include "PixelGeneralFrames.h"
 
 #include <algorithm>
@@ -160,6 +161,8 @@ WorldRenderer::WorldRenderer(Renderer &renderer) : m_Renderer(renderer)
     m_HouseVariants[1] = m_Renderer.LoadTexture(L"./Assets/PixelArt/World/house-shop-v1.png");
     m_CampfireTexture = m_Renderer.LoadTexture(L"./Assets/PixelArt/Effects/campfire.png");
     m_PlayerHitTexture = m_Renderer.LoadTexture(L"./Assets/PixelArt/Effects/boar-player-hit.png");
+    m_BoarLootTexture = m_Renderer.LoadTexture(L"./Assets/PixelArt/Items/boar-loot-v1.png");
+    m_SearchTexture = m_Renderer.LoadTexture(L"./Assets/PixelArt/Characters/hero-search-v1.png");
     m_AttackHitTextures[0] = m_Renderer.LoadTexture(L"./Assets/PixelArt/Effects/attack-hit-spark.png");
     m_AttackHitTextures[1] = m_Renderer.LoadTexture(L"./Assets/PixelArt/Effects/attack-hit-heavy.png");
     m_AttackHitTextures[2] = m_Renderer.LoadTexture(L"./Assets/PixelArt/Effects/attack-hit-gold.png");
@@ -187,7 +190,7 @@ WorldRenderer::WorldRenderer(Renderer &renderer) : m_Renderer(renderer)
                                  m_CampfireTexture, m_GeneralWalkTexture, m_GeneralRunTexture, m_GeneralAttackTexture,
                                  m_PixelAnimalTextures[0], m_PixelAnimalTextures[1], m_PixelAnimalTextures[2],
                                  m_Chapter1BoarTextures[0], m_Chapter1BoarTextures[1], m_Chapter1BoarTextures[2], m_PlayerHitTexture,
-                                 m_AttackHitTextures[0], m_AttackHitTextures[1], m_AttackHitTextures[2]})
+                                 m_AttackHitTextures[0], m_AttackHitTextures[1], m_AttackHitTextures[2], m_BoarLootTexture, m_SearchTexture})
         if (texture != 0)
         {
             glBindTexture(GL_TEXTURE_2D, texture);
@@ -200,6 +203,8 @@ WorldRenderer::WorldRenderer(Renderer &renderer) : m_Renderer(renderer)
 WorldRenderer::~WorldRenderer()
 {
     if (m_PlayerHitTexture != 0) glDeleteTextures(1, &m_PlayerHitTexture);
+    for (unsigned int texture : {m_BoarLootTexture, m_SearchTexture})
+        if (texture != 0) glDeleteTextures(1, &texture);
     for (unsigned int texture : m_AttackHitTextures)
         if (texture != 0) glDeleteTextures(1, &texture);
     for (unsigned int texture : m_Chapter1BoarTextures)
@@ -1037,13 +1042,40 @@ void WorldRenderer::RenderWorld(const GameState &state)
                                           },
                                           state.width, state.height, state.time, Pi};
             m_Renderer.SetSpriteFlash(state.monster.health > 0 ? state.monster.hitFlash / .22f : 0);
-            MonsterSystem::Draw(state.monster, context, state.quest == QuestStage::Trophy || StorySystem::HasDrop(state));
+            const bool hasLoot = state.quest == QuestStage::Trophy || StorySystem::HasDrop(state);
+            MonsterSystem::Draw(state.monster, context, hasLoot && m_BoarLootTexture == 0);
+            if (hasLoot && m_BoarLootTexture != 0)
+            {
+                const Vec2 foot = ToScreen(state.monster.position);
+                for (int item = 0; item < 2; ++item)
+                {
+                    const float x = foot.x + (item == 0 ? -24 : 24);
+                    const float bob = std::sin(state.time * 3 + item * 2) * 3;
+                    m_Renderer.DrawSolidRect(x, foot.z + 32, 8, 65, 0, 1, .68f, .18f, .16f);
+                    m_Renderer.DrawEffectRect(x, foot.z + 14, 48, 18, 0, 1, .76f, .25f, .4f, 3);
+                    m_Renderer.DrawSprite(m_BoarLootTexture, x, foot.z + 35 + bob, 42, 42, item, 0, 2, 1);
+                    m_Renderer.DrawEffectRect(x + 12, foot.z + 52 + bob, 14, 14, state.time, 1, .95f, .6f,
+                        .45f + .3f * std::sin(state.time * 5 + item), 15);
+                }
+            }
             m_Renderer.SetSpriteFlash(0);
             break;
         }
         case DrawType::Player:
         {
             const Vec2 foot = ToScreen(state.player);
+            if (state.lootTime > 0 && m_SearchTexture != 0)
+            {
+                const float dx = state.facing.x - state.facing.z, dy = (state.facing.x + state.facing.z) * .5f;
+                const int row = std::abs(dx) > std::abs(dy) ? (dx < 0 ? 0 : 1) : (dy < 0 ? 2 : 3);
+                const int frame = std::min(3, static_cast<int>((1.2f - state.lootTime) / .3f));
+                const auto pivot = SearchSpriteFrames::Pivots[row][frame];
+                DrawShadow(state.player, 42, 9);
+                m_Renderer.DrawSprite(m_SearchTexture, foot.x + (.5f - pivot.x) * 108,
+                    foot.z + (pivot.y - .5f) * 108, 108, 108, frame, row, 4, 4,
+                    1, 1, 1, 1, 0, 0, 0, 1, 1, .5f);
+                break;
+            }
             if (state.moving || state.dodge > 0)
                 for (int puff = 0; puff < 3; ++puff)
                 {
@@ -1196,6 +1228,18 @@ void WorldRenderer::RenderWorld(const GameState &state)
             state.height * .5f + screen.z + 80 + age * 35, text.c_str(),
             1, heavy ? .72f : .96f, .35f, heavy ? 1.5f : 1.2f,
             std::min(1.0f, number.remaining / .2f), true);
+    }
+    if (state.lootTime > 0 || state.lootPickupTime > 0)
+    {
+        const Vec2 screen = ToScreen(state.player);
+        const std::wstring text = state.lootTime > 0
+            ? L"수집 중 " + std::to_wstring(static_cast<int>((1 - state.lootTime / 1.2f) * 100)) + L"%"
+            : L"이빨 · 가죽 획득!";
+        m_Renderer.DrawLabel(state.width * .5f + screen.x, state.height * .5f + screen.z + 110,
+            text.c_str(), 1, .87f, .4f, .65f, 1, true);
+        if (state.lootPickupTime > 0)
+            m_Renderer.DrawEffectRect(screen.x, screen.z + 40, 100, 80, state.time,
+                1, .8f, .25f, state.lootPickupTime, 15);
     }
     m_State = nullptr;
 }

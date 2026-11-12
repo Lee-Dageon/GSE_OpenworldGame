@@ -30,7 +30,7 @@ void DrawDrop(const MonsterState &monster, const MonsterDrawContext &context)
     context.renderer->DrawSolidRect(s.x, s.z + 9, 7, 7, 0, 1.0f, .88f, .38f, glow);
 
     context.renderer->DrawLabel(context.screenWidth * .5f + s.x - 64, context.screenHeight * .5f + s.z + 30,
-                                L"전리품: 가죽·엄니", 1.0f, .86f, .42f);
+                                L"전리품: 가죽·이빨", 1.0f, .86f, .42f);
 }
 
 void DrawInfo(const MonsterState &monster, const MonsterDrawContext &context, const Vec2 &s)

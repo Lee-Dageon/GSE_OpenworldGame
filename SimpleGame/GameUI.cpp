@@ -173,51 +173,94 @@ void DrawGameUi(Renderer &renderer, const GameUiState &state)
 static void DrawInventoryPanel(Renderer &renderer, const GameUiState &state)
 {
     const float s = GameUiScale(state.windowWidth, state.windowHeight);
-    const float textScale = std::max(.65f, s);
     const auto panel = InventoryPanel(state.windowWidth, state.windowHeight);
-    const auto rect = [&](float x, float y, float width, float height, float r, float g, float b, float alpha) {
-        renderer.DrawSolidRect(x+width*.5f-state.windowWidth*.5f,
-            state.windowHeight*.5f-y-height*.5f, width, height, 0, r, g, b, alpha);
+    const auto rect = [&](float x, float y, float w, float h, float r, float g, float b, float a = 1.0f) {
+        renderer.DrawSolidRect(panel.x+(x+w*.5f)*s-state.windowWidth*.5f,
+            state.windowHeight*.5f-panel.y-(y+h*.5f)*s, w*s, h*s, 0, r,g,b,a);
     };
-    const auto text = [&](float x, float y, const wchar_t *value, float r, float g, float b) {
-        renderer.DrawLabel(x, state.windowHeight-y-28*textScale, value, r, g, b, textScale);
+    const auto text = [&](float x, float y, const wchar_t *value, float size = .85f,
+                          float r = .88f, float g = .90f, float b = .86f) {
+        const float textScale = std::max(.55f, size*s);
+        renderer.DrawLabel(panel.x+x*s, state.windowHeight-panel.y-y*s-28*textScale,
+            value, r,g,b, textScale);
     };
-    rect(0, 0, static_cast<float>(state.windowWidth), static_cast<float>(state.windowHeight), 0, 0, 0, .62f);
-    rect(panel.x, panel.y, panel.width, panel.height, .58f, .43f, .20f, 1);
-    rect(panel.x+2*s, panel.y+2*s, panel.width-4*s, panel.height-4*s, .045f, .055f, .05f, 1);
-    text(panel.x+20*s, panel.y+20*s, L"가방 · 야영지 제작", 1, .86f, .54f);
+    const GLuint icons = renderer.UiTexture(L"./Assets/PixelArt/Items/inventory-icons-v1.png");
+    const GLuint loot = renderer.UiTexture(L"./Assets/PixelArt/Items/boar-loot-v1.png");
+    const auto icon = [&](float x, float y, float size, int item) {
+        const bool material = item >= 4;
+        const GLuint texture = material ? loot : icons;
+        if (texture == 0) { text(x+8,y+8,L"◇",1.4f, .8f,.65f,.35f); return; }
+        renderer.DrawSprite(texture, panel.x+(x+size*.5f)*s-state.windowWidth*.5f,
+            state.windowHeight*.5f-panel.y-(y+size*.5f)*s, size*s,size*s,
+            material ? item-4 : item%2, material ? 0 : item/2, 2, material ? 1 : 2,
+            1,1,1,1,0,0,0,1,1,.5f);
+    };
+    renderer.DrawSolidRect(0,0,static_cast<float>(state.windowWidth),static_cast<float>(state.windowHeight),
+        0, .005f,.008f,.012f,.78f);
+    rect(0,0,760,540,.42f,.34f,.20f);
+    rect(2,2,756,536,.035f,.05f,.065f);
+    rect(2,2,756,54,.065f,.085f,.10f);
+    text(24,12,L"가방",1.2f,1,.88f,.59f);
+    text(110,20,L"재료 · 장비 · 제작",.7f,.57f,.65f,.67f);
+    rect(24,70,712,66,.065f,.09f,.105f);
+    text(38,78,state.hunterBladeCrafted ? L"이빨 검" : L"기본 검",.9f);
+    text(190,78,state.hunterArmorCrafted ? L"가죽 방어구" : L"기본 의상",.9f);
+    text(38,109,L"장착 장비",.55f,.52f,.63f,.63f);
     wchar_t line[120];
-    std::swprintf(line, 120, L"%ls / %ls | 공격 %d · 방어 %d", state.hunterBladeCrafted ? L"엄니 검" : L"기본 검",
-                  state.hunterArmorCrafted ? L"가죽 방어구" : L"기본 의상", state.attackPower, state.defense);
-    text(panel.x+20*s, panel.y+65*s, line, .87f, .90f, .82f);
-    const wchar_t *names[] = {L"회복 물약", L"약초", L"멧돼지 가죽", L"멧돼지 엄니"};
-    const int counts[] = {state.potions, state.herbs, state.hides, state.trophies};
-    for (int row = 0; row < 4; ++row)
+    std::swprintf(line,120,L"피해 %d   방어 %d",std::max(1,state.attackPower/2),state.defense);
+    text(490,88,line,.95f,1,.84f,.48f);
+    text(24,148,L"보유 재료",.8f,1,.87f,.58f);
+    text(318,148,L"야영지 제작",.8f,1,.87f,.58f);
+    const wchar_t *names[] = {L"회복 물약",L"약초",L"가죽",L"이빨"};
+    const int counts[] = {state.potions,state.herbs,state.hides,state.trophies};
+    const int itemIcons[] = {0,1,5,4};
+    for (int item=0;item<4;++item)
     {
-        std::swprintf(line, 120, L"%ls     %d / 99", names[row], counts[row]);
-        text(panel.x+24*s, panel.y+(105+row*30)*s, line, .90f, .88f, .76f);
+        const float x=24+(item%2)*136.0f, y=174+(item/2)*134.0f;
+        rect(x,y,124,122,.14f,.20f,.23f);
+        rect(x+1,y+1,122,120,.055f,.085f,.105f);
+        icon(x+28,y+9,68,itemIcons[item]);
+        text(x+10,y+82,names[item],.8f);
+        std::swprintf(line,120,L"%d",counts[item]);
+        text(x+86,y+9,line,.95f,1,.87f,.5f);
+        rect(x+10,y+110,104,3,.025f,.04f,.05f);
+        rect(x+10,y+110,104*std::min(1.0f,counts[item]/99.0f),3,.48f,.65f,.38f);
     }
-    text(panel.x+20*s, panel.y+228*s, state.nearWorkbench
-        ? (state.armorRecipeUnlocked ? L"가죽 방어구: 가죽 2 + 엄니 1" :
-           (state.huntReported ? L"엄니 검 재료: 가죽 1 + 엄니 1" : L"엄니 검: 먼저 장로에게 사냥 보고"))
-        : L"제작 위치: 장로 근처의 야영지", .95f, .76f, .42f);
-    const auto buttons = InventoryButtons(state.windowWidth, state.windowHeight);
-    const wchar_t *labels[] = {L"C  엄니 검 제작 · 자동 장착 (+3)", L"P  회복 물약 제작 (약초 1)", L"R  가죽 방어구 제작 (받는 피해 -3)", L"×"};
-    for (size_t index = 0; index < buttons.size(); ++index)
+    text(24,449,L"아이템별 최대 99개",.6f,.52f,.63f,.65f);
+    const auto buttons=InventoryButtons(state.windowWidth,state.windowHeight);
+    const wchar_t *titles[]={L"이빨 검",L"회복 물약",L"가죽 방어구"};
+    const wchar_t *costs[]={L"가죽 1 + 이빨 1",L"약초 1",L"가죽 2 + 이빨 1"};
+    const wchar_t *keys[]={L"C",L"P",L"R"};
+    const int recipeIcons[]={2,0,3};
+    for (int recipe=0;recipe<3;++recipe)
     {
-        const auto &button = buttons[index];
-        const bool enabled = index == 3 || (state.nearWorkbench && (index == 0
-            ? state.huntReported && !state.hunterBladeCrafted && state.hides > 0 && state.trophies > 0
-            : (index == 1 ? state.herbs > 0 && state.potions < 99 :
-               state.armorRecipeUnlocked && !state.hunterArmorCrafted && state.hides >= 2 && state.trophies >= 1)));
-        rect(button.x, button.y, button.width, button.height, .34f, .29f, .16f, 1);
-        rect(button.x+s, button.y+s, button.width-2*s, button.height-2*s,
-             enabled ? .16f : .08f, enabled ? .23f : .09f, .10f, 1);
-        text(button.x+9*s, button.y+6*s, labels[index], enabled ? 1.0f : .58f, enabled ? .92f : .58f, .70f);
+        const auto &button=buttons[recipe];
+        const float x=(button.x-panel.x)/s, y=(button.y-panel.y)/s;
+        const bool equipped=recipe==0 ? state.hunterBladeCrafted : (recipe==2 && state.hunterArmorCrafted);
+        const bool unlocked=recipe==0 ? state.huntReported : (recipe==1 || state.armorRecipeUnlocked);
+        const bool enough=recipe==0 ? state.hides>=1 && state.trophies>=1 :
+            (recipe==1 ? state.herbs>=1 : state.hides>=2 && state.trophies>=1);
+        const bool full=recipe==1 && state.potions>=99;
+        const bool enabled=state.nearWorkbench && !equipped && unlocked && enough && !full;
+        rect(x,y,418,78,enabled ? .46f : .16f,enabled ? .48f : .22f,enabled ? .27f : .25f);
+        rect(x+1,y+1,416,76,enabled ? .10f : .05f,enabled ? .17f : .075f,.09f);
+        icon(x+9,y+9,60,recipeIcons[recipe]);
+        text(x+82,y+8,titles[recipe],.95f,enabled ? 1 : .72f,.88f,.65f);
+        text(x+82,y+42,costs[recipe],.65f,.61f,.72f,.7f);
+        const wchar_t *status=equipped ? L"장착 중" : (!unlocked ? L"의뢰 잠김" :
+            (!state.nearWorkbench ? L"마을 제작" : (full ? L"보관 가득" : (!enough ? L"재료 부족" : L"제작"))));
+        text(x+324,y+11,status,.65f,enabled ? .85f : .53f,enabled ? 1 : .61f,.63f);
+        text(x+350,y+43,keys[recipe],.75f,.72f,.8f,.72f);
     }
-    const std::wstring status = state.messageTime > 0 ? state.message : L"재료를 모아 장비를 제작하세요.";
-    const size_t limit = static_cast<size_t>(std::max(12.0f, (panel.width-40*s)/(18*textScale)));
-    for (size_t row = 0; row < 2 && row*limit < status.size(); ++row)
-        text(panel.x+20*s, panel.y+(411+row*25)*s, status.substr(row*limit, limit).c_str(), .88f, .86f, .73f);
-    text(panel.x+20*s, panel.y+470*s, L"I / ESC 닫기 · 일시정지 중", .69f, .75f, .67f);
+    rect(24,475,712,1,.18f,.24f,.25f);
+    std::wstring status=state.messageTime>0 ? state.message :
+        (state.nearWorkbench ? L"제작하면 자동 장착됩니다." : L"장로 근처에서 제작할 수 있습니다.");
+    const size_t statusLimit = static_cast<size_t>(712*s/(18*std::max(.55f,.65f*s)));
+    if (status.size()>statusLimit) status=status.substr(0,statusLimit-1)+L"…";
+    text(24,486,status.c_str(),.65f,.74f,.79f,.72f);
+    text(24,516,L"I / ESC  닫기",.55f,.48f,.58f,.60f);
+    text(614,516,L"일시정지",.55f,.70f,.65f,.47f);
+    const auto &close=buttons[3];
+    rect((close.x-panel.x)/s,(close.y-panel.y)/s,close.width/s,close.height/s,.16f,.21f,.22f);
+    text((close.x-panel.x)/s+9,(close.y-panel.y)/s+1,L"×",1.0f);
 }
