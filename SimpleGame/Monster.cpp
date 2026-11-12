@@ -141,6 +141,7 @@ MonsterHitResult Hit(MonsterState &monster, Vec2 player, int attackPower)
         return {false, false};
     }
 
+    const bool committedChatDirection = monster.chatPattern >= 0;
     if (monster.definition.id == "ancient_guardian")
     {
         if (monster.chatPattern == 1 && monster.chatElapsed >= GameConstants::Chatacabra::SecondImpact)
@@ -170,6 +171,9 @@ MonsterHitResult Hit(MonsterState &monster, Vec2 player, int attackPower)
         return {true, false};
     }
 
+    if (monster.definition.id == "ancient_guardian" && !committedChatDirection &&
+        Distance(player,monster.position) > .001f)
+        monster.animationFacing = {player.x-monster.position.x,player.z-monster.position.z};
     monster.deathTime = .01f;
     return {true, true};
 }

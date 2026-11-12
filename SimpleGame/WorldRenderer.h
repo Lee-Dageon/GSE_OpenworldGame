@@ -79,6 +79,7 @@ class WorldRenderer
     unsigned int m_BoarLootTexture = 0, m_SearchTexture = 0;
     unsigned int m_AnimalCarcassTexture = 0;
     unsigned int m_AncientGuardianTexture = 0;
+    unsigned int m_ChatDeathTexture = 0;
     std::array<unsigned int, 3> m_ChatAttackTextures = {};
     std::array<unsigned int, 2> m_ChatImpactTextures = {};
     unsigned int m_PixelSceneryTexture = 0;

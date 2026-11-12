@@ -37,13 +37,16 @@ int main()
             assert(frame.widthScale>.1f && frame.widthScale<2);
             assert(frame.widthScale==frame.heightScale); // Square cells, uniform scaling.
         }
-    for (const auto &sheet : ChatacabraFrames::Frames)
-        for (const auto &frame : sheet)
-        {
-            assert(frame.x>0 && frame.x<1 && frame.y>0 && frame.y<1);
-            assert(frame.widthScale>.5f && frame.widthScale<2);
-            assert(frame.widthScale==frame.heightScale); // Square cells, uniform scaling.
-        }
+    for (const auto &frame : ChatacabraFrames::DeathFrames)
+    {
+        assert(frame.x>0 && frame.x<1 && frame.y>0 && frame.y<1);
+        assert(frame.widthScale>.1f && frame.widthScale<2);
+        assert(frame.widthScale==frame.heightScale);
+    }
+    assert(ChatacabraFrames::DeathPose(-1)==0 && ChatacabraFrames::DeathPose(0)==0);
+    for (int frame=0;frame<4;++frame)
+        assert(ChatacabraFrames::DeathPose((frame+.5f)*GameConstants::Chatacabra::DeathFrameDuration)==frame);
+    assert(ChatacabraFrames::DeathPose(100)==3); // Corpse holds the final pose instead of looping.
     using namespace GameConstants::Chatacabra;
     auto monster=Create();
     float health=100;
@@ -92,6 +95,21 @@ int main()
     assert(health==100-22*ArmoredDamageMultiplier); // Enlarged radius and damage.
     monster.health=0;
     assert(!Tick(monster,{1,0},SecondImpact,health));
+
+    monster=Create(); monster.health=1;
+    const auto fatalHit=MonsterSystem::Hit(monster,{1,0},1);
+    assert(fatalHit.defeated && monster.deathTime>0);
+    assert(monster.animationFacing.x==1 && monster.animationFacing.z==0);
+    MonsterSystem::UpdateTimers(monster,1);
+    Tick(monster,{-1,0},1,health);
+    assert(ChatacabraFrames::DeathPose(monster.deathTime)==3);
+    assert(monster.animationFacing.x==1 && monster.animationFacing.z==0);
+    monster=Create(); monster.health=1; monster.chatPattern=0; monster.animationFacing={0,1};
+    MonsterSystem::Hit(monster,{1,0},1);
+    assert(monster.animationFacing.x==0 && monster.animationFacing.z==1); // Keep committed attack direction.
+    monster=Create(); monster.health=1; monster.chatPattern=0; monster.chatArmorHits=1; monster.animationFacing={0,1};
+    MonsterSystem::Hit(monster,{1,0},1);
+    assert(monster.health==0 && monster.animationFacing.x==0 && monster.animationFacing.z==1);
 
     monster=Create(); monster.definition.id="boar"; monster.definition.attackRange=2;
     health=100;

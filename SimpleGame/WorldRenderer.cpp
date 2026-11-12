@@ -167,6 +167,7 @@ WorldRenderer::WorldRenderer(Renderer &renderer) : m_Renderer(renderer)
     m_BoarLootTexture = m_Renderer.LoadTexture(L"./Assets/PixelArt/Items/boar-loot-v1.png");
     m_AnimalCarcassTexture = m_Renderer.LoadTexture(L"./Assets/PixelArt/Animals/carcasses-v1.png");
     m_AncientGuardianTexture = m_Renderer.LoadTexture(L"./Assets/PixelArt/Monsters/Chapter3/chatacabra-walk-8dir-v2.png");
+    m_ChatDeathTexture = m_Renderer.LoadTexture(L"./Assets/PixelArt/Monsters/Chapter3/chatacabra-death-8dir-v1.png");
     m_ChatAttackTextures[0] = m_Renderer.LoadTexture(L"./Assets/PixelArt/Monsters/Chapter3/chatacabra-tongue-8dir-v2.png");
     m_ChatAttackTextures[1] = m_Renderer.LoadTexture(L"./Assets/PixelArt/Monsters/Chapter3/chatacabra-slam-8dir-v2.png");
     m_ChatAttackTextures[2] = m_Renderer.LoadTexture(L"./Assets/PixelArt/Monsters/Chapter3/chatacabra-coat-8dir-v2.png");
@@ -202,7 +203,7 @@ WorldRenderer::WorldRenderer(Renderer &renderer) : m_Renderer(renderer)
                                  m_PixelAnimalTextures[0], m_PixelAnimalTextures[1], m_PixelAnimalTextures[2],
                                  m_Chapter1BoarTextures[0], m_Chapter1BoarTextures[1], m_Chapter1BoarTextures[2], m_PlayerHitTexture,
                                  m_AttackHitTextures[0], m_AttackHitTextures[1], m_AttackHitTextures[2], m_BoarLootTexture, m_SearchTexture, m_AnimalCarcassTexture, m_AncientGuardianTexture, m_PixelSceneryTexture,
-                                 m_ChatAttackTextures[0], m_ChatAttackTextures[1], m_ChatAttackTextures[2], m_ChatImpactTextures[0], m_ChatImpactTextures[1]})
+                                 m_ChatAttackTextures[0], m_ChatAttackTextures[1], m_ChatAttackTextures[2], m_ChatImpactTextures[0], m_ChatImpactTextures[1], m_ChatDeathTexture})
         if (texture != 0)
         {
             glBindTexture(GL_TEXTURE_2D, texture);
@@ -214,6 +215,7 @@ WorldRenderer::WorldRenderer(Renderer &renderer) : m_Renderer(renderer)
 
 WorldRenderer::~WorldRenderer()
 {
+    if (m_ChatDeathTexture) glDeleteTextures(1, &m_ChatDeathTexture);
     for (auto texture : m_ChatAttackTextures)
         if (texture) glDeleteTextures(1, &texture);
     for (auto texture : m_ChatImpactTextures)
@@ -1094,7 +1096,7 @@ void WorldRenderer::RenderWorld(const GameState &state)
                                               if (state.monster.definition.id == "ancient_guardian" && m_AncientGuardianTexture)
                                               {
                                                   const auto &monster=state.monster;
-                                                  const Vec2 aim=monster.chatPattern>=0 ? monster.animationFacing : facing;
+                                                  const Vec2 aim=monster.health<=0 || monster.chatPattern>=0 ? monster.animationFacing : facing;
                                                   const int direction=ChatacabraFrames::Direction(aim.x,aim.z);
                                                   const bool guardianWalking=walking && distance>GameConstants::Chatacabra::EngageRange && monster.chatPattern<0;
                                                   int pose=guardianWalking && monster.health>0 && monster.chatStagger<=0 ? static_cast<int>(state.time*6)%4 : 0;
@@ -1110,9 +1112,16 @@ void WorldRenderer::RenderWorld(const GameState &state)
                                                       sheet=action+1;
                                                       texture=m_ChatAttackTextures[action];
                                                   }
-                                                  const auto frame=ChatacabraFrames::Frames[sheet][pose*8+direction];
+                                                  const bool deathSprite=monster.health<=0 && m_ChatDeathTexture;
+                                                  if (deathSprite)
+                                                  {
+                                                      pose=ChatacabraFrames::DeathPose(monster.deathTime);
+                                                      texture=m_ChatDeathTexture;
+                                                  }
+                                                  const auto frame=deathSprite ? ChatacabraFrames::DeathFrames[pose*8+direction] :
+                                                      ChatacabraFrames::Frames[sheet][pose*8+direction];
                                                   const float width=size*frame.widthScale;
-                                                  const float height=size*frame.heightScale*(monster.health<=0 ? .45f : 1.0f);
+                                                  const float height=size*frame.heightScale*(monster.health<=0 && !deathSprite ? .45f : 1.0f);
                                                   DrawShadow(p,state.monster.definition.spriteHeight*.55f,12);
                                                   m_Renderer.DrawSprite(texture,screen.x+(.5f-frame.x)*width,
                                                       screen.z+(frame.y-.5f)*height,

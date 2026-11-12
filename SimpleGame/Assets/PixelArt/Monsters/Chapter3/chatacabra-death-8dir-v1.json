@@ -1,0 +1,32 @@
+{
+  "image": "chatacabra-death-8dir-v1.png",
+  "columns": 8,
+  "rows": 4,
+  "size": [
+    1774,
+    887
+  ],
+  "direction_order": [
+    "down",
+    "down-left",
+    "left",
+    "up-left",
+    "up",
+    "up-right",
+    "right",
+    "down-right"
+  ],
+  "poses": [
+    "fatal stagger",
+    "legs buckle",
+    "body lands",
+    "resting corpse"
+  ],
+  "loop": false,
+  "hold_last_frame": true,
+  "timing_source": "GameConstants::Chatacabra::DeathFrameDuration",
+  "default_frame_seconds": 0.22,
+  "geometry_source": "ChatacabraFrames::DeathFrames",
+  "origin": "body ground contact; excludes pink tongue",
+  "generator": "built-in imagegen; padding edit"
+}
