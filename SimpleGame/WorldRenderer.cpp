@@ -12,7 +12,6 @@
 #include "DamageFeedback.h"
 #include "SearchSpriteFrames.h"
 #include "PixelPropFrames.h"
-#include "GuardianFrames.h"
 #include "ChatacabraFrames.h"
 #include "PixelGeneralFrames.h"
 
@@ -167,10 +166,10 @@ WorldRenderer::WorldRenderer(Renderer &renderer) : m_Renderer(renderer)
     m_PlayerHitTexture = m_Renderer.LoadTexture(L"./Assets/PixelArt/Effects/boar-player-hit.png");
     m_BoarLootTexture = m_Renderer.LoadTexture(L"./Assets/PixelArt/Items/boar-loot-v1.png");
     m_AnimalCarcassTexture = m_Renderer.LoadTexture(L"./Assets/PixelArt/Animals/carcasses-v1.png");
-    m_AncientGuardianTexture = m_Renderer.LoadTexture(L"./Assets/PixelArt/Monsters/Chapter3/guardian-walk-v1.png");
-    m_ChatAttackTextures[0] = m_Renderer.LoadTexture(L"./Assets/PixelArt/Monsters/Chapter3/chatacabra-tongue-v1.png");
-    m_ChatAttackTextures[1] = m_Renderer.LoadTexture(L"./Assets/PixelArt/Monsters/Chapter3/chatacabra-slam-v1.png");
-    m_ChatAttackTextures[2] = m_Renderer.LoadTexture(L"./Assets/PixelArt/Monsters/Chapter3/chatacabra-coat-v1.png");
+    m_AncientGuardianTexture = m_Renderer.LoadTexture(L"./Assets/PixelArt/Monsters/Chapter3/chatacabra-walk-8dir-v2.png");
+    m_ChatAttackTextures[0] = m_Renderer.LoadTexture(L"./Assets/PixelArt/Monsters/Chapter3/chatacabra-tongue-8dir-v2.png");
+    m_ChatAttackTextures[1] = m_Renderer.LoadTexture(L"./Assets/PixelArt/Monsters/Chapter3/chatacabra-slam-8dir-v2.png");
+    m_ChatAttackTextures[2] = m_Renderer.LoadTexture(L"./Assets/PixelArt/Monsters/Chapter3/chatacabra-coat-8dir-v2.png");
     m_ChatImpactTextures[0] = m_Renderer.LoadTexture(L"./Assets/PixelArt/Effects/chatacabra-saliva.png");
     m_ChatImpactTextures[1] = m_Renderer.LoadTexture(L"./Assets/PixelArt/Effects/chatacabra-slam.png");
     m_PixelSceneryTexture = m_Renderer.LoadTexture(L"./Assets/PixelArt/World/frontier-props-v1.png");
@@ -1096,29 +1095,28 @@ void WorldRenderer::RenderWorld(const GameState &state)
                                               {
                                                   const auto &monster=state.monster;
                                                   const Vec2 aim=monster.chatPattern>=0 ? monster.animationFacing : facing;
-                                                  const float dx=aim.x-aim.z,dy=(aim.x+aim.z)*.5f;
-                                                  const int direction=std::abs(dx)>std::abs(dy) ? (dx<0 ? 1 : 2) : (dy<0 ? 0 : 3);
+                                                  const int direction=ChatacabraFrames::Direction(aim.x,aim.z);
                                                   const bool guardianWalking=walking && distance>GameConstants::Chatacabra::EngageRange && monster.chatPattern<0;
                                                   int pose=guardianWalking && monster.health>0 && monster.chatStagger<=0 ? static_cast<int>(state.time*6)%4 : 0;
                                                   const Vec2 screen=ToScreen(p);
-                                                  float height=state.monster.definition.spriteHeight;
-                                                  auto pivot=GuardianFrames::Pivots[pose*4+direction];
+                                                  const float size=state.monster.definition.spriteHeight*GameConstants::Chatacabra::SpriteScale;
+                                                  int sheet=0;
                                                   auto texture=m_AncientGuardianTexture;
                                                   const int action=monster.health>0 ? (monster.chatPattern>=0 ? monster.chatPattern :
-                                                      (monster.chatArmorHits>0 ? 2 : -1)) : -1;
+                                                      (monster.chatArmorHits>0 && !guardianWalking ? 2 : -1)) : -1;
                                                   if (action>=0 && m_ChatAttackTextures[action])
                                                   {
                                                       pose=monster.chatPattern<0 ? 3 : ChatacabraFrames::Pose(action,monster.chatElapsed);
-                                                      const auto anchor=ChatacabraFrames::Pivots[action][pose*4+direction];
-                                                      pivot={anchor.x,anchor.y};
+                                                      sheet=action+1;
                                                       texture=m_ChatAttackTextures[action];
-                                                      height*=GameConstants::Chatacabra::ActionSpriteScale[action];
                                                   }
-                                                  const float displayHeight=state.monster.health<=0 ? height*.45f : height;
-                                                  DrawShadow(p,height*.55f,12);
-                                                  m_Renderer.DrawSprite(texture,screen.x+(.5f-pivot.x)*height,
-                                                      screen.z+(pivot.y-.5f)*displayHeight,
-                                                      height,displayHeight,direction,pose,4,4,1,1,1,1,0,0,0,1,1,.5f);
+                                                  const auto frame=ChatacabraFrames::Frames[sheet][pose*8+direction];
+                                                  const float width=size*frame.widthScale;
+                                                  const float height=size*frame.heightScale*(monster.health<=0 ? .45f : 1.0f);
+                                                  DrawShadow(p,state.monster.definition.spriteHeight*.55f,12);
+                                                  m_Renderer.DrawSprite(texture,screen.x+(.5f-frame.x)*width,
+                                                      screen.z+(frame.y-.5f)*height,
+                                                      width,height,direction,pose,8,4,1,1,1,1,0,0,0,1,1,.5f);
                                                   return;
                                               }
                                               if ((!walking || chapterAnimation) && DrawChapter1Boar(state.monster)) return;

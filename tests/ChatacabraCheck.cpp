@@ -1,5 +1,6 @@
 #include "../SimpleGame/Monster.h"
 #include "../SimpleGame/GameConstants.h"
+#include "../SimpleGame/ChatacabraFrames.h"
 #include <cassert>
 
 namespace
@@ -22,6 +23,27 @@ bool Tick(MonsterState &monster, Vec2 player, float dt, float &health, float dod
 
 int main()
 {
+    const Vec2 screenDirections[8]={{0,-1},{-1,-1},{-1,0},{-1,1},{0,1},{1,1},{1,0},{1,-1}};
+    for (int direction=0;direction<8;++direction)
+    {
+        const auto screen=screenDirections[direction];
+        assert(ChatacabraFrames::Direction((screen.x+2*screen.z)*.5f,(2*screen.z-screen.x)*.5f)==direction);
+    }
+    assert(ChatacabraFrames::Direction(0,0)==0);
+    for (const auto &sheet : ChatacabraFrames::Frames)
+        for (const auto &frame : sheet)
+        {
+            assert(frame.x>0 && frame.x<1 && frame.y>0 && frame.y<1);
+            assert(frame.widthScale>.1f && frame.widthScale<2);
+            assert(frame.widthScale==frame.heightScale); // Square cells, uniform scaling.
+        }
+    for (const auto &sheet : ChatacabraFrames::Frames)
+        for (const auto &frame : sheet)
+        {
+            assert(frame.x>0 && frame.x<1 && frame.y>0 && frame.y<1);
+            assert(frame.widthScale>.5f && frame.widthScale<2);
+            assert(frame.widthScale==frame.heightScale); // Square cells, uniform scaling.
+        }
     using namespace GameConstants::Chatacabra;
     auto monster=Create();
     float health=100;
