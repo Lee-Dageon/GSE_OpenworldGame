@@ -59,6 +59,30 @@ stage id elder|tracks|herb|hunt|trophy|return|complete next_id "목표" "힌트"
 앞의 세 역할은 순환 없이 hunt에 도달해야 한다. 사냥 이후 연결은 hunt/trophy/return/complete/hunt 순서를 유지한다.
 이는 기존 행동을 데이터로 구성하는 형식이다. 호위·분기 선택 등 새 행동에는 코드 확장이 필요하다.
 
+## 디버그 장·목표 진입
+
+실행 인자에서 장 또는 목표 하나를 지정한다. Visual Studio에서는 프로젝트 속성의 디버깅 → 명령 인수에 같은 옵션을 입력한다.
+
+```text
+SimpleGame.exe --debug-chapter unfamiliar
+SimpleGame.exe --debug-chapter displaced
+SimpleGame.exe --debug-step forest_hunt
+SimpleGame.exe --debug-step first_armor
+```
+
+`--debug-chapter`는 해당 장의 첫 목표로, `--debug-step`은 해당 목표로 진입한다. 두 옵션의 동시 지정·반복 지정, 없는 ID, 누락된 인자는 오류로 종료한다. 현재 장 ID는 `unfamiliar`(1장), `displaced`(2장)이다. 3장 이후는 데이터에 추가된 뒤 사용할 수 있다. 옵션 없이 실행하면 기존 튜토리얼로 시작한다.
+
+| 장 | 목표 ID (진행 순서) |
+| --- | --- |
+| 1장 | south_travel, south_tracks, border_hunt, border_loot, border_report, first_armor |
+| 2장 | forest_travel, forest_tracks, sand_travel, sand_records, forest_hunt, forest_loot, ruin_signal, second_report |
+
+코드 진입점은 `StorySystem::DebugEnterChapter(state, chapterId)`와 `StorySystem::DebugEnterStep(state, stepId)`이다. 기존 플레이 상태를 초기화한 테스트 상태로 교체하고, 검·이전 사냥 경험치/재료·제작 완료 방어구를 준비한다. 현재 목표가 사냥이면 몬스터, 수집이면 시체를 생성한다. 이동 목표는 시작점에서, 다른 목표는 목표점에서 시작한다. 창 크기·프레임 시간은 보존한다. 실패하면 원래 GameState를 변경하지 않는다.
+
+저장 복원에는 위 디버그 함수를 사용하지 않는다. `StorySystem::SetProgressById(state, chapterId, stepId)`는 ID 쌍을 검증하고 `storyStep`·`storyFinished=false`만 설정한다. `Current(state)`에서 현재 장·목표 ID를 얻을 수 있다. 보유품·위치·장비·퀘스트·몬스터와 이야기 미시작/완료 상태는 저장 계층이 별도로 복원해야 한다. 이 API는 활성 이야기 목표의 식별만 담당하며 저장 파일 읽기/쓰기는 아직 없다. 목표 순서를 바꿔도 ID를 유지하면 인덱스를 다시 찾지만, ID 삭제·변경 시에는 별도 호환 정책이 필요하다.
+
+`tests/StoryFlowCheck.cpp`에 모든 현재 목표의 진입/진행, 장 첫 목표, 잘못된 ID의 무변경, 진행 커서 설정 시 보유품/몬스터 보존 검사를 작성했다. 현재 변경은 미빌드·미실행이며 실제 플레이 진입 검증은 남아 있다.
+
 ## 장별 이야기: story.gse
 
 ```text

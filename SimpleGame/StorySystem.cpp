@@ -1,5 +1,7 @@
 #include "stdafx.h"
 #include "StorySystem.h"
+#include "QuestSystem.h"
+#include "CraftingSystem.h"
 
 namespace
 {
@@ -40,6 +42,83 @@ const GameContent::StoryStep *Current(const GameState &state)
     return !state.storyFinished && state.storyStep >= 0 && static_cast<size_t>(state.storyStep) < steps.size()
         ? &steps[state.storyStep] : nullptr;
 }
+bool SetProgressById(GameState &state, const std::string &chapterId, const std::string &stepId)
+{
+    const auto &steps = GameContent::Get().story.steps;
+    for (size_t index = 0; index < steps.size(); ++index)
+        if (steps[index].id == stepId && steps[index].chapterId == chapterId)
+        {
+            state.storyStep = static_cast<int>(index);
+            state.storyFinished = false;
+            return true;
+        }
+    return false;
+}
+
+bool DebugEnterStep(GameState &state, const std::string &stepId)
+{
+    const auto &content = GameContent::Get();
+    const auto &steps = content.story.steps;
+    size_t target = 0;
+    while (target < steps.size() && steps[target].id != stepId) ++target;
+    if (target == steps.size()) return false;
+
+    GameState prepared = CreateInitialGameState();
+    prepared.width = state.width;
+    prepared.height = state.height;
+    prepared.lastTime = state.lastTime;
+    prepared.time = state.time;
+    prepared.quest = QuestStage::Complete;
+    prepared.hunterBladeCrafted = true;
+    prepared.attackPower += 3;
+    prepared.completedHunts = 1;
+    QuestSystem::AddExperience(prepared, prepared.monster.definition.experience);
+    // Reconstruct the debug prerequisites without replaying movement or dialogue.
+    for (size_t index = 0; index < target; ++index)
+    {
+        const auto &previous = steps[index];
+        if (previous.action == GameContent::StoryAction::Hunt)
+            QuestSystem::AddExperience(prepared, content.monsters.at(previous.monsterId).experience);
+        if (previous.action == GameContent::StoryAction::Collect)
+        {
+            if (index == 0) return false;
+            const auto &loot = content.monsters.at(steps[index - 1].monsterId);
+            if ((loot.hideDrop > 0 && !prepared.inventory.Add(ItemId::BoarHide, loot.hideDrop)) ||
+                (loot.tuskDrop > 0 && !prepared.inventory.Add(ItemId::BoarTusk, loot.tuskDrop))) return false;
+            ++prepared.completedHunts;
+        }
+        if (previous.action == GameContent::StoryAction::CraftArmor)
+        {
+            prepared.armorRecipeUnlocked = true;
+            prepared.player = prepared.world.elder;
+            CraftingSystem::TryCraft(prepared, CraftingSystem::Recipe::HunterArmor);
+            if (!prepared.hunterArmorCrafted) return false;
+        }
+    }
+    const auto &step = steps[target];
+    if (!SetProgressById(prepared, step.chapterId, step.id)) return false;
+    EnterStep(prepared);
+    if (step.action == GameContent::StoryAction::Collect)
+    {
+        if (target == 0) return false;
+        prepared.monster = MonsterSystem::Create(content.monsters.at(steps[target - 1].monsterId), step.position);
+        prepared.monster.health = 0;
+    }
+    // Travel must remain pending on entry, rather than complete on the first update.
+    prepared.player = step.action == GameContent::StoryAction::Travel ? prepared.world.spawn : step.position;
+    prepared.message = L"디버그 목표 진입: " + step.objective;
+    prepared.messageTime = 5.0f;
+    state = prepared;
+    return true;
+}
+
+bool DebugEnterChapter(GameState &state, const std::string &chapterId)
+{
+    for (const auto &step : GameContent::Get().story.steps)
+        if (step.chapterId == chapterId) return DebugEnterStep(state, step.id);
+    return false;
+}
+
 bool CanStart(const GameState &state)
 {
     return state.storyStep < 0 && !state.storyFinished && state.quest == QuestStage::Complete &&

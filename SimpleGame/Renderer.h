@@ -33,7 +33,8 @@ class Renderer
                     int rows, float alpha = 1.0f, float r = 1.0f, float g = 1.0f, float b = 1.0f,
                     float sway = 0.0f, float swayPivot = 0.0f, float rotation = 0.0f,
                     float sourceWidth = 1.0f, float sourceHeight = 1.0f, float alphaCutoff = .03f);
-    void DrawLabel(float x, float y, const wchar_t *text, float r, float g, float b, float scale = 1.0f);
+    void DrawLabel(float x, float y, const wchar_t *text, float r, float g, float b, float scale = 1.0f,
+                   float alpha = 1.0f, bool centered = false);
 
   private:
     struct LabelTexture

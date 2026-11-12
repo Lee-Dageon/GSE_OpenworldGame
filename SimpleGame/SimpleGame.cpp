@@ -44,6 +44,41 @@ int ElapsedMilliseconds()
     return static_cast<int>(glfwGetTime() * 1000.0);
 }
 
+void DrawChapterIntro()
+{
+    static std::string chapterId;
+    static std::wstring chapterName, chapterTitle = L"튜토리얼";
+    static float startedAt = g_GameState.time;
+    const auto *step = StorySystem::Current(g_GameState);
+    if (step && step->chapterId != chapterId)
+    {
+        for (const auto &chapter : GameContent::Get().story.chapters)
+            if (chapter.id == step->chapterId)
+            {
+                chapterId = chapter.id;
+                const auto separator = chapter.title.find(L':');
+                chapterName = separator == std::wstring::npos ? L"" : chapter.title.substr(0, separator);
+                chapterTitle = separator == std::wstring::npos ? chapter.title : chapter.title.substr(separator + 1);
+                const auto first = chapterTitle.find_first_not_of(L" \t");
+                chapterTitle = first == std::wstring::npos ? L"" : chapterTitle.substr(first);
+                startedAt = g_GameState.time;
+                break;
+            }
+    }
+    const float elapsed = g_GameState.time - startedAt;
+    if (elapsed < 0.0f || elapsed >= 3.5f || chapterTitle.empty())
+        return;
+    const float alpha = std::max(0.0f, std::min(1.0f, std::min(elapsed / .4f, 3.5f - elapsed)));
+    const float scale = GameUiScale(g_GameState.width, g_GameState.height);
+    const float centerX = g_GameState.width * .5f, centerY = g_GameState.height * .5f;
+    g_Renderer->DrawSolidRect(0, 0, static_cast<float>(g_GameState.width), 150 * scale,
+                              0, .025f, .03f, .025f, .72f * alpha);
+    g_Renderer->DrawLabel(centerX, centerY + 18 * scale, chapterName.c_str(),
+                          .9f, .72f, .4f, .9f * scale, alpha, true);
+    g_Renderer->DrawLabel(centerX, centerY - 35 * scale, chapterTitle.c_str(),
+                          1, .94f, .79f, 1.5f * scale, alpha, true);
+}
+
 void RenderScene()
 {
     static int fpsStartTime = ElapsedMilliseconds();
@@ -106,6 +141,7 @@ void RenderScene()
         uiState.hint = hint;
     uiState.message = g_GameState.message;
     DrawGameUi(*g_Renderer, uiState);
+    DrawChapterIntro();
     if (g_CapturePath && ++g_CaptureFrames == 5)
     {
         wchar_t filename[MAX_PATH];
@@ -228,16 +264,44 @@ int main(int argc, char **argv)
         std::cerr << "게임 데이터 로드 실패: " << error.what() << '\n';
         return 1;
     }
-    for (int index = 1; index + 1 < argc; ++index)
-        if (std::string(argv[index]) == "--capture")
+    bool debugEntrySelected = false;
+    for (int index = 1; index < argc; ++index)
+    {
+        const std::string option = argv[index];
+        if (option != "--capture" && option != "--debug-chapter" && option != "--debug-step")
         {
-            g_CaptureFilename = (launchDirectory / std::filesystem::u8path(argv[index + 1])).u8string();
-            g_CapturePath = g_CaptureFilename.c_str();
-            for (int next = index; next + 2 < argc; ++next)
-                argv[next] = argv[next + 2];
-            argc -= 2;
-            break;
+            std::cerr << "Unknown option: " << option << '\n';
+            return 1;
         }
+        if (index + 1 >= argc)
+        {
+            std::cerr << "Missing value for " << option << '\n';
+            return 1;
+        }
+        const std::string value = argv[++index];
+        if (option == "--capture")
+        {
+            g_CaptureFilename = (launchDirectory / std::filesystem::u8path(value)).u8string();
+            g_CapturePath = g_CaptureFilename.c_str();
+        }
+        else
+        {
+            if (debugEntrySelected)
+            {
+                std::cerr << "Choose only one debug chapter or step.\n";
+                return 1;
+            }
+            const bool entered = option == "--debug-chapter"
+                ? StorySystem::DebugEnterChapter(g_GameState, value)
+                : StorySystem::DebugEnterStep(g_GameState, value);
+            if (!entered)
+            {
+                std::cerr << "Cannot enter " << option << ' ' << value << '\n';
+                return 1;
+            }
+            debugEntrySelected = true;
+        }
+    }
     glfwSetErrorCallback([](int code, const char *message) {
         std::cerr << "GLFW " << code << ": " << message << '\n';
     });

@@ -2,6 +2,7 @@
 #include "Monster.h"
 #include "Renderer.h"
 #include "GameContent.h"
+#include "Chapter1BoarAnimation.h"
 
 #include <algorithm>
 #include <cmath>
@@ -132,6 +133,13 @@ MonsterHitResult Hit(MonsterState &monster, Vec2 player, int attackPower)
 
     monster.health = std::max(0, monster.health - attackPower);
     monster.hitFlash = HitFlashTime;
+    if (monster.definition.id == "rampaging_boar")
+    {
+        monster.hitAnimation = Chapter1BoarAnimation::Duration(Chapter1BoarAnimation::Hit);
+        monster.attackAnimation = 0.0f;
+        if (Distance(player, monster.position) > .001f)
+            monster.animationFacing = {player.x - monster.position.x, player.z - monster.position.z};
+    }
 
     if (monster.health > 0)
     {
@@ -146,6 +154,8 @@ void UpdateTimers(MonsterState &monster, float deltaTime)
 {
     monster.attackCooldown = std::max(0.0f, monster.attackCooldown - deltaTime);
     monster.hitFlash = std::max(0.0f, monster.hitFlash - deltaTime);
+    monster.attackAnimation = std::max(0.0f, monster.attackAnimation - deltaTime);
+    monster.hitAnimation = std::max(0.0f, monster.hitAnimation - deltaTime);
 
     if (monster.deathTime > 0)
     {
@@ -162,6 +172,10 @@ bool UpdateChaseAndAttack(MonsterState &monster, Vec2 player, float dodgeTime, f
 
     const float distance = Distance(player, monster.position);
 
+    if (monster.definition.id == "rampaging_boar" && distance > .001f &&
+        monster.attackAnimation <= 0.0f && monster.hitAnimation <= 0.0f)
+        monster.animationFacing = {player.x - monster.position.x, player.z - monster.position.z};
+
     if (distance < monster.definition.chaseRange && distance > monster.definition.attackRange)
     {
         monster.position.x += (player.x - monster.position.x) / distance * monster.definition.speed * deltaTime;
@@ -173,6 +187,10 @@ bool UpdateChaseAndAttack(MonsterState &monster, Vec2 player, float dodgeTime, f
     {
         playerHealth -= monster.definition.damage <= 0 ? 0 : std::max(1.0f,monster.definition.damage-std::max(0,defense));
         monster.attackCooldown = monster.definition.cooldown;
+        if (monster.definition.id == "rampaging_boar")
+        {
+            monster.attackAnimation = Chapter1BoarAnimation::Duration(Chapter1BoarAnimation::Attack);
+        }
         return true;
     }
 

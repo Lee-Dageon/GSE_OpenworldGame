@@ -466,7 +466,8 @@ Renderer::LabelTexture Renderer::CreateLabelTexture(const wchar_t *text)
     return result;
 }
 
-void Renderer::DrawLabel(float x, float y, const wchar_t *text, float r, float g, float b, float scale)
+void Renderer::DrawLabel(float x, float y, const wchar_t *text, float r, float g, float b, float scale,
+                         float alpha, bool centered)
 {
     const std::wstring key(text);
     auto found = m_LabelCache.find(key);
@@ -480,8 +481,8 @@ void Renderer::DrawLabel(float x, float y, const wchar_t *text, float r, float g
         return;
     }
 
-    const float centerX = x + label.width * scale * 0.5f - m_WindowSizeX * 0.5f;
+    const float centerX = x + (centered ? 0.0f : label.width * scale * 0.5f) - m_WindowSizeX * 0.5f;
     const float centerY = y + label.height * scale * 0.5f - m_WindowSizeY * 0.5f;
     DrawSprite(label.id, centerX, centerY, label.width * scale, label.height * scale, 0, 0, 1,
-               1, 1.0f, r, g, b);
+               1, alpha, r, g, b);
 }

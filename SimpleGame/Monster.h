@@ -31,6 +31,8 @@ struct MonsterState
     float hitFlash;
     float deathTime;
     MonsterDefinition definition;
+    float attackAnimation = 0.0f, hitAnimation = 0.0f;
+    Vec2 animationFacing = {1.0f, 0.0f};
 };
 
 struct MonsterHitResult

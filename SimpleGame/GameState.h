@@ -67,6 +67,7 @@ struct GameState
     bool inventoryOpen = false, hunterBladeCrafted = false;
     bool armorRecipeUnlocked = false, hunterArmorCrafted = false, storyFinished = false;
     int defense = 0, storyStep = -1;
+    float playerHitTime = 0.0f, hitStop = 0.0f;
     int completedHunts = 0;
     int level = 1, experience = 0, experienceToNextLevel = 20, attackPower = 2;
     QuestStage quest = QuestStage::Elder;

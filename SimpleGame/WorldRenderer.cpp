@@ -7,6 +7,7 @@
 #include "StorySystem.h"
 #include "PixelNpcFrames.h"
 #include "PixelAnimalFrames.h"
+#include "Chapter1BoarAnimation.h"
 #include "PixelGeneralFrames.h"
 
 #include <algorithm>
@@ -157,6 +158,9 @@ WorldRenderer::WorldRenderer(Renderer &renderer) : m_Renderer(renderer)
     m_HouseVariants[0] = m_Renderer.LoadTexture(L"./Assets/PixelArt/World/house-stone-v1.png");
     m_HouseVariants[1] = m_Renderer.LoadTexture(L"./Assets/PixelArt/World/house-shop-v1.png");
     m_CampfireTexture = m_Renderer.LoadTexture(L"./Assets/PixelArt/Effects/campfire.png");
+    m_Chapter1BoarTextures[0] = m_Renderer.LoadTexture(L"./Assets/PixelArt/Monsters/Chapter1/great-boar-attack-v1.png");
+    m_Chapter1BoarTextures[1] = m_Renderer.LoadTexture(L"./Assets/PixelArt/Monsters/Chapter1/great-boar-hit-v1.png");
+    m_Chapter1BoarTextures[2] = m_Renderer.LoadTexture(L"./Assets/PixelArt/Monsters/Chapter1/great-boar-death-v1.png");
     if (m_SwordSlashTexture != 0)
     {
         glBindTexture(GL_TEXTURE_2D, m_SwordSlashTexture);
@@ -176,7 +180,8 @@ WorldRenderer::WorldRenderer(Renderer &renderer) : m_Renderer(renderer)
                                  m_ElderTexture, m_NoticeBoardTexture, m_RockTexture, m_PineTexture,
                                  m_NpcTextures[0], m_NpcTextures[1], m_HouseVariants[0], m_HouseVariants[1],
                                  m_CampfireTexture, m_GeneralWalkTexture, m_GeneralRunTexture, m_GeneralAttackTexture,
-                                 m_PixelAnimalTextures[0], m_PixelAnimalTextures[1], m_PixelAnimalTextures[2]})
+                                 m_PixelAnimalTextures[0], m_PixelAnimalTextures[1], m_PixelAnimalTextures[2],
+                                 m_Chapter1BoarTextures[0], m_Chapter1BoarTextures[1], m_Chapter1BoarTextures[2]})
         if (texture != 0)
         {
             glBindTexture(GL_TEXTURE_2D, texture);
@@ -188,6 +193,9 @@ WorldRenderer::WorldRenderer(Renderer &renderer) : m_Renderer(renderer)
 
 WorldRenderer::~WorldRenderer()
 {
+    for (unsigned int texture : m_Chapter1BoarTextures)
+        if (texture != 0)
+            glDeleteTextures(1, &texture);
     for (unsigned int texture : m_PixelAnimalTextures)
         if (texture != 0)
             glDeleteTextures(1, &texture);
@@ -438,6 +446,41 @@ bool WorldRenderer::DrawPixelAnimal(Vec2 position, int species, Vec2 facing, int
                           screen.z + (pivot.y - .5f) * displayHeight,
                           height, displayHeight, direction, pose, 4, 4,
                           1, tint, tint, tint, 0, 0, 0, 1, 1, .5f);
+    return true;
+}
+
+bool WorldRenderer::DrawChapter1Boar(const MonsterState &monster) const
+{
+    if (monster.definition.id != "rampaging_boar") return false;
+    using namespace Chapter1BoarAnimation;
+    Action action = Attack;
+    float elapsed = 0.0f;
+    if (monster.health <= 0)
+    {
+        action = Death;
+        elapsed = monster.deathTime > 0 ? monster.deathTime : Duration(Death);
+    }
+    else if (monster.hitAnimation > 0)
+    {
+        action = Hit;
+        elapsed = Duration(Hit) - monster.hitAnimation;
+    }
+    else if (monster.attackAnimation > 0)
+        elapsed = Duration(Attack) - monster.attackAnimation;
+    const unsigned int texture = m_Chapter1BoarTextures[action];
+    if (texture == 0) return false;
+    const Vec2 facing = monster.animationFacing;
+    const float dx = facing.x - facing.z, dy = (facing.x + facing.z) * .5f;
+    const int direction = std::abs(dx) > std::abs(dy) ? (dx < 0 ? 0 : 1) : (dy < 0 ? 2 : 3);
+    constexpr float anchorX[] = {131.5f, 137.0f, 126.0f, 128.5f};
+    constexpr float anchorY[] = {225, 224, 224, 233};
+    const float height = monster.definition.spriteHeight;
+    const Vec2 screen = ToScreen(monster.position);
+    DrawShadow(monster.position, height * .55f, 12);
+    m_Renderer.DrawSprite(texture, screen.x + (.5f - anchorX[direction] / 256) * height,
+                          screen.z + (anchorY[direction] / 256 - .5f) * height,
+                          height, height, Frame(action, elapsed), direction, 6, 4,
+                          1, 1, 1, 1, 0, 0, 0, 1, 1, .5f);
     return true;
 }
 
@@ -973,6 +1016,9 @@ void WorldRenderer::RenderWorld(const GameState &state)
                                               const float distance = Distance(p, state.player);
                                               const bool walking = (state.quest == QuestStage::Hunt || StorySystem::IsHunting(state)) &&
                                                   distance > state.monster.definition.attackRange && distance < state.monster.definition.chaseRange;
+                                              const bool chapterAnimation = state.monster.health <= 0 ||
+                                                  state.monster.hitAnimation > 0 || state.monster.attackAnimation > 0;
+                                              if ((!walking || chapterAnimation) && DrawChapter1Boar(state.monster)) return;
                                               const int frame = walking ? static_cast<int>(state.time * 8.0f) % 4 : 0;
                                               if (!DrawPixelAnimal(p, 1, facing, frame, state.monster.definition.spriteHeight, state.monster.health <= 0) &&
                                                   !DrawAtlasSprite(p, m_BoarTexture, facing, frame, state.monster.definition.spriteHeight, AnimalPivotY, state.monster.health <= 0))

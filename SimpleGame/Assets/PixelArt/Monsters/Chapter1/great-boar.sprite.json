@@ -1,0 +1,102 @@
+{
+  "version": 1,
+  "monster_id": "rampaging_boar",
+  "display_name": "1장 거대 숲 멧돼지",
+  "generator": "built-in imagegen",
+  "status": "connected_in_source_not_runtime_verified",
+  "layout": {
+    "origin": "top_left",
+    "columns": 6,
+    "rows": 4,
+    "cell_width": 256,
+    "cell_height": 256,
+    "direction_rows": [
+      "left",
+      "right",
+      "down",
+      "up"
+    ],
+    "frame_order": "left_to_right",
+    "anchor_space": "cell_pixels",
+    "anchors_from_attack_ready_pose": [
+      {
+        "direction": "left",
+        "x": 131.5,
+        "y": 225
+      },
+      {
+        "direction": "right",
+        "x": 137.0,
+        "y": 224
+      },
+      {
+        "direction": "down",
+        "x": 126.0,
+        "y": 224
+      },
+      {
+        "direction": "up",
+        "x": 128.5,
+        "y": 233
+      }
+    ]
+  },
+  "rendering": {
+    "filter": "nearest",
+    "alpha_cutoff": 0.5,
+    "cast_shadow_in_image": false
+  },
+  "animations": {
+    "attack": {
+      "file": "great-boar-attack-v1.png",
+      "width": 1536,
+      "height": 1024,
+      "frame_durations_ms": [
+        120,
+        160,
+        100,
+        120,
+        120,
+        160
+      ],
+      "duration_ms": 780,
+      "loop": false,
+      "on_complete": "return_to_idle",
+      "timing_status": "suggested_not_runtime_verified"
+    },
+    "hit": {
+      "file": "great-boar-hit-v1.png",
+      "width": 1536,
+      "height": 1024,
+      "frame_durations_ms": [
+        40,
+        60,
+        100,
+        60,
+        60,
+        80
+      ],
+      "duration_ms": 400,
+      "loop": false,
+      "on_complete": "return_to_idle",
+      "timing_status": "suggested_not_runtime_verified"
+    },
+    "death": {
+      "file": "great-boar-death-v1.png",
+      "width": 1536,
+      "height": 1024,
+      "frame_durations_ms": [
+        120,
+        140,
+        160,
+        160,
+        180,
+        240
+      ],
+      "duration_ms": 1000,
+      "loop": false,
+      "on_complete": "hold_last_frame",
+      "timing_status": "suggested_not_runtime_verified"
+    }
+  }
+}
