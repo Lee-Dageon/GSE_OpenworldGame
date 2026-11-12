@@ -61,25 +61,18 @@ void Renderer::Initialize(int windowSizeX, int windowSizeY)
     }
     if (m_GdiToken == 0)
         return;
-    Gdiplus::FontFamily systemFont(m_FontFamilyName.c_str());
-    if (systemFont.GetLastStatus() != Gdiplus::Ok)
+    m_Fonts = std::make_unique<Gdiplus::PrivateFontCollection>();
+    if (m_Fonts->AddFontFile(L"C:/GameSoftwareEngineering/BaseProject_SE/NotoSansKR-VF.ttf") != Gdiplus::Ok)
     {
-        m_Fonts = std::make_unique<Gdiplus::PrivateFontCollection>();
-        if (m_Fonts->AddFontFile(L"./Fonts/NanumGothic-Regular.ttf") != Gdiplus::Ok)
-        {
-            std::cerr << "Cannot load Korean font: Fonts/NanumGothic-Regular.ttf\n";
-            return;
-        }
-        Gdiplus::FontFamily fallback;
-        int count = 0;
-        WCHAR name[LF_FACESIZE] = {};
-        if (m_Fonts->GetFamilies(1, &fallback, &count) != Gdiplus::Ok || count != 1 ||
-            fallback.GetFamilyName(name) != Gdiplus::Ok)
-        {
-            std::cerr << "Cannot read bundled Korean font family.\n";
-            return;
-        }
-        m_FontFamilyName = name;
+        std::cerr << "Cannot load Korean font: NotoSansKR-VF.ttf\n";
+        return;
+    }
+    m_FontFamilyName = L"Noto Sans KR";
+    Gdiplus::FontFamily requestedFont(m_FontFamilyName.c_str(), m_Fonts.get());
+    if (requestedFont.GetLastStatus() != Gdiplus::Ok)
+    {
+        std::cerr << "Cannot read Noto Sans KR font family.\n";
+        return;
     }
 
     m_SolidRectShader = CompileShaders("./Shaders/SolidRect.vs", "./Shaders/SolidRect.fs");

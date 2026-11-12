@@ -1068,11 +1068,11 @@ void WorldRenderer::RenderWorld(const GameState &state)
             {
                 const float dx = state.facing.x - state.facing.z, dy = (state.facing.x + state.facing.z) * .5f;
                 const int row = std::abs(dx) > std::abs(dy) ? (dx < 0 ? 0 : 1) : (dy < 0 ? 2 : 3);
-                const int frame = std::min(3, static_cast<int>((1.2f - state.lootTime) / .3f));
+                const int frame = std::min(3, static_cast<int>((1.5f - state.lootTime) / .5f));
                 const auto pivot = SearchSpriteFrames::Pivots[row][frame];
                 DrawShadow(state.player, 42, 9);
-                m_Renderer.DrawSprite(m_SearchTexture, foot.x + (.5f - pivot.x) * 108,
-                    foot.z + (pivot.y - .5f) * 108, 108, 108, frame, row, 4, 4,
+                m_Renderer.DrawSprite(m_SearchTexture, foot.x + (.5f - pivot.x) * 102.6f,
+                    foot.z + (pivot.y - .5f) * 102.6f, 102.6f, 102.6f, frame, row, 4, 4,
                     1, 1, 1, 1, 0, 0, 0, 1, 1, .5f);
                 break;
             }
@@ -1233,7 +1233,7 @@ void WorldRenderer::RenderWorld(const GameState &state)
     {
         const Vec2 screen = ToScreen(state.player);
         const std::wstring text = state.lootTime > 0
-            ? L"수집 중 " + std::to_wstring(static_cast<int>((1 - state.lootTime / 1.2f) * 100)) + L"%"
+            ? L"수집 중 " + std::to_wstring(static_cast<int>((1 - state.lootTime / 1.5f) * 100)) + L"%"
             : L"이빨 · 가죽 획득!";
         m_Renderer.DrawLabel(state.width * .5f + screen.x, state.height * .5f + screen.z + 110,
             text.c_str(), 1, .87f, .4f, .65f, 1, true);

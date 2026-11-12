@@ -201,7 +201,7 @@ void GameManager::HandleCommand(GameCommand command)
         if ((m_State.quest == QuestStage::Trophy || StorySystem::HasDrop(m_State)) &&
             MonsterSystem::IsInteractableDrop(m_State.monster, m_State.player))
         {
-            m_State.lootTime = 1.2f;
+            m_State.lootTime = 1.5f;
             m_State.moving = false;
             const Vec2 direction = {m_State.monster.position.x - m_State.player.x, m_State.monster.position.z - m_State.player.z};
             if (std::abs(direction.x) + std::abs(direction.z) > .001f) m_State.facing = direction;

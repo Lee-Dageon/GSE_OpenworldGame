@@ -51,18 +51,18 @@ int main()
     GameManager game(state);
     state.player = state.world.elder;
     game.HandleCommand(GameCommand::Interact);
-    if (state.lootTime > 0) game.UpdateGame(1.21f);
+    if (state.lootTime > 0) game.UpdateGame(1.51f);
     assert(state.quest == QuestStage::Tracks);
     state.player = state.world.tracks;
     game.HandleCommand(GameCommand::Interact);
-    if (state.lootTime > 0) game.UpdateGame(1.21f);
+    if (state.lootTime > 0) game.UpdateGame(1.51f);
     assert(state.quest == QuestStage::Herb);
     state.player = state.world.herb;
     game.HandleCommand(GameCommand::Interact);
-    if (state.lootTime > 0) game.UpdateGame(1.21f);
+    if (state.lootTime > 0) game.UpdateGame(1.51f);
     assert(state.quest == QuestStage::Hunt && state.inventory.Count(ItemId::Herb) == 1);
     game.HandleCommand(GameCommand::Interact);
-    if (state.lootTime > 0) game.UpdateGame(1.21f);
+    if (state.lootTime > 0) game.UpdateGame(1.51f);
     assert(state.inventory.Count(ItemId::Herb) == 1);
     const auto kill = [&]() {
         state.player = state.monster.position;
@@ -83,19 +83,19 @@ int main()
     assert(state.experience == xp);
     state.inventory.Add(ItemId::BoarHide, 99);
     game.HandleCommand(GameCommand::Interact);
-    if (state.lootTime > 0) game.UpdateGame(1.21f);
+    if (state.lootTime > 0) game.UpdateGame(1.51f);
     assert(state.quest == QuestStage::Trophy && state.inventory.Count(ItemId::BoarTusk) == 0);
     state.inventory.Remove(ItemId::BoarHide, 99);
     game.HandleCommand(GameCommand::Interact);
-    if (state.lootTime > 0) game.UpdateGame(1.21f);
+    if (state.lootTime > 0) game.UpdateGame(1.51f);
     assert(state.quest == QuestStage::Return && state.completedHunts == 1);
     assert(state.inventory.Count(ItemId::BoarHide) == 1 && state.inventory.Count(ItemId::BoarTusk) == 1);
     game.HandleCommand(GameCommand::Interact);
-    if (state.lootTime > 0) game.UpdateGame(1.21f);
+    if (state.lootTime > 0) game.UpdateGame(1.51f);
     assert(state.inventory.Count(ItemId::BoarHide) == 1);
     state.player = state.world.elder;
     game.HandleCommand(GameCommand::Interact);
-    if (state.lootTime > 0) game.UpdateGame(1.21f);
+    if (state.lootTime > 0) game.UpdateGame(1.51f);
     assert(state.quest == QuestStage::Complete);
     game.HandleCommand(GameInput::OnKeyDown(state, 'i', false));
     assert(state.inventoryOpen);
@@ -120,15 +120,15 @@ int main()
     assert(GameInput::OnKeyDown(state, 27, false) == GameCommand::Quit);
     state.storyFinished = true; // This check covers post-story repeat hunts; StoryFlowCheck covers the campaign.
     game.HandleCommand(GameCommand::Interact);
-    if (state.lootTime > 0) game.UpdateGame(1.21f);
+    if (state.lootTime > 0) game.UpdateGame(1.51f);
     assert(state.quest == QuestStage::Hunt && state.monster.health == 18);
     assert(kill() == 3);
     game.HandleCommand(GameCommand::Interact);
-    if (state.lootTime > 0) game.UpdateGame(1.21f);
+    if (state.lootTime > 0) game.UpdateGame(1.51f);
     assert(state.completedHunts == 2 && state.quest == QuestStage::Return);
     state.player = state.world.elder;
     game.HandleCommand(GameCommand::Interact);
-    if (state.lootTime > 0) game.UpdateGame(1.21f);
+    if (state.lootTime > 0) game.UpdateGame(1.51f);
     assert(state.quest == QuestStage::Complete && state.hunterBladeCrafted);
     for (auto size : {std::array<int,2>{640,360}, {1280,720}, {1920,1080}, {2560,1440}})
     {
