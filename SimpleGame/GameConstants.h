@@ -83,6 +83,7 @@ constexpr int MaxStack = 99;
 namespace Npc
 {
 constexpr float InteractRange=1.2f, LabelRange=3.0f, MealHealing=25.0f;
+constexpr float SpriteHeight=100.0f;
 constexpr int TradeHideCost=2;
 }
 namespace World

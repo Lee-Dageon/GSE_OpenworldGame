@@ -94,6 +94,12 @@
     <ClInclude Include="GameState.h">
       <Filter>헤더 파일\Game State</Filter>
     </ClInclude>
+    <ClInclude Include="NpcSystem.h">
+      <Filter>헤더 파일\Game State</Filter>
+    </ClInclude>
+    <ClInclude Include="NpcRosterFrames.h">
+      <Filter>헤더 파일\Rendering</Filter>
+    </ClInclude>
     <ClInclude Include="GameContent.h">
       <Filter>헤더 파일\Content and World</Filter>
     </ClInclude>

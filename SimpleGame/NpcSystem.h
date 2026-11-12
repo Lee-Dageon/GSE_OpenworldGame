@@ -8,10 +8,12 @@ namespace NpcSystem
 inline int Role(const NpcState &npc)
 {
     if (npc.identity==0) return 0;
+    if (npc.identity==20) return 5; // Arin, an independent visiting researcher.
     return npc.identity>0 ? 1+(npc.identity-1)%7 : 6;
 }
 inline const wchar_t *Name(const NpcState &npc)
 {
+    if (npc.identity==20) return L"아린";
     static const wchar_t *names[]={L"미라",L"도란",L"세라",L"로웬",L"가람",L"이안",L"보리",L"하린",
         L"타온",L"유나",L"루카",L"나루",L"에린",L"모아",L"레온",L"오린",L"리나",L"벤",L"소하",L"테오"};
     return npc.identity>=0 && npc.identity<20 ? names[npc.identity] : L"여행자";
@@ -57,7 +59,10 @@ inline std::wstring Interact(GameState &state, NpcState &npc)
     }
     else if (role==4) reply=state.ruinDeviceDisabled ? L"차타카브라가 양팔을 내리찍은 뒤 혀를 노리세요. 돌을 깨면 빈틈이 생깁니다." :
         alternate ? L"큰 공격은 옆으로 피하고 빈틈에 한 번씩 치세요." : L"명중을 이어 가면 콤보가 쌓입니다. 욕심내다 맞으면 끊기죠.";
-    else if (role==5) reply=state.ruinDeviceDisabled ? L"장치가 멎었군요. 생태계가 회복하는지는 계속 지켜봐야 합니다." :
+    else if (role==5) reply=npc.identity==20 ? (state.ruinDeviceDisabled ?
+        L"유적의 진동이 잦아들었군요. 저는 주민들의 증언을 모아 변화를 기록하겠습니다." :
+        L"저는 조사원 아린입니다. 미라 장로와 별도로, 유적이 마을에 끼친 영향을 기록하고 있어요.") :
+        state.ruinDeviceDisabled ? L"장치가 멎었군요. 생태계가 회복하는지는 계속 지켜봐야 합니다." :
         state.armorRecipeUnlocked ? L"짐승들이 같은 방향을 피해 이동합니다. 북쪽 유적의 기록을 찾아보세요." :
         alternate ? L"조사대 기록이 남아 있다면 이동 원인을 찾을 수 있을 겁니다." : L"짐승이 마을로 온 이유부터 알아야 합니다. 흔적을 남겨 주세요.";
     else if (role==6)

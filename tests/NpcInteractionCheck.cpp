@@ -6,10 +6,12 @@
 int main()
 {
     auto state=CreateInitialGameState();
-    assert(state.npcs.size()==20);
+    assert(state.npcs.size()==21);
     std::set<std::wstring> names;
     for (const auto &npc:state.npcs) names.insert(NpcSystem::Name(npc));
-    assert(names.size()==20);
+    assert(names.size()==21);
+    assert(state.npcs.back().identity==20 && NpcSystem::Role(state.npcs.back())==5);
+    assert(std::wstring(NpcSystem::Name(state.npcs.back()))==L"아린");
     auto &trader=state.npcs[3];
     state.inventory.Add(ItemId::BoarHide,2);
     const int potions=state.inventory.Count(ItemId::Potion);

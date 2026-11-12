@@ -45,6 +45,7 @@ class WorldRenderer
                          float height, float pivotY, bool fallen = false) const;
     void DrawHouse(Vec2 position, float roofRed, float roofGreen, float roofBlue, int variant = 0) const;
     void DrawPixelNpc(const NpcState &npc, int variant) const;
+    bool DrawRosterNpc(const NpcState &npc) const;
     bool DrawPixelAnimal(Vec2 position, int species, Vec2 facing, int frame,
                          float height, bool fallen = false) const;
     bool DrawChapter1Boar(const MonsterState &monster) const;
@@ -74,6 +75,7 @@ class WorldRenderer
     unsigned int m_RockTexture = 0;
     unsigned int m_PineTexture = 0;
     std::array<unsigned int, 2> m_NpcTextures = {}, m_HouseVariants = {};
+    std::array<unsigned int, 20> m_RosterNpcTextures = {};
     unsigned int m_CampfireTexture = 0;
     unsigned int m_PlayerHitTexture = 0;
     unsigned int m_BoarLootTexture = 0, m_SearchTexture = 0;

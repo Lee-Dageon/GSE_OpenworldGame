@@ -8,6 +8,7 @@
 #include "WorldLayout.h"
 #include "StorySystem.h"
 #include "PixelNpcFrames.h"
+#include "NpcRosterFrames.h"
 #include "PixelAnimalFrames.h"
 #include "Chapter1BoarAnimation.h"
 #include "DamageFeedback.h"
@@ -161,6 +162,18 @@ WorldRenderer::WorldRenderer(Renderer &renderer) : m_Renderer(renderer)
     m_PineTexture = m_Renderer.LoadTexture(L"./Assets/PixelArt/World/pine-v1.png");
     m_NpcTextures[0] = m_Renderer.LoadTexture(L"./Assets/PixelArt/Characters/npc-farmer-v1.png");
     m_NpcTextures[1] = m_Renderer.LoadTexture(L"./Assets/PixelArt/Characters/npc-merchant-v1.png");
+    for (int i=0;i<20;++i)
+    {
+        const auto path=std::wstring(L"./Assets/PixelArt/NPCs/npc-")+(i<10 ? L"0" : L"")+std::to_wstring(i)+L"-v1.png";
+        auto &texture=m_RosterNpcTextures[i];
+        texture=m_Renderer.LoadTexture(path.c_str());
+        if (texture)
+        {
+            glBindTexture(GL_TEXTURE_2D,texture);
+            glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
+            glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
+        }
+    }
     m_HouseVariants[0] = m_Renderer.LoadTexture(L"./Assets/PixelArt/World/house-stone-v1.png");
     m_HouseVariants[1] = m_Renderer.LoadTexture(L"./Assets/PixelArt/World/house-shop-v1.png");
     m_CampfireTexture = m_Renderer.LoadTexture(L"./Assets/PixelArt/Effects/campfire.png");
@@ -216,6 +229,8 @@ WorldRenderer::WorldRenderer(Renderer &renderer) : m_Renderer(renderer)
 
 WorldRenderer::~WorldRenderer()
 {
+    for (auto texture:m_RosterNpcTextures)
+        if (texture) glDeleteTextures(1,&texture);
     if (m_ChatDeathTexture) glDeleteTextures(1, &m_ChatDeathTexture);
     for (auto texture : m_ChatAttackTextures)
         if (texture) glDeleteTextures(1, &texture);
@@ -517,6 +532,24 @@ bool WorldRenderer::DrawChapter1Boar(const MonsterState &monster) const
                           screen.z + (anchorY[direction] / 256 - .5f) * height,
                           height, height, Frame(action, elapsed), direction, 6, 4,
                           1, 1, 1, 1, 0, 0, 0, 1, 1, .5f);
+    return true;
+}
+
+bool WorldRenderer::DrawRosterNpc(const NpcState &npc) const
+{
+    if (npc.identity==0) return false; // Mira keeps the original elder artwork.
+    const int visual=npc.identity==20 ? 0 : npc.identity;
+    if (visual<0 || visual>=20 || !m_RosterNpcTextures[visual]) return false;
+    const Vec2 facing=npc.moving || !m_State ? npc.facing : Vec2{m_State->player.x-npc.position.x,m_State->player.z-npc.position.z};
+    const float dx=facing.x-facing.z,dy=(facing.x+facing.z)*.5f;
+    const int direction=std::abs(dx)>std::abs(dy) ? (dx<0 ? 1 : 2) : (dy<0 ? 0 : 3);
+    const int pose=npc.moving ? (static_cast<int>(npc.phase)%4+4)%4 : 1;
+    const auto frame=NpcRosterFrames::Frames[visual][pose*4+direction];
+    const float size=GameConstants::Npc::SpriteHeight*frame.scale;
+    const Vec2 screen=ToScreen(npc.position);
+    DrawShadow(npc.position,32,9);
+    m_Renderer.DrawSprite(m_RosterNpcTextures[visual],screen.x+(.5f-frame.x)*size,
+        screen.z+(frame.y-.5f)*size,size,size,direction,pose,4,4,1,1,1,1,0,0,0,1,1,.5f);
     return true;
 }
 
@@ -1040,6 +1073,7 @@ void WorldRenderer::RenderWorld(const GameState &state)
                     name.c_str(),1,.9f,.65f,.75f,1,true);
             }
             const bool elder = Distance(npc.wanderSeed != 0 ? npc.home : npc.position, state.world.elder) < .1f;
+            if (DrawRosterNpc(npc)) break;
             if (m_ElderTexture != 0 && elder)
             {
                 DrawShadow(npc.position, 35, 9);

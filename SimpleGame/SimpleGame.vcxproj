@@ -177,6 +177,8 @@
     <ClInclude Include="GameConstants.h" />
     <ClInclude Include="GlfwSetup.h" />
     <ClInclude Include="GameState.h" />
+    <ClInclude Include="NpcSystem.h" />
+    <ClInclude Include="NpcRosterFrames.h" />
     <ClInclude Include="GameContent.h" />
     <ClInclude Include="StorySystem.h" />
     <ClInclude Include="Inventory.h" />
