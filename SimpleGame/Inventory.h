@@ -1,4 +1,5 @@
 #pragma once
+#include "GameConstants.h"
 #include <array>
 #include <cstddef>
 
@@ -6,7 +7,7 @@ enum class ItemId { Potion, Herb, BoarHide, BoarTusk, Count };
 
 struct Inventory
 {
-    static constexpr int MaxStack = 99;
+    static constexpr int MaxStack = GameConstants::Inventory::MaxStack;
     std::array<int, static_cast<size_t>(ItemId::Count)> stacks = {{2, 0, 0, 0}};
 
     int Count(ItemId item) const

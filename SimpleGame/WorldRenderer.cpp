@@ -1,4 +1,5 @@
 #include "stdafx.h"
+#include "GameConstants.h"
 #include "WorldRenderer.h"
 
 #include <GL/glew.h>
@@ -23,7 +24,7 @@ namespace
 constexpr float Pi = 3.14159265f;
 constexpr float TileWidth = 64.0f;
 constexpr float TileHeight = 32.0f;
-constexpr float WorldScale = 2.6f;
+constexpr float WorldScale = GameConstants::World::Scale;
 constexpr float GroundDotSize = 2.0f;
 constexpr int GroundChunkDots = 48;
 constexpr float GroundChunkSize = GroundDotSize * GroundChunkDots;
@@ -351,7 +352,7 @@ void WorldRenderer::DrawGeneralPlayer(const GameState &state) const
     const int worldDirection = (static_cast<int>(std::lround(std::atan2(-state.facing.z, -state.facing.x) /
                                                                         (Pi * .25f))) + 8) % 8;
     const int direction = (10 - worldDirection) % 8;
-    const float progress = std::max(0.0f, std::min(1.0f, 1.0f - state.attack / .32f));
+    const float progress = std::max(0.0f, std::min(1.0f, 1.0f - state.attack / GameConstants::Player::AttackDuration));
     const int frame = state.attack > 0 ? std::min(3, static_cast<int>(progress * 4)) :
                       (state.moving ? static_cast<int>(state.time * (state.sprint ? 8 : 6)) % 4 : 0);
     const bool newSheet = m_GeneralRunTexture != 0 && state.attack <= 0.0f && (running || !state.moving);
@@ -398,7 +399,7 @@ void WorldRenderer::DrawPixelPlayer(const GameState &state) const
                                                                         (Pi * .25f))) + 8) % 8;
     // Pixel sheet runs SE,S,SW,W,NW,N,NE,E; reflect the Blender ordering horizontally.
     const int direction = (10 - worldDirection) % 8;
-    const float progress = std::max(0.0f, std::min(1.0f, 1.0f - state.attack / .32f));
+    const float progress = std::max(0.0f, std::min(1.0f, 1.0f - state.attack / GameConstants::Player::AttackDuration));
     const int frame = state.attack > 0 ? std::min(3, static_cast<int>(progress * 4)) :
                       (state.moving ? static_cast<int>(state.time * (state.sprint ? 8 : 6)) % 4 : 0);
     // Alpha-measured foot anchors for the generated 8x4 sheet (top-to-bottom rows).
@@ -1017,7 +1018,8 @@ void WorldRenderer::RenderWorld(const GameState &state)
             const unsigned int texture = animal.column == 0 ? m_DeerTexture : (animal.column == 1 ? m_BoarTexture : m_SheepTexture);
             const int frame = static_cast<int>(state.time * 8.0f + animal.phase) % 4;
             if (!DrawPixelAnimal(animal.position, animal.column == 0 ? 0 : (animal.column == 1 ? 1 : 2), facing, frame,
-                                 animal.column == 0 ? 88.0f : (animal.column == 1 ? 110.0f : 72.0f)) &&
+                                 animal.column == 0 ? GameConstants::World::DeerSpriteSize :
+                                     (animal.column == 1 ? GameConstants::World::BoarSpriteSize : GameConstants::World::SheepSpriteSize)) &&
                 !DrawAtlasSprite(animal.position, texture, facing, frame, animal.column == 0 ? 128.0f : 110.0f, AnimalPivotY))
                 DrawSprite(animal.position, animal.column, animal.row, 105, 82);
             break;
@@ -1041,7 +1043,7 @@ void WorldRenderer::RenderWorld(const GameState &state)
                                                   DrawSprite(p, c, r, w*(state.monster.definition.spriteHeight/125), h*(state.monster.definition.spriteHeight/125), s);
                                           },
                                           state.width, state.height, state.time, Pi};
-            m_Renderer.SetSpriteFlash(state.monster.health > 0 ? state.monster.hitFlash / .22f : 0);
+            m_Renderer.SetSpriteFlash(state.monster.health > 0 ? state.monster.hitFlash / GameConstants::Feedback::MonsterFlashDuration : 0);
             const bool hasLoot = state.quest == QuestStage::Trophy || StorySystem::HasDrop(state);
             MonsterSystem::Draw(state.monster, context, hasLoot && m_BoarLootTexture == 0);
             if (hasLoot && m_BoarLootTexture != 0)
@@ -1068,11 +1070,11 @@ void WorldRenderer::RenderWorld(const GameState &state)
             {
                 const float dx = state.facing.x - state.facing.z, dy = (state.facing.x + state.facing.z) * .5f;
                 const int row = std::abs(dx) > std::abs(dy) ? (dx < 0 ? 0 : 1) : (dy < 0 ? 2 : 3);
-                const int frame = std::min(3, static_cast<int>((1.5f - state.lootTime) / .5f));
+                const int frame = std::min(GameConstants::Loot::FrameCount - 1, static_cast<int>((GameConstants::Loot::Duration - state.lootTime) / GameConstants::Loot::FrameDuration));
                 const auto pivot = SearchSpriteFrames::Pivots[row][frame];
                 DrawShadow(state.player, 42, 9);
-                m_Renderer.DrawSprite(m_SearchTexture, foot.x + (.5f - pivot.x) * 102.6f,
-                    foot.z + (pivot.y - .5f) * 102.6f, 102.6f, 102.6f, frame, row, 4, 4,
+                m_Renderer.DrawSprite(m_SearchTexture, foot.x + (.5f - pivot.x) * GameConstants::Loot::SpriteSize,
+                    foot.z + (pivot.y - .5f) * GameConstants::Loot::SpriteSize, GameConstants::Loot::SpriteSize, GameConstants::Loot::SpriteSize, frame, row, 4, 4,
                     1, 1, 1, 1, 0, 0, 0, 1, 1, .5f);
                 break;
             }
@@ -1091,7 +1093,7 @@ void WorldRenderer::RenderWorld(const GameState &state)
                 if (state.attack <= 0.0f || m_SwordSlashTexture == 0)
                     return;
                 // pixelfx: 24 frames, 5 columns, 136x104 cells; origin is (44, 92) from top-left.
-                const int frame = std::max(0, std::min(23, static_cast<int>((1.0f - state.attack / .32f) * 24)));
+                const int frame = std::max(0, std::min(23, static_cast<int>((1.0f - state.attack / GameConstants::Player::AttackDuration) * 24)));
                 const float angle = std::atan2((state.facing.x + state.facing.z) * .5f,
                                                state.facing.x - state.facing.z);
                 constexpr float scale = .8f, offsetX = (68 - 44) * scale, offsetY = (92 - 52) * scale;
@@ -1103,7 +1105,7 @@ void WorldRenderer::RenderWorld(const GameState &state)
             };
             if (m_SwordSlashTexture == 0 && state.attack > .035f && state.attack < .25f)
             {
-                const float progress = 1.0f - state.attack / .32f;
+                const float progress = 1.0f - state.attack / GameConstants::Player::AttackDuration;
                 const float angle = std::atan2(state.facing.x + state.facing.z, state.facing.x - state.facing.z);
                 const float swing = angle - Pi * .5f + (progress - .5f) * 1.8f;
                 m_Renderer.DrawEffectRect(foot.x, foot.z + 28, 92, 55, swing,
@@ -1127,7 +1129,7 @@ void WorldRenderer::RenderWorld(const GameState &state)
             }
             if (state.attack > 0.0f && m_PlayerAttackTexture != 0)
             {
-                const int frame = std::max(0, std::min(7, static_cast<int>((1.0f-state.attack/.32f)*8)));
+                const int frame = std::max(0, std::min(7, static_cast<int>((1.0f-state.attack/GameConstants::Player::AttackDuration)*8)));
                 const int direction = (static_cast<int>(std::lround(std::atan2(-state.facing.z, -state.facing.x) / (Pi*.25f)))+8)%8;
                 const Vec2 screen = ToScreen(state.player);
                 // A wider attack canvas preserves the walking sprite's body scale and foot position.
@@ -1140,7 +1142,7 @@ void WorldRenderer::RenderWorld(const GameState &state)
                 drawSwordSlash();
                 break;
             }
-            const float fps = state.sprint ? 8.0f : 6.0f;
+            const float fps = state.sprint ? GameConstants::Player::SprintFps : GameConstants::Player::WalkFps;
             const int frame = state.moving ? static_cast<int>(state.time * fps) % 4 : 0;
             m_Renderer.SetSpriteFlash(DamageFeedback::Fade(state.playerHitTime, DamageFeedback::FlashDuration));
             if (!DrawAtlasSprite(state.player, m_PlayerTexture != 0 ? m_PlayerTexture : m_HumanTexture, state.facing, frame, 88, HumanPivotY))
@@ -1184,7 +1186,7 @@ void WorldRenderer::RenderWorld(const GameState &state)
     if (state.playerHitTime > 0 && m_PlayerHitTexture != 0)
     {
         const float age = std::max(0.0f, DamageFeedback::Elapsed(state.playerHitTime) - DamageFeedback::HitStop);
-        const int frame = std::min(27, static_cast<int>(age * 30));
+        const int frame = std::min(27, static_cast<int>(age * GameConstants::HitEffect::FramesPerSecond));
         const Vec2 screen = ToScreen(state.playerHitPosition);
         m_Renderer.SetLocalLight(0, 0, 0);
         m_Renderer.DrawSprite(m_PlayerHitTexture, screen.x, screen.z + 28,
@@ -1193,47 +1195,47 @@ void WorldRenderer::RenderWorld(const GameState &state)
     m_Renderer.SetLocalLight(0, 0, 0);
     for (const auto &number : state.damageNumbers)
     {
-        const float age = .9f - number.remaining;
-        const bool heavy = number.combo % 3 == 0;
+        const float age = GameConstants::HitEffect::NumberDuration - number.remaining;
+        const bool heavy = number.combo % GameConstants::Combo::HeavyInterval == 0;
         const int frames = heavy ? 28 : 16, columns = heavy ? 5 : 4, rows = heavy ? 6 : 4;
         const float width = heavy ? 216.0f : 136.0f, height = heavy ? 136.0f : 80.0f;
         const Vec2 screen = ToScreen(number.position);
-        const int frame = std::min(frames - 1, static_cast<int>(age * 30));
-        if (age <= (frames - 1) / 30.0f)
+        const int frame = std::min(frames - 1, static_cast<int>(age * GameConstants::HitEffect::FramesPerSecond));
+        if (age <= (frames - 1) / GameConstants::HitEffect::FramesPerSecond)
             m_Renderer.DrawSprite(m_AttackHitTextures[heavy ? 1 : 0],
-                screen.x + (width * .5f - (heavy ? 84 : 44)) * 2,
-                screen.z + 35 + ((heavy ? 106 : 64) - height * .5f) * 2,
-                width * 2, height * 2, frame % columns, frame / columns, columns, rows);
-        const int extraSparks = std::min(3, number.combo / 3);
+                screen.x + (width * .5f - (heavy ? 84 : 44)) * GameConstants::HitEffect::Scale,
+                screen.z + 35 + ((heavy ? 106 : 64) - height * .5f) * GameConstants::HitEffect::Scale,
+                width * GameConstants::HitEffect::Scale, height * GameConstants::HitEffect::Scale, frame % columns, frame / columns, columns, rows);
+        const int extraSparks = std::min(GameConstants::Combo::MaxExtraSparks, number.combo / GameConstants::Combo::HeavyInterval);
         for (int extra = 0; extra < extraSparks; ++extra)
         {
-            const float delayedAge = age - .035f * (extra + 1);
-            if (delayedAge < 0 || delayedAge >= .5f) continue;
-            const int sparkFrame = std::min(15, static_cast<int>(delayedAge * 30));
+            const float delayedAge = age - GameConstants::HitEffect::ExtraSparkDelay * (extra + 1);
+            if (delayedAge < 0 || delayedAge >= GameConstants::HitEffect::SparkDuration) continue;
+            const int sparkFrame = std::min(15, static_cast<int>(delayedAge * GameConstants::HitEffect::FramesPerSecond));
             const float angle = extra * 2.094f + number.combo * .65f;
             m_Renderer.DrawSprite(m_AttackHitTextures[0],
                 screen.x + std::cos(angle) * 35 + 24,
                 screen.z + 55 + std::sin(angle) * 20 + 24,
                 136, 80, sparkFrame % 4, sparkFrame / 4, 4, 4, .85f);
         }
-        if (number.combo >= 3)
+        if (number.combo >= GameConstants::Combo::HeavyInterval)
         {
-            const int goldFrame = std::min(30, static_cast<int>(age * 36));
+            const int goldFrame = std::min(30, static_cast<int>(age * GameConstants::HitEffect::GoldFramesPerSecond));
             m_Renderer.DrawSprite(m_AttackHitTextures[2], screen.x, screen.z + 35 + 40 * 1.6f,
                 320, 179.2f, goldFrame % 5, goldFrame / 5, 5, 7, .7f);
         }
         const std::wstring text = L"-" + std::to_wstring(number.damage);
-        const float spread = static_cast<float>(number.combo % 3 - 1) * 12;
+        const float spread = static_cast<float>(number.combo % 3 - 1) * GameConstants::HitEffect::NumberSpread;
         m_Renderer.DrawLabel(state.width * .5f + screen.x + spread,
-            state.height * .5f + screen.z + 80 + age * 35, text.c_str(),
-            1, heavy ? .72f : .96f, .35f, heavy ? 1.5f : 1.2f,
-            std::min(1.0f, number.remaining / .2f), true);
+            state.height * .5f + screen.z + GameConstants::HitEffect::NumberHeight + age * GameConstants::HitEffect::NumberRiseSpeed, text.c_str(),
+            1, heavy ? .72f : .96f, .35f, heavy ? GameConstants::HitEffect::HeavyNumberScale : GameConstants::HitEffect::NumberScale,
+            std::min(1.0f, number.remaining / GameConstants::HitEffect::NumberFadeDuration), true);
     }
     if (state.lootTime > 0 || state.lootPickupTime > 0)
     {
         const Vec2 screen = ToScreen(state.player);
         const std::wstring text = state.lootTime > 0
-            ? L"수집 중 " + std::to_wstring(static_cast<int>((1 - state.lootTime / 1.5f) * 100)) + L"%"
+            ? L"수집 중 " + std::to_wstring(static_cast<int>((1 - state.lootTime / GameConstants::Loot::Duration) * 100)) + L"%"
             : L"이빨 · 가죽 획득!";
         m_Renderer.DrawLabel(state.width * .5f + screen.x, state.height * .5f + screen.z + 110,
             text.c_str(), 1, .87f, .4f, .65f, 1, true);

@@ -1,14 +1,10 @@
 #pragma once
 #include <algorithm>
+#include "GameConstants.h"
 
 namespace DamageFeedback
 {
-constexpr float HitStop = .06f;
-constexpr float EffectDuration = .9f;
-constexpr float Duration = HitStop + EffectDuration;
-constexpr float FlashDuration = .16f;
-constexpr float ShakeDuration = .25f;
-constexpr float BorderDuration = .45f;
+using namespace GameConstants::Feedback;
 inline float Elapsed(float remaining) { return Duration - remaining; }
 inline float Fade(float remaining, float duration)
 {

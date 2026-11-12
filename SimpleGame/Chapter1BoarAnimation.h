@@ -1,14 +1,11 @@
 #pragma once
 #include <array>
+#include "GameConstants.h"
 
 namespace Chapter1BoarAnimation
 {
 enum Action { Attack, Hit, Death };
-constexpr std::array<std::array<int, 6>, 3> FrameMilliseconds = {{
-    {{120, 160, 100, 120, 120, 160}},
-    {{40, 60, 100, 60, 60, 80}},
-    {{120, 140, 160, 160, 180, 240}}
-}};
+using GameConstants::Chapter1Boar::FrameMilliseconds;
 constexpr float Duration(Action action)
 {
     int total = 0;

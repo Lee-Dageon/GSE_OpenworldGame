@@ -1,4 +1,5 @@
 #include "stdafx.h"
+#include "GameConstants.h"
 #include "Renderer.h"
 #include "DamageFeedback.h"
 
@@ -127,12 +128,12 @@ void Renderer::EndFrame(float time)
     glUniform1i(glGetUniformLocation(m_PostProcessShader, "u_Source"), 0);
     glUniform1f(glGetUniformLocation(m_PostProcessShader, "u_Time"), time);
     const float playerShake = DamageFeedback::Fade(m_DamageFeedback, DamageFeedback::ShakeDuration);
-    const float attackShake = DamageFeedback::Fade(m_AttackFeedback, .16f) * .65f;
+    const float attackShake = DamageFeedback::Fade(m_AttackFeedback, GameConstants::Feedback::AttackShakeDuration) * GameConstants::Feedback::AttackShakeStrength;
     const float hitAge = DamageFeedback::Elapsed(playerShake >= attackShake ? m_DamageFeedback : m_AttackFeedback);
     const float shake = std::max(playerShake, attackShake);
     glUniform2f(glGetUniformLocation(m_PostProcessShader, "u_CameraShake"),
-                std::sin(hitAge * 131.0f + 1.2f) * 6.0f * shake,
-                std::cos(hitAge * 173.0f) * 4.0f * shake);
+                std::sin(hitAge * 131.0f + 1.2f) * GameConstants::Feedback::ShakeX * shake,
+                std::cos(hitAge * 173.0f) * GameConstants::Feedback::ShakeY * shake);
     glUniform1f(glGetUniformLocation(m_PostProcessShader, "u_DamageFlash"),
                 DamageFeedback::Fade(m_DamageFeedback, DamageFeedback::BorderDuration));
     glUniform2f(glGetUniformLocation(m_PostProcessShader, "u_Resolution"), static_cast<float>(m_WindowSizeX),

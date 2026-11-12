@@ -1,4 +1,5 @@
 #pragma once
+#include "GameConstants.h"
 
 #include <string>
 #include <algorithm>
@@ -43,7 +44,7 @@ struct GameUiControl
 
 inline float GameUiScale(int width, int height)
 {
-    return std::max(.5f, std::min(1.4f, std::min(width / 1280.0f, height / 720.0f)));
+    return std::max(GameConstants::Ui::MinimumScale, std::min(GameConstants::Ui::MaximumScale, std::min(width / GameConstants::Ui::ReferenceWidth, height / GameConstants::Ui::ReferenceHeight)));
 }
 
 inline std::array<GameUiControl, 4> GameUiControls(int width, int height)
@@ -68,7 +69,7 @@ struct GameUiButton
 inline GameUiButton InventoryPanel(int width, int height)
 {
     const float s = GameUiScale(width, height);
-    return {(width-760*s)*.5f, (height-540*s)*.5f, 760*s, 540*s, GameCommand::None};
+    return {(width-GameConstants::Ui::InventoryWidth*s)*.5f, (height-GameConstants::Ui::InventoryHeight*s)*.5f, GameConstants::Ui::InventoryWidth*s, GameConstants::Ui::InventoryHeight*s, GameCommand::None};
 }
 
 inline std::array<GameUiButton, 4> InventoryButtons(int width, int height)

@@ -1,4 +1,5 @@
 #include "stdafx.h"
+#include "GameConstants.h"
 #include "PlayerController.h"
 #include "WorldLayout.h"
 
@@ -42,7 +43,7 @@ void UpdateMovement(GameState &state, float deltaTime)
     move.x /= length;
     move.z /= length;
     state.facing = move;
-    const float speed = state.dodge > 0.0f ? 9.0f : (state.sprint ? 4.0f : 2.4f);
+    const float speed = state.dodge > 0.0f ? GameConstants::Player::DodgeSpeed : (state.sprint ? GameConstants::Player::SprintSpeed : GameConstants::Player::WalkSpeed);
     Vec2 next = {state.player.x + move.x * speed * deltaTime, state.player.z + move.z * speed * deltaTime};
     next.x = std::max(state.world.minimumCoordinate, std::min(state.world.maximumCoordinate, next.x));
     next.z = std::max(state.world.minimumCoordinate, std::min(state.world.maximumCoordinate, next.z));
@@ -57,12 +58,12 @@ bool TryUsePotion(GameState &state)
     if (state.inventory.Count(ItemId::Potion) <= 0 || state.health >= state.maxHealth)
         return false;
     state.inventory.Remove(ItemId::Potion);
-    state.health = std::min(state.maxHealth, state.health + 45.0f);
+    state.health = std::min(state.maxHealth, state.health + GameConstants::Player::PotionHealing);
     return true;
 }
 
 void StartDodge(GameState &state)
 {
-    state.dodge = .24f;
+    state.dodge = GameConstants::Player::DodgeDuration;
 }
 } // namespace PlayerController

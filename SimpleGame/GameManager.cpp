@@ -1,4 +1,5 @@
 #include "stdafx.h"
+#include "GameConstants.h"
 #include "GameManager.h"
 
 #include "Monster.h"
@@ -28,7 +29,7 @@ void GameManager::UpdateNpcs(float deltaTime)
 {
     if (deltaTime <= 0.0f)
         return;
-    const float dt = std::min(deltaTime, .05f);
+    const float dt = std::min(deltaTime, GameConstants::Timing::MaxDeltaTime);
     const auto distance = [](Vec2 a, Vec2 b) {
         return std::sqrt((a.x-b.x)*(a.x-b.x) + (a.z-b.z)*(a.z-b.z));
     };
@@ -136,7 +137,7 @@ void GameManager::UpdateGame(float deltaTime)
                 const auto result = QuestSystem::TryInteract(m_State, m_State.world.elder, m_State.world.tracks, m_State.world.herb);
                 if (const wchar_t *message = QuestSystem::GetInteractionMessage(result)) ShowMessage(message);
             }
-            if (m_State.completedHunts > hunts) m_State.lootPickupTime = .6f;
+            if (m_State.completedHunts > hunts) m_State.lootPickupTime = GameConstants::Loot::PickupDuration;
         }
         return;
     }
@@ -201,7 +202,7 @@ void GameManager::HandleCommand(GameCommand command)
         if ((m_State.quest == QuestStage::Trophy || StorySystem::HasDrop(m_State)) &&
             MonsterSystem::IsInteractableDrop(m_State.monster, m_State.player))
         {
-            m_State.lootTime = 1.5f;
+            m_State.lootTime = GameConstants::Loot::Duration;
             m_State.moving = false;
             const Vec2 direction = {m_State.monster.position.x - m_State.player.x, m_State.monster.position.z - m_State.player.z};
             if (std::abs(direction.x) + std::abs(direction.z) > .001f) m_State.facing = direction;
@@ -231,20 +232,20 @@ void GameManager::HandleCommand(GameCommand command)
     }
     if (command == GameCommand::Attack && m_State.attack <= 0.0f)
     {
-        m_State.attack = .32f;
+        m_State.attack = GameConstants::Player::AttackDuration;
         if (m_State.quest != QuestStage::Hunt && !StorySystem::IsHunting(m_State))
             return;
         const int healthBefore = m_State.monster.health;
-        const MonsterHitResult result = MonsterSystem::Hit(m_State.monster, m_State.player, std::max(1, m_State.attackPower / 2));
+        const MonsterHitResult result = MonsterSystem::Hit(m_State.monster, m_State.player, std::max(GameConstants::Player::MinimumDamage, m_State.attackPower / GameConstants::Player::DamageDivisor));
         const int damage = healthBefore - m_State.monster.health;
         if (result.hit && damage > 0)
         {
             m_State.combo = m_State.comboTime > 0 ? m_State.combo + 1 : 1;
-            m_State.comboTime = 2.0f;
+            m_State.comboTime = GameConstants::Combo::Window;
             m_State.attackHitTime = DamageFeedback::Duration;
-            m_State.hitStop = std::max(m_State.hitStop, m_State.combo % 3 == 0 ? .08f : .05f);
-            if (m_State.damageNumbers.size() >= 16) m_State.damageNumbers.erase(m_State.damageNumbers.begin());
-            m_State.damageNumbers.push_back({m_State.monster.position, damage, m_State.combo, .9f});
+            m_State.hitStop = std::max(m_State.hitStop, m_State.combo % GameConstants::Combo::HeavyInterval == 0 ? GameConstants::Feedback::HeavyHitStop : GameConstants::Feedback::AttackHitStop);
+            if (m_State.damageNumbers.size() >= GameConstants::HitEffect::MaxNumbers) m_State.damageNumbers.erase(m_State.damageNumbers.begin());
+            m_State.damageNumbers.push_back({m_State.monster.position, damage, m_State.combo, GameConstants::HitEffect::NumberDuration});
         }
         if (!result.defeated)
             return;

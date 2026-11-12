@@ -6,6 +6,7 @@
 #include "../SimpleGame/GameUI.h"
 #include "../SimpleGame/Chapter1BoarAnimation.h"
 #include "../SimpleGame/DamageFeedback.h"
+#include "../SimpleGame/GameConstants.h"
 #include <cassert>
 #include <iostream>
 
@@ -20,14 +21,14 @@ int main()
     lootGame.HandleCommand(GameCommand::Interact);
     assert(looter.lootTime > 0 && looter.inventory.Count(ItemId::BoarHide) == initialHide);
     lootGame.HandleCommand(GameCommand::Interact);
-    lootGame.UpdateGame(.5f);
+    lootGame.UpdateGame(GameConstants::Loot::Duration * .4f);
     assert(looter.inventory.Count(ItemId::BoarHide) == initialHide);
     looter.inventoryOpen = true;
     const float pausedLoot = looter.lootTime;
     lootGame.UpdateGame(1);
     assert(looter.lootTime == pausedLoot);
     looter.inventoryOpen = false;
-    lootGame.UpdateGame(1);
+    lootGame.UpdateGame(GameConstants::Loot::Duration);
     assert(looter.lootTime == 0 && looter.quest == QuestStage::Return);
     assert(looter.inventory.Count(ItemId::BoarHide) == initialHide + looter.monster.definition.hideDrop);
     GameState attacker = CreateInitialGameState();
@@ -144,7 +145,7 @@ int main()
         case GameContent::StoryAction::Report:
         case GameContent::StoryAction::Collect:
             debugGame.HandleCommand(GameCommand::Interact);
-    if (debug.lootTime > 0) debugGame.UpdateGame(1.51f);
+    if (debug.lootTime > 0) debugGame.UpdateGame(GameConstants::Loot::Duration + .01f);
             break;
         case GameContent::StoryAction::CraftArmor:
             assert(!debug.hunterArmorCrafted && debug.armorRecipeUnlocked);
@@ -193,13 +194,13 @@ int main()
     assert(StorySystem::CanStart(state));
     state.player = state.world.spawn;
     game.HandleCommand(GameCommand::Interact);
-    if (state.lootTime > 0) game.UpdateGame(1.51f);
+    if (state.lootTime > 0) game.UpdateGame(GameConstants::Loot::Duration + .01f);
     assert(state.storyStep == -1);
     state.player = state.world.elder;
     CraftingSystem::TryCraft(state,CraftingSystem::Recipe::HunterArmor);
     assert(!state.hunterArmorCrafted && state.defense == 0);
     game.HandleCommand(GameCommand::Interact);
-    if (state.lootTime > 0) game.UpdateGame(1.51f);
+    if (state.lootTime > 0) game.UpdateGame(GameConstants::Loot::Duration + .01f);
     assert(state.storyStep == 0);
     int steps = 0, hunts = 0;
     while (const auto *step = StorySystem::Current(state))
@@ -216,7 +217,7 @@ int main()
         case GameContent::StoryAction::Investigate:
         case GameContent::StoryAction::Report:
             game.HandleCommand(GameCommand::Interact);
-    if (state.lootTime > 0) game.UpdateGame(1.51f);
+    if (state.lootTime > 0) game.UpdateGame(GameConstants::Loot::Duration + .01f);
             break;
         case GameContent::StoryAction::Hunt:
         {
@@ -244,16 +245,16 @@ int main()
             {
                 state.inventory.Add(ItemId::BoarHide,Inventory::MaxStack-hide);
                 game.HandleCommand(GameCommand::Interact);
-    if (state.lootTime > 0) game.UpdateGame(1.51f);
+    if (state.lootTime > 0) game.UpdateGame(GameConstants::Loot::Duration + .01f);
                 assert(state.storyStep == before && state.inventory.Count(ItemId::BoarTusk) == tusk);
                 state.inventory.Remove(ItemId::BoarHide,Inventory::MaxStack-hide);
             }
             const int hideReward = state.monster.definition.hideDrop, tuskReward = state.monster.definition.tuskDrop;
             game.HandleCommand(GameCommand::Interact);
-    if (state.lootTime > 0) game.UpdateGame(1.51f);
+    if (state.lootTime > 0) game.UpdateGame(GameConstants::Loot::Duration + .01f);
             assert(state.inventory.Count(ItemId::BoarHide) == hide+hideReward && state.inventory.Count(ItemId::BoarTusk) == tusk+tuskReward);
             game.HandleCommand(GameCommand::Interact);
-    if (state.lootTime > 0) game.UpdateGame(1.51f);
+    if (state.lootTime > 0) game.UpdateGame(GameConstants::Loot::Duration + .01f);
             assert(state.inventory.Count(ItemId::BoarHide) == hide+hideReward);
             break;
         }
@@ -296,7 +297,7 @@ int main()
     }
     state.player = state.world.elder;
     game.HandleCommand(GameCommand::Interact);
-    if (state.lootTime > 0) game.UpdateGame(1.51f);
+    if (state.lootTime > 0) game.UpdateGame(GameConstants::Loot::Duration + .01f);
     assert(state.quest == QuestStage::Hunt && !StorySystem::IsHunting(state));
     assert(state.monster.definition.id == GameContent::Get().map.monsterId);
     std::cout << "PASS: two chapters/14 objectives, prerequisites, clues, loot once/capacity, armor/pause, defense, button mapping and post-story repeat hunt\n";

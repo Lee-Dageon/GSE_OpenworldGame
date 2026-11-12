@@ -1,4 +1,5 @@
 #pragma once
+#include "GameConstants.h"
 
 #include "Monster.h"
 #include "Inventory.h"
@@ -56,7 +57,7 @@ struct DamageNumber
 {
     Vec2 position = {};
     int damage = 0, combo = 0;
-    float remaining = .9f;
+    float remaining = GameConstants::HitEffect::NumberDuration;
 };
 
 struct GameState

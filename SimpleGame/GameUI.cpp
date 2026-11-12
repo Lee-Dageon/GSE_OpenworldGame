@@ -1,4 +1,5 @@
 #include "stdafx.h"
+#include "GameConstants.h"
 #include "GameUI.h"
 #include "Renderer.h"
 
@@ -180,7 +181,7 @@ static void DrawInventoryPanel(Renderer &renderer, const GameUiState &state)
     };
     const auto text = [&](float x, float y, const wchar_t *value, float size = .85f,
                           float r = .88f, float g = .90f, float b = .86f) {
-        const float textScale = std::max(.55f, size*s);
+        const float textScale = std::max(GameConstants::Ui::MinimumFontScale, size*s);
         renderer.DrawLabel(panel.x+x*s, state.windowHeight-panel.y-y*s-28*textScale,
             value, r,g,b, textScale);
     };
@@ -197,9 +198,9 @@ static void DrawInventoryPanel(Renderer &renderer, const GameUiState &state)
     };
     renderer.DrawSolidRect(0,0,static_cast<float>(state.windowWidth),static_cast<float>(state.windowHeight),
         0, .005f,.008f,.012f,.78f);
-    rect(0,0,760,540,.42f,.34f,.20f);
-    rect(2,2,756,536,.035f,.05f,.065f);
-    rect(2,2,756,54,.065f,.085f,.10f);
+    rect(0,0,GameConstants::Ui::InventoryWidth,GameConstants::Ui::InventoryHeight,.42f,.34f,.20f);
+    rect(2,2,GameConstants::Ui::InventoryWidth-4,GameConstants::Ui::InventoryHeight-4,.035f,.05f,.065f);
+    rect(2,2,GameConstants::Ui::InventoryWidth-4,54,.065f,.085f,.10f);
     text(24,12,L"가방",1.2f,1,.88f,.59f);
     text(110,20,L"재료 · 장비 · 제작",.7f,.57f,.65f,.67f);
     rect(24,70,712,66,.065f,.09f,.105f);
@@ -207,7 +208,7 @@ static void DrawInventoryPanel(Renderer &renderer, const GameUiState &state)
     text(190,78,state.hunterArmorCrafted ? L"가죽 방어구" : L"기본 의상",.9f);
     text(38,109,L"장착 장비",.55f,.52f,.63f,.63f);
     wchar_t line[120];
-    std::swprintf(line,120,L"피해 %d   방어 %d",std::max(1,state.attackPower/2),state.defense);
+    std::swprintf(line,120,L"피해 %d   방어 %d",std::max(GameConstants::Player::MinimumDamage,state.attackPower/GameConstants::Player::DamageDivisor),state.defense);
     text(490,88,line,.95f,1,.84f,.48f);
     text(24,148,L"보유 재료",.8f,1,.87f,.58f);
     text(318,148,L"야영지 제작",.8f,1,.87f,.58f);
@@ -224,9 +225,10 @@ static void DrawInventoryPanel(Renderer &renderer, const GameUiState &state)
         std::swprintf(line,120,L"%d",counts[item]);
         text(x+86,y+9,line,.95f,1,.87f,.5f);
         rect(x+10,y+110,104,3,.025f,.04f,.05f);
-        rect(x+10,y+110,104*std::min(1.0f,counts[item]/99.0f),3,.48f,.65f,.38f);
+        rect(x+10,y+110,104*std::min(1.0f,counts[item]/static_cast<float>(GameConstants::Inventory::MaxStack)),3,.48f,.65f,.38f);
     }
-    text(24,449,L"아이템별 최대 99개",.6f,.52f,.63f,.65f);
+    const std::wstring stackLimit = L"아이템별 최대 " + std::to_wstring(GameConstants::Inventory::MaxStack) + L"개";
+    text(24,449,stackLimit.c_str(),.6f,.52f,.63f,.65f);
     const auto buttons=InventoryButtons(state.windowWidth,state.windowHeight);
     const wchar_t *titles[]={L"이빨 검",L"회복 물약",L"가죽 방어구"};
     const wchar_t *costs[]={L"가죽 1 + 이빨 1",L"약초 1",L"가죽 2 + 이빨 1"};
@@ -240,7 +242,7 @@ static void DrawInventoryPanel(Renderer &renderer, const GameUiState &state)
         const bool unlocked=recipe==0 ? state.huntReported : (recipe==1 || state.armorRecipeUnlocked);
         const bool enough=recipe==0 ? state.hides>=1 && state.trophies>=1 :
             (recipe==1 ? state.herbs>=1 : state.hides>=2 && state.trophies>=1);
-        const bool full=recipe==1 && state.potions>=99;
+        const bool full=recipe==1 && state.potions>=GameConstants::Inventory::MaxStack;
         const bool enabled=state.nearWorkbench && !equipped && unlocked && enough && !full;
         rect(x,y,418,78,enabled ? .46f : .16f,enabled ? .48f : .22f,enabled ? .27f : .25f);
         rect(x+1,y+1,416,76,enabled ? .10f : .05f,enabled ? .17f : .075f,.09f);
@@ -255,7 +257,7 @@ static void DrawInventoryPanel(Renderer &renderer, const GameUiState &state)
     rect(24,475,712,1,.18f,.24f,.25f);
     std::wstring status=state.messageTime>0 ? state.message :
         (state.nearWorkbench ? L"제작하면 자동 장착됩니다." : L"장로 근처에서 제작할 수 있습니다.");
-    const size_t statusLimit = static_cast<size_t>(712*s/(18*std::max(.55f,.65f*s)));
+    const size_t statusLimit = static_cast<size_t>(712*s/(18*std::max(GameConstants::Ui::MinimumFontScale,.65f*s)));
     if (status.size()>statusLimit) status=status.substr(0,statusLimit-1)+L"…";
     text(24,486,status.c_str(),.65f,.74f,.79f,.72f);
     text(24,516,L"I / ESC  닫기",.55f,.48f,.58f,.60f);

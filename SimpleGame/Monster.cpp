@@ -1,4 +1,5 @@
 #include "stdafx.h"
+#include "GameConstants.h"
 #include "Monster.h"
 #include "Renderer.h"
 #include "GameContent.h"
@@ -9,7 +10,7 @@
 
 namespace
 {
-constexpr float HitFlashTime = .22f;
+constexpr float HitFlashTime = GameConstants::Feedback::MonsterFlashDuration;
 
 float Distance(Vec2 a, Vec2 b)
 {
