@@ -386,7 +386,7 @@ void Renderer::DrawSolidRect(float x, float y, float sizeX, float sizeY, float r
 }
 
 void Renderer::DrawEffectRect(float x, float y, float sizeX, float sizeY, float rotation, float r, float g, float b,
-                              float a, int effectType)
+                              float a, int effectType, const float *basis)
 {
     const float normalizedX = x * 2.0f * m_DrawScale / static_cast<float>(m_WindowSizeX);
     const float normalizedY = y * 2.0f * m_DrawScale / static_cast<float>(m_WindowSizeY);
@@ -399,6 +399,11 @@ void Renderer::DrawEffectRect(float x, float y, float sizeX, float sizeY, float 
     glUniform4f(glGetUniformLocation(m_SolidRectShader, "u_Color"), r, g, b, a);
     glUniform1f(glGetUniformLocation(m_SolidRectShader, "u_Time"), m_Time);
     glUniform1i(glGetUniformLocation(m_SolidRectShader, "u_EffectType"), effectType);
+    glUniform1i(glGetUniformLocation(m_SolidRectShader, "u_UseBasis"), basis != nullptr);
+    if (basis)
+        glUniform4f(glGetUniformLocation(m_SolidRectShader, "u_Basis"),
+            basis[0] * 2 * m_DrawScale / m_WindowSizeX, basis[1] * 2 * m_DrawScale / m_WindowSizeY,
+            basis[2] * 2 * m_DrawScale / m_WindowSizeX, basis[3] * 2 * m_DrawScale / m_WindowSizeY);
     const GLint positionAttribute = glGetAttribLocation(m_SolidRectShader, "a_Position");
     glEnableVertexAttribArray(positionAttribute);
     glBindBuffer(GL_ARRAY_BUFFER, m_VBORect);
@@ -406,6 +411,7 @@ void Renderer::DrawEffectRect(float x, float y, float sizeX, float sizeY, float 
     glDrawArrays(GL_TRIANGLES, 0, 6);
     glDisableVertexAttribArray(positionAttribute);
     glUniform1i(glGetUniformLocation(m_SolidRectShader, "u_EffectType"), 0);
+    glUniform1i(glGetUniformLocation(m_SolidRectShader, "u_UseBasis"), 0);
 }
 
 void Renderer::DrawSprite(GLuint texture, float x, float y, float sizeX, float sizeY, int column, int row, int columns,

@@ -131,8 +131,7 @@ void GameManager::UpdateGame(float deltaTime)
     if (BossIntro::Active(m_State))
     {
         m_State.moving = false;
-        m_State.bossIntroTime += deltaTime;
-        if (m_State.bossIntroTime >= GameConstants::Chatacabra::IntroDuration) BossIntro::Skip(m_State);
+        BossIntro::Update(m_State, deltaTime);
         return;
     }
     m_State.playerHitTime = std::max(0.0f, m_State.playerHitTime - deltaTime);
@@ -358,6 +357,7 @@ void GameManager::HandleCommand(GameCommand command)
         }
         if (!result.defeated)
             return;
+        if (m_State.monster.definition.id == "ancient_guardian") BossIntro::StartDefeat(m_State);
         if (StorySystem::IsHunting(m_State))
         {
             QuestSystem::AddExperience(m_State,m_State.monster.definition.experience);

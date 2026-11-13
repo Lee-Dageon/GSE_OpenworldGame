@@ -8,6 +8,7 @@
 #include "../SimpleGame/DamageFeedback.h"
 #include "../SimpleGame/GameConstants.h"
 #include "../SimpleGame/BossIntro.h"
+#include "../SimpleGame/ChatacabraFrames.h"
 #include <cmath>
 #include <cassert>
 #include <iostream>
@@ -30,7 +31,12 @@ int main()
     assert(cinematic.time == timeBefore && cinematic.health == healthBefore);
     assert(cinematic.player.x == playerBefore.x && cinematic.player.z == playerBefore.z);
     assert(cinematic.monster.chatPattern == -1 && BossIntro::Weight(cinematic) == 1);
-    assert(std::abs(BossIntro::Zoom(cinematic) - GameConstants::Chatacabra::IntroZoom) < .00001f);
+    assert(BossIntro::Zoom(cinematic) >= GameConstants::Chatacabra::IntroZoom &&
+        BossIntro::Zoom(cinematic) <= GameConstants::Chatacabra::IntroZoomClose);
+    const float wideZoom = BossIntro::Zoom(cinematic);
+    cinematicGame.UpdateGame(4);
+    assert(BossIntro::Active(cinematic) && BossIntro::Zoom(cinematic) > wideZoom);
+    assert(BossIntro::FootOffset(cinematic) > 86);
     cinematicGame.UpdateGame(GameConstants::Chatacabra::IntroDuration);
     assert(!BossIntro::Active(cinematic) && BossIntro::Zoom(cinematic) == 1.3f);
     assert(BossIntro::Focus(cinematic).x == cinematic.player.x && BossIntro::Focus(cinematic).z == cinematic.player.z);
@@ -42,8 +48,58 @@ int main()
         assert(GameInput::OnKeyDown(skipped, key, false) == GameCommand::None);
         assert(!BossIntro::Active(skipped) && skipped.dodge == 0 && skipped.cameraZoom == 1);
     }
-    assert(BossIntro::SlamPose(.5f) == -1 && BossIntro::SlamPose(1) == 0);
-    assert(BossIntro::SlamPose(1.6f) == 2 && BossIntro::SlamPose(2) == 3 && BossIntro::SlamPose(3) == -1);
+    assert(BossIntro::SlamPose(0) == -1);
+    assert(BossIntro::SlamPose(GameConstants::Chatacabra::IntroPrepareTime) == 0);
+    assert(BossIntro::SlamPose(GameConstants::Chatacabra::IntroRaiseTime) == 2);
+    assert(BossIntro::SlamPose(GameConstants::Chatacabra::IntroImpactTime) == 3);
+    assert(BossIntro::SlamPose(GameConstants::Chatacabra::IntroRecoverTime) == -1);
+    GameState victory = CreateInitialGameState();
+    assert(StorySystem::DebugEnterStep(victory, "ancient_hunt"));
+    BossIntro::Skip(victory);
+    victory.cameraZoom = 1.3f;
+    victory.monster.health = 1;
+    victory.player = victory.monster.position;
+    GameManager victoryGame(victory);
+    victoryGame.HandleCommand(GameCommand::Attack);
+    assert(victory.monster.health == 0 && victory.bossDefeatIntro && BossIntro::Active(victory));
+    assert(StorySystem::HasDrop(victory));
+    const int victoryStep = victory.storyStep, victoryExperience = victory.experience;
+    const int scalesBefore = victory.inventory.Count(ItemId::GuardianScale);
+    const float victoryTime = victory.time, victoryHealth = victory.health;
+    for (GameCommand command : {GameCommand::Attack, GameCommand::Interact, GameCommand::ToggleInventory})
+        victoryGame.HandleCommand(command);
+    GameInput::OnScroll(victory, 1);
+    assert(!victory.inventoryOpen && victory.cameraZoom == 1.3f && victory.lootTime == 0);
+    victoryGame.UpdateGame(1);
+    assert(ChatacabraFrames::DeathPose(victory.monster.deathTime) == 0);
+    victoryGame.UpdateGame(1);
+    assert(ChatacabraFrames::DeathPose(victory.monster.deathTime) == 1);
+    victoryGame.UpdateGame(1);
+    assert(ChatacabraFrames::DeathPose(victory.monster.deathTime) == 2);
+    victoryGame.UpdateGame(1);
+    assert(ChatacabraFrames::DeathPose(victory.monster.deathTime) == 3 && BossIntro::Active(victory));
+    assert(victory.time == victoryTime && victory.health == victoryHealth && victory.storyStep == victoryStep);
+    assert(victory.experience == victoryExperience && victory.inventory.Count(ItemId::GuardianScale) == scalesBefore);
+    victoryGame.UpdateGame(GameConstants::Chatacabra::DefeatDuration);
+    assert(!BossIntro::Active(victory) && BossIntro::Zoom(victory) == 1.3f);
+    victoryGame.HandleCommand(GameCommand::Interact);
+    victoryGame.UpdateGame(GameConstants::Loot::Duration + .01f);
+    assert(victory.inventory.Count(ItemId::GuardianScale) == scalesBefore + 2);
+    victoryGame.HandleCommand(GameCommand::Interact);
+    assert(victory.inventory.Count(ItemId::GuardianScale) == scalesBefore + 2);
+    for (unsigned char key : {static_cast<unsigned char>(27), static_cast<unsigned char>(' ')})
+    {
+        GameState skipped = CreateInitialGameState();
+        assert(StorySystem::DebugEnterStep(skipped, "ancient_hunt"));
+        BossIntro::Skip(skipped);
+        skipped.monster.health = 1;
+        GameManager skippedGame(skipped);
+        skippedGame.HandleCommand(GameCommand::Attack);
+        assert(BossIntro::Active(skipped) && skipped.bossDefeatIntro);
+        GameInput::OnKeyDown(skipped, key, false);
+        assert(!BossIntro::Active(skipped) && skipped.dodge == 0);
+        assert(ChatacabraFrames::DeathPose(skipped.monster.deathTime) == 3 && StorySystem::HasDrop(skipped));
+    }
     auto gatherer=CreateInitialGameState();
     gatherer.quest=QuestStage::Complete;
     gatherer.player=gatherer.world.herb;

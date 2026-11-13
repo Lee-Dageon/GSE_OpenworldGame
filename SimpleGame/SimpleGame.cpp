@@ -18,6 +18,7 @@
 
 #include <Windows.h>
 #include <algorithm>
+#include <cmath>
 #include <cstdio>
 #include <cwchar>
 #include <exception>
@@ -90,15 +91,37 @@ void DrawBossIntro()
     const float bar = height * .11f * fade;
     g_Renderer->DrawSolidRect(0, height * .5f - bar * .5f, width, bar, 0, .006f, .008f, .012f, .98f);
     g_Renderer->DrawSolidRect(0, -height * .5f + bar * .5f, width, bar, 0, .006f, .008f, .012f, .98f);
-    const float title = BossIntro::Smooth((time - 1.55f) / .4f) * BossIntro::Smooth((4.2f - time) / .5f);
+    const bool defeated = g_GameState.bossDefeatIntro;
+    const float titleStart = defeated ? GameConstants::Chatacabra::DefeatTitleStart : GameConstants::Chatacabra::IntroTitleStart;
+    const float titleEnd = defeated ? GameConstants::Chatacabra::DefeatTitleEnd : GameConstants::Chatacabra::IntroTitleEnd;
+    const float title = BossIntro::Smooth((time - titleStart) / .7f) * BossIntro::Smooth((titleEnd - time) / .8f);
     if (title > 0)
     {
         const float y = height * .23f;
         g_Renderer->DrawSolidRect(0, y - height * .5f + 35 * scale, width, 140 * scale, 0, .02f, .025f, .03f, .55f * title);
-        g_Renderer->DrawLabel(width * .5f, y + 76 * scale, L"깨어난 유적의 수호자", .84f, .76f, .55f, .75f * scale, title, true);
+        if (defeated)
+        {
+            const float burst = BossIntro::Smooth((time - titleStart) / 1.2f);
+            // UI-space rays and orbiting glints remain sharp at every window size.
+            for (int index = 0; index < 16; ++index)
+            {
+                const float angle = index * 6.2831853f / 16 + .12f * burst;
+                const float distance = (85 + 95 * burst) * scale;
+                const float x = std::cos(angle) * distance;
+                const float z = y - height * .5f + std::sin(angle) * distance * .38f;
+                g_Renderer->DrawSolidRect(x, z, (26 + 70 * burst) * scale, 2 * scale, angle,
+                    1, .77f, .3f, .35f * title * (1 - .5f * burst));
+                const float glint = (.5f + .5f * std::sin(time * 5 + index * 2.4f)) * title;
+                g_Renderer->DrawSolidRect(x * 1.6f, z, (3 + 3 * glint) * scale,
+                    (3 + 3 * glint) * scale, .785398f, 1, .9f, .55f, glint);
+            }
+            g_Renderer->DrawSolidRect(0, y - height * .5f, width, 3 * scale, 0,
+                1, .86f, .46f, .3f * title * (1 - burst));
+        }
+        g_Renderer->DrawLabel(width * .5f, y + 76 * scale, defeated ? L"차타카브라 토벌 성공" : L"깨어난 유적의 수호자", .84f, .76f, .55f, .75f * scale, title, true);
         const float size = (2.05f + .2f * title) * scale;
-        g_Renderer->DrawLabel(width * .5f + 2 * scale, y - 2 * scale, L"차타카브라", .03f, .02f, .01f, size, title, true);
-        g_Renderer->DrawLabel(width * .5f, y, L"차타카브라", 1, .84f, .48f, size, title, true);
+        g_Renderer->DrawLabel(width * .5f + 2 * scale, y - 2 * scale, defeated ? L"퀘스트 완료" : L"차타카브라", .03f, .02f, .01f, size, title, true);
+        g_Renderer->DrawLabel(width * .5f, y, defeated ? L"퀘스트 완료" : L"차타카브라", 1, .84f, .48f, size, title, true);
         g_Renderer->DrawSolidRect(0, y - height * .5f - 12 * scale, 360 * scale * title, 2 * scale, 0, .95f, .72f, .3f, title);
     }
     g_Renderer->DrawLabel(width - 210 * scale, 24 * scale, L"공백 / ESC  건너뛰기", .8f, .82f, .78f, .6f * scale, fade);

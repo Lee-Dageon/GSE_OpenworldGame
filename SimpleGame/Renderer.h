@@ -32,7 +32,7 @@ class Renderer
     GLuint UiTexture(const wchar_t *filename);
     void DrawSolidRect(float x, float y, float sizeX, float sizeY, float rotation, float r, float g, float b, float a);
     void DrawEffectRect(float x, float y, float sizeX, float sizeY, float rotation, float r, float g, float b, float a,
-                        int effectType);
+                        int effectType, const float *basis = nullptr);
     void DrawSprite(GLuint texture, float x, float y, float sizeX, float sizeY, int column, int row, int columns,
                     int rows, float alpha = 1.0f, float r = 1.0f, float g = 1.0f, float b = 1.0f,
                     float sway = 0.0f, float swayPivot = 0.0f, float rotation = 0.0f,

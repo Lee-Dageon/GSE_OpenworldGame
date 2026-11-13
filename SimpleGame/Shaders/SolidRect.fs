@@ -321,7 +321,15 @@ void main()
 		color.a *= smoothstep(0.0, max(fwidth(edge), .02), edge);
 		color.rgb *= .8 + .25 * p.x;
 	}
-	if (u_WorldLighting && u_EffectType != 6)
+	else if (u_EffectType == 20 || u_EffectType == 21)
+	{
+		float edge = u_EffectType == 20 ? length(v_LocalPosition) : max(abs(v_LocalPosition.x), abs(v_LocalPosition.y));
+		float rim = smoothstep(.84, .94, edge);
+		color.a *= (1.0 - smoothstep(1.0 - max(fwidth(edge), .001), 1.0, edge))
+			* (.30 + .60 * rim) * (.88 + .12 * sin(u_Time * 9.0));
+		color.rgb *= 1.0 + .35 * rim;
+	}
+	if (u_WorldLighting && u_EffectType != 6 && u_EffectType != 20 && u_EffectType != 21)
 	{
 		vec3 linearColor = pow(max(color.rgb, vec3(0.0)), vec3(2.2));
 		color.rgb = min(linearColor * (vec3(.96,.98,1) + u_LocalLight), vec3(.95));

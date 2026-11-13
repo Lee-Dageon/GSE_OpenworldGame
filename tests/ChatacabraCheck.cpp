@@ -57,7 +57,27 @@ int main()
     assert(ChatacabraFrames::DeathPose(100)==3); // Corpse holds the final pose instead of looping.
     using namespace GameConstants::Chatacabra;
     auto monster=Create();
+    assert(monster.definition.hitRange == 2.1f * CombatScale);
+    assert(monster.definition.chaseRange == 9 * CombatScale);
+    MonsterDefinition ordinary;
+    ordinary.id = "boar";
+    ordinary.hitRange = 2.1f;
+    ordinary.chaseRange = 9;
+    const auto boar = MonsterSystem::Create(ordinary, {0, 0});
+    assert(boar.definition.hitRange == 2.1f && boar.definition.chaseRange == 9);
     float health=100;
+    Tick(monster, {8, 0}, 0, health);
+    assert(Tick(monster, {TongueRange - .01f, TongueHalfWidth - .01f}, FirstImpact + .01f, health));
+    monster = Create(); health = 100;
+    Tick(monster, {8, 0}, 0, health);
+    assert(!Tick(monster, {TongueRange + .01f, 0}, FirstImpact + .01f, health) && health == 100);
+    monster = Create();
+    Tick(monster, {8, 0}, 0, health);
+    assert(!Tick(monster, {8, TongueHalfWidth + .01f}, FirstImpact + .01f, health) && health == 100);
+    monster = Create(); monster.chatNext = 1;
+    Tick(monster, {1, 0}, 0, health);
+    assert(Tick(monster, {1 + SlamRadius - .01f, 0}, FirstImpact + .01f, health));
+    monster = Create(); health = 100;
     assert(!Tick(monster,{1,0},0,health)); // Start telegraph, no instant damage.
     assert(!Tick(monster,{1,0},FirstImpact-.01f,health));
     assert(Tick(monster,{1,0},.02f,health) && health==78);

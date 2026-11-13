@@ -122,6 +122,14 @@ MonsterState Create(const MonsterDefinition &definition, Vec2 position)
 {
     MonsterState monster = {};
     monster.definition = definition;
+    if (definition.id == "ancient_guardian")
+    {
+        const float scale = GameConstants::Chatacabra::CombatScale;
+        monster.definition.hitRange *= scale;
+        monster.definition.dropRange *= scale;
+        monster.definition.chaseRange *= scale;
+        monster.definition.attackRange *= scale;
+    }
     monster.position = position;
     monster.maxHealth = monster.health = monster.definition.health;
     return monster;

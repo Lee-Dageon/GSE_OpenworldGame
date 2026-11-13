@@ -5,22 +5,51 @@
 
 namespace BossIntro
 {
+inline float Duration(const GameState &state)
+{
+    return state.bossDefeatIntro ? GameConstants::Chatacabra::DefeatDuration : GameConstants::Chatacabra::IntroDuration;
+}
 inline bool Active(const GameState &state)
 {
-    return state.bossIntroTime >= 0 && state.bossIntroTime < GameConstants::Chatacabra::IntroDuration &&
-        state.monster.definition.id == "ancient_guardian" && state.monster.health > 0;
+    return state.bossIntroTime >= 0 && state.bossIntroTime < Duration(state) &&
+        state.monster.definition.id == "ancient_guardian" &&
+        (state.bossDefeatIntro ? state.monster.health <= 0 : state.monster.health > 0);
 }
 inline void Start(GameState &state)
 {
+    state.bossDefeatIntro = false;
     state.bossIntroTime = 0;
     state.inventoryOpen = false;
     state.moving = false;
     state.attack = state.dodge = state.hitStop = 0;
     state.playerHitTime = state.attackHitTime = 0;
     state.damageNumbers.clear();
-    state.monster.animationFacing = {state.player.x - state.monster.position.x, state.player.z - state.monster.position.z};
+    if (state.monster.health > 0)
+        state.monster.animationFacing = {state.player.x - state.monster.position.x, state.player.z - state.monster.position.z};
 }
-inline void Skip(GameState &state) { state.bossIntroTime = -1; }
+inline void StartDefeat(GameState &state)
+{
+    Start(state);
+    state.bossDefeatIntro = true;
+    state.monster.deathTime = .01f;
+    state.monster.hitFlash = 0;
+    state.monster.chatImpactTime = 0;
+}
+inline void Skip(GameState &state)
+{
+    if (state.bossDefeatIntro)
+        state.monster.deathTime = GameConstants::Chatacabra::DeathFrameDuration * 4;
+    state.bossIntroTime = -1;
+}
+inline void Update(GameState &state, float deltaTime)
+{
+    if (!Active(state)) return;
+    state.bossIntroTime += std::max(0.0f, deltaTime);
+    if (state.bossDefeatIntro)
+        state.monster.deathTime = GameConstants::Chatacabra::DeathFrameDuration * 3 *
+            std::min(1.0f, state.bossIntroTime / GameConstants::Chatacabra::DefeatAnimationDuration);
+    if (state.bossIntroTime >= Duration(state)) Skip(state);
+}
 inline float Smooth(float value)
 {
     value = std::max(0.0f, std::min(1.0f, value));
@@ -30,22 +59,37 @@ inline float Weight(const GameState &state)
 {
     if (!Active(state)) return 0;
     using namespace GameConstants::Chatacabra;
-    return std::min(Smooth(state.bossIntroTime / IntroPanDuration),
-        Smooth((IntroDuration - state.bossIntroTime) / IntroReturnDuration));
+    return std::min(Smooth(state.bossIntroTime / (state.bossDefeatIntro ? .8f : IntroPanDuration)),
+        Smooth((Duration(state) - state.bossIntroTime) / (state.bossDefeatIntro ? 1.0f : IntroReturnDuration)));
+}
+inline float Sweep(const GameState &state)
+{
+    using namespace GameConstants::Chatacabra;
+    return Smooth((state.bossIntroTime - IntroPanDuration) / (IntroDuration - IntroPanDuration - IntroReturnDuration));
 }
 inline float Zoom(const GameState &state)
 {
-    return state.cameraZoom + (GameConstants::Chatacabra::IntroZoom - state.cameraZoom) * Weight(state);
+    using namespace GameConstants::Chatacabra;
+    const float target = state.bossDefeatIntro ? .58f : IntroZoom + (IntroZoomClose - IntroZoom) * Sweep(state);
+    return state.cameraZoom + (target - state.cameraZoom) * Weight(state);
+}
+inline float FootOffset(const GameState &state)
+{
+    return 86 + 12 * Weight(state);
 }
 inline Vec2 Focus(const GameState &state)
 {
     const float weight = Weight(state);
     Vec2 point = {state.player.x + (state.monster.position.x - state.player.x) * weight,
                   state.player.z + (state.monster.position.z - state.player.z) * weight};
+    const float drift = state.bossDefeatIntro ? 0 : std::sin(Sweep(state) * 3.14159265f) * .55f * weight;
+    point.x += drift;
+    point.z -= drift;
     const float age = state.bossIntroTime - GameConstants::Chatacabra::IntroImpactTime;
-    if (Active(state) && age >= 0 && age < .35f)
+    if (Active(state) && !state.bossDefeatIntro && age >= 0 && age < GameConstants::Chatacabra::IntroShakeDuration)
     {
-        const float shake = .09f * (1 - age / .35f);
+        const float shake = GameConstants::Chatacabra::IntroShakeStrength *
+            (1 - age / GameConstants::Chatacabra::IntroShakeDuration);
         point.x += std::sin(age * 75) * shake;
         point.z += std::cos(age * 61) * shake;
     }
@@ -53,12 +97,13 @@ inline Vec2 Focus(const GameState &state)
 }
 inline int SlamPose(float time)
 {
-    return time < .9f || time >= 2.25f ? -1 : time < 1.5f ? 0 :
-        time < GameConstants::Chatacabra::IntroImpactTime ? 2 : 3;
+    using namespace GameConstants::Chatacabra;
+    return time < IntroPrepareTime || time >= IntroRecoverTime ? -1 : time < IntroRaiseTime ? 0 :
+        time < IntroImpactTime ? 2 : 3;
 }
 inline float Fade(const GameState &state)
 {
     return Active(state) ? std::min(Smooth(state.bossIntroTime / .5f),
-        Smooth((GameConstants::Chatacabra::IntroDuration - state.bossIntroTime) / .5f)) : 0;
+        Smooth((Duration(state) - state.bossIntroTime) / .5f)) : 0;
 }
 }

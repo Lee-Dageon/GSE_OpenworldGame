@@ -61,22 +61,29 @@ constexpr std::array<std::array<int, 6>, 3> FrameMilliseconds = {{
 }
 namespace Chatacabra
 {
-constexpr float EngageRange = 3.8f, TongueRange = 4.0f, TongueHalfWidth = .75f;
-constexpr float SlamRadius = 1.6f, ArmoredSlamRadius = 2.2f;
-constexpr float FirstImpact = .55f, SecondImpact = 1.0f;
-constexpr float TongueDuration = 1.6f, SlamDuration = 2.1f, CoatDuration = 1.4f;
+constexpr float SpriteScale = 5.0f;
+constexpr float CombatScale = SpriteScale / 2.0f;
+constexpr float EngageRange = 3.8f * CombatScale, TongueRange = 4.0f * CombatScale, TongueHalfWidth = .75f * CombatScale;
+constexpr float SlamRadius = 1.6f * CombatScale, ArmoredSlamRadius = 2.2f * CombatScale;
+constexpr float FirstImpact = .85f, SecondImpact = 1.55f;
+constexpr float TongueDuration = 2.2f, SlamDuration = 2.9f, CoatDuration = 1.4f;
 constexpr float CoatTime = .8f, Recovery = .8f, StaggerDuration = 1.0f;
 constexpr int ArmorBreakHits = 3, WeakDamageMultiplier = 2;
 constexpr float ImpactDuration = 3.2f;
 constexpr float SalivaDuration = 2.5f, ArmoredDamageMultiplier = 1.25f;
-constexpr float TongueSweepTime = .75f, TongueRetractTime = 1.2f, SlamRaiseTime = .8f;
+constexpr float TongueSweepTime = 1.1f, TongueRetractTime = 1.7f, SlamRaiseTime = 1.25f;
 constexpr float CoatLickTime = .4f, CoatReadyTime = 1.1f;
 constexpr float TelegraphWidthPerUnit = 90.51f, TelegraphHeightPerUnit = 45.25f;
-constexpr float ImpactScale = 1.15f, ArmoredImpactScale = 1.5f;
-constexpr float SpriteScale = 5.0f; // Giant on-screen body; keep atlas alignment and combat distances independent.
+constexpr float ImpactScale = 1.15f * CombatScale, ArmoredImpactScale = 1.5f * CombatScale;
 constexpr float DeathFrameDuration = .22f;
-constexpr float IntroDuration = 4.8f, IntroPanDuration = 1.0f, IntroReturnDuration = 1.0f;
-constexpr float IntroZoom = .5f, IntroImpactTime = 1.85f;
+constexpr float IntroDuration = 9.6f, IntroPanDuration = 1.8f, IntroReturnDuration = 1.6f;
+constexpr float IntroZoom = .46f, IntroZoomClose = .66f;
+constexpr float IntroPrepareTime = 1.8f, IntroRaiseTime = 2.6f, IntroImpactTime = 3.6f, IntroRecoverTime = 4.6f;
+constexpr float IntroTitleStart = 3.35f, IntroTitleEnd = 8.2f;
+constexpr float IntroImpactScale = ImpactScale * 1.2f;
+constexpr float IntroShakeDuration = .75f, IntroShakeStrength = .18f;
+constexpr float DefeatDuration = 7.2f, DefeatAnimationDuration = 4.0f;
+constexpr float DefeatTitleStart = 3.2f, DefeatTitleEnd = 6.6f;
 }
 namespace Inventory
 {

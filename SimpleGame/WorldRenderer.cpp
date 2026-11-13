@@ -339,7 +339,7 @@ Vec2 WorldRenderer::ToScreen(Vec2 position) const
     const Vec2 focus = BossIntro::Focus(*m_State);
     const float x = position.x - focus.x;
     const float z = position.z - focus.z;
-    return {(x - z) * TileWidth * .5f, (x + z) * TileHeight * .5f - 86.0f / BossIntro::Zoom(*m_State)};
+    return {(x - z) * TileWidth * .5f, (x + z) * TileHeight * .5f - BossIntro::FootOffset(*m_State) / BossIntro::Zoom(*m_State)};
 }
 
 void WorldRenderer::DrawRect(Vec2 position, float width, float height, float rotation, float red, float green,
@@ -1347,7 +1347,7 @@ void WorldRenderer::RenderWorld(const GameState &state)
                                                       pose=ChatacabraFrames::DeathPose(monster.deathTime);
                                                       texture=m_ChatDeathTexture;
                                                   }
-                                                  if (BossIntro::Active(state))
+                                                  if (BossIntro::Active(state) && !state.bossDefeatIntro)
                                                   {
                                                       const int introPose = BossIntro::SlamPose(state.bossIntroTime);
                                                       sheet = introPose >= 0 ? 2 : 0;
@@ -1394,14 +1394,33 @@ void WorldRenderer::RenderWorld(const GameState &state)
                 using namespace GameConstants::Chatacabra;
                 const auto &monster=state.monster;
                 const bool pending=monster.chatElapsed<(monster.chatPattern==0 ? FirstImpact : SecondImpact);
-                const float radius=monster.chatPattern==0 ? TongueHalfWidth : (monster.chatArmorHits>0 ? ArmoredSlamRadius : SlamRadius);
-                const Vec2 target=ToScreen(monster.chatTarget);
-                if (pending) m_Renderer.DrawEffectRect(target.x,target.z,TelegraphWidthPerUnit*radius,
-                    TelegraphHeightPerUnit*radius,0,1,.38f,.12f,.4f,3);
+                if (pending && monster.chatPattern == 0)
+                {
+                    const float length = std::sqrt(monster.animationFacing.x * monster.animationFacing.x +
+                        monster.animationFacing.z * monster.animationFacing.z);
+                    const Vec2 direction = length > .001f ? Vec2{monster.animationFacing.x / length,
+                        monster.animationFacing.z / length} : Vec2{1, 0};
+                    const Vec2 center = ToScreen({monster.position.x + direction.x * TongueRange * .5f,
+                        monster.position.z + direction.z * TongueRange * .5f});
+                    // Half-axes of the actual world-space tongue rectangle, projected isometrically.
+                    const float basis[] = {
+                        (direction.x - direction.z) * TileWidth * .5f * TongueRange * .5f,
+                        (direction.x + direction.z) * TileHeight * .5f * TongueRange * .5f,
+                        (-direction.z - direction.x) * TileWidth * .5f * TongueHalfWidth,
+                        (-direction.z + direction.x) * TileHeight * .5f * TongueHalfWidth};
+                    m_Renderer.DrawEffectRect(center.x, center.z, 1, 1, 0, 1, .13f, .04f, .85f, 21, basis);
+                }
+                else if (pending)
+                {
+                    const float radius = monster.chatArmorHits > 0 ? ArmoredSlamRadius : SlamRadius;
+                    const Vec2 target = ToScreen(monster.chatTarget);
+                    m_Renderer.DrawEffectRect(target.x, target.z, TelegraphWidthPerUnit * radius,
+                        TelegraphHeightPerUnit * radius, 0, 1, .13f, .04f, .85f, 20);
+                }
             }
             if (BossIntro::Active(state)) context.drawSprite(state.monster.position, 1, 2, 128, 96, true);
             else MonsterSystem::Draw(state.monster, context, false);
-            if (hasLoot) DrawLoot(state.monster.position, LootTable::Monster(state.monster.definition));
+            if (hasLoot && !BossIntro::Active(state)) DrawLoot(state.monster.position, LootTable::Monster(state.monster.definition));
             m_Renderer.SetSpriteFlash(0);
             break;
         }
@@ -1525,14 +1544,16 @@ void WorldRenderer::RenderWorld(const GameState &state)
         }
         }
     }
-    if (BossIntro::Active(state) && state.bossIntroTime >= GameConstants::Chatacabra::IntroImpactTime && m_ChatImpactTextures[1])
+    if (BossIntro::Active(state) && !state.bossDefeatIntro && state.bossIntroTime >= GameConstants::Chatacabra::IntroImpactTime &&
+        state.bossIntroTime <= GameConstants::Chatacabra::IntroImpactTime + GameConstants::Chatacabra::ImpactDuration && m_ChatImpactTextures[1])
     {
         const float age = state.bossIntroTime - GameConstants::Chatacabra::IntroImpactTime;
         const int frame = std::min(96, static_cast<int>(age * 30));
         const Vec2 point = ToScreen(state.monster.position);
         m_Renderer.SetLocalLight(0, 0, 0);
-        m_Renderer.DrawSprite(m_ChatImpactTextures[1], point.x, point.z + 60,
-            288 * 1.3f, 208 * 1.3f, frame % 9, frame / 9, 9, 11);
+        const float scale = GameConstants::Chatacabra::IntroImpactScale;
+        m_Renderer.DrawSprite(m_ChatImpactTextures[1], point.x, point.z + (164 - 104) * scale,
+            288 * scale, 208 * scale, frame % 9, frame / 9, 9, 11);
     }
     if (state.monster.definition.id=="ancient_guardian" && state.monster.chatImpactTime>0)
     {
