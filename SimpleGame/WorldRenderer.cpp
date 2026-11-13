@@ -216,6 +216,20 @@ WorldRenderer::WorldRenderer(Renderer &renderer) : m_Renderer(renderer)
     m_ChatAttackTextures[2] = m_Renderer.LoadTexture(L"./Assets/PixelArt/Monsters/Chapter3/chatacabra-coat-8dir-v2.png");
     m_ChatImpactTextures[0] = m_Renderer.LoadTexture(L"./Assets/PixelArt/Effects/chatacabra-saliva.png");
     m_ChatImpactTextures[1] = m_Renderer.LoadTexture(L"./Assets/PixelArt/Effects/chatacabra-slam.png");
+    const wchar_t *hardEffects[] = {L"chatacabra-rage-emblem-v1.png", L"chatacabra-roar.png",
+        L"chatacabra-armor-break.png", L"player-hit-slow.png"};
+    for (size_t index = 0; index < m_ChatHardTextures.size(); ++index)
+    {
+        const auto path = std::wstring(L"./Assets/PixelArt/Effects/") + hardEffects[index];
+        auto &texture = m_ChatHardTextures[index];
+        texture = m_Renderer.LoadTexture(path.c_str());
+        if (texture)
+        {
+            glBindTexture(GL_TEXTURE_2D, texture);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        }
+    }
     m_PixelSceneryTexture = m_Renderer.LoadTexture(L"./Assets/PixelArt/World/frontier-props-v1.png");
     for (size_t index = 0; index < m_InvestigationTextures.size(); ++index)
     {
@@ -285,6 +299,8 @@ WorldRenderer::~WorldRenderer()
     for (auto texture : m_ChatAttackTextures)
         if (texture) glDeleteTextures(1, &texture);
     for (auto texture : m_ChatImpactTextures)
+        if (texture) glDeleteTextures(1, &texture);
+    for (auto texture : m_ChatHardTextures)
         if (texture) glDeleteTextures(1, &texture);
     if (m_PlayerHitTexture != 0) glDeleteTextures(1, &m_PlayerHitTexture);
     if (m_AnimalCarcassTexture != 0) glDeleteTextures(1, &m_AnimalCarcassTexture);
@@ -1335,11 +1351,24 @@ void WorldRenderer::RenderWorld(const GameState &state)
                                                   auto texture=m_AncientGuardianTexture;
                                                   const int action=monster.health>0 ? (monster.chatPattern>=0 ? monster.chatPattern :
                                                       (monster.chatArmorHits>0 && !guardianWalking ? 2 : -1)) : -1;
-                                                  if (action>=0 && (m_ChatAttackTextures[action] || m_ChatHdTextures[action+1][direction/4]))
+                                                  if (action>=0 && action<3 && (m_ChatAttackTextures[action] || m_ChatHdTextures[action+1][direction/4]))
                                                   {
                                                       pose=monster.chatPattern<0 ? 3 : ChatacabraFrames::Pose(action,monster.chatElapsed);
                                                       sheet=action+1;
                                                       texture=m_ChatAttackTextures[action];
+                                                  }
+                                                  if (monster.chatPattern == MonsterSystem::Charge)
+                                                  {
+                                                      sheet = 0;
+                                                      pose = monster.chatElapsed < GameConstants::Chatacabra::ChargeWindup ? 0 :
+                                                          static_cast<int>(monster.chatElapsed * 12) % 4;
+                                                      texture = m_AncientGuardianTexture;
+                                                  }
+                                                  if (monster.chatPattern == MonsterSystem::Roar || monster.chatWeakTime > 0)
+                                                  {
+                                                      sheet = 1;
+                                                      pose = 1;
+                                                      texture = m_ChatAttackTextures[0];
                                                   }
                                                   const bool deathSprite=monster.health<=0 && m_ChatDeathTexture;
                                                   if (deathSprite)
@@ -1372,7 +1401,9 @@ void WorldRenderer::RenderWorld(const GameState &state)
                                                       12 * GameConstants::Chatacabra::SpriteScale / 2);
                                                   m_Renderer.DrawSprite(texture,screen.x+(.5f-frame.x)*width,
                                                       screen.z+(frame.y-.5f)*height,
-                                                      width,height,column,pose,columns,4,1,1,1,1,0,0,0,1,1,.5f);
+                                                      width,height,column,pose,columns,4,1,1,
+                                                      monster.chatRage && monster.health > 0 ? .72f : 1.0f,
+                                                      monster.chatRage && monster.health > 0 ? .65f : 1.0f,0,0,0,1,1,.5f);
                                                   return;
                                               }
                                               if ((!walking || chapterAnimation) && DrawChapter1Boar(state.monster)) return;
@@ -1389,26 +1420,36 @@ void WorldRenderer::RenderWorld(const GameState &state)
             m_Renderer.SetSpriteFlash(state.monster.health > 0 ? state.monster.hitFlash / GameConstants::Feedback::MonsterFlashDuration : 0);
             const bool hasLoot = state.quest == QuestStage::Trophy || StorySystem::HasDrop(state);
             if (state.monster.definition.id=="ancient_guardian" && state.monster.health>0 &&
-                state.monster.chatPattern>=0 && state.monster.chatPattern<2)
+                (state.monster.chatPattern==MonsterSystem::Tongue || state.monster.chatPattern==MonsterSystem::Slam ||
+                 state.monster.chatPattern==MonsterSystem::Charge))
             {
                 using namespace GameConstants::Chatacabra;
                 const auto &monster=state.monster;
-                const bool pending=monster.chatElapsed<(monster.chatPattern==0 ? FirstImpact : SecondImpact);
-                if (pending && monster.chatPattern == 0)
+                const bool charge = monster.chatPattern == MonsterSystem::Charge;
+                const bool pending=monster.chatElapsed<(charge ? ChargeWindup : monster.chatPattern==0 ? FirstImpact : SecondImpact);
+                if (pending && (monster.chatPattern == 0 || charge))
                 {
-                    const float length = std::sqrt(monster.animationFacing.x * monster.animationFacing.x +
-                        monster.animationFacing.z * monster.animationFacing.z);
-                    const Vec2 direction = length > .001f ? Vec2{monster.animationFacing.x / length,
-                        monster.animationFacing.z / length} : Vec2{1, 0};
-                    const Vec2 center = ToScreen({monster.position.x + direction.x * TongueRange * .5f,
-                        monster.position.z + direction.z * TongueRange * .5f});
+                    const Vec2 direction = MonsterSystem::ChatDirection(monster);
+                    const float dx = monster.chatTarget.x - monster.chatOrigin.x, dz = monster.chatTarget.z - monster.chatOrigin.z;
+                    const float range = charge ? std::sqrt(dx * dx + dz * dz) : TongueRange;
+                    const float halfWidth = charge ? ChargeHalfWidth : TongueHalfWidth;
+                    const Vec2 origin = charge ? monster.chatOrigin : monster.position;
+                    const Vec2 center = ToScreen({origin.x + direction.x * range * .5f,
+                        origin.z + direction.z * range * .5f});
                     // Half-axes of the actual world-space tongue rectangle, projected isometrically.
                     const float basis[] = {
-                        (direction.x - direction.z) * TileWidth * .5f * TongueRange * .5f,
-                        (direction.x + direction.z) * TileHeight * .5f * TongueRange * .5f,
-                        (-direction.z - direction.x) * TileWidth * .5f * TongueHalfWidth,
-                        (-direction.z + direction.x) * TileHeight * .5f * TongueHalfWidth};
+                        (direction.x - direction.z) * TileWidth * .5f * range * .5f,
+                        (direction.x + direction.z) * TileHeight * .5f * range * .5f,
+                        (-direction.z - direction.x) * TileWidth * .5f * halfWidth,
+                        (-direction.z + direction.x) * TileHeight * .5f * halfWidth};
                     m_Renderer.DrawEffectRect(center.x, center.z, 1, 1, 0, 1, .13f, .04f, .85f, 21, basis);
+                    if (charge)
+                        for (const auto end : {monster.chatOrigin, monster.chatTarget})
+                        {
+                            const auto cap = ToScreen(end);
+                            m_Renderer.DrawEffectRect(cap.x, cap.z, TelegraphWidthPerUnit * halfWidth,
+                                TelegraphHeightPerUnit * halfWidth, 0, 1, .13f, .04f, .7f, 20);
+                        }
                 }
                 else if (pending)
                 {
@@ -1570,6 +1611,65 @@ void WorldRenderer::RenderWorld(const GameState &state)
         if (m_ChatImpactTextures[effect] && age<=(effect==0 ? SalivaDuration : ImpactDuration))
             m_Renderer.DrawSprite(m_ChatImpactTextures[effect],point.x,point.z+pivot-height*.5f,
                 width,height,frame%columns,frame/columns,columns,11);
+    }
+    if (state.monster.definition.id == "ancient_guardian" && state.monster.health > 0 && !BossIntro::Active(state))
+    {
+        using namespace GameConstants::Chatacabra;
+        const auto &monster = state.monster;
+        const auto point = ToScreen(monster.position);
+        m_Renderer.SetLocalLight(0, 0, 0);
+        if (monster.chatRage && m_ChatHardTextures[0])
+        {
+            const float top = monster.definition.spriteHeight * SpriteScale * .55f;
+            m_Renderer.DrawSprite(m_ChatHardTextures[0], point.x, point.z + top + 95,
+                105, 105, 0, 0, 1, 1, .8f + .2f * std::sin(state.time * 5));
+        }
+        if (monster.chatRageTime > 0 && m_ChatHardTextures[1])
+        {
+            const int frame = std::min(96, static_cast<int>((RageEffectDuration - monster.chatRageTime) * 30));
+            m_Renderer.DrawSprite(m_ChatHardTextures[1], point.x, point.z + 60 * ImpactScale,
+                288 * ImpactScale, 208 * ImpactScale, frame % 9, frame / 9, 9, 11);
+        }
+        if (monster.chatArmorBreakTime > 0 && m_ChatHardTextures[2])
+        {
+            const int frame = std::min(60, static_cast<int>((ArmorBreakEffectDuration - monster.chatArmorBreakTime) * 30));
+            for (int side : {-1, 1})
+            {
+                const auto arm = ToScreen(MonsterSystem::ChatArmPoint(monster, side));
+                m_Renderer.DrawSprite(m_ChatHardTextures[2], arm.x + 44 * CombatScale, arm.z + 34 * CombatScale,
+                    224 * CombatScale, 112 * CombatScale, frame % 6, frame / 6, 6, 11);
+            }
+        }
+        if (monster.chatArmorHits > 0)
+            for (int side : {-1, 1})
+            {
+                const auto arm = ToScreen(MonsterSystem::ChatArmPoint(monster, side));
+                m_Renderer.DrawEffectRect(arm.x, arm.z, TelegraphWidthPerUnit * TargetRadius,
+                    TelegraphHeightPerUnit * TargetRadius, 0, .25f, .9f, 1, .65f, 20);
+            }
+        if (monster.chatWeakTime > 0)
+        {
+            const auto weak = MonsterSystem::ChatWeakPoint(monster);
+            const auto target = ToScreen(weak);
+            m_Renderer.DrawEffectRect(target.x, target.z, TelegraphWidthPerUnit * TargetRadius,
+                TelegraphHeightPerUnit * TargetRadius, 0, 1, .82f, .2f, .8f, 20);
+            DrawQuestGlimmer(weak, 112);
+        }
+        if (monster.chatPattern == MonsterSystem::Charge && monster.chatElapsed >= ChargeWindup &&
+            monster.chatElapsed < ChargeWindup + ChargeTravelTime && m_ChatImpactTextures[1])
+        {
+            const int frame = 5 + static_cast<int>((monster.chatElapsed - ChargeWindup) * 20) % 18;
+            m_Renderer.DrawSprite(m_ChatImpactTextures[1], point.x, point.z + 60 * CombatScale,
+                288 * CombatScale, 208 * CombatScale, frame % 9, frame / 9, 9, 11, .65f);
+        }
+    }
+    if (state.playerSlowTime > 0 && m_ChatHardTextures[3] && !BossIntro::Active(state))
+    {
+        const auto foot = ToScreen(state.player);
+        const int frame = static_cast<int>((GameConstants::Player::HitSlowDuration - state.playerSlowTime) * 30) % 72;
+        m_Renderer.SetLocalLight(0, 0, 0);
+        m_Renderer.DrawSprite(m_ChatHardTextures[3], foot.x, foot.z + 45, 96, 114,
+            frame % 10, frame / 10, 10, 8, std::min(1.0f, state.playerSlowTime / .15f));
     }
     if (state.playerHitTime > 0 && m_PlayerHitTexture != 0)
     {

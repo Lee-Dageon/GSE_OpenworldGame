@@ -33,9 +33,11 @@ struct MonsterState
     MonsterDefinition definition;
     float attackAnimation = 0.0f, hitAnimation = 0.0f;
     Vec2 animationFacing = {1.0f, 0.0f};
-    int chatPattern = -1, chatNext = 0, chatHitMask = 0, chatArmorHits = 0, chatImpactType = 0;
+    int chatPattern = -1, chatHitMask = 0, chatArmorHits = 0, chatImpactType = 0, chatAttacks = 0;
     float chatElapsed = 0, chatStagger = 0, chatImpactTime = 0;
-    Vec2 chatTarget = {}, chatImpactPosition = {};
+    float chatWeakTime = 0, chatArmorCooldown = 0, chatRageTime = 0, chatArmorBreakTime = 0;
+    bool chatRage = false, chatCombo = false;
+    Vec2 chatTarget = {}, chatImpactPosition = {}, chatOrigin = {};
 };
 
 struct MonsterHitResult
@@ -60,6 +62,10 @@ struct MonsterDrawContext
 
 namespace MonsterSystem
 {
+enum ChatPattern { Tongue, Slam, Coat, Charge, Roar };
+Vec2 ChatDirection(const MonsterState &monster);
+Vec2 ChatWeakPoint(const MonsterState &monster);
+Vec2 ChatArmPoint(const MonsterState &monster, int side);
 MonsterState CreateEncounter();
 MonsterState Create(const MonsterDefinition &definition, Vec2 position);
 bool IsAlive(const MonsterState &monster);

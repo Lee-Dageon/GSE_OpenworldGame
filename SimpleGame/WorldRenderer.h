@@ -94,6 +94,7 @@ class WorldRenderer
     std::array<unsigned int, 3> m_ChatAttackTextures = {};
     std::array<std::array<unsigned int, 2>, 5> m_ChatHdTextures = {};
     std::array<unsigned int, 2> m_ChatImpactTextures = {};
+    std::array<unsigned int, 4> m_ChatHardTextures = {}; // rage emblem, roar, armor break, player slow
     unsigned int m_PixelSceneryTexture = 0;
     std::array<unsigned int, 7> m_InvestigationTextures = {};
     std::array<unsigned int, 3> m_AttackHitTextures = {};

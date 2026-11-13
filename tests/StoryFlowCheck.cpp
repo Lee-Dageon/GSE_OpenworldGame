@@ -9,6 +9,7 @@
 #include "../SimpleGame/GameConstants.h"
 #include "../SimpleGame/BossIntro.h"
 #include "../SimpleGame/ChatacabraFrames.h"
+#include "../SimpleGame/PlayerController.h"
 #include <cmath>
 #include <cassert>
 #include <iostream>
@@ -169,15 +170,35 @@ int main()
     GameManager victimGame(victim);
     victimGame.UpdateGame(0);
     assert(victim.playerHitTime == DamageFeedback::Duration && victim.hitStop == DamageFeedback::HitStop);
+    assert(victim.playerSlowTime == GameConstants::Player::HitSlowDuration);
     const float frozenTime = victim.time, frozenHealth = victim.health;
     victimGame.UpdateGame(.03f);
+    assert(victim.playerSlowTime == GameConstants::Player::HitSlowDuration);
     assert(victim.time == frozenTime && victim.health == frozenHealth && victim.hitStop > 0);
     victimGame.UpdateGame(.05f);
     assert(victim.time > frozenTime && victim.hitStop == 0);
+    assert(victim.playerSlowTime < GameConstants::Player::HitSlowDuration);
+    GameState walking = CreateInitialGameState();
+    walking.keys['w'] = true;
+    GameState slowed = walking;
+    slowed.playerSlowTime = GameConstants::Player::HitSlowDuration;
+    PlayerController::UpdateMovement(walking, .1f);
+    PlayerController::UpdateMovement(slowed, .1f);
+    const float normalDistance = walking.player.x;
+    assert(normalDistance > 0 && std::abs(slowed.player.x / normalDistance - GameConstants::Player::HitSlowSpeed) < .0001f);
+    walking = CreateInitialGameState(); walking.keys['w'] = true; walking.dodge = .1f;
+    slowed = walking; slowed.playerSlowTime = GameConstants::Player::HitSlowDuration;
+    PlayerController::UpdateMovement(walking, .01f);
+    PlayerController::UpdateMovement(slowed, .01f);
+    assert(walking.player.x == slowed.player.x && walking.player.z == slowed.player.z);
+    victim.monster.definition.damage = 0;
+    victimGame.BeginFrame(GameConstants::Player::HitSlowDuration + .1f);
+    assert(victim.playerSlowTime == 0);
     victim.inventoryOpen = true;
+    victim.playerSlowTime = .5f;
     const float pausedFeedback = victim.playerHitTime;
     victimGame.UpdateGame(1);
-    assert(victim.playerHitTime == pausedFeedback);
+    assert(victim.playerHitTime == pausedFeedback && victim.playerSlowTime == .5f);
     for (bool dodge : {false, true})
     {
         GameState safe = CreateInitialGameState();
@@ -186,7 +207,7 @@ int main()
         if (dodge) safe.dodge = 1;
         else safe.monster.definition.damage = 0;
         GameManager(safe).UpdateGame(0);
-        assert(safe.playerHitTime == 0 && safe.hitStop == 0);
+        assert(safe.playerHitTime == 0 && safe.hitStop == 0 && safe.playerSlowTime == 0);
     }
     assert(DamageFeedback::Fade(0, DamageFeedback::BorderDuration) == 0);
     assert(DamageFeedback::Fade(DamageFeedback::Duration, DamageFeedback::BorderDuration) == 1);

@@ -1,0 +1,1381 @@
+{
+ "frames": [
+  {
+   "filename": "chatacabra-armor-break 0",
+   "frame": {
+    "x": 0,
+    "y": 0,
+    "w": 224,
+    "h": 112
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 224,
+    "h": 112
+   },
+   "sourceSize": {
+    "w": 224,
+    "h": 112
+   },
+   "duration": 33
+  },
+  {
+   "filename": "chatacabra-armor-break 1",
+   "frame": {
+    "x": 224,
+    "y": 0,
+    "w": 224,
+    "h": 112
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 224,
+    "h": 112
+   },
+   "sourceSize": {
+    "w": 224,
+    "h": 112
+   },
+   "duration": 33
+  },
+  {
+   "filename": "chatacabra-armor-break 2",
+   "frame": {
+    "x": 448,
+    "y": 0,
+    "w": 224,
+    "h": 112
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 224,
+    "h": 112
+   },
+   "sourceSize": {
+    "w": 224,
+    "h": 112
+   },
+   "duration": 33
+  },
+  {
+   "filename": "chatacabra-armor-break 3",
+   "frame": {
+    "x": 672,
+    "y": 0,
+    "w": 224,
+    "h": 112
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 224,
+    "h": 112
+   },
+   "sourceSize": {
+    "w": 224,
+    "h": 112
+   },
+   "duration": 33
+  },
+  {
+   "filename": "chatacabra-armor-break 4",
+   "frame": {
+    "x": 896,
+    "y": 0,
+    "w": 224,
+    "h": 112
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 224,
+    "h": 112
+   },
+   "sourceSize": {
+    "w": 224,
+    "h": 112
+   },
+   "duration": 33
+  },
+  {
+   "filename": "chatacabra-armor-break 5",
+   "frame": {
+    "x": 1120,
+    "y": 0,
+    "w": 224,
+    "h": 112
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 224,
+    "h": 112
+   },
+   "sourceSize": {
+    "w": 224,
+    "h": 112
+   },
+   "duration": 33
+  },
+  {
+   "filename": "chatacabra-armor-break 6",
+   "frame": {
+    "x": 0,
+    "y": 112,
+    "w": 224,
+    "h": 112
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 224,
+    "h": 112
+   },
+   "sourceSize": {
+    "w": 224,
+    "h": 112
+   },
+   "duration": 33
+  },
+  {
+   "filename": "chatacabra-armor-break 7",
+   "frame": {
+    "x": 224,
+    "y": 112,
+    "w": 224,
+    "h": 112
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 224,
+    "h": 112
+   },
+   "sourceSize": {
+    "w": 224,
+    "h": 112
+   },
+   "duration": 33
+  },
+  {
+   "filename": "chatacabra-armor-break 8",
+   "frame": {
+    "x": 448,
+    "y": 112,
+    "w": 224,
+    "h": 112
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 224,
+    "h": 112
+   },
+   "sourceSize": {
+    "w": 224,
+    "h": 112
+   },
+   "duration": 33
+  },
+  {
+   "filename": "chatacabra-armor-break 9",
+   "frame": {
+    "x": 672,
+    "y": 112,
+    "w": 224,
+    "h": 112
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 224,
+    "h": 112
+   },
+   "sourceSize": {
+    "w": 224,
+    "h": 112
+   },
+   "duration": 33
+  },
+  {
+   "filename": "chatacabra-armor-break 10",
+   "frame": {
+    "x": 896,
+    "y": 112,
+    "w": 224,
+    "h": 112
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 224,
+    "h": 112
+   },
+   "sourceSize": {
+    "w": 224,
+    "h": 112
+   },
+   "duration": 33
+  },
+  {
+   "filename": "chatacabra-armor-break 11",
+   "frame": {
+    "x": 1120,
+    "y": 112,
+    "w": 224,
+    "h": 112
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 224,
+    "h": 112
+   },
+   "sourceSize": {
+    "w": 224,
+    "h": 112
+   },
+   "duration": 33
+  },
+  {
+   "filename": "chatacabra-armor-break 12",
+   "frame": {
+    "x": 0,
+    "y": 224,
+    "w": 224,
+    "h": 112
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 224,
+    "h": 112
+   },
+   "sourceSize": {
+    "w": 224,
+    "h": 112
+   },
+   "duration": 33
+  },
+  {
+   "filename": "chatacabra-armor-break 13",
+   "frame": {
+    "x": 224,
+    "y": 224,
+    "w": 224,
+    "h": 112
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 224,
+    "h": 112
+   },
+   "sourceSize": {
+    "w": 224,
+    "h": 112
+   },
+   "duration": 33
+  },
+  {
+   "filename": "chatacabra-armor-break 14",
+   "frame": {
+    "x": 448,
+    "y": 224,
+    "w": 224,
+    "h": 112
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 224,
+    "h": 112
+   },
+   "sourceSize": {
+    "w": 224,
+    "h": 112
+   },
+   "duration": 33
+  },
+  {
+   "filename": "chatacabra-armor-break 15",
+   "frame": {
+    "x": 672,
+    "y": 224,
+    "w": 224,
+    "h": 112
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 224,
+    "h": 112
+   },
+   "sourceSize": {
+    "w": 224,
+    "h": 112
+   },
+   "duration": 33
+  },
+  {
+   "filename": "chatacabra-armor-break 16",
+   "frame": {
+    "x": 896,
+    "y": 224,
+    "w": 224,
+    "h": 112
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 224,
+    "h": 112
+   },
+   "sourceSize": {
+    "w": 224,
+    "h": 112
+   },
+   "duration": 33
+  },
+  {
+   "filename": "chatacabra-armor-break 17",
+   "frame": {
+    "x": 1120,
+    "y": 224,
+    "w": 224,
+    "h": 112
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 224,
+    "h": 112
+   },
+   "sourceSize": {
+    "w": 224,
+    "h": 112
+   },
+   "duration": 33
+  },
+  {
+   "filename": "chatacabra-armor-break 18",
+   "frame": {
+    "x": 0,
+    "y": 336,
+    "w": 224,
+    "h": 112
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 224,
+    "h": 112
+   },
+   "sourceSize": {
+    "w": 224,
+    "h": 112
+   },
+   "duration": 33
+  },
+  {
+   "filename": "chatacabra-armor-break 19",
+   "frame": {
+    "x": 224,
+    "y": 336,
+    "w": 224,
+    "h": 112
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 224,
+    "h": 112
+   },
+   "sourceSize": {
+    "w": 224,
+    "h": 112
+   },
+   "duration": 33
+  },
+  {
+   "filename": "chatacabra-armor-break 20",
+   "frame": {
+    "x": 448,
+    "y": 336,
+    "w": 224,
+    "h": 112
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 224,
+    "h": 112
+   },
+   "sourceSize": {
+    "w": 224,
+    "h": 112
+   },
+   "duration": 33
+  },
+  {
+   "filename": "chatacabra-armor-break 21",
+   "frame": {
+    "x": 672,
+    "y": 336,
+    "w": 224,
+    "h": 112
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 224,
+    "h": 112
+   },
+   "sourceSize": {
+    "w": 224,
+    "h": 112
+   },
+   "duration": 33
+  },
+  {
+   "filename": "chatacabra-armor-break 22",
+   "frame": {
+    "x": 896,
+    "y": 336,
+    "w": 224,
+    "h": 112
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 224,
+    "h": 112
+   },
+   "sourceSize": {
+    "w": 224,
+    "h": 112
+   },
+   "duration": 33
+  },
+  {
+   "filename": "chatacabra-armor-break 23",
+   "frame": {
+    "x": 1120,
+    "y": 336,
+    "w": 224,
+    "h": 112
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 224,
+    "h": 112
+   },
+   "sourceSize": {
+    "w": 224,
+    "h": 112
+   },
+   "duration": 33
+  },
+  {
+   "filename": "chatacabra-armor-break 24",
+   "frame": {
+    "x": 0,
+    "y": 448,
+    "w": 224,
+    "h": 112
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 224,
+    "h": 112
+   },
+   "sourceSize": {
+    "w": 224,
+    "h": 112
+   },
+   "duration": 33
+  },
+  {
+   "filename": "chatacabra-armor-break 25",
+   "frame": {
+    "x": 224,
+    "y": 448,
+    "w": 224,
+    "h": 112
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 224,
+    "h": 112
+   },
+   "sourceSize": {
+    "w": 224,
+    "h": 112
+   },
+   "duration": 33
+  },
+  {
+   "filename": "chatacabra-armor-break 26",
+   "frame": {
+    "x": 448,
+    "y": 448,
+    "w": 224,
+    "h": 112
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 224,
+    "h": 112
+   },
+   "sourceSize": {
+    "w": 224,
+    "h": 112
+   },
+   "duration": 33
+  },
+  {
+   "filename": "chatacabra-armor-break 27",
+   "frame": {
+    "x": 672,
+    "y": 448,
+    "w": 224,
+    "h": 112
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 224,
+    "h": 112
+   },
+   "sourceSize": {
+    "w": 224,
+    "h": 112
+   },
+   "duration": 33
+  },
+  {
+   "filename": "chatacabra-armor-break 28",
+   "frame": {
+    "x": 896,
+    "y": 448,
+    "w": 224,
+    "h": 112
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 224,
+    "h": 112
+   },
+   "sourceSize": {
+    "w": 224,
+    "h": 112
+   },
+   "duration": 33
+  },
+  {
+   "filename": "chatacabra-armor-break 29",
+   "frame": {
+    "x": 1120,
+    "y": 448,
+    "w": 224,
+    "h": 112
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 224,
+    "h": 112
+   },
+   "sourceSize": {
+    "w": 224,
+    "h": 112
+   },
+   "duration": 33
+  },
+  {
+   "filename": "chatacabra-armor-break 30",
+   "frame": {
+    "x": 0,
+    "y": 560,
+    "w": 224,
+    "h": 112
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 224,
+    "h": 112
+   },
+   "sourceSize": {
+    "w": 224,
+    "h": 112
+   },
+   "duration": 33
+  },
+  {
+   "filename": "chatacabra-armor-break 31",
+   "frame": {
+    "x": 224,
+    "y": 560,
+    "w": 224,
+    "h": 112
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 224,
+    "h": 112
+   },
+   "sourceSize": {
+    "w": 224,
+    "h": 112
+   },
+   "duration": 33
+  },
+  {
+   "filename": "chatacabra-armor-break 32",
+   "frame": {
+    "x": 448,
+    "y": 560,
+    "w": 224,
+    "h": 112
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 224,
+    "h": 112
+   },
+   "sourceSize": {
+    "w": 224,
+    "h": 112
+   },
+   "duration": 33
+  },
+  {
+   "filename": "chatacabra-armor-break 33",
+   "frame": {
+    "x": 672,
+    "y": 560,
+    "w": 224,
+    "h": 112
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 224,
+    "h": 112
+   },
+   "sourceSize": {
+    "w": 224,
+    "h": 112
+   },
+   "duration": 33
+  },
+  {
+   "filename": "chatacabra-armor-break 34",
+   "frame": {
+    "x": 896,
+    "y": 560,
+    "w": 224,
+    "h": 112
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 224,
+    "h": 112
+   },
+   "sourceSize": {
+    "w": 224,
+    "h": 112
+   },
+   "duration": 33
+  },
+  {
+   "filename": "chatacabra-armor-break 35",
+   "frame": {
+    "x": 1120,
+    "y": 560,
+    "w": 224,
+    "h": 112
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 224,
+    "h": 112
+   },
+   "sourceSize": {
+    "w": 224,
+    "h": 112
+   },
+   "duration": 33
+  },
+  {
+   "filename": "chatacabra-armor-break 36",
+   "frame": {
+    "x": 0,
+    "y": 672,
+    "w": 224,
+    "h": 112
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 224,
+    "h": 112
+   },
+   "sourceSize": {
+    "w": 224,
+    "h": 112
+   },
+   "duration": 33
+  },
+  {
+   "filename": "chatacabra-armor-break 37",
+   "frame": {
+    "x": 224,
+    "y": 672,
+    "w": 224,
+    "h": 112
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 224,
+    "h": 112
+   },
+   "sourceSize": {
+    "w": 224,
+    "h": 112
+   },
+   "duration": 33
+  },
+  {
+   "filename": "chatacabra-armor-break 38",
+   "frame": {
+    "x": 448,
+    "y": 672,
+    "w": 224,
+    "h": 112
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 224,
+    "h": 112
+   },
+   "sourceSize": {
+    "w": 224,
+    "h": 112
+   },
+   "duration": 33
+  },
+  {
+   "filename": "chatacabra-armor-break 39",
+   "frame": {
+    "x": 672,
+    "y": 672,
+    "w": 224,
+    "h": 112
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 224,
+    "h": 112
+   },
+   "sourceSize": {
+    "w": 224,
+    "h": 112
+   },
+   "duration": 33
+  },
+  {
+   "filename": "chatacabra-armor-break 40",
+   "frame": {
+    "x": 896,
+    "y": 672,
+    "w": 224,
+    "h": 112
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 224,
+    "h": 112
+   },
+   "sourceSize": {
+    "w": 224,
+    "h": 112
+   },
+   "duration": 33
+  },
+  {
+   "filename": "chatacabra-armor-break 41",
+   "frame": {
+    "x": 1120,
+    "y": 672,
+    "w": 224,
+    "h": 112
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 224,
+    "h": 112
+   },
+   "sourceSize": {
+    "w": 224,
+    "h": 112
+   },
+   "duration": 33
+  },
+  {
+   "filename": "chatacabra-armor-break 42",
+   "frame": {
+    "x": 0,
+    "y": 784,
+    "w": 224,
+    "h": 112
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 224,
+    "h": 112
+   },
+   "sourceSize": {
+    "w": 224,
+    "h": 112
+   },
+   "duration": 33
+  },
+  {
+   "filename": "chatacabra-armor-break 43",
+   "frame": {
+    "x": 224,
+    "y": 784,
+    "w": 224,
+    "h": 112
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 224,
+    "h": 112
+   },
+   "sourceSize": {
+    "w": 224,
+    "h": 112
+   },
+   "duration": 33
+  },
+  {
+   "filename": "chatacabra-armor-break 44",
+   "frame": {
+    "x": 448,
+    "y": 784,
+    "w": 224,
+    "h": 112
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 224,
+    "h": 112
+   },
+   "sourceSize": {
+    "w": 224,
+    "h": 112
+   },
+   "duration": 33
+  },
+  {
+   "filename": "chatacabra-armor-break 45",
+   "frame": {
+    "x": 672,
+    "y": 784,
+    "w": 224,
+    "h": 112
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 224,
+    "h": 112
+   },
+   "sourceSize": {
+    "w": 224,
+    "h": 112
+   },
+   "duration": 33
+  },
+  {
+   "filename": "chatacabra-armor-break 46",
+   "frame": {
+    "x": 896,
+    "y": 784,
+    "w": 224,
+    "h": 112
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 224,
+    "h": 112
+   },
+   "sourceSize": {
+    "w": 224,
+    "h": 112
+   },
+   "duration": 33
+  },
+  {
+   "filename": "chatacabra-armor-break 47",
+   "frame": {
+    "x": 1120,
+    "y": 784,
+    "w": 224,
+    "h": 112
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 224,
+    "h": 112
+   },
+   "sourceSize": {
+    "w": 224,
+    "h": 112
+   },
+   "duration": 33
+  },
+  {
+   "filename": "chatacabra-armor-break 48",
+   "frame": {
+    "x": 0,
+    "y": 896,
+    "w": 224,
+    "h": 112
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 224,
+    "h": 112
+   },
+   "sourceSize": {
+    "w": 224,
+    "h": 112
+   },
+   "duration": 33
+  },
+  {
+   "filename": "chatacabra-armor-break 49",
+   "frame": {
+    "x": 224,
+    "y": 896,
+    "w": 224,
+    "h": 112
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 224,
+    "h": 112
+   },
+   "sourceSize": {
+    "w": 224,
+    "h": 112
+   },
+   "duration": 33
+  },
+  {
+   "filename": "chatacabra-armor-break 50",
+   "frame": {
+    "x": 448,
+    "y": 896,
+    "w": 224,
+    "h": 112
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 224,
+    "h": 112
+   },
+   "sourceSize": {
+    "w": 224,
+    "h": 112
+   },
+   "duration": 33
+  },
+  {
+   "filename": "chatacabra-armor-break 51",
+   "frame": {
+    "x": 672,
+    "y": 896,
+    "w": 224,
+    "h": 112
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 224,
+    "h": 112
+   },
+   "sourceSize": {
+    "w": 224,
+    "h": 112
+   },
+   "duration": 33
+  },
+  {
+   "filename": "chatacabra-armor-break 52",
+   "frame": {
+    "x": 896,
+    "y": 896,
+    "w": 224,
+    "h": 112
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 224,
+    "h": 112
+   },
+   "sourceSize": {
+    "w": 224,
+    "h": 112
+   },
+   "duration": 33
+  },
+  {
+   "filename": "chatacabra-armor-break 53",
+   "frame": {
+    "x": 1120,
+    "y": 896,
+    "w": 224,
+    "h": 112
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 224,
+    "h": 112
+   },
+   "sourceSize": {
+    "w": 224,
+    "h": 112
+   },
+   "duration": 33
+  },
+  {
+   "filename": "chatacabra-armor-break 54",
+   "frame": {
+    "x": 0,
+    "y": 1008,
+    "w": 224,
+    "h": 112
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 224,
+    "h": 112
+   },
+   "sourceSize": {
+    "w": 224,
+    "h": 112
+   },
+   "duration": 33
+  },
+  {
+   "filename": "chatacabra-armor-break 55",
+   "frame": {
+    "x": 224,
+    "y": 1008,
+    "w": 224,
+    "h": 112
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 224,
+    "h": 112
+   },
+   "sourceSize": {
+    "w": 224,
+    "h": 112
+   },
+   "duration": 33
+  },
+  {
+   "filename": "chatacabra-armor-break 56",
+   "frame": {
+    "x": 448,
+    "y": 1008,
+    "w": 224,
+    "h": 112
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 224,
+    "h": 112
+   },
+   "sourceSize": {
+    "w": 224,
+    "h": 112
+   },
+   "duration": 33
+  },
+  {
+   "filename": "chatacabra-armor-break 57",
+   "frame": {
+    "x": 672,
+    "y": 1008,
+    "w": 224,
+    "h": 112
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 224,
+    "h": 112
+   },
+   "sourceSize": {
+    "w": 224,
+    "h": 112
+   },
+   "duration": 33
+  },
+  {
+   "filename": "chatacabra-armor-break 58",
+   "frame": {
+    "x": 896,
+    "y": 1008,
+    "w": 224,
+    "h": 112
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 224,
+    "h": 112
+   },
+   "sourceSize": {
+    "w": 224,
+    "h": 112
+   },
+   "duration": 33
+  },
+  {
+   "filename": "chatacabra-armor-break 59",
+   "frame": {
+    "x": 1120,
+    "y": 1008,
+    "w": 224,
+    "h": 112
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 224,
+    "h": 112
+   },
+   "sourceSize": {
+    "w": 224,
+    "h": 112
+   },
+   "duration": 33
+  },
+  {
+   "filename": "chatacabra-armor-break 60",
+   "frame": {
+    "x": 0,
+    "y": 1120,
+    "w": 224,
+    "h": 112
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 224,
+    "h": 112
+   },
+   "sourceSize": {
+    "w": 224,
+    "h": 112
+   },
+   "duration": 33
+  }
+ ],
+ "meta": {
+  "app": "https://github.com/patch-gg/pixelfx",
+  "version": "1",
+  "image": "chatacabra-armor-break.png",
+  "format": "RGBA8888",
+  "size": {
+   "w": 1344,
+   "h": 1232
+  },
+  "scale": "1",
+  "frameTags": [
+   {
+    "name": "chatacabra-armor-break",
+    "from": 0,
+    "to": 60,
+    "direction": "forward"
+   }
+  ],
+  "pixelfx": {
+   "id": "ice/chatacabra-armor-break",
+   "name": "Chatacabra stone armor break",
+   "fps": 30,
+   "loop": false,
+   "frames": 61,
+   "frameSize": [
+    224,
+    112
+   ],
+   "pivot": [
+    68,
+    90
+   ],
+   "columns": 6
+  }
+ }
+}

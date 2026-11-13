@@ -43,7 +43,9 @@ void UpdateMovement(GameState &state, float deltaTime)
     move.x /= length;
     move.z /= length;
     state.facing = move;
-    const float speed = state.dodge > 0.0f ? GameConstants::Player::DodgeSpeed : (state.sprint ? GameConstants::Player::SprintSpeed : GameConstants::Player::WalkSpeed);
+    const float slow = state.playerSlowTime > 0 ? GameConstants::Player::HitSlowSpeed : 1.0f;
+    const float speed = state.dodge > 0.0f ? GameConstants::Player::DodgeSpeed :
+        (state.sprint ? GameConstants::Player::SprintSpeed : GameConstants::Player::WalkSpeed) * slow;
     Vec2 next = {state.player.x + move.x * speed * deltaTime, state.player.z + move.z * speed * deltaTime};
     next.x = std::max(state.world.minimumCoordinate, std::min(state.world.maximumCoordinate, next.x));
     next.z = std::max(state.world.minimumCoordinate, std::min(state.world.maximumCoordinate, next.z));

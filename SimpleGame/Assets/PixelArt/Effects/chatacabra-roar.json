@@ -1,0 +1,2173 @@
+{
+ "frames": [
+  {
+   "filename": "chatacabra-roar 0",
+   "frame": {
+    "x": 0,
+    "y": 0,
+    "w": 288,
+    "h": 208
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 288,
+    "h": 208
+   },
+   "sourceSize": {
+    "w": 288,
+    "h": 208
+   },
+   "duration": 33
+  },
+  {
+   "filename": "chatacabra-roar 1",
+   "frame": {
+    "x": 288,
+    "y": 0,
+    "w": 288,
+    "h": 208
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 288,
+    "h": 208
+   },
+   "sourceSize": {
+    "w": 288,
+    "h": 208
+   },
+   "duration": 33
+  },
+  {
+   "filename": "chatacabra-roar 2",
+   "frame": {
+    "x": 576,
+    "y": 0,
+    "w": 288,
+    "h": 208
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 288,
+    "h": 208
+   },
+   "sourceSize": {
+    "w": 288,
+    "h": 208
+   },
+   "duration": 33
+  },
+  {
+   "filename": "chatacabra-roar 3",
+   "frame": {
+    "x": 864,
+    "y": 0,
+    "w": 288,
+    "h": 208
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 288,
+    "h": 208
+   },
+   "sourceSize": {
+    "w": 288,
+    "h": 208
+   },
+   "duration": 33
+  },
+  {
+   "filename": "chatacabra-roar 4",
+   "frame": {
+    "x": 1152,
+    "y": 0,
+    "w": 288,
+    "h": 208
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 288,
+    "h": 208
+   },
+   "sourceSize": {
+    "w": 288,
+    "h": 208
+   },
+   "duration": 33
+  },
+  {
+   "filename": "chatacabra-roar 5",
+   "frame": {
+    "x": 1440,
+    "y": 0,
+    "w": 288,
+    "h": 208
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 288,
+    "h": 208
+   },
+   "sourceSize": {
+    "w": 288,
+    "h": 208
+   },
+   "duration": 33
+  },
+  {
+   "filename": "chatacabra-roar 6",
+   "frame": {
+    "x": 1728,
+    "y": 0,
+    "w": 288,
+    "h": 208
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 288,
+    "h": 208
+   },
+   "sourceSize": {
+    "w": 288,
+    "h": 208
+   },
+   "duration": 33
+  },
+  {
+   "filename": "chatacabra-roar 7",
+   "frame": {
+    "x": 2016,
+    "y": 0,
+    "w": 288,
+    "h": 208
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 288,
+    "h": 208
+   },
+   "sourceSize": {
+    "w": 288,
+    "h": 208
+   },
+   "duration": 33
+  },
+  {
+   "filename": "chatacabra-roar 8",
+   "frame": {
+    "x": 2304,
+    "y": 0,
+    "w": 288,
+    "h": 208
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 288,
+    "h": 208
+   },
+   "sourceSize": {
+    "w": 288,
+    "h": 208
+   },
+   "duration": 33
+  },
+  {
+   "filename": "chatacabra-roar 9",
+   "frame": {
+    "x": 0,
+    "y": 208,
+    "w": 288,
+    "h": 208
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 288,
+    "h": 208
+   },
+   "sourceSize": {
+    "w": 288,
+    "h": 208
+   },
+   "duration": 33
+  },
+  {
+   "filename": "chatacabra-roar 10",
+   "frame": {
+    "x": 288,
+    "y": 208,
+    "w": 288,
+    "h": 208
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 288,
+    "h": 208
+   },
+   "sourceSize": {
+    "w": 288,
+    "h": 208
+   },
+   "duration": 33
+  },
+  {
+   "filename": "chatacabra-roar 11",
+   "frame": {
+    "x": 576,
+    "y": 208,
+    "w": 288,
+    "h": 208
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 288,
+    "h": 208
+   },
+   "sourceSize": {
+    "w": 288,
+    "h": 208
+   },
+   "duration": 33
+  },
+  {
+   "filename": "chatacabra-roar 12",
+   "frame": {
+    "x": 864,
+    "y": 208,
+    "w": 288,
+    "h": 208
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 288,
+    "h": 208
+   },
+   "sourceSize": {
+    "w": 288,
+    "h": 208
+   },
+   "duration": 33
+  },
+  {
+   "filename": "chatacabra-roar 13",
+   "frame": {
+    "x": 1152,
+    "y": 208,
+    "w": 288,
+    "h": 208
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 288,
+    "h": 208
+   },
+   "sourceSize": {
+    "w": 288,
+    "h": 208
+   },
+   "duration": 33
+  },
+  {
+   "filename": "chatacabra-roar 14",
+   "frame": {
+    "x": 1440,
+    "y": 208,
+    "w": 288,
+    "h": 208
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 288,
+    "h": 208
+   },
+   "sourceSize": {
+    "w": 288,
+    "h": 208
+   },
+   "duration": 33
+  },
+  {
+   "filename": "chatacabra-roar 15",
+   "frame": {
+    "x": 1728,
+    "y": 208,
+    "w": 288,
+    "h": 208
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 288,
+    "h": 208
+   },
+   "sourceSize": {
+    "w": 288,
+    "h": 208
+   },
+   "duration": 33
+  },
+  {
+   "filename": "chatacabra-roar 16",
+   "frame": {
+    "x": 2016,
+    "y": 208,
+    "w": 288,
+    "h": 208
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 288,
+    "h": 208
+   },
+   "sourceSize": {
+    "w": 288,
+    "h": 208
+   },
+   "duration": 33
+  },
+  {
+   "filename": "chatacabra-roar 17",
+   "frame": {
+    "x": 2304,
+    "y": 208,
+    "w": 288,
+    "h": 208
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 288,
+    "h": 208
+   },
+   "sourceSize": {
+    "w": 288,
+    "h": 208
+   },
+   "duration": 33
+  },
+  {
+   "filename": "chatacabra-roar 18",
+   "frame": {
+    "x": 0,
+    "y": 416,
+    "w": 288,
+    "h": 208
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 288,
+    "h": 208
+   },
+   "sourceSize": {
+    "w": 288,
+    "h": 208
+   },
+   "duration": 33
+  },
+  {
+   "filename": "chatacabra-roar 19",
+   "frame": {
+    "x": 288,
+    "y": 416,
+    "w": 288,
+    "h": 208
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 288,
+    "h": 208
+   },
+   "sourceSize": {
+    "w": 288,
+    "h": 208
+   },
+   "duration": 33
+  },
+  {
+   "filename": "chatacabra-roar 20",
+   "frame": {
+    "x": 576,
+    "y": 416,
+    "w": 288,
+    "h": 208
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 288,
+    "h": 208
+   },
+   "sourceSize": {
+    "w": 288,
+    "h": 208
+   },
+   "duration": 33
+  },
+  {
+   "filename": "chatacabra-roar 21",
+   "frame": {
+    "x": 864,
+    "y": 416,
+    "w": 288,
+    "h": 208
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 288,
+    "h": 208
+   },
+   "sourceSize": {
+    "w": 288,
+    "h": 208
+   },
+   "duration": 33
+  },
+  {
+   "filename": "chatacabra-roar 22",
+   "frame": {
+    "x": 1152,
+    "y": 416,
+    "w": 288,
+    "h": 208
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 288,
+    "h": 208
+   },
+   "sourceSize": {
+    "w": 288,
+    "h": 208
+   },
+   "duration": 33
+  },
+  {
+   "filename": "chatacabra-roar 23",
+   "frame": {
+    "x": 1440,
+    "y": 416,
+    "w": 288,
+    "h": 208
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 288,
+    "h": 208
+   },
+   "sourceSize": {
+    "w": 288,
+    "h": 208
+   },
+   "duration": 33
+  },
+  {
+   "filename": "chatacabra-roar 24",
+   "frame": {
+    "x": 1728,
+    "y": 416,
+    "w": 288,
+    "h": 208
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 288,
+    "h": 208
+   },
+   "sourceSize": {
+    "w": 288,
+    "h": 208
+   },
+   "duration": 33
+  },
+  {
+   "filename": "chatacabra-roar 25",
+   "frame": {
+    "x": 2016,
+    "y": 416,
+    "w": 288,
+    "h": 208
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 288,
+    "h": 208
+   },
+   "sourceSize": {
+    "w": 288,
+    "h": 208
+   },
+   "duration": 33
+  },
+  {
+   "filename": "chatacabra-roar 26",
+   "frame": {
+    "x": 2304,
+    "y": 416,
+    "w": 288,
+    "h": 208
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 288,
+    "h": 208
+   },
+   "sourceSize": {
+    "w": 288,
+    "h": 208
+   },
+   "duration": 33
+  },
+  {
+   "filename": "chatacabra-roar 27",
+   "frame": {
+    "x": 0,
+    "y": 624,
+    "w": 288,
+    "h": 208
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 288,
+    "h": 208
+   },
+   "sourceSize": {
+    "w": 288,
+    "h": 208
+   },
+   "duration": 33
+  },
+  {
+   "filename": "chatacabra-roar 28",
+   "frame": {
+    "x": 288,
+    "y": 624,
+    "w": 288,
+    "h": 208
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 288,
+    "h": 208
+   },
+   "sourceSize": {
+    "w": 288,
+    "h": 208
+   },
+   "duration": 33
+  },
+  {
+   "filename": "chatacabra-roar 29",
+   "frame": {
+    "x": 576,
+    "y": 624,
+    "w": 288,
+    "h": 208
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 288,
+    "h": 208
+   },
+   "sourceSize": {
+    "w": 288,
+    "h": 208
+   },
+   "duration": 33
+  },
+  {
+   "filename": "chatacabra-roar 30",
+   "frame": {
+    "x": 864,
+    "y": 624,
+    "w": 288,
+    "h": 208
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 288,
+    "h": 208
+   },
+   "sourceSize": {
+    "w": 288,
+    "h": 208
+   },
+   "duration": 33
+  },
+  {
+   "filename": "chatacabra-roar 31",
+   "frame": {
+    "x": 1152,
+    "y": 624,
+    "w": 288,
+    "h": 208
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 288,
+    "h": 208
+   },
+   "sourceSize": {
+    "w": 288,
+    "h": 208
+   },
+   "duration": 33
+  },
+  {
+   "filename": "chatacabra-roar 32",
+   "frame": {
+    "x": 1440,
+    "y": 624,
+    "w": 288,
+    "h": 208
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 288,
+    "h": 208
+   },
+   "sourceSize": {
+    "w": 288,
+    "h": 208
+   },
+   "duration": 33
+  },
+  {
+   "filename": "chatacabra-roar 33",
+   "frame": {
+    "x": 1728,
+    "y": 624,
+    "w": 288,
+    "h": 208
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 288,
+    "h": 208
+   },
+   "sourceSize": {
+    "w": 288,
+    "h": 208
+   },
+   "duration": 33
+  },
+  {
+   "filename": "chatacabra-roar 34",
+   "frame": {
+    "x": 2016,
+    "y": 624,
+    "w": 288,
+    "h": 208
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 288,
+    "h": 208
+   },
+   "sourceSize": {
+    "w": 288,
+    "h": 208
+   },
+   "duration": 33
+  },
+  {
+   "filename": "chatacabra-roar 35",
+   "frame": {
+    "x": 2304,
+    "y": 624,
+    "w": 288,
+    "h": 208
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 288,
+    "h": 208
+   },
+   "sourceSize": {
+    "w": 288,
+    "h": 208
+   },
+   "duration": 33
+  },
+  {
+   "filename": "chatacabra-roar 36",
+   "frame": {
+    "x": 0,
+    "y": 832,
+    "w": 288,
+    "h": 208
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 288,
+    "h": 208
+   },
+   "sourceSize": {
+    "w": 288,
+    "h": 208
+   },
+   "duration": 33
+  },
+  {
+   "filename": "chatacabra-roar 37",
+   "frame": {
+    "x": 288,
+    "y": 832,
+    "w": 288,
+    "h": 208
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 288,
+    "h": 208
+   },
+   "sourceSize": {
+    "w": 288,
+    "h": 208
+   },
+   "duration": 33
+  },
+  {
+   "filename": "chatacabra-roar 38",
+   "frame": {
+    "x": 576,
+    "y": 832,
+    "w": 288,
+    "h": 208
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 288,
+    "h": 208
+   },
+   "sourceSize": {
+    "w": 288,
+    "h": 208
+   },
+   "duration": 33
+  },
+  {
+   "filename": "chatacabra-roar 39",
+   "frame": {
+    "x": 864,
+    "y": 832,
+    "w": 288,
+    "h": 208
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 288,
+    "h": 208
+   },
+   "sourceSize": {
+    "w": 288,
+    "h": 208
+   },
+   "duration": 33
+  },
+  {
+   "filename": "chatacabra-roar 40",
+   "frame": {
+    "x": 1152,
+    "y": 832,
+    "w": 288,
+    "h": 208
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 288,
+    "h": 208
+   },
+   "sourceSize": {
+    "w": 288,
+    "h": 208
+   },
+   "duration": 33
+  },
+  {
+   "filename": "chatacabra-roar 41",
+   "frame": {
+    "x": 1440,
+    "y": 832,
+    "w": 288,
+    "h": 208
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 288,
+    "h": 208
+   },
+   "sourceSize": {
+    "w": 288,
+    "h": 208
+   },
+   "duration": 33
+  },
+  {
+   "filename": "chatacabra-roar 42",
+   "frame": {
+    "x": 1728,
+    "y": 832,
+    "w": 288,
+    "h": 208
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 288,
+    "h": 208
+   },
+   "sourceSize": {
+    "w": 288,
+    "h": 208
+   },
+   "duration": 33
+  },
+  {
+   "filename": "chatacabra-roar 43",
+   "frame": {
+    "x": 2016,
+    "y": 832,
+    "w": 288,
+    "h": 208
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 288,
+    "h": 208
+   },
+   "sourceSize": {
+    "w": 288,
+    "h": 208
+   },
+   "duration": 33
+  },
+  {
+   "filename": "chatacabra-roar 44",
+   "frame": {
+    "x": 2304,
+    "y": 832,
+    "w": 288,
+    "h": 208
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 288,
+    "h": 208
+   },
+   "sourceSize": {
+    "w": 288,
+    "h": 208
+   },
+   "duration": 33
+  },
+  {
+   "filename": "chatacabra-roar 45",
+   "frame": {
+    "x": 0,
+    "y": 1040,
+    "w": 288,
+    "h": 208
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 288,
+    "h": 208
+   },
+   "sourceSize": {
+    "w": 288,
+    "h": 208
+   },
+   "duration": 33
+  },
+  {
+   "filename": "chatacabra-roar 46",
+   "frame": {
+    "x": 288,
+    "y": 1040,
+    "w": 288,
+    "h": 208
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 288,
+    "h": 208
+   },
+   "sourceSize": {
+    "w": 288,
+    "h": 208
+   },
+   "duration": 33
+  },
+  {
+   "filename": "chatacabra-roar 47",
+   "frame": {
+    "x": 576,
+    "y": 1040,
+    "w": 288,
+    "h": 208
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 288,
+    "h": 208
+   },
+   "sourceSize": {
+    "w": 288,
+    "h": 208
+   },
+   "duration": 33
+  },
+  {
+   "filename": "chatacabra-roar 48",
+   "frame": {
+    "x": 864,
+    "y": 1040,
+    "w": 288,
+    "h": 208
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 288,
+    "h": 208
+   },
+   "sourceSize": {
+    "w": 288,
+    "h": 208
+   },
+   "duration": 33
+  },
+  {
+   "filename": "chatacabra-roar 49",
+   "frame": {
+    "x": 1152,
+    "y": 1040,
+    "w": 288,
+    "h": 208
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 288,
+    "h": 208
+   },
+   "sourceSize": {
+    "w": 288,
+    "h": 208
+   },
+   "duration": 33
+  },
+  {
+   "filename": "chatacabra-roar 50",
+   "frame": {
+    "x": 1440,
+    "y": 1040,
+    "w": 288,
+    "h": 208
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 288,
+    "h": 208
+   },
+   "sourceSize": {
+    "w": 288,
+    "h": 208
+   },
+   "duration": 33
+  },
+  {
+   "filename": "chatacabra-roar 51",
+   "frame": {
+    "x": 1728,
+    "y": 1040,
+    "w": 288,
+    "h": 208
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 288,
+    "h": 208
+   },
+   "sourceSize": {
+    "w": 288,
+    "h": 208
+   },
+   "duration": 33
+  },
+  {
+   "filename": "chatacabra-roar 52",
+   "frame": {
+    "x": 2016,
+    "y": 1040,
+    "w": 288,
+    "h": 208
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 288,
+    "h": 208
+   },
+   "sourceSize": {
+    "w": 288,
+    "h": 208
+   },
+   "duration": 33
+  },
+  {
+   "filename": "chatacabra-roar 53",
+   "frame": {
+    "x": 2304,
+    "y": 1040,
+    "w": 288,
+    "h": 208
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 288,
+    "h": 208
+   },
+   "sourceSize": {
+    "w": 288,
+    "h": 208
+   },
+   "duration": 33
+  },
+  {
+   "filename": "chatacabra-roar 54",
+   "frame": {
+    "x": 0,
+    "y": 1248,
+    "w": 288,
+    "h": 208
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 288,
+    "h": 208
+   },
+   "sourceSize": {
+    "w": 288,
+    "h": 208
+   },
+   "duration": 33
+  },
+  {
+   "filename": "chatacabra-roar 55",
+   "frame": {
+    "x": 288,
+    "y": 1248,
+    "w": 288,
+    "h": 208
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 288,
+    "h": 208
+   },
+   "sourceSize": {
+    "w": 288,
+    "h": 208
+   },
+   "duration": 33
+  },
+  {
+   "filename": "chatacabra-roar 56",
+   "frame": {
+    "x": 576,
+    "y": 1248,
+    "w": 288,
+    "h": 208
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 288,
+    "h": 208
+   },
+   "sourceSize": {
+    "w": 288,
+    "h": 208
+   },
+   "duration": 33
+  },
+  {
+   "filename": "chatacabra-roar 57",
+   "frame": {
+    "x": 864,
+    "y": 1248,
+    "w": 288,
+    "h": 208
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 288,
+    "h": 208
+   },
+   "sourceSize": {
+    "w": 288,
+    "h": 208
+   },
+   "duration": 33
+  },
+  {
+   "filename": "chatacabra-roar 58",
+   "frame": {
+    "x": 1152,
+    "y": 1248,
+    "w": 288,
+    "h": 208
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 288,
+    "h": 208
+   },
+   "sourceSize": {
+    "w": 288,
+    "h": 208
+   },
+   "duration": 33
+  },
+  {
+   "filename": "chatacabra-roar 59",
+   "frame": {
+    "x": 1440,
+    "y": 1248,
+    "w": 288,
+    "h": 208
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 288,
+    "h": 208
+   },
+   "sourceSize": {
+    "w": 288,
+    "h": 208
+   },
+   "duration": 33
+  },
+  {
+   "filename": "chatacabra-roar 60",
+   "frame": {
+    "x": 1728,
+    "y": 1248,
+    "w": 288,
+    "h": 208
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 288,
+    "h": 208
+   },
+   "sourceSize": {
+    "w": 288,
+    "h": 208
+   },
+   "duration": 33
+  },
+  {
+   "filename": "chatacabra-roar 61",
+   "frame": {
+    "x": 2016,
+    "y": 1248,
+    "w": 288,
+    "h": 208
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 288,
+    "h": 208
+   },
+   "sourceSize": {
+    "w": 288,
+    "h": 208
+   },
+   "duration": 33
+  },
+  {
+   "filename": "chatacabra-roar 62",
+   "frame": {
+    "x": 2304,
+    "y": 1248,
+    "w": 288,
+    "h": 208
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 288,
+    "h": 208
+   },
+   "sourceSize": {
+    "w": 288,
+    "h": 208
+   },
+   "duration": 33
+  },
+  {
+   "filename": "chatacabra-roar 63",
+   "frame": {
+    "x": 0,
+    "y": 1456,
+    "w": 288,
+    "h": 208
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 288,
+    "h": 208
+   },
+   "sourceSize": {
+    "w": 288,
+    "h": 208
+   },
+   "duration": 33
+  },
+  {
+   "filename": "chatacabra-roar 64",
+   "frame": {
+    "x": 288,
+    "y": 1456,
+    "w": 288,
+    "h": 208
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 288,
+    "h": 208
+   },
+   "sourceSize": {
+    "w": 288,
+    "h": 208
+   },
+   "duration": 33
+  },
+  {
+   "filename": "chatacabra-roar 65",
+   "frame": {
+    "x": 576,
+    "y": 1456,
+    "w": 288,
+    "h": 208
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 288,
+    "h": 208
+   },
+   "sourceSize": {
+    "w": 288,
+    "h": 208
+   },
+   "duration": 33
+  },
+  {
+   "filename": "chatacabra-roar 66",
+   "frame": {
+    "x": 864,
+    "y": 1456,
+    "w": 288,
+    "h": 208
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 288,
+    "h": 208
+   },
+   "sourceSize": {
+    "w": 288,
+    "h": 208
+   },
+   "duration": 33
+  },
+  {
+   "filename": "chatacabra-roar 67",
+   "frame": {
+    "x": 1152,
+    "y": 1456,
+    "w": 288,
+    "h": 208
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 288,
+    "h": 208
+   },
+   "sourceSize": {
+    "w": 288,
+    "h": 208
+   },
+   "duration": 33
+  },
+  {
+   "filename": "chatacabra-roar 68",
+   "frame": {
+    "x": 1440,
+    "y": 1456,
+    "w": 288,
+    "h": 208
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 288,
+    "h": 208
+   },
+   "sourceSize": {
+    "w": 288,
+    "h": 208
+   },
+   "duration": 33
+  },
+  {
+   "filename": "chatacabra-roar 69",
+   "frame": {
+    "x": 1728,
+    "y": 1456,
+    "w": 288,
+    "h": 208
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 288,
+    "h": 208
+   },
+   "sourceSize": {
+    "w": 288,
+    "h": 208
+   },
+   "duration": 33
+  },
+  {
+   "filename": "chatacabra-roar 70",
+   "frame": {
+    "x": 2016,
+    "y": 1456,
+    "w": 288,
+    "h": 208
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 288,
+    "h": 208
+   },
+   "sourceSize": {
+    "w": 288,
+    "h": 208
+   },
+   "duration": 33
+  },
+  {
+   "filename": "chatacabra-roar 71",
+   "frame": {
+    "x": 2304,
+    "y": 1456,
+    "w": 288,
+    "h": 208
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 288,
+    "h": 208
+   },
+   "sourceSize": {
+    "w": 288,
+    "h": 208
+   },
+   "duration": 33
+  },
+  {
+   "filename": "chatacabra-roar 72",
+   "frame": {
+    "x": 0,
+    "y": 1664,
+    "w": 288,
+    "h": 208
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 288,
+    "h": 208
+   },
+   "sourceSize": {
+    "w": 288,
+    "h": 208
+   },
+   "duration": 33
+  },
+  {
+   "filename": "chatacabra-roar 73",
+   "frame": {
+    "x": 288,
+    "y": 1664,
+    "w": 288,
+    "h": 208
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 288,
+    "h": 208
+   },
+   "sourceSize": {
+    "w": 288,
+    "h": 208
+   },
+   "duration": 33
+  },
+  {
+   "filename": "chatacabra-roar 74",
+   "frame": {
+    "x": 576,
+    "y": 1664,
+    "w": 288,
+    "h": 208
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 288,
+    "h": 208
+   },
+   "sourceSize": {
+    "w": 288,
+    "h": 208
+   },
+   "duration": 33
+  },
+  {
+   "filename": "chatacabra-roar 75",
+   "frame": {
+    "x": 864,
+    "y": 1664,
+    "w": 288,
+    "h": 208
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 288,
+    "h": 208
+   },
+   "sourceSize": {
+    "w": 288,
+    "h": 208
+   },
+   "duration": 33
+  },
+  {
+   "filename": "chatacabra-roar 76",
+   "frame": {
+    "x": 1152,
+    "y": 1664,
+    "w": 288,
+    "h": 208
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 288,
+    "h": 208
+   },
+   "sourceSize": {
+    "w": 288,
+    "h": 208
+   },
+   "duration": 33
+  },
+  {
+   "filename": "chatacabra-roar 77",
+   "frame": {
+    "x": 1440,
+    "y": 1664,
+    "w": 288,
+    "h": 208
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 288,
+    "h": 208
+   },
+   "sourceSize": {
+    "w": 288,
+    "h": 208
+   },
+   "duration": 33
+  },
+  {
+   "filename": "chatacabra-roar 78",
+   "frame": {
+    "x": 1728,
+    "y": 1664,
+    "w": 288,
+    "h": 208
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 288,
+    "h": 208
+   },
+   "sourceSize": {
+    "w": 288,
+    "h": 208
+   },
+   "duration": 33
+  },
+  {
+   "filename": "chatacabra-roar 79",
+   "frame": {
+    "x": 2016,
+    "y": 1664,
+    "w": 288,
+    "h": 208
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 288,
+    "h": 208
+   },
+   "sourceSize": {
+    "w": 288,
+    "h": 208
+   },
+   "duration": 33
+  },
+  {
+   "filename": "chatacabra-roar 80",
+   "frame": {
+    "x": 2304,
+    "y": 1664,
+    "w": 288,
+    "h": 208
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 288,
+    "h": 208
+   },
+   "sourceSize": {
+    "w": 288,
+    "h": 208
+   },
+   "duration": 33
+  },
+  {
+   "filename": "chatacabra-roar 81",
+   "frame": {
+    "x": 0,
+    "y": 1872,
+    "w": 288,
+    "h": 208
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 288,
+    "h": 208
+   },
+   "sourceSize": {
+    "w": 288,
+    "h": 208
+   },
+   "duration": 33
+  },
+  {
+   "filename": "chatacabra-roar 82",
+   "frame": {
+    "x": 288,
+    "y": 1872,
+    "w": 288,
+    "h": 208
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 288,
+    "h": 208
+   },
+   "sourceSize": {
+    "w": 288,
+    "h": 208
+   },
+   "duration": 33
+  },
+  {
+   "filename": "chatacabra-roar 83",
+   "frame": {
+    "x": 576,
+    "y": 1872,
+    "w": 288,
+    "h": 208
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 288,
+    "h": 208
+   },
+   "sourceSize": {
+    "w": 288,
+    "h": 208
+   },
+   "duration": 33
+  },
+  {
+   "filename": "chatacabra-roar 84",
+   "frame": {
+    "x": 864,
+    "y": 1872,
+    "w": 288,
+    "h": 208
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 288,
+    "h": 208
+   },
+   "sourceSize": {
+    "w": 288,
+    "h": 208
+   },
+   "duration": 33
+  },
+  {
+   "filename": "chatacabra-roar 85",
+   "frame": {
+    "x": 1152,
+    "y": 1872,
+    "w": 288,
+    "h": 208
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 288,
+    "h": 208
+   },
+   "sourceSize": {
+    "w": 288,
+    "h": 208
+   },
+   "duration": 33
+  },
+  {
+   "filename": "chatacabra-roar 86",
+   "frame": {
+    "x": 1440,
+    "y": 1872,
+    "w": 288,
+    "h": 208
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 288,
+    "h": 208
+   },
+   "sourceSize": {
+    "w": 288,
+    "h": 208
+   },
+   "duration": 33
+  },
+  {
+   "filename": "chatacabra-roar 87",
+   "frame": {
+    "x": 1728,
+    "y": 1872,
+    "w": 288,
+    "h": 208
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 288,
+    "h": 208
+   },
+   "sourceSize": {
+    "w": 288,
+    "h": 208
+   },
+   "duration": 33
+  },
+  {
+   "filename": "chatacabra-roar 88",
+   "frame": {
+    "x": 2016,
+    "y": 1872,
+    "w": 288,
+    "h": 208
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 288,
+    "h": 208
+   },
+   "sourceSize": {
+    "w": 288,
+    "h": 208
+   },
+   "duration": 33
+  },
+  {
+   "filename": "chatacabra-roar 89",
+   "frame": {
+    "x": 2304,
+    "y": 1872,
+    "w": 288,
+    "h": 208
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 288,
+    "h": 208
+   },
+   "sourceSize": {
+    "w": 288,
+    "h": 208
+   },
+   "duration": 33
+  },
+  {
+   "filename": "chatacabra-roar 90",
+   "frame": {
+    "x": 0,
+    "y": 2080,
+    "w": 288,
+    "h": 208
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 288,
+    "h": 208
+   },
+   "sourceSize": {
+    "w": 288,
+    "h": 208
+   },
+   "duration": 33
+  },
+  {
+   "filename": "chatacabra-roar 91",
+   "frame": {
+    "x": 288,
+    "y": 2080,
+    "w": 288,
+    "h": 208
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 288,
+    "h": 208
+   },
+   "sourceSize": {
+    "w": 288,
+    "h": 208
+   },
+   "duration": 33
+  },
+  {
+   "filename": "chatacabra-roar 92",
+   "frame": {
+    "x": 576,
+    "y": 2080,
+    "w": 288,
+    "h": 208
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 288,
+    "h": 208
+   },
+   "sourceSize": {
+    "w": 288,
+    "h": 208
+   },
+   "duration": 33
+  },
+  {
+   "filename": "chatacabra-roar 93",
+   "frame": {
+    "x": 864,
+    "y": 2080,
+    "w": 288,
+    "h": 208
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 288,
+    "h": 208
+   },
+   "sourceSize": {
+    "w": 288,
+    "h": 208
+   },
+   "duration": 33
+  },
+  {
+   "filename": "chatacabra-roar 94",
+   "frame": {
+    "x": 1152,
+    "y": 2080,
+    "w": 288,
+    "h": 208
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 288,
+    "h": 208
+   },
+   "sourceSize": {
+    "w": 288,
+    "h": 208
+   },
+   "duration": 33
+  },
+  {
+   "filename": "chatacabra-roar 95",
+   "frame": {
+    "x": 1440,
+    "y": 2080,
+    "w": 288,
+    "h": 208
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 288,
+    "h": 208
+   },
+   "sourceSize": {
+    "w": 288,
+    "h": 208
+   },
+   "duration": 33
+  },
+  {
+   "filename": "chatacabra-roar 96",
+   "frame": {
+    "x": 1728,
+    "y": 2080,
+    "w": 288,
+    "h": 208
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 288,
+    "h": 208
+   },
+   "sourceSize": {
+    "w": 288,
+    "h": 208
+   },
+   "duration": 33
+  }
+ ],
+ "meta": {
+  "app": "https://github.com/patch-gg/pixelfx",
+  "version": "1",
+  "image": "chatacabra-roar.png",
+  "format": "RGBA8888",
+  "size": {
+   "w": 2592,
+   "h": 2288
+  },
+  "scale": "1",
+  "frameTags": [
+   {
+    "name": "chatacabra-roar",
+    "from": 0,
+    "to": 96,
+    "direction": "forward"
+   }
+  ],
+  "pixelfx": {
+   "id": "impacts/chatacabra-roar",
+   "name": "Chatacabra rage roar",
+   "fps": 30,
+   "loop": false,
+   "frames": 97,
+   "frameSize": [
+    288,
+    208
+   ],
+   "pivot": [
+    144,
+    164
+   ],
+   "columns": 9
+  }
+ }
+}

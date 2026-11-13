@@ -24,6 +24,7 @@ void GameManager::BeginFrame(float deltaTime)
     m_State.time += deltaTime;
     m_State.dodge = std::max(0.0f, m_State.dodge - deltaTime);
     m_State.attack = std::max(0.0f, m_State.attack - deltaTime);
+    m_State.playerSlowTime = std::max(0.0f, m_State.playerSlowTime - deltaTime);
     m_State.messageTime = std::max(0.0f, m_State.messageTime - deltaTime);
     MonsterSystem::UpdateTimers(m_State.monster, deltaTime);
 }
@@ -213,6 +214,7 @@ void GameManager::UpdateGame(float deltaTime)
         if (m_State.health < previousHealth)
         {
             m_State.playerHitTime = DamageFeedback::Duration;
+            m_State.playerSlowTime = GameConstants::Player::HitSlowDuration;
             m_State.hitStop = DamageFeedback::HitStop;
             m_State.playerHitPosition = m_State.player;
             m_State.combo = 0;
@@ -225,6 +227,7 @@ void GameManager::UpdateGame(float deltaTime)
     {
         m_State.player = m_State.world.spawn;
         m_State.health = m_State.maxHealth;
+        m_State.playerSlowTime = 0;
         ShowMessage(L"구조대의 도움으로 마을에 돌아왔습니다.");
     }
 }

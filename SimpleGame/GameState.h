@@ -86,6 +86,7 @@ struct GameState
     float herbRegrowTime = 0.0f;
     int defense = 0, storyStep = -1;
     float playerHitTime = 0.0f, hitStop = 0.0f;
+    float playerSlowTime = 0.0f;
     Vec2 playerHitPosition = {};
     std::vector<DamageNumber> damageNumbers;
     float attackHitTime = 0.0f, comboTime = 0.0f;

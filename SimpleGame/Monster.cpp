@@ -50,9 +50,11 @@ void DrawInfo(const MonsterState &monster, const MonsterDrawContext &context, co
     if (monster.definition.id == "ancient_guardian")
     {
         const wchar_t *status = monster.chatStagger > 0 ? L"돌 파괴 · 경직" :
-            monster.chatPattern == 1 && monster.chatElapsed >= GameConstants::Chatacabra::SecondImpact ? L"혀 노출 · 피해 2배" :
+            monster.chatWeakTime > 0 ? L"금빛 혀 약점 · 피해 2배" :
             monster.chatPattern == 0 ? L"혀 공격" : monster.chatPattern == 1 ? L"연속 내려찍기" :
-            monster.chatPattern == 2 ? L"돌 부착" : monster.chatArmorHits > 0 ? L"앞다리 강화" : L"";
+            monster.chatPattern == 2 ? L"돌 부착" : monster.chatPattern == 3 ? L"돌진 · 옆으로 회피" :
+            monster.chatPattern == 4 ? L"분노 포효" : monster.chatArmorHits > 0 ? L"푸른 앞다리를 노려 갑옷 파괴" :
+            monster.chatRage ? L"분노 · 연속 공격 주의" : L"";
         context.renderer->DrawLabel(context.screenWidth*.5f+s.x-76,context.screenHeight*.5f+s.z+top+36,
             status,1,.72f,.32f,.8f);
     }
@@ -112,6 +114,23 @@ void DrawDeathEffect(const MonsterState &monster, const MonsterDrawContext &cont
 
 namespace MonsterSystem
 {
+Vec2 ChatDirection(const MonsterState &monster)
+{
+    const float length = Distance(monster.animationFacing, {0, 0});
+    return length > .001f ? Vec2{monster.animationFacing.x / length, monster.animationFacing.z / length} : Vec2{1, 0};
+}
+Vec2 ChatWeakPoint(const MonsterState &monster)
+{
+    const auto d = ChatDirection(monster);
+    return {monster.position.x + d.x * 3.5f, monster.position.z + d.z * 3.5f};
+}
+Vec2 ChatArmPoint(const MonsterState &monster, int side)
+{
+    const auto d = ChatDirection(monster);
+    return {monster.position.x + d.x * 1.5f - d.z * side * 1.8f,
+        monster.position.z + d.z * 1.5f + d.x * side * 1.8f};
+}
+
 MonsterState CreateEncounter()
 {
     const auto &content = GameContent::Get();
@@ -155,16 +174,23 @@ MonsterHitResult Hit(MonsterState &monster, Vec2 player, int attackPower)
     const bool committedChatDirection = monster.chatPattern >= 0;
     if (monster.definition.id == "ancient_guardian")
     {
-        if (monster.chatPattern == 1 && monster.chatElapsed >= GameConstants::Chatacabra::SecondImpact)
+        if (monster.chatWeakTime > 0 && Distance(player, ChatWeakPoint(monster)) <= GameConstants::Chatacabra::TargetRadius)
             attackPower *= GameConstants::Chatacabra::WeakDamageMultiplier;
-        if (monster.chatArmorHits > 0 && --monster.chatArmorHits == 0)
+        if (monster.chatArmorHits > 0)
         {
-            monster.chatStagger = GameConstants::Chatacabra::StaggerDuration;
-            monster.chatPattern = -1;
-            monster.attackCooldown = monster.chatStagger;
-            monster.chatImpactTime = GameConstants::Chatacabra::ImpactDuration;
-            monster.chatImpactPosition = monster.position;
-            monster.chatImpactType = 1;
+            attackPower = std::max(1, static_cast<int>(attackPower * GameConstants::Chatacabra::ArmoredDamageTaken));
+            const bool arm = Distance(player, ChatArmPoint(monster, -1)) <= GameConstants::Chatacabra::TargetRadius ||
+                Distance(player, ChatArmPoint(monster, 1)) <= GameConstants::Chatacabra::TargetRadius;
+            if (arm && --monster.chatArmorHits == 0)
+            {
+                monster.chatStagger = GameConstants::Chatacabra::StaggerDuration;
+                monster.chatPattern = -1;
+                monster.chatCombo = false;
+                monster.chatWeakTime = monster.chatStagger;
+                monster.attackCooldown = monster.chatStagger;
+                monster.chatArmorCooldown = GameConstants::Chatacabra::ArmorCooldown;
+                monster.chatArmorBreakTime = GameConstants::Chatacabra::ArmorBreakEffectDuration;
+            }
         }
     }
     monster.health = std::max(0, monster.health - attackPower);
@@ -191,16 +217,39 @@ MonsterHitResult Hit(MonsterState &monster, Vec2 player, int attackPower)
 
 void UpdateTimers(MonsterState &monster, float deltaTime)
 {
-    monster.attackCooldown = std::max(0.0f, monster.attackCooldown - deltaTime);
+    const float recoveryRate = monster.chatRage && monster.chatWeakTime <= 0 && monster.chatStagger <= 0 ?
+        GameConstants::Chatacabra::RageSpeed : 1.0f;
+    monster.attackCooldown = std::max(0.0f, monster.attackCooldown - deltaTime * recoveryRate);
     monster.hitFlash = std::max(0.0f, monster.hitFlash - deltaTime);
     monster.attackAnimation = std::max(0.0f, monster.attackAnimation - deltaTime);
     monster.hitAnimation = std::max(0.0f, monster.hitAnimation - deltaTime);
     monster.chatStagger = std::max(0.0f, monster.chatStagger - deltaTime);
     monster.chatImpactTime = std::max(0.0f, monster.chatImpactTime - deltaTime);
+    monster.chatWeakTime = std::max(0.0f, monster.chatWeakTime - deltaTime);
+    monster.chatArmorCooldown = std::max(0.0f, monster.chatArmorCooldown - deltaTime);
+    monster.chatRageTime = std::max(0.0f, monster.chatRageTime - deltaTime);
+    monster.chatArmorBreakTime = std::max(0.0f, monster.chatArmorBreakTime - deltaTime);
 
     if (monster.deathTime > 0)
     {
         monster.deathTime += deltaTime;
+    }
+}
+
+void StartChatAttack(MonsterState &monster, Vec2 player, int pattern)
+{
+    monster.chatPattern = pattern;
+    monster.chatElapsed = 0;
+    monster.chatHitMask = 0;
+    monster.chatOrigin = monster.position;
+    if (Distance(player, monster.position) > .001f)
+        monster.animationFacing = {player.x - monster.position.x, player.z - monster.position.z};
+    monster.chatTarget = player;
+    if (pattern == Charge)
+    {
+        const auto d = ChatDirection(monster);
+        const float length = std::min(GameConstants::Chatacabra::ChargeRange, Distance(player, monster.position));
+        monster.chatTarget = {monster.position.x + d.x * length, monster.position.z + d.z * length};
     }
 }
 
@@ -211,23 +260,43 @@ bool UpdateChatacabra(MonsterState &monster, Vec2 player, float dodgeTime, float
     const float distance=Distance(player,monster.position);
     if (monster.chatPattern < 0)
     {
-        if (distance > EngageRange && distance < monster.definition.chaseRange)
+        if (monster.attackCooldown > 0 || distance > monster.definition.chaseRange) return false;
+        if (!monster.chatRage && monster.health * 2 <= monster.maxHealth)
         {
-            monster.position.x+=(player.x-monster.position.x)/distance*monster.definition.speed*dt;
-            monster.position.z+=(player.z-monster.position.z)/distance*monster.definition.speed*dt;
+            monster.chatRage = true;
+            StartChatAttack(monster, player, Roar);
         }
-        else if (distance <= EngageRange && monster.attackCooldown <= 0)
+        else if (monster.chatAttacks >= 2 && monster.chatArmorHits == 0 && monster.chatArmorCooldown <= 0)
         {
-            monster.chatPattern=monster.chatNext;
-            monster.chatNext=(monster.chatNext+1)%3;
-            monster.chatElapsed=0; monster.chatHitMask=0;
-            monster.chatTarget=player;
-            if (distance > .001f) monster.animationFacing={player.x-monster.position.x,player.z-monster.position.z};
+            monster.chatAttacks = 0;
+            StartChatAttack(monster, player, Coat);
+        }
+        else
+        {
+            const int pattern = distance <= CloseRange ? Slam : distance <= TongueRange ? Tongue : Charge;
+            monster.chatCombo = pattern == Slam;
+            ++monster.chatAttacks;
+            StartChatAttack(monster, player, pattern);
         }
         return false;
     }
-    monster.chatElapsed+=dt;
-    if (monster.chatPattern==2)
+    const float previousElapsed = monster.chatElapsed;
+    monster.chatElapsed += dt * (monster.chatRage && monster.chatPattern != Roar ? RageSpeed : 1.0f);
+    if (monster.chatPattern == Roar)
+    {
+        if (monster.chatElapsed >= RoarImpactTime && monster.chatHitMask == 0)
+        {
+            monster.chatHitMask = 1;
+            monster.chatRageTime = RageEffectDuration;
+        }
+        if (monster.chatElapsed >= RoarDuration)
+        {
+            monster.chatPattern = -1;
+            monster.attackCooldown = .4f;
+        }
+        return false;
+    }
+    if (monster.chatPattern==Coat)
     {
         if (monster.chatElapsed>=CoatTime && monster.chatHitMask==0)
         {
@@ -236,7 +305,29 @@ bool UpdateChatacabra(MonsterState &monster, Vec2 player, float dodgeTime, float
         }
     }
     bool damaged=false;
-    const int impacts=monster.chatPattern==1 ? 2 : (monster.chatPattern==0 ? 1 : 0);
+    if (monster.chatPattern == Charge && monster.chatElapsed >= ChargeWindup)
+    {
+        const Vec2 previous = monster.position;
+        const float progress = std::min(1.0f, (monster.chatElapsed - ChargeWindup) / ChargeTravelTime);
+        monster.position = {monster.chatOrigin.x + (monster.chatTarget.x - monster.chatOrigin.x) * progress,
+            monster.chatOrigin.z + (monster.chatTarget.z - monster.chatOrigin.z) * progress};
+        const float dx = monster.position.x - previous.x, dz = monster.position.z - previous.z;
+        const float length2 = dx * dx + dz * dz;
+        const float along = length2 > .000001f ? std::max(0.0f, std::min(1.0f,
+            ((player.x - previous.x) * dx + (player.z - previous.z) * dz) / length2)) : 0;
+        const Vec2 closest = {previous.x + dx * along, previous.z + dz * along};
+        if (previousElapsed < ChargeWindup + ChargeTravelTime &&
+            monster.chatHitMask == 0 && Distance(player, closest) <= ChargeHalfWidth)
+        {
+            monster.chatHitMask = 1; // A dodged crossing is consumed as well.
+            if (dodgeTime <= 0 && monster.definition.damage > 0)
+            {
+                health -= std::max(1.0f, monster.definition.damage * ChargeDamage * (monster.chatRage ? RageDamage : 1) - std::max(0, defense));
+                damaged = true;
+            }
+        }
+    }
+    const int impacts=monster.chatPattern==Slam ? 2 : (monster.chatPattern==Tongue ? 1 : 0);
     for (int event=0;event<impacts;++event)
     {
         if (monster.chatElapsed<(event==0 ? FirstImpact : SecondImpact) || (monster.chatHitMask&(1<<event))) continue;
@@ -244,7 +335,7 @@ bool UpdateChatacabra(MonsterState &monster, Vec2 player, float dodgeTime, float
         monster.chatImpactTime=ImpactDuration; monster.chatImpactType=monster.chatPattern;
         monster.chatImpactPosition=monster.chatTarget;
         bool inRange=false;
-        if (monster.chatPattern==0)
+        if (monster.chatPattern==Tongue)
         {
             const float length=std::sqrt(monster.animationFacing.x*monster.animationFacing.x+monster.animationFacing.z*monster.animationFacing.z);
             const float x=player.x-monster.position.x,z=player.z-monster.position.z;
@@ -255,12 +346,29 @@ bool UpdateChatacabra(MonsterState &monster, Vec2 player, float dodgeTime, float
         else inRange=Distance(player,monster.chatTarget)<=(monster.chatArmorHits>0 ? ArmoredSlamRadius : SlamRadius);
         if (inRange && dodgeTime<=0 && monster.definition.damage>0)
         {
-            health-=std::max(1.0f,monster.definition.damage*(monster.chatArmorHits>0 ? ArmoredDamageMultiplier : 1.0f)-std::max(0,defense));
+            const float heavy = monster.chatPattern == Slam ? 1.15f : 1.0f;
+            health-=std::max(1.0f,monster.definition.damage*heavy*(monster.chatArmorHits>0 ? ArmoredDamageMultiplier : 1.0f)*
+                (monster.chatRage ? RageDamage : 1.0f)-std::max(0,defense));
             damaged=true;
         }
     }
-    const float duration=monster.chatPattern==0 ? TongueDuration : (monster.chatPattern==1 ? SlamDuration : CoatDuration);
-    if (monster.chatElapsed>=duration) { monster.chatPattern=-1; monster.attackCooldown=Recovery; }
+    const float duration=monster.chatPattern==Tongue ? TongueDuration : monster.chatPattern==Slam ? SlamDuration :
+        monster.chatPattern == Charge ? ChargeDuration : CoatDuration;
+    if (monster.chatElapsed>=duration)
+    {
+        if (monster.chatPattern == Slam && monster.chatCombo)
+        {
+            StartChatAttack(monster, player, Tongue); // New warning, then the second move of the combo.
+        }
+        else
+        {
+            const bool exhausted = monster.chatPattern == Tongue || monster.chatPattern == Charge;
+            monster.chatWeakTime = exhausted ? WeakDuration : 0;
+            monster.attackCooldown = exhausted ? WeakDuration : Recovery;
+            monster.chatCombo = false;
+            monster.chatPattern = -1;
+        }
+    }
     return damaged;
 }
 

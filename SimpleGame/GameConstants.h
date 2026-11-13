@@ -20,6 +20,7 @@ namespace Player
 constexpr float WalkSpeed = 2.4f, SprintSpeed = 4.0f, DodgeSpeed = 9.0f;
 constexpr float DodgeDuration = .24f, PotionHealing = 45.0f;
 constexpr float AttackDuration = .32f;
+constexpr float HitSlowDuration = 5.0f, HitSlowSpeed = .25f;
 constexpr float WalkFps = 6.0f, SprintFps = 8.0f;
 constexpr int DamageDivisor = 2, MinimumDamage = 1;
 }
@@ -67,8 +68,14 @@ constexpr float EngageRange = 3.8f * CombatScale, TongueRange = 4.0f * CombatSca
 constexpr float SlamRadius = 1.6f * CombatScale, ArmoredSlamRadius = 2.2f * CombatScale;
 constexpr float FirstImpact = .85f, SecondImpact = 1.55f;
 constexpr float TongueDuration = 2.2f, SlamDuration = 2.9f, CoatDuration = 1.4f;
-constexpr float CoatTime = .8f, Recovery = .8f, StaggerDuration = 1.0f;
-constexpr int ArmorBreakHits = 3, WeakDamageMultiplier = 2;
+constexpr float CoatTime = .8f, Recovery = 1.2f, StaggerDuration = 2.0f;
+constexpr int ArmorBreakHits = 5, WeakDamageMultiplier = 2;
+constexpr float ArmoredDamageTaken = .45f, RageSpeed = 1.2f, RageDamage = 1.15f;
+constexpr float CloseRange = 5.0f, WeakDuration = 1.8f, ArmorCooldown = 7.0f;
+constexpr float ChargeRange = 18.0f, ChargeHalfWidth = 1.4f, ChargeWindup = 1.05f;
+constexpr float ChargeTravelTime = .85f, ChargeDuration = 2.4f, ChargeDamage = 1.3f;
+constexpr float RoarDuration = 2.0f, RoarImpactTime = .45f, RageEffectDuration = 3.2f;
+constexpr float ArmorBreakEffectDuration = 2.0f, TargetRadius = 1.65f;
 constexpr float ImpactDuration = 3.2f;
 constexpr float SalivaDuration = 2.5f, ArmoredDamageMultiplier = 1.25f;
 constexpr float TongueSweepTime = 1.1f, TongueRetractTime = 1.7f, SlamRaiseTime = 1.25f;

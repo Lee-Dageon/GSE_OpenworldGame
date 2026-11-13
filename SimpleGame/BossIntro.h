@@ -23,6 +23,7 @@ inline void Start(GameState &state)
     state.moving = false;
     state.attack = state.dodge = state.hitStop = 0;
     state.playerHitTime = state.attackHitTime = 0;
+    state.playerSlowTime = 0;
     state.damageNumbers.clear();
     if (state.monster.health > 0)
         state.monster.animationFacing = {state.player.x - state.monster.position.x, state.player.z - state.monster.position.z};

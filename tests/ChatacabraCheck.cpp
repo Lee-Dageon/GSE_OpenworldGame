@@ -10,10 +10,10 @@ MonsterState Create()
 {
     MonsterDefinition definition;
     definition.id="ancient_guardian";
-    definition.health=90;
+    definition.health=240;
     definition.hitRange=2.1f;
     definition.chaseRange=9;
-    definition.damage=22;
+    definition.damage=28;
     return MonsterSystem::Create(definition,{0,0});
 }
 bool Tick(MonsterState &monster, Vec2 player, float dt, float &health, float dodge=0)
@@ -56,90 +56,108 @@ int main()
         assert(ChatacabraFrames::DeathPose((frame+.5f)*GameConstants::Chatacabra::DeathFrameDuration)==frame);
     assert(ChatacabraFrames::DeathPose(100)==3); // Corpse holds the final pose instead of looping.
     using namespace GameConstants::Chatacabra;
-    auto monster=Create();
-    assert(monster.definition.hitRange == 2.1f * CombatScale);
-    assert(monster.definition.chaseRange == 9 * CombatScale);
-    MonsterDefinition ordinary;
-    ordinary.id = "boar";
-    ordinary.hitRange = 2.1f;
-    ordinary.chaseRange = 9;
-    const auto boar = MonsterSystem::Create(ordinary, {0, 0});
-    assert(boar.definition.hitRange == 2.1f && boar.definition.chaseRange == 9);
-    float health=100;
-    Tick(monster, {8, 0}, 0, health);
-    assert(Tick(monster, {TongueRange - .01f, TongueHalfWidth - .01f}, FirstImpact + .01f, health));
-    monster = Create(); health = 100;
-    Tick(monster, {8, 0}, 0, health);
-    assert(!Tick(monster, {TongueRange + .01f, 0}, FirstImpact + .01f, health) && health == 100);
-    monster = Create();
-    Tick(monster, {8, 0}, 0, health);
-    assert(!Tick(monster, {8, TongueHalfWidth + .01f}, FirstImpact + .01f, health) && health == 100);
-    monster = Create(); monster.chatNext = 1;
-    Tick(monster, {1, 0}, 0, health);
-    assert(Tick(monster, {1 + SlamRadius - .01f, 0}, FirstImpact + .01f, health));
-    monster = Create(); health = 100;
-    assert(!Tick(monster,{1,0},0,health)); // Start telegraph, no instant damage.
-    assert(!Tick(monster,{1,0},FirstImpact-.01f,health));
-    assert(Tick(monster,{1,0},.02f,health) && health==78);
-    assert(!Tick(monster,{1,0},.1f,health) && health==78); // One hit per event.
+    using namespace MonsterSystem;
+    float health = 1000;
+    auto monster = Create();
+    Tick(monster, {1,0}, 0, health);
+    assert(monster.chatPattern == Slam && monster.chatCombo);
+    assert(!Tick(monster, {1,0}, FirstImpact-.01f, health));
+    assert(Tick(monster, {1,0}, .02f, health));
+    const float once = health;
+    assert(!Tick(monster, {1,0}, .01f, health) && health == once);
+    assert(Tick(monster, {1,0}, SecondImpact-FirstImpact, health));
+    Tick(monster, {8,0}, SlamDuration, health);
+    assert(monster.chatPattern == Tongue && monster.chatElapsed == 0 && monster.chatWeakTime == 0);
+    Tick(monster, {8,0}, TongueDuration, health, 1);
+    assert(monster.chatPattern == -1 && monster.chatWeakTime == WeakDuration);
+    assert(monster.attackCooldown >= monster.chatWeakTime);
+    const int beforeWeak = monster.health;
+    Hit(monster, ChatWeakPoint(monster), 8);
+    assert(monster.health == beforeWeak-16);
+    const int beforeBody = monster.health;
+    Hit(monster, {-1,0}, 8);
+    assert(monster.health == beforeBody-8);
+    UpdateTimers(monster, WeakDuration+.01f);
+    const int closed = monster.health;
+    Hit(monster, ChatWeakPoint(monster), 8);
+    assert(monster.health == closed-8);
 
-    monster=Create(); health=100;
+    monster = Create(); health = 1000;
+    Tick(monster, {8,0}, 0, health);
+    assert(monster.chatPattern == Tongue);
+    assert(Tick(monster, {TongueRange-.01f,TongueHalfWidth-.01f}, FirstImpact+.01f, health));
+    for (Vec2 outside : {Vec2{TongueRange+.01f,0},Vec2{8,TongueHalfWidth+.01f}})
+    {
+        monster=Create(); health=1000;
+        Tick(monster,{8,0},0,health);
+        assert(!Tick(monster,outside,FirstImpact+.01f,health) && health==1000);
+    }
+    monster=Create(); health=1000;
+    Tick(monster,{8,0},0,health);
+    assert(!Tick(monster,{8,0},FirstImpact+.01f,health,1));
+    assert(!Tick(monster,{8,0},.1f,health) && health==1000);
+    monster=Create(); health=1000;
     Tick(monster,{1,0},0,health);
-    assert(!Tick(monster,{1,0},FirstImpact+.01f,health,1));
-    assert(!Tick(monster,{1,0},.1f,health) && health==100); // Dodged event cannot hit later.
-    monster=Create();
-    Tick(monster,{1,0},0,health);
-    assert(!Tick(monster,{1,2},FirstImpact+.01f,health) && health==100); // Sidestep tongue.
-
-    monster=Create(); monster.chatNext=1; health=100;
-    Tick(monster,{1,0},0,health);
-    assert(Tick(monster,{1,0},FirstImpact+.01f,health) && health==78);
-    assert(Tick(monster,{1,0},SecondImpact-FirstImpact,health) && health==56);
-    assert(!Tick(monster,{1,0},.1f,health) && health==56);
-    MonsterSystem::Hit(monster,{1,0},7);
-    assert(monster.health==90-7*WeakDamageMultiplier);
-    Tick(monster,{1,0},SlamDuration,health);
-    const int before=monster.health;
-    MonsterSystem::Hit(monster,{1,0},7);
-    assert(monster.health==before-7); // Weak window closes.
-    monster=Create(); monster.chatNext=1; health=100;
-    Tick(monster,{1,0},0,health);
-    assert(!Tick(monster,{6,0},SecondImpact+.01f,health) && health==100); // Locked slam target.
-
-    monster=Create(); monster.chatNext=2;
-    Tick(monster,{1,0},0,health);
-    assert(!Tick(monster,{1,0},CoatTime+.01f,health));
-    assert(monster.chatArmorHits==ArmorBreakHits && health==100);
-    for (int hit=0;hit<ArmorBreakHits;++hit) MonsterSystem::Hit(monster,{1,0},1);
-    assert(monster.chatArmorHits==0 && monster.chatStagger==StaggerDuration && monster.chatPattern==-1);
-    assert(!Tick(monster,{1,0},.1f,health));
-    MonsterSystem::UpdateTimers(monster,StaggerDuration+.01f);
-    assert(monster.chatStagger==0);
-
-    monster=Create(); monster.chatNext=1; monster.chatArmorHits=ArmorBreakHits;
-    health=100;
+    assert(!Tick(monster,{1+SlamRadius+.01f,0},SecondImpact+.01f,health));
+    monster=Create(); monster.chatArmorHits=ArmorBreakHits;
     Tick(monster,{1,0},0,health);
     assert(Tick(monster,{1+SlamRadius+.1f,0},FirstImpact+.01f,health));
-    assert(health==100-22*ArmoredDamageMultiplier); // Enlarged radius and damage.
-    monster.health=0;
-    assert(!Tick(monster,{1,0},SecondImpact,health));
 
-    monster=Create(); monster.health=1;
-    const auto fatalHit=MonsterSystem::Hit(monster,{1,0},1);
-    assert(fatalHit.defeated && monster.deathTime>0);
-    assert(monster.animationFacing.x==1 && monster.animationFacing.z==0);
-    MonsterSystem::UpdateTimers(monster,1);
-    Tick(monster,{-1,0},1,health);
+    monster=Create(); monster.chatAttacks=2; health=1000;
+    Tick(monster,{1,0},0,health);
+    assert(monster.chatPattern==Coat);
+    assert(!Tick(monster,{1,0},CoatTime+.01f,health));
+    assert(monster.chatArmorHits==ArmorBreakHits);
+    const int armored=monster.health;
+    Hit(monster,{-1,0},10);
+    assert(monster.chatArmorHits==ArmorBreakHits && monster.health==armored-4);
+    for (int index=0;index<ArmorBreakHits;++index) Hit(monster,ChatArmPoint(monster,1),1);
+    assert(monster.chatArmorHits==0 && monster.chatStagger==StaggerDuration && !monster.chatCombo);
+    assert(monster.chatArmorBreakTime==ArmorBreakEffectDuration && monster.chatArmorCooldown>0);
+    assert(!Tick(monster,{1,0},.2f,health));
+    UpdateTimers(monster,StaggerDuration+.01f);
+    assert(monster.chatStagger==0);
+    Tick(monster,{1,0},0,health);
+    assert(monster.chatPattern==Slam); // Cannot immediately refresh broken armor.
+
+    monster=Create(); health=1000;
+    monster.health=monster.maxHealth/2;
+    Tick(monster,{8,0},0,health);
+    assert(monster.chatRage && monster.chatPattern==Roar);
+    assert(!Tick(monster,{8,0},RoarImpactTime+.01f,health) && monster.chatRageTime>0);
+    Tick(monster,{8,0},RoarDuration,health);
+    UpdateTimers(monster,1);
+    Tick(monster,{8,0},0,health);
+    assert(monster.chatPattern==Tongue);
+    assert(Tick(monster,{8,0},(FirstImpact+.01f)/RageSpeed,health));
+    assert(health<1000-28);
+
+    monster=Create(); health=1000;
+    Tick(monster,{15,0},0,health);
+    assert(monster.chatPattern==Charge && monster.chatTarget.x==15);
+    assert(!Tick(monster,{8,0},ChargeWindup-.01f,health));
+    assert(Tick(monster,{8,0},ChargeTravelTime+.02f,health)); // Swept hit, even in a long frame.
+    assert(monster.position.x==15);
+    const float charged=health;
+    assert(!Tick(monster,{15,0},.1f,health) && health==charged);
+    monster=Create(); health=1000;
+    Tick(monster,{15,0},0,health);
+    assert(!Tick(monster,{8,ChargeHalfWidth+.01f},ChargeWindup+ChargeTravelTime,health));
+    monster=Create();
+    Tick(monster,{15,0},0,health);
+    assert(!Tick(monster,{8,0},ChargeWindup+ChargeTravelTime,health,1));
+    assert(!Tick(monster,{15,0},.01f,health));
+
+    monster=Create(); monster.health=1; monster.chatPattern=Tongue; monster.animationFacing={0,1};
+    assert(Hit(monster,{1,0},1).defeated);
+    assert(monster.animationFacing.x==0 && monster.animationFacing.z==1);
+    assert(!Tick(monster,{0,1},1,health));
+    UpdateTimers(monster,1);
     assert(ChatacabraFrames::DeathPose(monster.deathTime)==3);
-    assert(monster.animationFacing.x==1 && monster.animationFacing.z==0);
-    monster=Create(); monster.health=1; monster.chatPattern=0; monster.animationFacing={0,1};
-    MonsterSystem::Hit(monster,{1,0},1);
-    assert(monster.animationFacing.x==0 && monster.animationFacing.z==1); // Keep committed attack direction.
-    monster=Create(); monster.health=1; monster.chatPattern=0; monster.chatArmorHits=1; monster.animationFacing={0,1};
-    MonsterSystem::Hit(monster,{1,0},1);
-    assert(monster.health==0 && monster.animationFacing.x==0 && monster.animationFacing.z==1);
-
-    monster=Create(); monster.definition.id="boar"; monster.definition.attackRange=2;
-    health=100;
-    assert(Tick(monster,{1,0},.01f,health) && health==78); // Other monsters keep contact attack.
+    MonsterDefinition ordinary;
+    ordinary.id="boar"; ordinary.health=10; ordinary.hitRange=2.1f;
+    ordinary.chaseRange=9; ordinary.attackRange=2; ordinary.damage=22;
+    monster=MonsterSystem::Create(ordinary,{0,0}); health=100;
+    assert(monster.definition.hitRange==2.1f && monster.definition.chaseRange==9);
+    assert(Tick(monster,{1,0},.01f,health) && health==78);
 }

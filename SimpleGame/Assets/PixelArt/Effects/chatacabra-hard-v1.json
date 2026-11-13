@@ -1,0 +1,36 @@
+{
+  "assets": [
+    {
+      "file": "chatacabra-rage-emblem-v1.png",
+      "sha256": "1ebdb4bdce690eff2c200ea53c0ce38cef1c62a0b7d65a6cb19619e6be497802"
+    },
+    {
+      "file": "chatacabra-roar.png",
+      "sha256": "4c221787f60273e4f671b3350a07ca3cd3a007b891f633ec3d58047c75e0e145",
+      "metadata": "chatacabra-roar.json"
+    },
+    {
+      "file": "chatacabra-armor-break.png",
+      "sha256": "6a2b7dd83c2d9b0477a296011002019fc379067eb3e116725b009b85f20ee05c",
+      "metadata": "chatacabra-armor-break.json"
+    },
+    {
+      "file": "player-hit-slow.png",
+      "sha256": "5062256b00b3b33083efa14aefeaa114c3b96216b90a388fcf53d7e0eb9e9ee1",
+      "metadata": "player-hit-slow.json"
+    }
+  ],
+  "imagegen": {
+    "mode": "built-in image_gen",
+    "prompt": "Use case: stylized-concept. Asset type: transparent pixel-art game VFX emblem, one square image. Create a fierce crimson rage emblem for a giant earthy frog monster boss: two narrow blazing red eyes with pale orange white cores, dark burgundy angular brows, surrounded by a broken circular halo of sharp red energy cracks and a few orange pixel sparks. Symmetrical, eyes central, no face skin or character body, isolated free-floating magical anger energy. Hand-painted pixel-art aesthetic with crisp stepped clustered pixels, limited red/orange/burgundy palette, controlled glow around eyes only. All motif contained within center 75 percent of square with generous fully transparent margins. True transparent alpha background, no text, no frame, no checkerboard, no ground, no watermark. Should remain readable when displayed as a small rage status emblem above a boss."
+  },
+  "pixelfx": {
+    "sources": [
+      "tools/pixelfx/src/fx/impacts/chatacabra-roar.js",
+      "tools/pixelfx/src/fx/ice/chatacabra-armor-break.js",
+      "tools/pixelfx/src/fx/status/player-hit-slow.js"
+    ],
+    "license": "chatacabra-hard-LICENSE.txt",
+    "inspection": "Contact sheets inspected; armor pre-burst block removed by advancing simulation 0.8 seconds. Effect checks passed. No game build, launch or capture."
+  }
+}
