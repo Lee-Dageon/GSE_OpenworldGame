@@ -21,5 +21,7 @@ GameState CreateInitialGameState()
     }
     for (const auto &animal : content.map.animals)
         state.animals.push_back(animal.initial);
+    for (const auto &node : content.map.gatherNodes)
+        state.gatherNodes.push_back(node.initial);
     return state;
 }

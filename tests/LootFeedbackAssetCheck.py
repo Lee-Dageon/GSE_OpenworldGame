@@ -68,7 +68,8 @@ assert "DrawLoot(state.monster.position, LootTable::Monster(state.monster.defini
 for path in ("GameManager.cpp", "StorySystem.cpp", "QuestSystem.cpp"):
     assert "LootTable::Grant" in (game / path).read_text(encoding="utf-8")
 assert "uiState.itemCounts = g_GameState.inventory.stacks" in (game / "SimpleGame.cpp").read_text(encoding="utf-8")
-assert "item<static_cast<int>(ItemId::Count)" in (game / "GameUI.cpp").read_text(encoding="utf-8")
+ui = (game / "GameUI.cpp").read_text(encoding="utf-8")
+assert "state.itemCounts[item]" in ui and "state.inventoryPage" in ui
 ns = {"m": "http://schemas.microsoft.com/developer/msbuild/2003"}
 for filename in ("SimpleGame.vcxproj", "SimpleGame.vcxproj.filters"):
     included = {n.attrib.get("Include") for n in ET.parse(game / filename).findall(".//m:ClInclude", ns)}

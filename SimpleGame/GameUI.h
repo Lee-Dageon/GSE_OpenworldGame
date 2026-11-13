@@ -22,6 +22,7 @@ struct GameUiState
     int trophies = 0;
     int hides = 0;
     std::array<int, static_cast<size_t>(ItemId::Count)> itemCounts = {};
+    int inventoryPage = 0;
     bool inventoryOpen = false, hunterBladeCrafted = false, nearWorkbench = false, huntReported = false;
     bool armorRecipeUnlocked = false, hunterArmorCrafted = false;
     int defense = 0;

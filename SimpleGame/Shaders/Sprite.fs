@@ -10,6 +10,7 @@ uniform vec4 u_UvRect;
 uniform bool u_WorldLighting;
 uniform vec3 u_LocalLight;
 uniform float u_HitFlash;
+uniform float u_Emission;
 
 void main()
 {
@@ -28,5 +29,6 @@ void main()
 		surface = min(surface * (vec3(.96, .98, 1.0) + u_LocalLight), vec3(.95));
 	}
 	surface = mix(surface, vec3(1.0, .88, .72), clamp(u_HitFlash, 0.0, 1.0));
+	surface += color.rgb * max(0.0, u_Emission);
 	FragColor = vec4(surface, color.a * u_Alpha);
 }

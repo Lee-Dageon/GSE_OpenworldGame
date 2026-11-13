@@ -185,6 +185,9 @@
     <ClInclude Include="BoarDeathFrames.h" />
     <ClInclude Include="AnimalHitFrames.h" />
     <ClInclude Include="BossIntro.h" />
+    <ClInclude Include="HarvestSystem.h" />
+    <ClInclude Include="WorldBiomes.h" />
+    <ClInclude Include="DesertPropFrames.h" />
     <ClInclude Include="LootTable.h" />
     <ClInclude Include="ChatacabraHDFrames.h" />
     <ClInclude Include="Inventory.h" />

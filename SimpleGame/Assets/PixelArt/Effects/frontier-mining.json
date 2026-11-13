@@ -1,0 +1,1381 @@
+{
+ "frames": [
+  {
+   "filename": "frontier-mining 0",
+   "frame": {
+    "x": 0,
+    "y": 0,
+    "w": 208,
+    "h": 112
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 208,
+    "h": 112
+   },
+   "sourceSize": {
+    "w": 208,
+    "h": 112
+   },
+   "duration": 33
+  },
+  {
+   "filename": "frontier-mining 1",
+   "frame": {
+    "x": 208,
+    "y": 0,
+    "w": 208,
+    "h": 112
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 208,
+    "h": 112
+   },
+   "sourceSize": {
+    "w": 208,
+    "h": 112
+   },
+   "duration": 33
+  },
+  {
+   "filename": "frontier-mining 2",
+   "frame": {
+    "x": 416,
+    "y": 0,
+    "w": 208,
+    "h": 112
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 208,
+    "h": 112
+   },
+   "sourceSize": {
+    "w": 208,
+    "h": 112
+   },
+   "duration": 33
+  },
+  {
+   "filename": "frontier-mining 3",
+   "frame": {
+    "x": 624,
+    "y": 0,
+    "w": 208,
+    "h": 112
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 208,
+    "h": 112
+   },
+   "sourceSize": {
+    "w": 208,
+    "h": 112
+   },
+   "duration": 33
+  },
+  {
+   "filename": "frontier-mining 4",
+   "frame": {
+    "x": 832,
+    "y": 0,
+    "w": 208,
+    "h": 112
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 208,
+    "h": 112
+   },
+   "sourceSize": {
+    "w": 208,
+    "h": 112
+   },
+   "duration": 33
+  },
+  {
+   "filename": "frontier-mining 5",
+   "frame": {
+    "x": 1040,
+    "y": 0,
+    "w": 208,
+    "h": 112
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 208,
+    "h": 112
+   },
+   "sourceSize": {
+    "w": 208,
+    "h": 112
+   },
+   "duration": 33
+  },
+  {
+   "filename": "frontier-mining 6",
+   "frame": {
+    "x": 0,
+    "y": 112,
+    "w": 208,
+    "h": 112
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 208,
+    "h": 112
+   },
+   "sourceSize": {
+    "w": 208,
+    "h": 112
+   },
+   "duration": 33
+  },
+  {
+   "filename": "frontier-mining 7",
+   "frame": {
+    "x": 208,
+    "y": 112,
+    "w": 208,
+    "h": 112
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 208,
+    "h": 112
+   },
+   "sourceSize": {
+    "w": 208,
+    "h": 112
+   },
+   "duration": 33
+  },
+  {
+   "filename": "frontier-mining 8",
+   "frame": {
+    "x": 416,
+    "y": 112,
+    "w": 208,
+    "h": 112
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 208,
+    "h": 112
+   },
+   "sourceSize": {
+    "w": 208,
+    "h": 112
+   },
+   "duration": 33
+  },
+  {
+   "filename": "frontier-mining 9",
+   "frame": {
+    "x": 624,
+    "y": 112,
+    "w": 208,
+    "h": 112
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 208,
+    "h": 112
+   },
+   "sourceSize": {
+    "w": 208,
+    "h": 112
+   },
+   "duration": 33
+  },
+  {
+   "filename": "frontier-mining 10",
+   "frame": {
+    "x": 832,
+    "y": 112,
+    "w": 208,
+    "h": 112
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 208,
+    "h": 112
+   },
+   "sourceSize": {
+    "w": 208,
+    "h": 112
+   },
+   "duration": 33
+  },
+  {
+   "filename": "frontier-mining 11",
+   "frame": {
+    "x": 1040,
+    "y": 112,
+    "w": 208,
+    "h": 112
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 208,
+    "h": 112
+   },
+   "sourceSize": {
+    "w": 208,
+    "h": 112
+   },
+   "duration": 33
+  },
+  {
+   "filename": "frontier-mining 12",
+   "frame": {
+    "x": 0,
+    "y": 224,
+    "w": 208,
+    "h": 112
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 208,
+    "h": 112
+   },
+   "sourceSize": {
+    "w": 208,
+    "h": 112
+   },
+   "duration": 33
+  },
+  {
+   "filename": "frontier-mining 13",
+   "frame": {
+    "x": 208,
+    "y": 224,
+    "w": 208,
+    "h": 112
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 208,
+    "h": 112
+   },
+   "sourceSize": {
+    "w": 208,
+    "h": 112
+   },
+   "duration": 33
+  },
+  {
+   "filename": "frontier-mining 14",
+   "frame": {
+    "x": 416,
+    "y": 224,
+    "w": 208,
+    "h": 112
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 208,
+    "h": 112
+   },
+   "sourceSize": {
+    "w": 208,
+    "h": 112
+   },
+   "duration": 33
+  },
+  {
+   "filename": "frontier-mining 15",
+   "frame": {
+    "x": 624,
+    "y": 224,
+    "w": 208,
+    "h": 112
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 208,
+    "h": 112
+   },
+   "sourceSize": {
+    "w": 208,
+    "h": 112
+   },
+   "duration": 33
+  },
+  {
+   "filename": "frontier-mining 16",
+   "frame": {
+    "x": 832,
+    "y": 224,
+    "w": 208,
+    "h": 112
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 208,
+    "h": 112
+   },
+   "sourceSize": {
+    "w": 208,
+    "h": 112
+   },
+   "duration": 33
+  },
+  {
+   "filename": "frontier-mining 17",
+   "frame": {
+    "x": 1040,
+    "y": 224,
+    "w": 208,
+    "h": 112
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 208,
+    "h": 112
+   },
+   "sourceSize": {
+    "w": 208,
+    "h": 112
+   },
+   "duration": 33
+  },
+  {
+   "filename": "frontier-mining 18",
+   "frame": {
+    "x": 0,
+    "y": 336,
+    "w": 208,
+    "h": 112
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 208,
+    "h": 112
+   },
+   "sourceSize": {
+    "w": 208,
+    "h": 112
+   },
+   "duration": 33
+  },
+  {
+   "filename": "frontier-mining 19",
+   "frame": {
+    "x": 208,
+    "y": 336,
+    "w": 208,
+    "h": 112
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 208,
+    "h": 112
+   },
+   "sourceSize": {
+    "w": 208,
+    "h": 112
+   },
+   "duration": 33
+  },
+  {
+   "filename": "frontier-mining 20",
+   "frame": {
+    "x": 416,
+    "y": 336,
+    "w": 208,
+    "h": 112
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 208,
+    "h": 112
+   },
+   "sourceSize": {
+    "w": 208,
+    "h": 112
+   },
+   "duration": 33
+  },
+  {
+   "filename": "frontier-mining 21",
+   "frame": {
+    "x": 624,
+    "y": 336,
+    "w": 208,
+    "h": 112
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 208,
+    "h": 112
+   },
+   "sourceSize": {
+    "w": 208,
+    "h": 112
+   },
+   "duration": 33
+  },
+  {
+   "filename": "frontier-mining 22",
+   "frame": {
+    "x": 832,
+    "y": 336,
+    "w": 208,
+    "h": 112
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 208,
+    "h": 112
+   },
+   "sourceSize": {
+    "w": 208,
+    "h": 112
+   },
+   "duration": 33
+  },
+  {
+   "filename": "frontier-mining 23",
+   "frame": {
+    "x": 1040,
+    "y": 336,
+    "w": 208,
+    "h": 112
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 208,
+    "h": 112
+   },
+   "sourceSize": {
+    "w": 208,
+    "h": 112
+   },
+   "duration": 33
+  },
+  {
+   "filename": "frontier-mining 24",
+   "frame": {
+    "x": 0,
+    "y": 448,
+    "w": 208,
+    "h": 112
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 208,
+    "h": 112
+   },
+   "sourceSize": {
+    "w": 208,
+    "h": 112
+   },
+   "duration": 33
+  },
+  {
+   "filename": "frontier-mining 25",
+   "frame": {
+    "x": 208,
+    "y": 448,
+    "w": 208,
+    "h": 112
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 208,
+    "h": 112
+   },
+   "sourceSize": {
+    "w": 208,
+    "h": 112
+   },
+   "duration": 33
+  },
+  {
+   "filename": "frontier-mining 26",
+   "frame": {
+    "x": 416,
+    "y": 448,
+    "w": 208,
+    "h": 112
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 208,
+    "h": 112
+   },
+   "sourceSize": {
+    "w": 208,
+    "h": 112
+   },
+   "duration": 33
+  },
+  {
+   "filename": "frontier-mining 27",
+   "frame": {
+    "x": 624,
+    "y": 448,
+    "w": 208,
+    "h": 112
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 208,
+    "h": 112
+   },
+   "sourceSize": {
+    "w": 208,
+    "h": 112
+   },
+   "duration": 33
+  },
+  {
+   "filename": "frontier-mining 28",
+   "frame": {
+    "x": 832,
+    "y": 448,
+    "w": 208,
+    "h": 112
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 208,
+    "h": 112
+   },
+   "sourceSize": {
+    "w": 208,
+    "h": 112
+   },
+   "duration": 33
+  },
+  {
+   "filename": "frontier-mining 29",
+   "frame": {
+    "x": 1040,
+    "y": 448,
+    "w": 208,
+    "h": 112
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 208,
+    "h": 112
+   },
+   "sourceSize": {
+    "w": 208,
+    "h": 112
+   },
+   "duration": 33
+  },
+  {
+   "filename": "frontier-mining 30",
+   "frame": {
+    "x": 0,
+    "y": 560,
+    "w": 208,
+    "h": 112
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 208,
+    "h": 112
+   },
+   "sourceSize": {
+    "w": 208,
+    "h": 112
+   },
+   "duration": 33
+  },
+  {
+   "filename": "frontier-mining 31",
+   "frame": {
+    "x": 208,
+    "y": 560,
+    "w": 208,
+    "h": 112
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 208,
+    "h": 112
+   },
+   "sourceSize": {
+    "w": 208,
+    "h": 112
+   },
+   "duration": 33
+  },
+  {
+   "filename": "frontier-mining 32",
+   "frame": {
+    "x": 416,
+    "y": 560,
+    "w": 208,
+    "h": 112
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 208,
+    "h": 112
+   },
+   "sourceSize": {
+    "w": 208,
+    "h": 112
+   },
+   "duration": 33
+  },
+  {
+   "filename": "frontier-mining 33",
+   "frame": {
+    "x": 624,
+    "y": 560,
+    "w": 208,
+    "h": 112
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 208,
+    "h": 112
+   },
+   "sourceSize": {
+    "w": 208,
+    "h": 112
+   },
+   "duration": 33
+  },
+  {
+   "filename": "frontier-mining 34",
+   "frame": {
+    "x": 832,
+    "y": 560,
+    "w": 208,
+    "h": 112
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 208,
+    "h": 112
+   },
+   "sourceSize": {
+    "w": 208,
+    "h": 112
+   },
+   "duration": 33
+  },
+  {
+   "filename": "frontier-mining 35",
+   "frame": {
+    "x": 1040,
+    "y": 560,
+    "w": 208,
+    "h": 112
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 208,
+    "h": 112
+   },
+   "sourceSize": {
+    "w": 208,
+    "h": 112
+   },
+   "duration": 33
+  },
+  {
+   "filename": "frontier-mining 36",
+   "frame": {
+    "x": 0,
+    "y": 672,
+    "w": 208,
+    "h": 112
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 208,
+    "h": 112
+   },
+   "sourceSize": {
+    "w": 208,
+    "h": 112
+   },
+   "duration": 33
+  },
+  {
+   "filename": "frontier-mining 37",
+   "frame": {
+    "x": 208,
+    "y": 672,
+    "w": 208,
+    "h": 112
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 208,
+    "h": 112
+   },
+   "sourceSize": {
+    "w": 208,
+    "h": 112
+   },
+   "duration": 33
+  },
+  {
+   "filename": "frontier-mining 38",
+   "frame": {
+    "x": 416,
+    "y": 672,
+    "w": 208,
+    "h": 112
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 208,
+    "h": 112
+   },
+   "sourceSize": {
+    "w": 208,
+    "h": 112
+   },
+   "duration": 33
+  },
+  {
+   "filename": "frontier-mining 39",
+   "frame": {
+    "x": 624,
+    "y": 672,
+    "w": 208,
+    "h": 112
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 208,
+    "h": 112
+   },
+   "sourceSize": {
+    "w": 208,
+    "h": 112
+   },
+   "duration": 33
+  },
+  {
+   "filename": "frontier-mining 40",
+   "frame": {
+    "x": 832,
+    "y": 672,
+    "w": 208,
+    "h": 112
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 208,
+    "h": 112
+   },
+   "sourceSize": {
+    "w": 208,
+    "h": 112
+   },
+   "duration": 33
+  },
+  {
+   "filename": "frontier-mining 41",
+   "frame": {
+    "x": 1040,
+    "y": 672,
+    "w": 208,
+    "h": 112
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 208,
+    "h": 112
+   },
+   "sourceSize": {
+    "w": 208,
+    "h": 112
+   },
+   "duration": 33
+  },
+  {
+   "filename": "frontier-mining 42",
+   "frame": {
+    "x": 0,
+    "y": 784,
+    "w": 208,
+    "h": 112
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 208,
+    "h": 112
+   },
+   "sourceSize": {
+    "w": 208,
+    "h": 112
+   },
+   "duration": 33
+  },
+  {
+   "filename": "frontier-mining 43",
+   "frame": {
+    "x": 208,
+    "y": 784,
+    "w": 208,
+    "h": 112
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 208,
+    "h": 112
+   },
+   "sourceSize": {
+    "w": 208,
+    "h": 112
+   },
+   "duration": 33
+  },
+  {
+   "filename": "frontier-mining 44",
+   "frame": {
+    "x": 416,
+    "y": 784,
+    "w": 208,
+    "h": 112
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 208,
+    "h": 112
+   },
+   "sourceSize": {
+    "w": 208,
+    "h": 112
+   },
+   "duration": 33
+  },
+  {
+   "filename": "frontier-mining 45",
+   "frame": {
+    "x": 624,
+    "y": 784,
+    "w": 208,
+    "h": 112
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 208,
+    "h": 112
+   },
+   "sourceSize": {
+    "w": 208,
+    "h": 112
+   },
+   "duration": 33
+  },
+  {
+   "filename": "frontier-mining 46",
+   "frame": {
+    "x": 832,
+    "y": 784,
+    "w": 208,
+    "h": 112
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 208,
+    "h": 112
+   },
+   "sourceSize": {
+    "w": 208,
+    "h": 112
+   },
+   "duration": 33
+  },
+  {
+   "filename": "frontier-mining 47",
+   "frame": {
+    "x": 1040,
+    "y": 784,
+    "w": 208,
+    "h": 112
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 208,
+    "h": 112
+   },
+   "sourceSize": {
+    "w": 208,
+    "h": 112
+   },
+   "duration": 33
+  },
+  {
+   "filename": "frontier-mining 48",
+   "frame": {
+    "x": 0,
+    "y": 896,
+    "w": 208,
+    "h": 112
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 208,
+    "h": 112
+   },
+   "sourceSize": {
+    "w": 208,
+    "h": 112
+   },
+   "duration": 33
+  },
+  {
+   "filename": "frontier-mining 49",
+   "frame": {
+    "x": 208,
+    "y": 896,
+    "w": 208,
+    "h": 112
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 208,
+    "h": 112
+   },
+   "sourceSize": {
+    "w": 208,
+    "h": 112
+   },
+   "duration": 33
+  },
+  {
+   "filename": "frontier-mining 50",
+   "frame": {
+    "x": 416,
+    "y": 896,
+    "w": 208,
+    "h": 112
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 208,
+    "h": 112
+   },
+   "sourceSize": {
+    "w": 208,
+    "h": 112
+   },
+   "duration": 33
+  },
+  {
+   "filename": "frontier-mining 51",
+   "frame": {
+    "x": 624,
+    "y": 896,
+    "w": 208,
+    "h": 112
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 208,
+    "h": 112
+   },
+   "sourceSize": {
+    "w": 208,
+    "h": 112
+   },
+   "duration": 33
+  },
+  {
+   "filename": "frontier-mining 52",
+   "frame": {
+    "x": 832,
+    "y": 896,
+    "w": 208,
+    "h": 112
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 208,
+    "h": 112
+   },
+   "sourceSize": {
+    "w": 208,
+    "h": 112
+   },
+   "duration": 33
+  },
+  {
+   "filename": "frontier-mining 53",
+   "frame": {
+    "x": 1040,
+    "y": 896,
+    "w": 208,
+    "h": 112
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 208,
+    "h": 112
+   },
+   "sourceSize": {
+    "w": 208,
+    "h": 112
+   },
+   "duration": 33
+  },
+  {
+   "filename": "frontier-mining 54",
+   "frame": {
+    "x": 0,
+    "y": 1008,
+    "w": 208,
+    "h": 112
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 208,
+    "h": 112
+   },
+   "sourceSize": {
+    "w": 208,
+    "h": 112
+   },
+   "duration": 33
+  },
+  {
+   "filename": "frontier-mining 55",
+   "frame": {
+    "x": 208,
+    "y": 1008,
+    "w": 208,
+    "h": 112
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 208,
+    "h": 112
+   },
+   "sourceSize": {
+    "w": 208,
+    "h": 112
+   },
+   "duration": 33
+  },
+  {
+   "filename": "frontier-mining 56",
+   "frame": {
+    "x": 416,
+    "y": 1008,
+    "w": 208,
+    "h": 112
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 208,
+    "h": 112
+   },
+   "sourceSize": {
+    "w": 208,
+    "h": 112
+   },
+   "duration": 33
+  },
+  {
+   "filename": "frontier-mining 57",
+   "frame": {
+    "x": 624,
+    "y": 1008,
+    "w": 208,
+    "h": 112
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 208,
+    "h": 112
+   },
+   "sourceSize": {
+    "w": 208,
+    "h": 112
+   },
+   "duration": 33
+  },
+  {
+   "filename": "frontier-mining 58",
+   "frame": {
+    "x": 832,
+    "y": 1008,
+    "w": 208,
+    "h": 112
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 208,
+    "h": 112
+   },
+   "sourceSize": {
+    "w": 208,
+    "h": 112
+   },
+   "duration": 33
+  },
+  {
+   "filename": "frontier-mining 59",
+   "frame": {
+    "x": 1040,
+    "y": 1008,
+    "w": 208,
+    "h": 112
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 208,
+    "h": 112
+   },
+   "sourceSize": {
+    "w": 208,
+    "h": 112
+   },
+   "duration": 33
+  },
+  {
+   "filename": "frontier-mining 60",
+   "frame": {
+    "x": 0,
+    "y": 1120,
+    "w": 208,
+    "h": 112
+   },
+   "rotated": false,
+   "trimmed": false,
+   "spriteSourceSize": {
+    "x": 0,
+    "y": 0,
+    "w": 208,
+    "h": 112
+   },
+   "sourceSize": {
+    "w": 208,
+    "h": 112
+   },
+   "duration": 33
+  }
+ ],
+ "meta": {
+  "app": "https://github.com/patch-gg/pixelfx",
+  "version": "1",
+  "image": "frontier-mining.png",
+  "format": "RGBA8888",
+  "size": {
+   "w": 1248,
+   "h": 1232
+  },
+  "scale": "1",
+  "frameTags": [
+   {
+    "name": "frontier-mining",
+    "from": 0,
+    "to": 60,
+    "direction": "forward"
+   }
+  ],
+  "pixelfx": {
+   "id": "melee/frontier-mining",
+   "name": "Frontier mining strike",
+   "fps": 30,
+   "loop": false,
+   "frames": 61,
+   "frameSize": [
+    208,
+    112
+   ],
+   "pivot": [
+    80,
+    92
+   ],
+   "columns": 6
+  }
+ }
+}

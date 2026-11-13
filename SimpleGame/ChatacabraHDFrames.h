@@ -10,6 +10,17 @@ constexpr const wchar_t *Files[5][2] = {
     {L"chatacabra-coat-hd-a-v1.png", L"chatacabra-coat-hd-b-v1.png"},
     {L"chatacabra-death-hd-a-v1.png", L"chatacabra-death-hd-b-v1.png"},
 };
+struct Bounds { float left, right, bottom, top; };
+constexpr Bounds WalkBounds[8] = {
+    {-0.21129542f,0.21129542f,0.00000000f,0.33767773f},
+    {-0.22315894f,0.22315894f,0.00000000f,0.34397089f},
+    {-0.23408780f,0.23408780f,0.00000000f,0.33218162f},
+    {-0.21715249f,0.21715249f,0.00000000f,0.33847242f},
+    {-0.21846266f,0.21846266f,0.00000000f,0.38032878f},
+    {-0.21938563f,0.21938563f,0.00000000f,0.33806678f},
+    {-0.23180873f,0.23180873f,0.00000000f,0.31292954f},
+    {-0.21060905f,0.21060905f,0.00000000f,0.35064752f},
+};
 // Same screen size as the original walk; uniform scale within each action/direction.
 constexpr ChatacabraFrames::Frame Frames[5][32] = {
     {

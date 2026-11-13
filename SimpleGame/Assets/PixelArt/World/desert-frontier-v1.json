@@ -1,0 +1,302 @@
+{
+  "mode": "built-in image_gen",
+  "props_prompt": "Transparent 4x4 atlas: cactus, dry bush, sandstone rock, bones; broken arch, column, obelisk, wall; desert tent, buried cart, footprints, journal; crystal altar, temple doorway, control console, monster nest. Isometric pixel art, ochre sandstone, turquoise inlays, no grass or text. Spacing edit: center each object within 68 percent of its cell; transparent gutters; preserve designs and order.",
+  "sand_prompt": "Seamless top-down golden desert sand, wind swept ripples, fine pixel grains and sparse ochre pebbles, opaque, no objects or text.",
+  "frames": [
+    {
+      "source": [
+        0,
+        0,
+        316,
+        280
+      ],
+      "x": 0.5395569620253164,
+      "y": 0.9178571428571428,
+      "scale": 1.5730337078651686,
+      "bounds": [
+        108,
+        79,
+        244,
+        257
+      ]
+    },
+    {
+      "source": [
+        316,
+        0,
+        316,
+        280
+      ],
+      "x": 0.4541139240506329,
+      "y": 0.8785714285714286,
+      "scale": 1.8064516129032258,
+      "bounds": [
+        60,
+        91,
+        244,
+        246
+      ]
+    },
+    {
+      "source": [
+        632,
+        0,
+        315,
+        280
+      ],
+      "x": 0.4238095238095238,
+      "y": 0.9,
+      "scale": 1.75,
+      "bounds": [
+        41,
+        92,
+        237,
+        252
+      ]
+    },
+    {
+      "source": [
+        947,
+        0,
+        316,
+        280
+      ],
+      "x": 0.495253164556962,
+      "y": 0.9178571428571428,
+      "scale": 1.9310344827586208,
+      "bounds": [
+        34,
+        112,
+        230,
+        257
+      ]
+    },
+    {
+      "source": [
+        0,
+        280,
+        316,
+        300
+      ],
+      "x": 0.4224683544303797,
+      "y": 0.9,
+      "scale": 1.5544041450777202,
+      "bounds": [
+        76,
+        77,
+        274,
+        270
+      ]
+    },
+    {
+      "source": [
+        316,
+        280,
+        316,
+        300
+      ],
+      "x": 0.495253164556962,
+      "y": 0.9,
+      "scale": 1.5544041450777202,
+      "bounds": [
+        86,
+        77,
+        226,
+        270
+      ]
+    },
+    {
+      "source": [
+        632,
+        280,
+        315,
+        300
+      ],
+      "x": 0.4365079365079365,
+      "y": 0.9,
+      "scale": 1.5075376884422111,
+      "bounds": [
+        65,
+        71,
+        207,
+        270
+      ]
+    },
+    {
+      "source": [
+        947,
+        280,
+        316,
+        300
+      ],
+      "x": 0.2674050632911392,
+      "y": 0.8733333333333333,
+      "scale": 2.158273381294964,
+      "bounds": [
+        31,
+        123,
+        238,
+        262
+      ]
+    },
+    {
+      "source": [
+        0,
+        580,
+        316,
+        270
+      ],
+      "x": 0.5427215189873418,
+      "y": 0.8703703703703703,
+      "scale": 1.560693641618497,
+      "bounds": [
+        72,
+        62,
+        273,
+        235
+      ]
+    },
+    {
+      "source": [
+        316,
+        580,
+        316,
+        270
+      ],
+      "x": 0.4699367088607595,
+      "y": 0.8407407407407408,
+      "scale": 1.836734693877551,
+      "bounds": [
+        53,
+        80,
+        256,
+        227
+      ]
+    },
+    {
+      "source": [
+        632,
+        580,
+        315,
+        270
+      ],
+      "x": 0.2746031746031746,
+      "y": 0.8666666666666667,
+      "scale": 1.656441717791411,
+      "bounds": [
+        55,
+        71,
+        225,
+        234
+      ]
+    },
+    {
+      "source": [
+        947,
+        580,
+        316,
+        270
+      ],
+      "x": 0.40031645569620256,
+      "y": 0.8666666666666667,
+      "scale": 1.6071428571428572,
+      "bounds": [
+        30,
+        66,
+        238,
+        234
+      ]
+    },
+    {
+      "source": [
+        0,
+        850,
+        316,
+        396
+      ],
+      "x": 0.5268987341772152,
+      "y": 0.6212121212121212,
+      "scale": 2.2,
+      "bounds": [
+        78,
+        66,
+        259,
+        246
+      ]
+    },
+    {
+      "source": [
+        316,
+        850,
+        316,
+        396
+      ],
+      "x": 0.49841772151898733,
+      "y": 0.6237373737373737,
+      "scale": 2.0307692307692307,
+      "bounds": [
+        51,
+        52,
+        260,
+        247
+      ]
+    },
+    {
+      "source": [
+        632,
+        850,
+        315,
+        396
+      ],
+      "x": 0.44285714285714284,
+      "y": 0.6035353535353535,
+      "scale": 2.1758241758241756,
+      "bounds": [
+        53,
+        57,
+        237,
+        239
+      ]
+    },
+    {
+      "source": [
+        947,
+        850,
+        316,
+        396
+      ],
+      "x": 0.435126582278481,
+      "y": 0.6186868686868687,
+      "scale": 2.2,
+      "bounds": [
+        33,
+        65,
+        237,
+        245
+      ]
+    }
+  ],
+  "props_sha256": "ab13dff9534e6fbbde0e9091886b84f2eb2dd913fa819880ef6b626a67c04d1c",
+  "sand_sha256": "6c288c8a1eec83231f205911407c47e971107b295054301b95a8299f851f6fa5",
+  "materials": [
+    "wild-berry",
+    "mushroom",
+    "hardwood",
+    "plant-fiber",
+    "copper-ore",
+    "iron-ore",
+    "silver-ore",
+    "gold-ore",
+    "quartz",
+    "sulfur",
+    "coal",
+    "rock-salt",
+    "amber",
+    "desert-rose",
+    "moonflower",
+    "sunstone"
+  ],
+  "material_source": "tools/pixelfx/src/fx/pickups/_frontier-materials.js",
+  "sampling": "Per-object source rectangles using row breaks 0,280,580,850,1246; union of body components >=500 pixels. Equal quarter-height sampling clipped the console roof.",
+  "material_feedback": "Stronger baked glow, 3 animated glints per material; runtime emissive quest motes and 3 HDR starbursts; depleted nodes remain dim."
+}

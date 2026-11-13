@@ -10,15 +10,43 @@
 #include "../SimpleGame/BossIntro.h"
 #include "../SimpleGame/ChatacabraFrames.h"
 #include "../SimpleGame/PlayerController.h"
+#include "../SimpleGame/HarvestSystem.h"
 #include <cmath>
 #include <cassert>
 #include <iostream>
 
 int main()
 {
+    GameState miner = CreateInitialGameState();
+    miner.gatherNodes = {{miner.player,5,0}};
+    GameManager mining(miner);
+    mining.HandleCommand(GameCommand::Interact);
+    assert(miner.lootNode == 0 && miner.lootTime == 3 && miner.inventory.Count(ItemId::IronOre) == 0);
+    mining.HandleCommand(GameCommand::ToggleInventory);
+    mining.UpdateGame(1);
+    assert(miner.lootTime == 3);
+    mining.HandleCommand(GameCommand::ToggleInventory);
+    mining.UpdateGame(1.5f);
+    assert(miner.inventory.Count(ItemId::IronOre) == 0);
+    mining.UpdateGame(1.6f);
+    assert(miner.inventory.Count(ItemId::IronOre) == 3 && miner.gatherNodes[0].regrowTime == 180);
+    assert(HarvestSystem::Nearby(miner) == -1 && miner.lootNode == -1);
+    mining.BeginFrame(181);
+    assert(HarvestSystem::Nearby(miner) == 0);
+    miner.inventory.Add(ItemId::IronOre,Inventory::MaxStack-3);
+    mining.HandleCommand(GameCommand::Interact);
+    mining.UpdateGame(3.1f);
+    assert(miner.gatherNodes[0].regrowTime == 0 && miner.inventory.Count(ItemId::IronOre) == Inventory::MaxStack);
+    miner.gatherNodes[0].kind = 0;
+    mining.HandleCommand(GameCommand::Interact);
+    assert(miner.lootTime == 1);
+    mining.UpdateGame(1.1f);
+    assert(miner.inventory.Count(ItemId::WildBerry) == 2 && miner.gatherNodes[0].regrowTime == 90);
     GameState cinematic = CreateInitialGameState();
     cinematic.cameraZoom = 1.3f;
     assert(StorySystem::DebugEnterStep(cinematic, "ancient_hunt"));
+    assert(cinematic.bossIntroPending && !BossIntro::Active(cinematic));
+    assert(BossIntro::TryStartVisible(cinematic));
     assert(BossIntro::Active(cinematic) && BossIntro::Weight(cinematic) == 0);
     GameManager cinematicGame(cinematic);
     const auto playerBefore = cinematic.player;
@@ -46,8 +74,35 @@ int main()
     {
         GameState skipped = CreateInitialGameState();
         assert(StorySystem::DebugEnterStep(skipped, "ancient_hunt"));
+        assert(BossIntro::TryStartVisible(skipped));
         assert(GameInput::OnKeyDown(skipped, key, false) == GameCommand::None);
         assert(!BossIntro::Active(skipped) && skipped.dodge == 0 && skipped.cameraZoom == 1);
+    }
+    GameState device = CreateInitialGameState();
+    assert(StorySystem::DebugEnterStep(device,"ruin_control"));
+    GameManager deviceGame(device);
+    deviceGame.HandleCommand(GameCommand::Interact);
+    assert(device.ruinDeviceDisabled && device.bossIntroPending && !BossIntro::Active(device));
+    assert(StorySystem::Current(device)->id == "ancient_hunt");
+    device.keys['w'] = true;
+    const float beforeApproach = device.player.x;
+    deviceGame.UpdateGame(.1f);
+    assert(device.player.x > beforeApproach && device.bossIntroPending && !BossIntro::Active(device));
+    for (const float zoom : {.4f,1.0f,1.6f})
+    {
+        GameState approaching = CreateInitialGameState();
+        assert(StorySystem::DebugEnterStep(approaching,"ancient_hunt"));
+        approaching.cameraZoom = zoom;
+        approaching.player.x += 200;
+        assert(!BossIntro::TryStartVisible(approaching) && approaching.bossIntroPending);
+        const auto bossPosition = approaching.monster.position;
+        GameManager(approaching).UpdateGame(.1f);
+        assert(!BossIntro::Active(approaching) && approaching.monster.chatPattern == -1);
+        assert(approaching.monster.position.x == bossPosition.x && approaching.monster.position.z == bossPosition.z);
+        approaching.player = approaching.monster.position;
+        assert(BossIntro::TryStartVisible(approaching) && !approaching.bossIntroPending);
+        BossIntro::Skip(approaching);
+        assert(!BossIntro::TryStartVisible(approaching)); // Re-entering the view cannot replay the intro.
     }
     assert(BossIntro::SlamPose(0) == -1);
     assert(BossIntro::SlamPose(GameConstants::Chatacabra::IntroPrepareTime) == 0);

@@ -6,6 +6,10 @@ uniform vec4 u_Color;
 uniform float u_Time;
 uniform int u_EffectType;
 uniform sampler2D u_TerrainTexture;
+uniform sampler2D u_DesertTexture;
+uniform bool u_HasDesertTexture;
+uniform int u_DesertCount;
+uniform vec4 u_DesertBounds[2];
 uniform bool u_PixelTerrain;
 uniform int u_TerrainColumn;
 uniform vec2 u_TerrainTileSize;
@@ -212,7 +216,21 @@ void main()
 		float edgeSoil = (1.0 - smoothstep(.05, .65, abs(distanceToRoad))) * Noise(world * 9.0);
 		tile.rgb = mix(tile.rgb, dirt.rgb * .78, edgeSoil * .24);
 		tile.rgb *= .93 + .12 * Noise(world * 2.2 + warp);
-		color.rgb = mix(color.rgb, tile.rgb, tile.a * .9);
+		float desert = 0.0;
+		for (int index=0; index<u_DesertCount; ++index)
+		{
+			vec4 bounds=u_DesertBounds[index];
+			vec2 edge=min(world-bounds.xy,bounds.zw-world);
+			desert=max(desert,smoothstep(-12.0,12.0,min(edge.x,edge.y)));
+		}
+		vec3 sand = vec3(.70,.48,.24) * (.92+.12*grain);
+		if (u_HasDesertTexture)
+		{
+			vec2 sandUV=(1.0-abs(fract(world/12.0)*2.0-1.0));
+			sand=texture(u_DesertTexture,sandUV).rgb;
+		}
+		tile.rgb=mix(tile.rgb,sand,desert);
+		color.rgb = mix(color.rgb, tile.rgb, mix(tile.a * .9,1.0,desert));
 		vec3 fireLight = vec3(0.0);
 		for (int index = 0; index < u_CampfireCount; ++index)
 		{
@@ -329,7 +347,13 @@ void main()
 			* (.30 + .60 * rim) * (.88 + .12 * sin(u_Time * 9.0));
 		color.rgb *= 1.0 + .35 * rim;
 	}
-	if (u_WorldLighting && u_EffectType != 6 && u_EffectType != 20 && u_EffectType != 21)
+	else if (u_EffectType == 22)
+	{
+		vec2 p=v_LocalPosition;
+		float rays=1.0-smoothstep(.025,.065,abs(p.x*p.y));
+		color.a *= rays*(1.0-smoothstep(.4,1.0,length(p)));
+	}
+	if (u_WorldLighting && u_EffectType != 6 && u_EffectType != 20 && u_EffectType != 21 && u_EffectType != 22)
 	{
 		vec3 linearColor = pow(max(color.rgb, vec3(0.0)), vec3(2.2));
 		color.rgb = min(linearColor * (vec3(.96,.98,1) + u_LocalLight), vec3(.95));

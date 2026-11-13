@@ -449,6 +449,7 @@ void Renderer::DrawSprite(GLuint texture, float x, float y, float sizeX, float s
     glUniform1f(glGetUniformLocation(m_SpriteShader, "u_Alpha"), alpha);
     glUniform1f(glGetUniformLocation(m_SpriteShader, "u_AlphaCutoff"), alphaCutoff);
     glUniform1f(glGetUniformLocation(m_SpriteShader, "u_HitFlash"), m_SpriteFlash);
+    glUniform1f(glGetUniformLocation(m_SpriteShader, "u_Emission"), m_SpriteEmission);
     glUniform3f(glGetUniformLocation(m_SpriteShader, "u_Tint"), r, g, b);
 
     const GLint positionAttribute = glGetAttribLocation(m_SpriteShader, "a_Position");
@@ -476,7 +477,14 @@ Renderer::LabelTexture Renderer::CreateLabelTexture(const wchar_t *text)
     graphics.SetTextRenderingHint(Gdiplus::TextRenderingHintAntiAliasGridFit);
     graphics.Clear(Gdiplus::Color(0, 0, 0, 0));
     Gdiplus::SolidBrush brush(Gdiplus::Color(255, 255, 255, 255));
-    graphics.DrawString(text, -1, &font, Gdiplus::PointF(2.0f, 1.0f), &brush);
+    // Cache the black outline with the white glyphs; tinting preserves black without extra draw calls.
+    Gdiplus::GraphicsPath glyphs;
+    glyphs.AddString(text, -1, &family, Gdiplus::FontStyleRegular, 18.0f, Gdiplus::PointF(3.0f, 2.0f), nullptr);
+    Gdiplus::Pen outline(Gdiplus::Color(255, 0, 0, 0), 3.5f);
+    outline.SetLineJoin(Gdiplus::LineJoinRound);
+    graphics.SetSmoothingMode(Gdiplus::SmoothingModeAntiAlias);
+    graphics.DrawPath(&outline, &glyphs);
+    graphics.FillPath(&brush, &glyphs);
 
     Gdiplus::Rect area(0, 0, result.width, result.height);
     Gdiplus::BitmapData data = {};
@@ -512,6 +520,13 @@ void Renderer::DrawLabel(float x, float y, const wchar_t *text, float r, float g
 
     const float centerX = x + (centered ? 0.0f : label.width * scale * 0.5f) - m_WindowSizeX * 0.5f;
     const float centerY = y + label.height * scale * 0.5f - m_WindowSizeY * 0.5f;
+    const float flash = m_SpriteFlash, emission = m_SpriteEmission;
+    const bool lighting = m_WorldLighting;
+    m_SpriteFlash = m_SpriteEmission = 0;
+    m_WorldLighting = false;
     DrawSprite(label.id, centerX, centerY, label.width * scale, label.height * scale, 0, 0, 1,
                1, alpha, r, g, b);
+    m_SpriteFlash = flash;
+    m_SpriteEmission = emission;
+    m_WorldLighting = lighting;
 }

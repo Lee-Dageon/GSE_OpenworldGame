@@ -4,32 +4,33 @@ ending "미라 장로: 고대 시설이 환경을 조절하고 있었군요. 장
 chapter unfamiliar "1장: 낯선 땅"
 chapter displaced "2장: 떠나온 몬스터들"
 chapter awakened "3장: 잠에서 깨어난 유적"
-region village "그린웨이크" -32 -28 32 28 .23 .32 .16
-region south_border "남쪽 길목" 5 -18 20 -4 .30 .29 .16
-region north_forest "북부 숲" -20 28 24 62 .17 .24 .11
-region sand_outpost "모래 폐허" 55 -8 80 20 .51 .42 .25
-region ancient_edge "유적 외곽" 6 34 18 48 .29 .30 .25
-region expedition_camp "폐허가 된 조사대 야영지" -58 28 -30 44 .27 .29 .19
-region ancient_hall "깨어난 유적" -58 44 -26 70 .23 .29 .29
-step south_travel unfamiliar travel 8 -7 1.5 none "남쪽 길목으로 이동하기" "목표 표시를 따라 남쪽 길목으로 이동하세요." "울타리 바깥에 낯선 발자국이 이어집니다."
-step south_tracks unfamiliar investigate 12 -10 1.3 none "남쪽 울타리 주변의 흔적 조사하기" "E  남쪽 길목의 흔적 조사" "큰 발자국은 숲에서 마을 쪽으로 향합니다. 먹이를 찾으러 내려온 것 같습니다."
-step border_hunt unfamiliar hunt 15 -8 1.5 rampaging_boar "마을을 위협하는 거대 멧돼지 사냥하기" "좌클릭 공격 · 공백 키 회피 · Q 회복" "거대 멧돼지를 쓰러뜨렸습니다. 몸에 남은 흔적을 확인하세요."
-step border_loot unfamiliar collect 15 -8 1.5 none "거대 멧돼지의 재료와 흔적 수집하기" "E  사냥 재료와 흔적 수집" "가죽에는 오래 굶주린 흔적이 있습니다. 짐승이 원래 서식지를 떠난 이유를 알아야 합니다."
+region village "그린웨이크" -40 -40 40 40 .23 .32 .16
+region south_border "남쪽 길목" 45 -150 250 -35 .30 .29 .16
+region north_forest "북부 숲" -30 120 230 470 .17 .24 .11
+region sand_outpost "모래 폐허" 260 60 470 250 .51 .42 .25
+region ancient_edge "유적 외곽" 140 390 240 490 .29 .30 .25
+region expedition_camp "폐허가 된 조사대 야영지" -380 120 -160 320 .27 .29 .19
+region ancient_hall "깨어난 유적" -850 290 -380 780 .23 .29 .29
+region desert_wastes "황금 모래 대사막" -900 80 -140 900 .66 .46 .24
+step south_travel unfamiliar travel 70 -60 1.5 none "남쪽 길목으로 이동하기" "목표 표시를 따라 남쪽 길목으로 이동하세요." "울타리 바깥에 낯선 발자국이 이어집니다."
+step south_tracks unfamiliar investigate 140 -110 1.3 none "남쪽 울타리 주변의 흔적 조사하기" "E  남쪽 길목의 흔적 조사" "큰 발자국은 숲에서 마을 쪽으로 향합니다. 먹이를 찾으러 내려온 것 같습니다."
+step border_hunt unfamiliar hunt 210 -70 1.5 rampaging_boar "마을을 위협하는 거대 멧돼지 사냥하기" "좌클릭 공격 · 공백 키 회피 · Q 회복" "거대 멧돼지를 쓰러뜨렸습니다. 몸에 남은 흔적을 확인하세요."
+step border_loot unfamiliar collect 210 -70 1.5 none "거대 멧돼지의 재료와 흔적 수집하기" "E  사냥 재료와 흔적 수집" "가죽에는 오래 굶주린 흔적이 있습니다. 짐승이 원래 서식지를 떠난 이유를 알아야 합니다."
 step border_report unfamiliar report 0 1.4 1.5 none "미라 장로에게 서식지 이탈 보고하기" "E  첫 번째 조사 보고" "미라 장로: 단순한 습격이 아니군요. 모은 가죽으로 방어구를 만들고 북쪽 숲을 조사해 주세요."
 step first_armor unfamiliar craft_armor 0 1.4 1.8 none "야영지에서 가죽 방어구 제작하기" "I  가방 · R  가죽 방어구 제작" "첫 방어구를 갖췄습니다. 북부 숲에 남은 이동 흔적을 추적하세요."
-step forest_travel displaced travel 0 31 1.8 none "북부 숲의 옛길 입구로 이동하기" "목표 표시를 따라 북부 숲으로 이동하세요." "마을과 떨어진 숲에도 같은 방향으로 이동한 짐승의 흔적이 있습니다."
-step forest_tracks displaced investigate 9.5 30 1.3 none "버려진 숲 야영지의 흔적 조사하기" "E  숲 야영지 조사" "짐승뿐 아니라 조사대도 자리를 떠났습니다. 기록에는 동쪽 모래 지대가 표시되어 있습니다."
-step sand_travel displaced travel 60 5 1.8 none "동쪽 모래 지대의 폐허로 이동하기" "목표 표시를 따라 모래 폐허로 이동하세요." "풀밭이 끝나고 모래에 묻힌 건물 흔적이 나타납니다."
-step sand_records displaced investigate 65 10 1.3 none "모래 폐허의 버려진 기록 조사하기" "E  모래 폐허의 기록 조사" "숲과 모래 지대의 짐승들이 모두 북쪽 유적을 피해 이동했습니다. 숲에 남은 난폭한 개체를 추적하세요."
-step forest_hunt displaced hunt 10 38 1.5 displaced_boar "서식지를 잃은 난폭한 멧돼지 사냥하기" "좌클릭 공격 · 공백 키 회피 · Q 회복" "난폭한 개체를 쓰러뜨렸습니다. 몸에 묻은 유적의 흔적을 수집하세요."
-step forest_loot displaced collect 10 38 1.5 none "난폭한 멧돼지의 재료와 유적 흔적 수집하기" "E  재료와 유적 흔적 수집" "가죽에 오래된 돌가루가 묻어 있습니다. 가까운 유적 외곽을 조사할 단서입니다."
-step ruin_signal displaced investigate 10 42 1.3 none "유적 외곽의 이상 징후 조사하기" "E  유적 외곽 조사" "멈춰 있어야 할 장치에서 진동이 느껴집니다. 짐승들의 이동과 관련이 있어 보입니다."
+step forest_travel displaced travel 20 160 1.8 none "북부 숲의 옛길 입구로 이동하기" "목표 표시를 따라 북부 숲으로 이동하세요." "마을과 떨어진 숲에도 같은 방향으로 이동한 짐승의 흔적이 있습니다."
+step forest_tracks displaced investigate 110 220 1.3 none "버려진 숲 야영지의 흔적 조사하기" "E  숲 야영지 조사" "짐승뿐 아니라 조사대도 자리를 떠났습니다. 기록에는 동쪽 모래 지대가 표시되어 있습니다."
+step sand_travel displaced travel 300 100 1.8 none "동쪽 모래 지대의 폐허로 이동하기" "목표 표시를 따라 모래 폐허로 이동하세요." "풀밭이 끝나고 모래에 묻힌 건물 흔적이 나타납니다."
+step sand_records displaced investigate 390 160 1.3 none "모래 폐허의 버려진 기록 조사하기" "E  모래 폐허의 기록 조사" "숲과 모래 지대의 짐승들이 모두 북쪽 유적을 피해 이동했습니다. 숲에 남은 난폭한 개체를 추적하세요."
+step forest_hunt displaced hunt 120 330 1.5 displaced_boar "서식지를 잃은 난폭한 멧돼지 사냥하기" "좌클릭 공격 · 공백 키 회피 · Q 회복" "난폭한 개체를 쓰러뜨렸습니다. 몸에 묻은 유적의 흔적을 수집하세요."
+step forest_loot displaced collect 120 330 1.5 none "난폭한 멧돼지의 재료와 유적 흔적 수집하기" "E  재료와 유적 흔적 수집" "가죽에 오래된 돌가루가 묻어 있습니다. 가까운 유적 외곽을 조사할 단서입니다."
+step ruin_signal displaced investigate 180 430 1.3 none "유적 외곽의 이상 징후 조사하기" "E  유적 외곽 조사" "멈춰 있어야 할 장치에서 진동이 느껴집니다. 짐승들의 이동과 관련이 있어 보입니다."
 step second_report displaced report 0 1.4 1.5 none "미라 장로에게 두 지역의 조사 결과 보고하기" "E  두 번째 조사 보고" "미라 장로: 서로 다른 지역에서 같은 흔적이 나왔군요. 이제 유적이 깨어난 원인을 찾아야 합니다."
 step ancient_fragment awakened investigate 0 1.4 1.5 none "장로에게 맡긴 고대 파편 조사하기" "E  고대 파편 확인" "이빨 사이에서 발견한 돌조각에는 조사대의 표식이 새겨져 있습니다. 서쪽 야영지 기록과 비교해야 합니다."
-step expedition_travel awakened travel -40 32 1.8 none "서쪽 조사대 야영지로 이동하기" "서쪽 야영지의 목표 표시를 따라가세요." "무너진 야영지에는 급히 떠난 흔적과 오래된 장치의 부품이 남아 있습니다."
-step expedition_records awakened investigate -44 36 1.5 none "조사대의 마지막 기록 수색하기" "E  조사대 기록 수색" "조사대는 북쪽 유적을 조사하다 기후 조절 장치의 이상 가동을 발견했습니다."
-step ruin_entrance awakened travel -42 48 1.8 none "고대 유적 입구 찾기" "북쪽 유적 입구로 이동하세요." "벽이 갈라진 틈에서 따뜻한 바람이 새어 나옵니다. 장치의 진동은 안쪽으로 이어집니다."
-step ruin_control awakened investigate -46 54 1.5 none "유적의 경계 장치 멈추기" "E  경계 장치 정지" "보조 동력을 차단했습니다. 진동은 잦아들었지만 둥지를 지키던 차타카브라가 모습을 드러냅니다."
-step ancient_hunt awakened hunt -40 61 1.6 ancient_guardian "차타카브라 사냥하기" "좌클릭 공격 · 공백 회피 · Q 회복" "차타카브라를 쓰러뜨렸습니다. 몸에 남은 장치의 흔적을 조사하세요."
-step ancient_loot awakened collect -40 61 1.6 none "차타카브라의 재료와 장치 흔적 수집하기" "E  차타카브라 전리품 수집" "굳은 피부 사이에 장치의 금속 가루가 박혀 있습니다. 고대 시설이 주변 생태에 영향을 주고 있었습니다."
+step expedition_travel awakened travel -200 180 1.8 none "서쪽 조사대 야영지로 이동하기" "서쪽 야영지의 목표 표시를 따라가세요." "무너진 야영지에는 급히 떠난 흔적과 오래된 장치의 부품이 남아 있습니다."
+step expedition_records awakened investigate -300 270 1.5 none "조사대의 마지막 기록 수색하기" "E  조사대 기록 수색" "조사대는 북쪽 유적을 조사하다 기후 조절 장치의 이상 가동을 발견했습니다."
+step ruin_entrance awakened travel -420 360 1.8 none "고대 유적 입구 찾기" "북쪽 유적 입구로 이동하세요." "벽이 갈라진 틈에서 따뜻한 바람이 새어 나옵니다. 장치의 진동은 안쪽으로 이어집니다."
+step ruin_control awakened investigate -520 450 1.5 none "유적의 경계 장치 멈추기" "E  경계 장치 정지" "보조 동력을 차단했습니다. 진동은 잦아들었지만 둥지를 지키던 차타카브라가 모습을 드러냅니다."
+step ancient_hunt awakened hunt -620 540 1.6 ancient_guardian "차타카브라 사냥하기" "좌클릭 공격 · 공백 회피 · Q 회복" "차타카브라를 쓰러뜨렸습니다. 몸에 남은 장치의 흔적을 조사하세요."
+step ancient_loot awakened collect -620 540 1.6 none "차타카브라의 재료와 장치 흔적 수집하기" "E  차타카브라 전리품 수집" "굳은 피부 사이에 장치의 금속 가루가 박혀 있습니다. 고대 시설이 주변 생태에 영향을 주고 있었습니다."
 step third_report awakened report 0 1.4 1.5 none "장로에게 고대 시설의 조사 결과 보고하기" "E  유적 조사 보고" "미라 장로: 이 시설은 자연환경을 조절하던 곳이군요. 남은 장치가 다른 지역에 미칠 영향도 알아봐야 합니다."

@@ -149,6 +149,7 @@ void RenderScene()
     uiState.hides = g_GameState.inventory.Count(ItemId::BoarHide);
     uiState.itemCounts = g_GameState.inventory.stacks;
     uiState.inventoryOpen = g_GameState.inventoryOpen;
+    uiState.inventoryPage = g_GameState.inventoryPage;
     uiState.hunterBladeCrafted = g_GameState.hunterBladeCrafted;
     uiState.hunterArmorCrafted = g_GameState.hunterArmorCrafted;
     uiState.armorRecipeUnlocked = g_GameState.armorRecipeUnlocked;

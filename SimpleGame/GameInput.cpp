@@ -55,7 +55,13 @@ GameCommand OnMouseButton(bool isLeftButton, bool isPressed)
 }
 void OnScroll(GameState &state, double verticalOffset)
 {
-    if (state.inventoryOpen || BossIntro::Active(state) || !std::isfinite(verticalOffset) || verticalOffset == 0) return;
+    if (BossIntro::Active(state) || !std::isfinite(verticalOffset) || verticalOffset == 0) return;
+    if (state.inventoryOpen)
+    {
+        const int lastPage = (static_cast<int>(ItemId::Count)-1) / GameConstants::Inventory::ItemsPerPage;
+        state.inventoryPage = std::max(0, std::min(lastPage, state.inventoryPage + (verticalOffset > 0 ? -1 : 1)));
+        return;
+    }
     using namespace GameConstants::World;
     const double steps = std::max(-20.0, std::min(20.0, verticalOffset));
     state.cameraZoom = std::max(ZoomMinimum, std::min(ZoomMaximum,

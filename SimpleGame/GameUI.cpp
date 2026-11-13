@@ -105,6 +105,12 @@ void DrawGameUi(Renderer &renderer, const GameUiState &state)
     label(mx-(mr+16*s)*.70710678f-5*s, my-(mr+16*s)*.70710678f-12*s,
           L"북", .57f, .93f, .88f, .66f);
     label(mx-45*s, my+mr+7*s, state.locationName.c_str(), .56f, .88f, .87f, .76f);
+    if (state.hasObjectiveTarget)
+    {
+        const float dx=state.objectiveTarget.x-state.player.x, dz=state.objectiveTarget.z-state.player.z;
+        std::swprintf(text,100,L"목표 거리 %.0f",std::sqrt(dx*dx+dz*dz));
+        label(mx-45*s,my+mr+23*s,text,.48f,1,.84f,.5f);
+    }
 
     // Existing gameplay commands, with the same circles used by HitTestGameUi.
     const auto controls = GameUiControls(state.windowWidth, state.windowHeight);
@@ -214,11 +220,16 @@ static void DrawInventoryPanel(Renderer &renderer, const GameUiState &state)
     text(318,148,L"야영지 제작",.8f,1,.87f,.58f);
     const int itemIcons[] = {0,1,5,4};
     const int basicCounts[] = {state.potions,state.herbs,state.hides,state.trophies};
-    for (int item=0;item<static_cast<int>(ItemId::Count);++item)
+    const int pageSize = GameConstants::Inventory::ItemsPerPage;
+    const int pageCount = (static_cast<int>(ItemId::Count)+pageSize-1)/pageSize;
+    const int page = std::max(0,std::min(pageCount-1,state.inventoryPage));
+    const int first = page*pageSize;
+    for (int item=first;item<std::min(first+pageSize,static_cast<int>(ItemId::Count));++item)
     {
         const auto id = static_cast<ItemId>(item);
         const int count = item < 4 ? basicCounts[item] : state.itemCounts[item];
-        const float x=24+(item%2)*136.0f, y=174+(item/2)*54.0f;
+        const int cell = item-first;
+        const float x=24+(cell%2)*136.0f, y=174+(cell/2)*54.0f;
         rect(x,y,124,48,.14f,.20f,.23f);
         rect(x+1,y+1,122,46,.055f,.085f,.105f);
         if (item < 4) icon(x+3,y+4,36,itemIcons[item]);
@@ -227,7 +238,9 @@ static void DrawInventoryPanel(Renderer &renderer, const GameUiState &state)
             const auto texture = renderer.UiTexture(ItemTexture(id));
             if (texture) renderer.DrawSprite(texture,
                 panel.x+(x+21)*s-state.windowWidth*.5f,
-                state.windowHeight*.5f-panel.y-(y+22)*s,36*s,36*s,0,0,1,1,1,1,1,1,0,0,0,1,1,.5f);
+                state.windowHeight*.5f-panel.y-(y+22)*s,36*s,36*s,
+                item >= 10 ? 1 : 0,item >= 10 ? 1 : 0,item >= 10 ? 5 : 1,item >= 10 ? 5 : 1,
+                1,1,1,1,0,0,0,1,1,.5f);
         }
         const wchar_t *name = id == ItemId::GuardianScale ? L"갑각" :
             id == ItemId::BeastBone ? L"짐승 뼈" : ItemName(id);
@@ -239,6 +252,8 @@ static void DrawInventoryPanel(Renderer &renderer, const GameUiState &state)
     }
     const std::wstring stackLimit = L"아이템별 최대 " + std::to_wstring(GameConstants::Inventory::MaxStack) + L"개";
     text(24,449,stackLimit.c_str(),.6f,.52f,.63f,.65f);
+    const auto pageHint = L"휠로 재료 넘기기  " + std::to_wstring(page+1) + L" / " + std::to_wstring(pageCount);
+    text(24,464,pageHint.c_str(),.46f,.85f,.78f,.55f);
     const auto buttons=InventoryButtons(state.windowWidth,state.windowHeight);
     const wchar_t *titles[]={L"이빨 검",L"회복 물약",L"가죽 방어구"};
     const wchar_t *costs[]={L"가죽 1 + 이빨 1",L"약초 1",L"가죽 2 + 이빨 1"};

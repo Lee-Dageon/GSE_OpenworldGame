@@ -32,6 +32,7 @@ struct Scenery
 };
 struct NpcDefinition { std::string id; NpcState initial = {}; };
 struct AnimalDefinition { std::string id; AnimalState initial = {}; };
+struct GatherDefinition { std::string id; GatherNodeState initial = {}; };
 struct MapDefinition
 {
     std::string id, monsterId;
@@ -43,6 +44,7 @@ struct MapDefinition
     std::vector<Placement> campfires;
     std::vector<NpcDefinition> npcs;
     std::vector<AnimalDefinition> animals;
+    std::vector<GatherDefinition> gatherNodes;
 };
 struct QuestStep
 {

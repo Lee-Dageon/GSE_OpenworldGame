@@ -112,6 +112,16 @@
     <ClInclude Include="BossIntro.h">
       <Filter>헤더 파일\Rendering</Filter>
     </ClInclude>
+    <ClInclude Include="HarvestSystem.h">
+      <Filter>헤더 파일\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="WorldBiomes.h">
+      <Filter>헤더 파일\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="DesertPropFrames.h">
+      <Filter>헤더 파일\Rendering</Filter>
+    </ClInclude>
+
     <ClInclude Include="LootTable.h">
       <Filter>헤더 파일\Gameplay</Filter>
     </ClInclude>

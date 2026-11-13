@@ -54,6 +54,7 @@ class WorldRenderer
     bool DrawAnimalHit(Vec2 position, int species, Vec2 facing, float height, float remaining) const;
     void DrawLoot(Vec2 position, const LootTable::Drops &drops) const;
     void DrawQuestGlimmer(Vec2 position, float height = 112, float phase = 0) const;
+    void DrawItemSparkle(Vec2 position, float height, float phase = 0) const;
     void DrawTree(Vec2 position, int variant) const;
     void DrawPixelPlayer(const GameState &state) const;
     void DrawGeneralPlayer(const GameState &state) const;
@@ -62,6 +63,7 @@ class WorldRenderer
     void DrawCampfire(Vec2 position) const;
     void DrawHerbPatch(Vec2 position) const;
     void DrawInvestigation(Vec2 position, int asset, bool disabled = false) const;
+    void DrawDesertProp(Vec2 position, int sprite, float height, bool disabled = false) const;
     void DrawGround() const;
 
     Renderer &m_Renderer;
@@ -88,6 +90,7 @@ class WorldRenderer
     unsigned int m_AnimalCarcassTexture = 0;
     unsigned int m_BoarDeathTexture = 0;
     unsigned int m_QuestGlimmerTexture = 0;
+    unsigned int m_DesertPropsTexture = 0, m_DesertSandTexture = 0, m_MiningTexture = 0;
     std::array<unsigned int, 3> m_AnimalHitTextures = {};
     unsigned int m_AncientGuardianTexture = 0;
     unsigned int m_ChatDeathTexture = 0;

@@ -65,6 +65,13 @@ struct DamageNumber
     float remaining = GameConstants::HitEffect::NumberDuration;
 };
 
+struct GatherNodeState
+{
+    Vec2 position = {};
+    int kind = 0;
+    float regrowTime = 0;
+};
+
 struct GameState
 {
     int width = 1280, height = 720, lastTime = 0;
@@ -74,13 +81,16 @@ struct GameState
     MonsterState monster = {};
     std::vector<NpcState> npcs;
     std::vector<AnimalState> animals;
+    std::vector<GatherNodeState> gatherNodes;
     WorldState world;
     float cameraZoom = 1.0f;
     float bossIntroTime = -1.0f;
     bool bossDefeatIntro = false;
+    bool bossIntroPending = false;
     float health = 100.0f, maxHealth = 100.0f, dodge = 0.0f, attack = 0.0f, messageTime = 7.0f, time = 0.0f;
     Inventory inventory;
     bool inventoryOpen = false, hunterBladeCrafted = false;
+    int inventoryPage = 0;
     bool armorRecipeUnlocked = false, hunterArmorCrafted = false, storyFinished = false;
     bool ruinDeviceDisabled = false;
     float herbRegrowTime = 0.0f;
@@ -93,6 +103,7 @@ struct GameState
     int combo = 0;
     float lootTime = 0.0f, lootPickupTime = 0.0f;
     int lootAnimal = -1;
+    int lootNode = -1;
     int completedHunts = 0;
     int level = 1, experience = 0, experienceToNextLevel = 20, attackPower = 2;
     QuestStage quest = QuestStage::Elder;

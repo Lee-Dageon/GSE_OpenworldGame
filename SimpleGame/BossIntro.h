@@ -1,5 +1,6 @@
 #pragma once
 #include "GameState.h"
+#include "ChatacabraHDFrames.h"
 #include <algorithm>
 #include <cmath>
 
@@ -17,6 +18,7 @@ inline bool Active(const GameState &state)
 }
 inline void Start(GameState &state)
 {
+    state.bossIntroPending = false;
     state.bossDefeatIntro = false;
     state.bossIntroTime = 0;
     state.inventoryOpen = false;
@@ -28,6 +30,27 @@ inline void Start(GameState &state)
     if (state.monster.health > 0)
         state.monster.animationFacing = {state.player.x - state.monster.position.x, state.player.z - state.monster.position.z};
 }
+inline void Arm(GameState &state)
+{
+    state.bossIntroPending = true;
+    state.bossDefeatIntro = false;
+    state.bossIntroTime = -1;
+}
+inline bool TryStartVisible(GameState &state)
+{
+    if (!state.bossIntroPending || state.inventoryOpen || state.width <= 0 || state.height <= 0 ||
+        state.monster.health <= 0 || state.monster.definition.id != "ancient_guardian") return false;
+    const float dx = state.monster.position.x-state.player.x, dz = state.monster.position.z-state.player.z;
+    const int direction = ChatacabraFrames::Direction(-dx,-dz);
+    const auto &bounds = ChatacabraHDFrames::WalkBounds[direction];
+    const float size = state.monster.definition.spriteHeight * GameConstants::Chatacabra::SpriteScale;
+    const float scale = GameConstants::World::Scale * state.height / 720.0f * state.cameraZoom;
+    const float x = (dx-dz)*32, y = (dx+dz)*16-86/state.cameraZoom;
+    if ((x+bounds.right*size)*scale < -state.width*.5f || (x+bounds.left*size)*scale > state.width*.5f ||
+        (y+bounds.top*size)*scale < -state.height*.5f || (y+bounds.bottom*size)*scale > state.height*.5f) return false;
+    Start(state);
+    return true;
+}
 inline void StartDefeat(GameState &state)
 {
     Start(state);
@@ -38,6 +61,7 @@ inline void StartDefeat(GameState &state)
 }
 inline void Skip(GameState &state)
 {
+    state.bossIntroPending = false;
     if (state.bossDefeatIntro)
         state.monster.deathTime = GameConstants::Chatacabra::DeathFrameDuration * 4;
     state.bossIntroTime = -1;

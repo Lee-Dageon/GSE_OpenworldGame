@@ -94,6 +94,7 @@ constexpr float DefeatTitleStart = 3.2f, DefeatTitleEnd = 6.6f;
 }
 namespace Inventory
 {
+constexpr int ItemsPerPage = 10;
 constexpr int MaxStack = 99;
 }
 namespace Npc

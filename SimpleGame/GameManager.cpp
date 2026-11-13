@@ -13,6 +13,7 @@
 #include "NpcSystem.h"
 #include "LootTable.h"
 #include "BossIntro.h"
+#include "HarvestSystem.h"
 
 #include <algorithm>
 #include <cmath>
@@ -27,6 +28,7 @@ void GameManager::BeginFrame(float deltaTime)
     m_State.playerSlowTime = std::max(0.0f, m_State.playerSlowTime - deltaTime);
     m_State.messageTime = std::max(0.0f, m_State.messageTime - deltaTime);
     MonsterSystem::UpdateTimers(m_State.monster, deltaTime);
+    HarvestSystem::Update(m_State, deltaTime);
 }
 
 void GameManager::UpdateNpcs(float deltaTime)
@@ -129,6 +131,7 @@ void GameManager::UpdateGame(float deltaTime)
         return;
     }
     deltaTime = std::max(0.0f, deltaTime);
+    BossIntro::TryStartVisible(m_State);
     if (BossIntro::Active(m_State))
     {
         m_State.moving = false;
@@ -148,7 +151,11 @@ void GameManager::UpdateGame(float deltaTime)
     {
         m_State.moving = false;
         m_State.lootTime = std::max(0.0f, m_State.lootTime - deltaTime);
-        if (m_State.lootTime == 0 && m_State.lootAnimal >= 0)
+        if (m_State.lootTime == 0 && m_State.lootNode >= 0)
+        {
+            ShowMessage(HarvestSystem::Complete(m_State).c_str());
+        }
+        else if (m_State.lootTime == 0 && m_State.lootAnimal >= 0)
         {
             const size_t index = static_cast<size_t>(m_State.lootAnimal);
             m_State.lootAnimal = -1;
@@ -190,6 +197,7 @@ void GameManager::UpdateGame(float deltaTime)
     PlayerController::UpdateMovement(m_State, deltaTime);
     UpdateNpcs(deltaTime);
     StorySystem::Update(m_State);
+    BossIntro::TryStartVisible(m_State);
     if (BossIntro::Active(m_State)) { m_State.moving = false; return; }
     for (AnimalState &animal : m_State.animals)
     {
@@ -209,7 +217,7 @@ void GameManager::UpdateGame(float deltaTime)
     }
     const float previousHealth = m_State.health;
     if ((m_State.quest == QuestStage::Hunt || StorySystem::IsHunting(m_State)) &&
-        MonsterSystem::UpdateChaseAndAttack(m_State.monster, m_State.player, m_State.dodge, deltaTime, m_State.health, m_State.defense))
+        !m_State.bossIntroPending && MonsterSystem::UpdateChaseAndAttack(m_State.monster, m_State.player, m_State.dodge, deltaTime, m_State.health, m_State.defense))
     {
         if (m_State.health < previousHealth)
         {
@@ -283,6 +291,11 @@ void GameManager::HandleCommand(GameCommand command)
             const auto p=m_State.animals[closest].position;
             m_State.facing = {p.x-m_State.player.x,p.z-m_State.player.z};
             ShowMessage(L"동물 전리품을 수집합니다.");
+            return;
+        }
+        if (const int node = HarvestSystem::Nearby(m_State); node >= 0)
+        {
+            ShowMessage(HarvestSystem::Start(m_State, node).c_str());
             return;
         }
         const float herbX=m_State.player.x-m_State.world.herb.x, herbZ=m_State.player.z-m_State.world.herb.z;
@@ -375,6 +388,10 @@ void GameManager::HandleCommand(GameCommand command)
 
 const wchar_t *GameManager::GetHint() const
 {
+    if (m_State.lootNode >= 0) return L"자원을 채집하고 있습니다...";
+    if ((m_State.quest == QuestStage::Trophy || StorySystem::HasDrop(m_State)) &&
+        MonsterSystem::IsInteractableDrop(m_State.monster,m_State.player))
+        return StorySystem::HasDrop(m_State) ? StorySystem::Hint(m_State) : QuestSystem::GetHint(m_State);
     const float herbX=m_State.player.x-m_State.world.herb.x, herbZ=m_State.player.z-m_State.world.herb.z;
     if (m_State.quest != QuestStage::Elder && m_State.quest != QuestStage::Tracks && m_State.quest != QuestStage::Herb &&
         herbX*herbX+herbZ*herbZ<GameConstants::Loot::HerbRange*GameConstants::Loot::HerbRange)
@@ -385,6 +402,8 @@ const wchar_t *GameManager::GetHint() const
         if (animal.health<=0 && !animal.collected && x*x+z*z<GameConstants::World::AnimalLootRange*GameConstants::World::AnimalLootRange)
             return L"E  동물 전리품 수집";
     }
+    if (const int node = HarvestSystem::Nearby(m_State); node >= 0)
+        return HarvestSystem::IsOre(m_State.gatherNodes[node].kind) ? L"E  광맥 채굴 (3초)" : L"E  야생 재료 채집 (1초)";
     if (const int npc=NpcSystem::Nearby(m_State); npc>=0) return NpcSystem::Hint(m_State.npcs[npc]);
     if (StorySystem::Current(m_State) || StorySystem::CanStart(m_State)) return StorySystem::Hint(m_State);
     return QuestSystem::GetHint(m_State);

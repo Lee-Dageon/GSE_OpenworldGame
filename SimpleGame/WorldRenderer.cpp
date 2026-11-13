@@ -21,6 +21,9 @@
 #include "ChatacabraHDFrames.h"
 #include "AnimalHitFrames.h"
 #include "BossIntro.h"
+#include "HarvestSystem.h"
+#include "WorldBiomes.h"
+#include "DesertPropFrames.h"
 
 #include <algorithm>
 #include <array>
@@ -187,6 +190,16 @@ WorldRenderer::WorldRenderer(Renderer &renderer) : m_Renderer(renderer)
     m_AnimalCarcassTexture = m_Renderer.LoadTexture(L"./Assets/PixelArt/Animals/carcasses-v1.png");
     m_BoarDeathTexture = m_Renderer.LoadTexture(L"./Assets/PixelArt/Animals/boar-death-v1.png");
     m_QuestGlimmerTexture = m_Renderer.LoadTexture(L"./Assets/PixelArt/Effects/quest-glimmer.png");
+    m_DesertPropsTexture = m_Renderer.LoadTexture(L"./Assets/PixelArt/World/desert-props-v1.png");
+    m_DesertSandTexture = m_Renderer.LoadTexture(L"./Assets/PixelArt/World/desert-sand-v1.png");
+    m_MiningTexture = m_Renderer.LoadTexture(L"./Assets/PixelArt/Effects/frontier-mining.png");
+    for (auto texture : {m_DesertPropsTexture, m_DesertSandTexture, m_MiningTexture})
+        if (texture)
+        {
+            glBindTexture(GL_TEXTURE_2D, texture);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        }
     for (int species = 0; species < 3; ++species)
         m_AnimalHitTextures[species] = m_Renderer.LoadTexture(AnimalHitFrames::Files[species]);
     for (auto texture : {m_QuestGlimmerTexture, m_AnimalHitTextures[0], m_AnimalHitTextures[1], m_AnimalHitTextures[2]})
@@ -287,6 +300,8 @@ WorldRenderer::~WorldRenderer()
     for (auto texture : m_AnimalHitTextures)
         if (texture != 0) glDeleteTextures(1, &texture);
     if (m_QuestGlimmerTexture != 0) glDeleteTextures(1, &m_QuestGlimmerTexture);
+    for (auto texture : {m_DesertPropsTexture, m_DesertSandTexture, m_MiningTexture})
+        if (texture) glDeleteTextures(1, &texture);
     if (m_BoarDeathTexture != 0) glDeleteTextures(1, &m_BoarDeathTexture);
     for (const auto &action : m_ChatHdTextures)
         for (auto texture : action)
@@ -595,11 +610,44 @@ void WorldRenderer::DrawQuestGlimmer(Vec2 position, float height, float phase) c
 {
     const Vec2 screen = ToScreen(position);
     const float scale = height / 112;
-    const float alpha = Distance(position, m_State->player) < 4 ? 1.0f : .65f;
+    const float alpha = Distance(position, m_State->player) < 4 ? 1.0f : .9f;
     const int frame = static_cast<int>((m_State->time + phase) * 30) % 72;
     if (m_QuestGlimmerTexture != 0)
+    {
+        m_Renderer.SetSpriteEmission(1.2f);
         m_Renderer.DrawSprite(m_QuestGlimmerTexture, screen.x, screen.z + 44 * scale,
             96 * scale, height, frame % 10, frame / 10, 10, 8, alpha);
+        m_Renderer.SetSpriteEmission(0);
+    }
+}
+
+void WorldRenderer::DrawItemSparkle(Vec2 position, float height, float phase) const
+{
+    const auto screen = ToScreen(position);
+    m_Renderer.DrawEffectRect(screen.x,screen.z+16,100,48,0,1,.76f,.25f,.25f,3);
+    DrawQuestGlimmer(position,height*1.35f,phase);
+    for (int index=0; index<3; ++index)
+    {
+        const float time=m_State->time*4.5f+phase+index*2.094f;
+        const float pulse=.35f+.65f*std::pow(.5f+.5f*std::sin(time),3.0f);
+        const float x=std::sin(time*.45f+index)*28;
+        const float y=25+index*17+std::cos(time*.7f)*7;
+        m_Renderer.DrawEffectRect(screen.x+x,screen.z+y,28*pulse,28*pulse,time*.12f,
+            2.4f,1.9f,.85f,.8f*pulse,22);
+    }
+}
+
+void WorldRenderer::DrawDesertProp(Vec2 position, int sprite, float height, bool disabled) const
+{
+    if (!m_DesertPropsTexture || sprite < 0 || sprite >= 16) return;
+    const auto &frame = DesertPropFrames::Frames[sprite];
+    const auto screen = ToScreen(position);
+    const float sizeY = height * frame.scale, sizeX = sizeY * frame.sourceW / frame.sourceH;
+    m_Renderer.DrawSprite(m_DesertPropsTexture, screen.x + (.5f-frame.x)*sizeX,
+        screen.z + (frame.y-.5f)*sizeY, sizeX, sizeY, frame.sourceX, frame.sourceY,
+        DesertPropFrames::TextureWidth, DesertPropFrames::TextureHeight,
+        1, disabled ? .55f : 1, disabled ? .5f : 1, disabled ? .4f : 1, 0,0,0,
+        static_cast<float>(frame.sourceW),static_cast<float>(frame.sourceH),.5f);
 }
 
 void WorldRenderer::DrawLoot(Vec2 position, const LootTable::Drops &drops) const
@@ -621,7 +669,7 @@ void WorldRenderer::DrawLoot(Vec2 position, const LootTable::Drops &drops) const
                 0, path ? 1 : 2, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, .5f);
         ++slot;
     }
-    DrawQuestGlimmer(position, 90, position.x * .01f + 1);
+    DrawItemSparkle(position, 100, position.x * .01f + 1);
     if (Distance(position, m_State->player) < 3)
     {
         const auto label = LootTable::Summary(drops);
@@ -994,6 +1042,18 @@ void WorldRenderer::DrawGround() const
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, m_TerrainTexture);
     glUniform1i(glGetUniformLocation(program, "u_TerrainTexture"), 0);
+    glActiveTexture(GL_TEXTURE1);
+    glBindTexture(GL_TEXTURE_2D, m_DesertSandTexture);
+    glUniform1i(glGetUniformLocation(program, "u_DesertTexture"), 1);
+    glUniform1i(glGetUniformLocation(program, "u_HasDesertTexture"), m_DesertSandTexture != 0);
+    glActiveTexture(GL_TEXTURE0);
+    std::array<std::array<float,4>, 2> desertBounds = {};
+    int desertCount = 0;
+    for (const auto &region : GameContent::Get().story.regions)
+        if (WorldBiomes::IsDesertRegion(region.id) && desertCount < 2)
+            desertBounds[desertCount++] = {{region.minimumX,region.minimumZ,region.maximumX,region.maximumZ}};
+    glUniform1i(glGetUniformLocation(program,"u_DesertCount"),desertCount);
+    glUniform4fv(glGetUniformLocation(program,"u_DesertBounds[0]"),desertCount,desertBounds[0].data());
     glUniform1i(glGetUniformLocation(program, "u_PixelTerrain"), m_PixelTerrain);
     glUniform2f(glGetUniformLocation(program, "u_TerrainTileSize"), TileWidth, TileHeight);
     std::array<Vec2, GameContent::MaxRoadHouses> houses = {}, bends = {};
@@ -1064,7 +1124,7 @@ void WorldRenderer::RenderWorld(const GameState &state)
     m_State = &state;
     m_Renderer.SetWorldScale(WorldScale * state.height / 720.0f * BossIntro::Zoom(state));
     DrawGround();
-    enum class DrawType { House, Tree, Campfire, Npc, Animal, Tracks, Herb, Monster, Player, NoticeBoard, Decoration, Scenery, Investigation, StoryMarker };
+    enum class DrawType { House, Tree, Campfire, Npc, Animal, Tracks, Herb, Monster, Player, NoticeBoard, Decoration, Scenery, Investigation, StoryMarker, GatherNode };
     struct DrawItem { Vec2 position; DrawType type; int index; };
     std::vector<DrawItem> items;
     for (int index = 0; index < static_cast<int>(Map().houses.size()); ++index)
@@ -1091,6 +1151,8 @@ void WorldRenderer::RenderWorld(const GameState &state)
             seed = (seed ^ (seed >> 13)) * 1274126177u;
             const Vec2 p = {(x + .15f + (seed & 255u) / 365.0f) * 1.4f,
                             (z + .15f + ((seed >> 8) & 255u) / 365.0f) * 1.4f};
+            if (p.x < state.world.minimumCoordinate || p.x > state.world.maximumCoordinate ||
+                p.z < state.world.minimumCoordinate || p.z > state.world.maximumCoordinate) continue;
             const Vec2 screen = ToScreen(p);
             const float scale = WorldScale * state.height / 720.0f * BossIntro::Zoom(state);
             if (std::abs(screen.x) * scale > state.width * .5f + 30 ||
@@ -1129,6 +1191,14 @@ void WorldRenderer::RenderWorld(const GameState &state)
         InvestigationSprites::Find(StorySystem::Current(state)->id) < 0)
         items.push_back({StorySystem::Target(state),DrawType::StoryMarker,0});
     items.push_back({state.player, DrawType::Player, 0});
+    for (size_t index = 0; index < state.gatherNodes.size(); ++index)
+    {
+        const auto &node = state.gatherNodes[index];
+        const auto screen = ToScreen(node.position);
+        const float scale = WorldScale * state.height / 720.0f * BossIntro::Zoom(state);
+        if (std::abs(screen.x)*scale > state.width*.5f+160 || std::abs(screen.z)*scale > state.height*.5f+180) continue;
+        items.push_back({node.position, DrawType::GatherNode, static_cast<int>(index)});
+    }
 
     // Higher screen coordinates are farther away. Draw them first so foreground objects cover them.
     std::sort(items.begin(), items.end(), [this](const DrawItem &left, const DrawItem &right) {
@@ -1139,6 +1209,28 @@ void WorldRenderer::RenderWorld(const GameState &state)
         ApplyLocalLight(m_Renderer, item.position, state.time);
         switch (item.type)
         {
+        case DrawType::GatherNode:
+        {
+            const auto &node = state.gatherNodes[item.index];
+            const auto p = ToScreen(node.position);
+            if (node.regrowTime > 0)
+            {
+                if (HarvestSystem::IsOre(node.kind)) DrawDesertProp(node.position,2,35,true);
+                break;
+            }
+            const auto texture = m_Renderer.UiTexture(ItemTexture(HarvestSystem::Item(node)));
+            const int frame = static_cast<int>((state.time + item.index*.13f)*15)%24;
+            const float size = HarvestSystem::IsOre(node.kind) ? 95.0f : 65.0f;
+            DrawShadow(node.position,size*.45f,7);
+            m_Renderer.DrawSprite(texture,p.x,p.z+size*(52.0f/64-.5f),size,size,frame%5,frame/5,5,5);
+            DrawItemSparkle(node.position,85,item.index*.37f);
+            if (Distance(node.position,state.player)<4)
+            {
+                const auto name = std::wstring(ItemName(HarvestSystem::Item(node))) + (HarvestSystem::IsOre(node.kind) ? L" 광맥 · E 채굴" : L" · E 채집");
+                m_Renderer.DrawLabel(state.width*.5f+p.x,state.height*.5f+p.z+70,name.c_str(),1,.88f,.55f,.55f,1,true);
+            }
+            break;
+        }
         case DrawType::Investigation:
         {
             const auto &step = storySteps[item.index];
@@ -1148,7 +1240,13 @@ void WorldRenderer::RenderWorld(const GameState &state)
                 m_Renderer.DrawEffectRect(p.x, p.z, 65, 24, 0, .35f, .85f, .72f,
                     .22f + .06f * std::sin(state.time * 2), 3);
             const bool control = step.id == "ruin_control";
-            DrawInvestigation(item.position, asset, control && state.ruinDeviceDisabled);
+            if (WorldBiomes::IsDesert(item.position))
+            {
+                static const int variants[] = {10,8,11,6,12,13,14};
+                DrawDesertProp(item.position,variants[asset],InvestigationSprites::Assets[asset].size,
+                    control && state.ruinDeviceDisabled);
+            }
+            else DrawInvestigation(item.position, asset, control && state.ruinDeviceDisabled);
             if (control && !state.ruinDeviceDisabled)
                 m_Renderer.DrawEffectRect(p.x, p.z + 48, 28, 70, 0, .25f, .85f, 1,
                     .22f + .06f * std::sin(state.time * 4), 15);
@@ -1166,6 +1264,14 @@ void WorldRenderer::RenderWorld(const GameState &state)
             const auto &landmark = WorldLayout::Landmarks()[item.index];
             const Vec2 screen = ToScreen(item.position);
             DrawShadow(item.position, landmark.height * .45f, 10, landmark.height * .2f);
+            if (WorldBiomes::IsDesert(item.position))
+            {
+                const int sprite = landmark.id == "ancient_nest" ? 15 : landmark.kind == WorldLayout::SceneryKind::Ruin ?
+                    4 + item.index%4 : landmark.kind == WorldLayout::SceneryKind::Cart ? 9 :
+                    landmark.kind == WorldLayout::SceneryKind::Bush ? 1 : landmark.kind == WorldLayout::SceneryKind::Log ? 3 : 2;
+                DrawDesertProp(item.position,sprite,landmark.height);
+                break;
+            }
             if (landmark.kind == WorldLayout::SceneryKind::Boulder && m_RockTexture != 0)
             {
                 DrawPixelSprite(item.position, m_RockTexture, landmark.height, landmark.height, .23f);
@@ -1203,6 +1309,12 @@ void WorldRenderer::RenderWorld(const GameState &state)
         }
         case DrawType::Decoration:
         {
+            if (WorldBiomes::IsDesert(item.position))
+            {
+                DrawDesertProp(item.position,item.index==0 ? 0 : item.index<7 ? 1 : 2,
+                    item.index==0 ? 65.0f : item.index<7 ? 22.0f : 13.0f);
+                break;
+            }
             const Vec2 p = ToScreen(item.position);
             const float variation = .85f + item.index * .035f;
             if (item.index < 7)
@@ -1220,10 +1332,14 @@ void WorldRenderer::RenderWorld(const GameState &state)
             }
             break;
         }
-        case DrawType::House: DrawHouse(item.position, .42f, .18f, .09f, item.index); break;
+        case DrawType::House:
+            if (WorldBiomes::IsDesert(item.position)) DrawDesertProp(item.position,8,180);
+            else DrawHouse(item.position, .42f, .18f, .09f, item.index);
+            break;
         case DrawType::Tree:
         {
             const auto &tree = WorldLayout::Trees()[item.index];
+            if (WorldBiomes::IsDesert(item.position)) { DrawDesertProp(item.position,0,110); break; }
             if (tree.pine && m_PineTexture != 0)
             {
                 const float height = 190.0f + tree.variant * 12;
@@ -1244,7 +1360,10 @@ void WorldRenderer::RenderWorld(const GameState &state)
                 DrawTree(item.position, tree.variant);
             break;
         }
-        case DrawType::Campfire: DrawCampfire(item.position); break;
+        case DrawType::Campfire:
+            if (WorldBiomes::IsDesert(item.position)) DrawDesertProp(item.position,8,125);
+            else DrawCampfire(item.position);
+            break;
         case DrawType::Npc:
         {
             const NpcState &npc = state.npcs[item.index];
@@ -1343,7 +1462,7 @@ void WorldRenderer::RenderWorld(const GameState &state)
                                                   const auto &monster=state.monster;
                                                   const Vec2 aim=monster.health<=0 || monster.chatPattern>=0 || BossIntro::Active(state) ? monster.animationFacing : facing;
                                                   const int direction=ChatacabraFrames::Direction(aim.x,aim.z);
-                                                  const bool guardianWalking=walking && distance>GameConstants::Chatacabra::EngageRange && monster.chatPattern<0;
+                                                  const bool guardianWalking=walking && !state.bossIntroPending && distance>GameConstants::Chatacabra::EngageRange && monster.chatPattern<0;
                                                   int pose=guardianWalking && monster.health>0 && monster.chatStagger<=0 ? static_cast<int>(state.time*6)%4 : 0;
                                                   const Vec2 screen=ToScreen(p);
                                                   const float size=state.monster.definition.spriteHeight*GameConstants::Chatacabra::SpriteScale;
@@ -1472,7 +1591,7 @@ void WorldRenderer::RenderWorld(const GameState &state)
             {
                 const float dx = state.facing.x - state.facing.z, dy = (state.facing.x + state.facing.z) * .5f;
                 const int row = std::abs(dx) > std::abs(dy) ? (dx < 0 ? 0 : 1) : (dy < 0 ? 2 : 3);
-                const int frame = std::min(GameConstants::Loot::FrameCount - 1, static_cast<int>((GameConstants::Loot::Duration - state.lootTime) / GameConstants::Loot::FrameDuration));
+                const int frame = static_cast<int>((HarvestSystem::Duration(state) - state.lootTime) / GameConstants::Loot::FrameDuration) % GameConstants::Loot::FrameCount;
                 const auto pivot = SearchSpriteFrames::Pivots[row][frame];
                 DrawShadow(state.player, 42, 9);
                 m_Renderer.DrawSprite(m_SearchTexture, foot.x + (.5f - pivot.x) * GameConstants::Loot::SpriteSize,
@@ -1663,6 +1782,23 @@ void WorldRenderer::RenderWorld(const GameState &state)
                 288 * CombatScale, 208 * CombatScale, frame % 9, frame / 9, 9, 11, .65f);
         }
     }
+    if (state.lootNode >= 0 && static_cast<size_t>(state.lootNode) < state.gatherNodes.size() && state.lootTime > 0 &&
+        HarvestSystem::IsOre(state.gatherNodes[state.lootNode].kind))
+    {
+        const auto node = ToScreen(state.gatherNodes[state.lootNode].position);
+        const auto foot = ToScreen(state.player);
+        const float age=HarvestSystem::Duration(state)-state.lootTime;
+        const float phase=std::fmod(age,1.0f);
+        const float angle=-1.5f+std::sin(phase*Pi)*1.6f;
+        const float x=foot.x+12, y=foot.z+40;
+        m_Renderer.DrawSolidRect(x,y,4,40,angle,.42f,.25f,.1f,1);
+        m_Renderer.DrawSolidRect(x-std::sin(angle)*19,y+std::cos(angle)*19,27,7,angle,.65f,.72f,.73f,1);
+        if (m_MiningTexture)
+        {
+            const int frame=static_cast<int>(phase*30);
+            m_Renderer.DrawSprite(m_MiningTexture,node.x-42,node.z+36,208,112,frame%6,frame/6,6,11,.8f);
+        }
+    }
     if (state.playerSlowTime > 0 && m_ChatHardTextures[3] && !BossIntro::Active(state))
     {
         const auto foot = ToScreen(state.player);
@@ -1723,7 +1859,8 @@ void WorldRenderer::RenderWorld(const GameState &state)
     {
         const Vec2 screen = ToScreen(state.player);
         const std::wstring text = state.lootTime > 0
-            ? L"수집 중 " + std::to_wstring(static_cast<int>((1 - state.lootTime / GameConstants::Loot::Duration) * 100)) + L"%"
+            ? std::wstring(state.lootNode >= 0 && HarvestSystem::IsOre(state.gatherNodes[state.lootNode].kind) ? L"채굴 중 " : L"수집 중 ") +
+                std::to_wstring(static_cast<int>((1 - state.lootTime / HarvestSystem::Duration(state)) * 100)) + L"%"
             : L"전리품 획득!";
         m_Renderer.DrawLabel(state.width * .5f + screen.x, state.height * .5f + screen.z + 110,
             text.c_str(), 1, .87f, .4f, .65f, 1, true);

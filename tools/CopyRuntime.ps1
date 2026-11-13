@@ -26,3 +26,4 @@ Copy-Item -LiteralPath (Join-Path $sourceRoot 'Dependencies/glfw/LICENSE.md') -D
 Copy-Item -LiteralPath (Join-Path $sourceRoot 'Dependencies/glew/LICENSE.txt') -Destination (Join-Path $licenses 'GLEW.txt') -Force
 Copy-Item -LiteralPath (Join-Path $sourceRoot 'Assets/PixelArt/Effects/quest-glimmer-LICENSE.txt') -Destination (Join-Path $licenses 'PixelfxQuestGlimmer.txt') -Force
 Copy-Item -LiteralPath (Join-Path $sourceRoot 'Assets/PixelArt/Effects/chatacabra-hard-LICENSE.txt') -Destination (Join-Path $licenses 'PixelfxChatacabraHard.txt') -Force
+Copy-Item -LiteralPath (Join-Path $sourceRoot 'Assets/PixelArt/Effects/frontier-LICENSE.txt') -Destination (Join-Path $licenses 'PixelfxFrontier.txt') -Force

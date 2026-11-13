@@ -25,6 +25,7 @@ class Renderer
     void SetDamageFeedback(float remaining) { m_DamageFeedback = remaining; }
     void SetAttackFeedback(float remaining) { m_AttackFeedback = remaining; }
     void SetSpriteFlash(float strength) { m_SpriteFlash = strength; }
+    void SetSpriteEmission(float strength) { m_SpriteEmission = strength; }
     void SetLocalLight(float red, float green, float blue);
     bool SaveScreenshot(const wchar_t *filename);
 
@@ -68,6 +69,7 @@ class Renderer
     std::unique_ptr<Gdiplus::PrivateFontCollection> m_Fonts;
     std::wstring m_FontFamilyName = L"Malgun Gothic";
     float m_Time = 0.0f;
+    float m_SpriteEmission = 0.0f;
     bool m_WorldLighting = false;
     float m_LocalLight[3] = {};
 

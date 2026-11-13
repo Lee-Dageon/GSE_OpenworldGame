@@ -60,8 +60,9 @@ struct Fixture
 int main()
 {
     const auto &live = GameContent::Get();
-    assert(live.map.id == "greenwake" && live.map.houses.size() == 8 && live.map.trees.size() == 40);
-    assert(live.map.landmarks.size() == 42 && live.map.campfires.size() == 10);
+    assert(live.map.id == "greenwake" && live.map.houses.size() == 8 && live.map.trees.size() == 112);
+    assert(live.map.landmarks.size() == 70 && live.map.campfires.size() == 10);
+    assert(live.map.gatherNodes.size() >= 250 && live.map.world.maximumCoordinate == 900);
     assert(live.map.npcs.size() == 21 && live.map.animals.size() == 8);
     assert(live.monsters.at("lake_boar").name == L"호숫가 멧돼지");
     assert(!GameContent::IsBlocked(live.map,live.map.world.spawn));
@@ -73,6 +74,8 @@ int main()
     const auto &map = fixture.originals.at("map.gse");
     const auto &monsters = fixture.originals.at("monsters.gse");
     const auto &quests = fixture.originals.at("quests.gse");
+    WriteFile(fixture.root/"map.gse",map+"gather bad_kind 16 5 5\n"); fixture.Reject();
+    WriteFile(fixture.root/"map.gse",map+"gather blocked_ore 5 -6 -1.7\n"); fixture.Reject();
     WriteFile(fixture.root/"map.gse",map+"house extra_cottage -40 -40 -35 -38 -20 1.55 1.4\n");
     assert(GameContent::Load(fixture.root.string()).map.houses.size() == 9);
     WriteFile(fixture.root/"map.gse",Replace(map,"encounter lake_boar","encounter forest_boar"));
@@ -98,8 +101,8 @@ int main()
     const auto &story = fixture.originals.at("story.gse");
     for (const auto &replacement : std::map<std::string,std::string>{
         {"gse_story 1","gse_story 2"},
-        {"unfamiliar travel 8 -7","unfamiliar unknown 8 -7"},
-        {"travel 8 -7","travel -6 -1.7"},
+        {"unfamiliar travel 70 -60","unfamiliar unknown 70 -60"},
+        {"travel 70 -60","travel -6 -1.7"},
         {"1.5 rampaging_boar","1.5 missing_boar"},
         {"unfamiliar collect","unfamiliar report"},
         {"unfamiliar hunt","missing_chapter hunt"}})

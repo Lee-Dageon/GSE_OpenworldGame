@@ -1,25 +1,25 @@
 # UTF-8, one record per line.
 gse_map 1 greenwake
-bounds -65 85
+bounds -900 900
 spawn 0 -2.5
 lake 45 39 12
 notice_board 2 1.5
 quest_point elder 0 1.4
-quest_point tracks 13 13
-quest_point herb 25 23
-encounter lake_boar 34 30
-landmark expedition_cart cart -47 35 110 .65
-landmark expedition_debris log -39 36 90 .4
-landmark ancient_gate ruin -46 48 150 .75
-landmark ancient_console ruin -49 54 110 .6
-landmark ancient_nest boulder -44 63 120 .7
-landmark south_border_fence fence 10.5 -10.5 100 .4
-landmark sand_ruin_01 ruin 63 9 155 .75
-landmark sand_ruin_02 ruin 67 12 140 .7
-landmark sand_cart cart 66 11 115 .65
-landmark sand_boulder_01 boulder 61 8 145 .8
-landmark sand_boulder_02 boulder 69 7 130 .7
-landmark sand_log log 64 13 100 .4
+quest_point tracks 70 50
+quest_point herb 130 90
+encounter lake_boar 180 140
+landmark expedition_cart cart -303 269 110 .65
+landmark expedition_debris log -295 272 90 .4
+landmark ancient_gate ruin -424 360 150 .75
+landmark ancient_console ruin -524 450 110 .6
+landmark ancient_nest boulder -624 542 120 .7
+landmark south_border_fence fence 138.5 -110.5 100 .4
+landmark sand_ruin_01 ruin 388.0 159.0 155 .75
+landmark sand_ruin_02 ruin 392.0 162.0 140 .7
+landmark sand_cart cart 391.0 161.0 115 .65
+landmark sand_boulder_01 boulder 386.0 158.0 145 .8
+landmark sand_boulder_02 boulder 394.0 157.0 130 .7
+landmark sand_log log 389.0 163.0 100 .4
 house house_00 -6 -1.7 -2 -1 -1 1.55 1.4
 house house_01 6 4 4 5 10 1.55 1.4
 house house_02 -9 19 -4 18 15 1.55 1.4
@@ -83,21 +83,21 @@ landmark landmark_11 fence -13 18 105 .45
 landmark landmark_12 cart 12 -17 115 .65
 landmark landmark_13 boulder -8 26 145 .9
 landmark landmark_14 bush 4 27 95 0
-landmark landmark_15 ruin 8 31 150 .8
-landmark landmark_16 boulder 10 32 125 .75
-landmark landmark_17 log -5 37 125 .5
-landmark landmark_18 bush -13 39 105 0
-landmark landmark_19 ruin 12 42 165 .9
-landmark landmark_20 ruin 14 44 130 .7
-landmark landmark_21 boulder -6 50 160 1.0
-landmark landmark_22 log 3 52 125 .5
-landmark landmark_23 boulder 33 27 165 1.0
-landmark landmark_24 bush 35 28 100 0
-landmark landmark_25 boulder 36 30 150 .9
-landmark landmark_26 ruin 48 25 175 1
-landmark landmark_27 boulder 50 26 150 .9
-landmark landmark_28 bush 56 42 110 0
-landmark landmark_29 boulder 57 45 160 1
+landmark landmark_15 ruin 108 221 150 .8
+landmark landmark_16 boulder 110.5 222 125 .75
+landmark landmark_17 log 105 227 125 .5
+landmark landmark_18 bush 97 229 105 0
+landmark landmark_19 ruin 182 430 165 .9
+landmark landmark_20 ruin 184 432 130 .7
+landmark landmark_21 boulder 164 438 160 1.0
+landmark landmark_22 log 173 440 125 .5
+landmark landmark_23 boulder 179 137 165 1.0
+landmark landmark_24 bush 181 138 100 0
+landmark landmark_25 boulder 182 140 150 .9
+landmark landmark_26 ruin 373 175 175 1
+landmark landmark_27 boulder 375 176 150 .9
+landmark landmark_28 bush 123 337 110 0
+landmark landmark_29 boulder 124 340 160 1
 campfire campfire_00 -3 0
 campfire campfire_01 8 2
 campfire campfire_02 -9 -8
@@ -137,3 +137,372 @@ animal animal_04 5 22 5 22 2 2 4 0.8
 animal animal_05 30 10 30 10 1 2 5 0.4
 animal animal_06 -8 28 -8 28 0 2 6 0.45
 animal animal_07 28 30 28 30 2 2 7 0.75
+landmark frontier_south_travel_0 boulder 63 -55 160 .8
+landmark frontier_south_travel_1 boulder 78 -54 195 .8
+landmark frontier_south_tracks_0 boulder 133 -105 160 .8
+landmark frontier_south_tracks_1 boulder 148 -104 195 .8
+landmark frontier_border_hunt_0 boulder 203 -65 160 .8
+landmark frontier_border_hunt_1 boulder 218 -64 195 .8
+landmark frontier_forest_travel_0 boulder 13 165 160 .8
+landmark frontier_forest_travel_1 boulder 28 166 195 .8
+landmark frontier_forest_tracks_0 boulder 103 225 160 .8
+landmark frontier_forest_tracks_1 boulder 118 226 195 .8
+landmark frontier_sand_travel_0 ruin 293 105 160 .8
+landmark frontier_sand_travel_1 ruin 308 106 195 .8
+landmark frontier_sand_records_0 ruin 383 165 160 .8
+landmark frontier_sand_records_1 ruin 398 166 195 .8
+landmark frontier_forest_hunt_0 boulder 113 335 160 .8
+landmark frontier_forest_hunt_1 boulder 128 336 195 .8
+landmark frontier_ruin_signal_0 boulder 173 435 160 .8
+landmark frontier_ruin_signal_1 boulder 188 436 195 .8
+landmark frontier_expedition_travel_0 ruin -207 185 160 .8
+landmark frontier_expedition_travel_1 ruin -192 186 195 .8
+landmark frontier_expedition_records_0 ruin -307 275 160 .8
+landmark frontier_expedition_records_1 ruin -292 276 195 .8
+landmark frontier_ruin_entrance_0 ruin -427 365 160 .8
+landmark frontier_ruin_entrance_1 ruin -412 366 195 .8
+landmark frontier_ruin_control_0 ruin -527 455 160 .8
+landmark frontier_ruin_control_1 ruin -512 456 195 .8
+landmark frontier_ancient_hunt_0 ruin -627 545 160 .8
+landmark frontier_ancient_hunt_1 ruin -612 546 195 .8
+tree frontier_tree_0_0 32.00 160.00 broadleaf 0 .45
+tree frontier_tree_0_1 32.99 167.50 broadleaf 1 .45
+tree frontier_tree_0_2 29.00 175.59 broadleaf 2 .45
+tree frontier_tree_0_3 20.00 172.00 broadleaf 3 .45
+tree frontier_tree_0_4 12.50 172.99 broadleaf 0 .45
+tree frontier_tree_0_5 4.41 169.00 broadleaf 1 .45
+tree frontier_tree_0_6 8.00 160.00 broadleaf 2 .45
+tree frontier_tree_0_7 7.01 152.50 broadleaf 3 .45
+tree frontier_tree_0_8 11.00 144.41 broadleaf 0 .45
+tree frontier_tree_0_9 20.00 148.00 broadleaf 1 .45
+tree frontier_tree_0_10 27.50 147.01 broadleaf 2 .45
+tree frontier_tree_0_11 35.59 151.00 broadleaf 3 .45
+tree frontier_tree_1_0 122.00 220.00 broadleaf 0 .45
+tree frontier_tree_1_1 122.99 227.50 broadleaf 1 .45
+tree frontier_tree_1_2 119.00 235.59 broadleaf 2 .45
+tree frontier_tree_1_3 110.00 232.00 broadleaf 3 .45
+tree frontier_tree_1_4 102.50 232.99 broadleaf 0 .45
+tree frontier_tree_1_5 94.41 229.00 broadleaf 1 .45
+tree frontier_tree_1_6 98.00 220.00 broadleaf 2 .45
+tree frontier_tree_1_7 97.01 212.50 broadleaf 3 .45
+tree frontier_tree_1_8 101.00 204.41 broadleaf 0 .45
+tree frontier_tree_1_9 110.00 208.00 broadleaf 1 .45
+tree frontier_tree_1_10 117.50 207.01 broadleaf 2 .45
+tree frontier_tree_1_11 125.59 211.00 broadleaf 3 .45
+tree frontier_tree_2_0 132.00 330.00 broadleaf 0 .45
+tree frontier_tree_2_1 132.99 337.50 broadleaf 1 .45
+tree frontier_tree_2_2 129.00 345.59 broadleaf 2 .45
+tree frontier_tree_2_3 120.00 342.00 broadleaf 3 .45
+tree frontier_tree_2_4 112.50 342.99 broadleaf 0 .45
+tree frontier_tree_2_5 104.41 339.00 broadleaf 1 .45
+tree frontier_tree_2_6 108.00 330.00 broadleaf 2 .45
+tree frontier_tree_2_7 107.01 322.50 broadleaf 3 .45
+tree frontier_tree_2_8 111.00 314.41 broadleaf 0 .45
+tree frontier_tree_2_9 120.00 318.00 broadleaf 1 .45
+tree frontier_tree_2_10 127.50 317.01 broadleaf 2 .45
+tree frontier_tree_2_11 135.59 321.00 broadleaf 3 .45
+tree frontier_tree_3_0 192.00 430.00 broadleaf 0 .45
+tree frontier_tree_3_1 192.99 437.50 broadleaf 1 .45
+tree frontier_tree_3_2 189.00 445.59 broadleaf 2 .45
+tree frontier_tree_3_3 180.00 442.00 broadleaf 3 .45
+tree frontier_tree_3_4 172.50 442.99 broadleaf 0 .45
+tree frontier_tree_3_5 164.41 439.00 broadleaf 1 .45
+tree frontier_tree_3_6 168.00 430.00 broadleaf 2 .45
+tree frontier_tree_3_7 167.01 422.50 broadleaf 3 .45
+tree frontier_tree_3_8 171.00 414.41 broadleaf 0 .45
+tree frontier_tree_3_9 180.00 418.00 broadleaf 1 .45
+tree frontier_tree_3_10 187.50 417.01 broadleaf 2 .45
+tree frontier_tree_3_11 195.59 421.00 broadleaf 3 .45
+tree frontier_tree_4_0 82.00 -60.00 broadleaf 0 .45
+tree frontier_tree_4_1 82.99 -52.50 broadleaf 1 .45
+tree frontier_tree_4_2 79.00 -44.41 broadleaf 2 .45
+tree frontier_tree_4_3 70.00 -48.00 broadleaf 3 .45
+tree frontier_tree_4_4 62.50 -47.01 broadleaf 0 .45
+tree frontier_tree_4_5 54.41 -51.00 broadleaf 1 .45
+tree frontier_tree_4_6 58.00 -60.00 broadleaf 2 .45
+tree frontier_tree_4_7 57.01 -67.50 broadleaf 3 .45
+tree frontier_tree_4_8 61.00 -75.59 broadleaf 0 .45
+tree frontier_tree_4_9 70.00 -72.00 broadleaf 1 .45
+tree frontier_tree_4_10 77.50 -72.99 broadleaf 2 .45
+tree frontier_tree_4_11 85.59 -69.00 broadleaf 3 .45
+tree frontier_tree_5_0 152.00 -110.00 broadleaf 0 .45
+tree frontier_tree_5_1 152.99 -102.50 broadleaf 1 .45
+tree frontier_tree_5_2 149.00 -94.41 broadleaf 2 .45
+tree frontier_tree_5_3 140.00 -98.00 broadleaf 3 .45
+tree frontier_tree_5_4 132.50 -97.01 broadleaf 0 .45
+tree frontier_tree_5_5 124.41 -101.00 broadleaf 1 .45
+tree frontier_tree_5_6 128.00 -110.00 broadleaf 2 .45
+tree frontier_tree_5_7 127.01 -117.50 broadleaf 3 .45
+tree frontier_tree_5_8 131.00 -125.59 broadleaf 0 .45
+tree frontier_tree_5_9 140.00 -122.00 broadleaf 1 .45
+tree frontier_tree_5_10 147.50 -122.99 broadleaf 2 .45
+tree frontier_tree_5_11 155.59 -119.00 broadleaf 3 .45
+gather frontier_resource_0000 2 18.280 9.585
+gather frontier_resource_0001 5 35.780 22.710
+gather frontier_resource_0002 12 60.470 44.477
+gather frontier_resource_0003 4 77.850 56.796
+gather frontier_resource_0004 6 87.864 60.347
+gather frontier_resource_0005 10 94.993 68.225
+gather frontier_resource_0006 14 105.007 71.775
+gather frontier_resource_0007 1 112.136 79.653
+gather frontier_resource_0008 3 122.150 83.204
+gather frontier_resource_0009 14 137.414 99.253
+gather frontier_resource_0010 1 147.586 105.747
+gather frontier_resource_0011 3 154.081 115.919
+gather frontier_resource_0012 5 164.253 122.414
+gather frontier_resource_0013 8 170.747 132.586
+gather frontier_resource_0014 5 160.260 126.441
+gather frontier_resource_0015 10 141.312 111.851
+gather frontier_resource_0016 14 133.425 102.496
+gather frontier_resource_0017 1 122.365 97.262
+gather frontier_resource_0018 3 114.477 87.907
+gather frontier_resource_0019 5 103.417 82.672
+gather frontier_resource_0020 8 95.530 73.317
+gather frontier_resource_0021 12 84.470 68.083
+gather frontier_resource_0022 5 27.628 24.314
+gather frontier_resource_0023 8 19.740 14.959
+gather frontier_resource_0024 12 8.681 9.725
+gather frontier_resource_0025 5 16.643 -14.927
+gather frontier_resource_0026 8 27.107 -20.648
+gather frontier_resource_0027 12 34.143 -30.277
+gather frontier_resource_0028 0 44.607 -35.998
+gather frontier_resource_0029 2 51.643 -45.627
+gather frontier_resource_0030 4 62.107 -51.348
+gather frontier_resource_0031 14 79.506 -65.192
+gather frontier_resource_0032 1 86.744 -73.558
+gather frontier_resource_0033 3 97.006 -77.692
+gather frontier_resource_0034 5 104.244 -86.058
+gather frontier_resource_0035 8 114.506 -90.192
+gather frontier_resource_0036 12 121.744 -98.558
+gather frontier_resource_0037 0 132.006 -102.692
+gather frontier_resource_0038 8 160.645 -99.700
+gather frontier_resource_0039 12 169.355 -91.728
+gather frontier_resource_0040 0 180.645 -88.272
+gather frontier_resource_0041 2 189.355 -80.300
+gather frontier_resource_0042 4 200.645 -76.843
+gather frontier_resource_0043 0 198.529 -67.473
+gather frontier_resource_0044 2 188.313 -61.253
+gather frontier_resource_0045 4 176.424 -59.957
+gather frontier_resource_0046 6 166.208 -53.738
+gather frontier_resource_0047 10 154.318 -52.441
+gather frontier_resource_0048 14 144.103 -46.222
+gather frontier_resource_0049 1 132.213 -44.926
+gather frontier_resource_0050 3 121.997 -38.706
+gather frontier_resource_0051 5 110.108 -37.410
+gather frontier_resource_0052 8 99.892 -31.190
+gather frontier_resource_0053 12 88.003 -29.894
+gather frontier_resource_0054 0 77.787 -23.674
+gather frontier_resource_0055 2 65.897 -22.378
+gather frontier_resource_0056 4 55.682 -16.159
+gather frontier_resource_0057 6 43.792 -14.862
+gather frontier_resource_0058 10 33.576 -8.643
+gather frontier_resource_0059 14 21.687 -7.347
+gather frontier_resource_0060 1 11.471 -1.127
+gather frontier_resource_0061 8 0.139 12.891
+gather frontier_resource_0062 12 4.147 23.894
+gather frontier_resource_0063 0 2.996 35.548
+gather frontier_resource_0064 2 7.004 46.552
+gather frontier_resource_0065 4 5.853 58.206
+gather frontier_resource_0066 6 9.861 69.209
+gather frontier_resource_0067 10 8.710 80.863
+gather frontier_resource_0068 14 12.718 91.866
+gather frontier_resource_0069 1 11.567 103.520
+gather frontier_resource_0070 3 15.575 114.523
+gather frontier_resource_0071 5 14.425 126.177
+gather frontier_resource_0072 8 18.433 137.180
+gather frontier_resource_0073 12 17.282 148.834
+gather frontier_resource_0074 14 38.721 170.918
+gather frontier_resource_0075 1 46.279 179.082
+gather frontier_resource_0076 3 56.721 182.918
+gather frontier_resource_0077 5 64.279 191.082
+gather frontier_resource_0078 8 74.721 194.918
+gather frontier_resource_0079 12 82.279 203.082
+gather frontier_resource_0080 0 92.721 206.918
+gather frontier_resource_0081 2 100.279 215.082
+gather frontier_resource_0082 6 120.694 214.783
+gather frontier_resource_0083 10 129.306 206.269
+gather frontier_resource_0084 14 140.694 202.152
+gather frontier_resource_0085 1 149.306 193.638
+gather frontier_resource_0086 3 160.694 189.520
+gather frontier_resource_0087 5 169.306 181.006
+gather frontier_resource_0088 8 180.694 176.889
+gather frontier_resource_0089 12 189.306 168.375
+gather frontier_resource_0090 0 200.694 164.257
+gather frontier_resource_0091 2 209.306 155.743
+gather frontier_resource_0092 4 220.694 151.625
+gather frontier_resource_0093 6 229.306 143.111
+gather frontier_resource_0094 10 240.694 138.994
+gather frontier_resource_0095 14 249.306 130.480
+gather frontier_resource_0096 5 260.694 126.362
+gather frontier_resource_0097 7 269.306 117.848
+gather frontier_resource_0098 9 280.694 113.731
+gather frontier_resource_0099 11 289.306 105.217
+gather frontier_resource_0100 7 318.721 110.918
+gather frontier_resource_0101 9 326.279 119.082
+gather frontier_resource_0102 11 336.721 122.918
+gather frontier_resource_0103 13 344.279 131.082
+gather frontier_resource_0104 4 354.721 134.918
+gather frontier_resource_0105 6 362.279 143.082
+gather frontier_resource_0106 8 372.721 146.918
+gather frontier_resource_0107 10 380.279 155.082
+gather frontier_resource_0108 15 379.307 165.196
+gather frontier_resource_0109 5 370.693 173.693
+gather frontier_resource_0110 7 359.307 177.789
+gather frontier_resource_0111 9 350.693 186.285
+gather frontier_resource_0112 11 339.307 190.381
+gather frontier_resource_0113 13 330.693 198.878
+gather frontier_resource_0114 4 319.307 202.974
+gather frontier_resource_0115 6 310.693 211.470
+gather frontier_resource_0116 8 299.307 215.567
+gather frontier_resource_0117 10 290.693 224.063
+gather frontier_resource_0118 12 279.307 228.159
+gather frontier_resource_0119 15 270.693 236.656
+gather frontier_resource_0120 1 259.307 240.752
+gather frontier_resource_0121 3 250.693 249.248
+gather frontier_resource_0122 5 239.307 253.344
+gather frontier_resource_0123 8 230.693 261.841
+gather frontier_resource_0124 12 219.307 265.937
+gather frontier_resource_0125 0 210.693 274.433
+gather frontier_resource_0126 2 199.307 278.530
+gather frontier_resource_0127 4 190.693 287.026
+gather frontier_resource_0128 6 179.307 291.122
+gather frontier_resource_0129 10 170.693 299.619
+gather frontier_resource_0130 14 159.307 303.715
+gather frontier_resource_0131 1 150.693 312.211
+gather frontier_resource_0132 3 139.307 316.307
+gather frontier_resource_0133 5 130.693 324.804
+gather frontier_resource_0134 4 133.115 349.331
+gather frontier_resource_0135 6 136.885 360.669
+gather frontier_resource_0136 10 145.115 369.331
+gather frontier_resource_0137 14 148.885 380.669
+gather frontier_resource_0138 1 157.115 389.331
+gather frontier_resource_0139 3 160.885 400.669
+gather frontier_resource_0140 5 169.115 409.331
+gather frontier_resource_0141 8 172.885 420.669
+gather frontier_resource_0142 2 167.352 396.527
+gather frontier_resource_0143 5 158.122 374.548
+gather frontier_resource_0144 8 151.109 364.565
+gather frontier_resource_0145 12 148.891 352.568
+gather frontier_resource_0146 0 141.878 342.585
+gather frontier_resource_0147 2 139.660 330.589
+gather frontier_resource_0148 5 130.429 308.609
+gather frontier_resource_0149 8 123.417 298.626
+gather frontier_resource_0150 12 121.199 286.630
+gather frontier_resource_0151 0 114.186 276.647
+gather frontier_resource_0152 2 111.968 264.650
+gather frontier_resource_0153 4 104.955 254.667
+gather frontier_resource_0154 6 102.737 242.671
+gather frontier_resource_0155 10 95.724 232.688
+gather frontier_resource_0156 14 93.506 220.691
+gather frontier_resource_0157 1 86.494 210.709
+gather frontier_resource_0158 4 77.263 188.729
+gather frontier_resource_0159 6 75.045 176.733
+gather frontier_resource_0160 10 68.032 166.750
+gather frontier_resource_0161 14 65.814 154.753
+gather frontier_resource_0162 1 58.801 144.770
+gather frontier_resource_0163 3 56.583 132.774
+gather frontier_resource_0164 5 49.571 122.791
+gather frontier_resource_0165 8 47.352 110.794
+gather frontier_resource_0166 12 40.340 100.811
+gather frontier_resource_0167 0 38.122 88.815
+gather frontier_resource_0168 2 31.109 78.832
+gather frontier_resource_0169 4 28.891 66.835
+gather frontier_resource_0170 6 21.878 56.852
+gather frontier_resource_0171 10 19.660 44.856
+gather frontier_resource_0172 14 12.648 34.873
+gather frontier_resource_0173 1 10.429 22.876
+gather frontier_resource_0174 1 -26.953 23.726
+gather frontier_resource_0175 3 -33.917 33.431
+gather frontier_resource_0176 5 -44.344 39.256
+gather frontier_resource_0177 8 -51.308 48.961
+gather frontier_resource_0178 12 -61.735 54.787
+gather frontier_resource_0179 0 -68.699 64.491
+gather frontier_resource_0180 2 -79.127 70.317
+gather frontier_resource_0181 4 -86.091 80.022
+gather frontier_resource_0182 6 -96.518 85.848
+gather frontier_resource_0183 10 -103.482 95.552
+gather frontier_resource_0184 14 -113.909 101.378
+gather frontier_resource_0185 1 -120.873 111.083
+gather frontier_resource_0186 3 -131.301 116.909
+gather frontier_resource_0187 5 -138.265 126.613
+gather frontier_resource_0188 11 -148.692 132.439
+gather frontier_resource_0189 13 -155.656 142.144
+gather frontier_resource_0190 4 -166.083 147.969
+gather frontier_resource_0191 6 -173.047 157.674
+gather frontier_resource_0192 8 -183.475 163.500
+gather frontier_resource_0193 10 -190.438 173.204
+gather frontier_resource_0194 12 -209.203 186.534
+gather frontier_resource_0195 15 -215.797 195.966
+gather frontier_resource_0196 5 -225.870 201.534
+gather frontier_resource_0197 7 -232.464 210.966
+gather frontier_resource_0198 9 -242.536 216.534
+gather frontier_resource_0199 11 -249.130 225.966
+gather frontier_resource_0200 13 -259.203 231.534
+gather frontier_resource_0201 4 -265.797 240.966
+gather frontier_resource_0202 6 -275.870 246.534
+gather frontier_resource_0203 8 -282.464 255.966
+gather frontier_resource_0204 10 -292.536 261.534
+gather frontier_resource_0205 12 -310.011 275.883
+gather frontier_resource_0206 15 -317.682 284.886
+gather frontier_resource_0207 5 -328.472 289.729
+gather frontier_resource_0208 7 -336.143 298.732
+gather frontier_resource_0209 9 -346.934 303.575
+gather frontier_resource_0210 11 -354.605 312.578
+gather frontier_resource_0211 13 -365.395 317.422
+gather frontier_resource_0212 4 -373.066 326.425
+gather frontier_resource_0213 6 -383.857 331.268
+gather frontier_resource_0214 8 -391.528 340.271
+gather frontier_resource_0215 10 -402.318 345.114
+gather frontier_resource_0216 12 -409.989 354.117
+gather frontier_resource_0217 13 -429.203 366.534
+gather frontier_resource_0218 4 -435.797 375.966
+gather frontier_resource_0219 6 -445.870 381.534
+gather frontier_resource_0220 8 -452.464 390.966
+gather frontier_resource_0221 10 -462.536 396.534
+gather frontier_resource_0222 12 -469.130 405.966
+gather frontier_resource_0223 15 -479.203 411.534
+gather frontier_resource_0224 5 -485.797 420.966
+gather frontier_resource_0225 7 -495.870 426.534
+gather frontier_resource_0226 9 -502.464 435.966
+gather frontier_resource_0227 11 -512.536 441.534
+gather frontier_resource_0228 13 -529.203 456.534
+gather frontier_resource_0229 4 -535.797 465.966
+gather frontier_resource_0230 6 -545.870 471.534
+gather frontier_resource_0231 8 -552.464 480.966
+gather frontier_resource_0232 10 -562.536 486.534
+gather frontier_resource_0233 12 -569.130 495.966
+gather frontier_resource_0234 15 -579.203 501.534
+gather frontier_resource_0235 5 -585.797 510.966
+gather frontier_resource_0236 7 -595.870 516.534
+gather frontier_resource_0237 9 -602.464 525.966
+gather frontier_resource_0238 11 -612.536 531.534
+gather frontier_resource_0239 6 -574.220 501.952
+gather frontier_resource_0240 9 -556.249 486.341
+gather frontier_resource_0241 11 -548.968 476.572
+gather frontier_resource_0242 13 -538.278 470.729
+gather frontier_resource_0243 4 -430.452 377.060
+gather frontier_resource_0244 6 -423.171 367.291
+gather frontier_resource_0245 8 -412.481 361.448
+gather frontier_resource_0246 10 -405.200 351.679
+gather frontier_resource_0247 12 -394.510 345.836
+gather frontier_resource_0248 15 -387.229 336.068
+gather frontier_resource_0249 5 -376.539 330.225
+gather frontier_resource_0250 12 -322.626 283.390
+gather frontier_resource_0251 15 -315.345 273.621
+gather frontier_resource_0252 6 -297.374 258.010
+gather frontier_resource_0253 8 -286.684 252.167
+gather frontier_resource_0254 10 -279.403 242.398
+gather frontier_resource_0255 12 -268.713 236.555
+gather frontier_resource_0256 15 -261.432 226.787
+gather frontier_resource_0257 5 -250.742 220.944
+gather frontier_resource_0258 7 -243.461 211.175
+gather frontier_resource_0259 9 -232.771 205.332
+gather frontier_resource_0260 11 -225.490 195.564
+gather frontier_resource_0261 13 -214.800 189.721
+gather frontier_resource_0262 4 -207.519 179.952
+gather frontier_resource_0263 6 -196.829 174.109
+gather frontier_resource_0264 8 -189.548 164.340
+gather frontier_resource_0265 10 -178.858 158.497
+gather frontier_resource_0266 12 -171.577 148.729
+gather frontier_resource_0267 15 -160.887 142.886
+gather frontier_resource_0268 5 -17.118 17.993

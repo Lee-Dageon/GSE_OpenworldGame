@@ -19,7 +19,7 @@ void EnterStep(GameState &state)
     if (step->action == GameContent::StoryAction::Hunt)
     {
         state.monster = MonsterSystem::Create(GameContent::Get().monsters.at(step->monsterId),step->position);
-        if (step->monsterId == "ancient_guardian") BossIntro::Start(state);
+        if (step->monsterId == "ancient_guardian") BossIntro::Arm(state);
     }
     if (step->action == GameContent::StoryAction::CraftArmor)
         state.armorRecipeUnlocked = true;

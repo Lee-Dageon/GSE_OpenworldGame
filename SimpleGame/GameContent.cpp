@@ -183,6 +183,14 @@ GameContent::MapDefinition ReadMap(const std::string &path)
                 reader.Require(npc.column >= 0 && npc.column < 4 && npc.row >= 0 && npc.row < 2 && Range(npc.phase,-1000,1000), "invalid NPC variant");
                 map.npcs.push_back(item); reader.Require(map.npcs.size() <= 128, "too many NPCs");
             }
+            else if (tag == "gather")
+            {
+                GameContent::GatherDefinition item; item.id = id;
+                Read(reader, row, item.initial.kind, item.initial.position.x, item.initial.position.z);
+                reader.Require(item.initial.kind >= 0 && item.initial.kind < 16, "unknown gathering material");
+                map.gatherNodes.push_back(item);
+                reader.Require(map.gatherNodes.size() <= 2048, "too many gather nodes");
+            }
             else if (tag == "animal")
             {
                 GameContent::AnimalDefinition item; item.id = id; auto &animal = item.initial;
@@ -213,6 +221,14 @@ GameContent::MapDefinition ReadMap(const std::string &path)
     for (const auto &item : map.campfires) point(item.position);
     for (const auto &item : map.npcs) point(item.initial.position);
     for (const auto &item : map.animals) { point(item.initial.position); point(item.initial.home); }
+    for (const auto &item : map.gatherNodes)
+    {
+        const Vec2 p = item.initial.position;
+        point(p);
+        const float dx = p.x - map.world.lake.x, dz = p.z - map.world.lake.z;
+        reader.Require(!GameContent::IsBlocked(map, p) && dx*dx + dz*dz > map.world.lakeRadius*map.world.lakeRadius,
+            "gather node is blocked or underwater");
+    }
     for (Vec2 p : {map.world.spawn, map.world.elder, map.world.tracks, map.world.herb, map.monsterSpawn})
     {
         const float x = p.x-map.world.lake.x, z = p.z-map.world.lake.z;
