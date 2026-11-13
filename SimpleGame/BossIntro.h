@@ -1,6 +1,7 @@
 #pragma once
 #include "GameState.h"
 #include "ChatacabraHDFrames.h"
+#include "WorldLayout.h"
 #include <algorithm>
 #include <cmath>
 
@@ -45,7 +46,8 @@ inline bool TryStartVisible(GameState &state)
     const auto &bounds = ChatacabraHDFrames::WalkBounds[direction];
     const float size = state.monster.definition.spriteHeight * GameConstants::Chatacabra::SpriteScale;
     const float scale = GameConstants::World::Scale * state.height / 720.0f * state.cameraZoom;
-    const float x = (dx-dz)*32, y = (dx+dz)*16-86/state.cameraZoom;
+    const float x = (dx-dz)*32, y = (dx+dz)*16-86/state.cameraZoom +
+        (WorldLayout::GroundHeight(state.monster.position)-WorldLayout::GroundHeight(state.player))*TerrainGeometry::HeightPixels;
     if ((x+bounds.right*size)*scale < -state.width*.5f || (x+bounds.left*size)*scale > state.width*.5f ||
         (y+bounds.top*size)*scale < -state.height*.5f || (y+bounds.bottom*size)*scale > state.height*.5f) return false;
     Start(state);

@@ -186,6 +186,10 @@
     <ClInclude Include="AnimalHitFrames.h" />
     <ClInclude Include="BossIntro.h" />
     <ClInclude Include="HarvestSystem.h" />
+    <ClInclude Include="TerrainGeometry.h" />
+    <ClInclude Include="WildlifeSystem.h" />
+    <ClInclude Include="TerrainPropFrames.h" />
+    <ClInclude Include="DesertAnimalFrames.h" />
     <ClInclude Include="WorldBiomes.h" />
     <ClInclude Include="DesertPropFrames.h" />
     <ClInclude Include="LootTable.h" />

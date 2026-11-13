@@ -1,0 +1,87 @@
+{
+  "generator": "built-in image_gen",
+  "prompt": "Transparent 2x2 isometric pixel-art atlas: grey mountain with zigzag trail, stone arch bridge, grassy cliff ridge, ochre desert mesa ledge. Detailed layered rock, no labels, isolated props with margins.",
+  "dimensions": [
+    1254,
+    1254
+  ],
+  "frames": [
+    {
+      "source": [
+        0,
+        0,
+        627,
+        627
+      ],
+      "foot": [
+        310.5,
+        607
+      ],
+      "body_height": 587,
+      "body_box": [
+        33,
+        20,
+        588,
+        607
+      ]
+    },
+    {
+      "source": [
+        627,
+        0,
+        627,
+        627
+      ],
+      "foot": [
+        312.5,
+        544
+      ],
+      "body_height": 422,
+      "body_box": [
+        14,
+        122,
+        611,
+        544
+      ]
+    },
+    {
+      "source": [
+        0,
+        627,
+        627,
+        627
+      ],
+      "foot": [
+        310.0,
+        600
+      ],
+      "body_height": 580,
+      "body_box": [
+        32,
+        20,
+        588,
+        600
+      ]
+    },
+    {
+      "source": [
+        627,
+        627,
+        627,
+        627
+      ],
+      "foot": [
+        307.0,
+        595
+      ],
+      "body_height": 587,
+      "body_box": [
+        24,
+        8,
+        590,
+        595
+      ]
+    }
+  ],
+  "sha256": "2be160d76f7f1b6ab8360057cdc351d039fdf5f2f80c3d500df7c3d7e03bdf56"
+}

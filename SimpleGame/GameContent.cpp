@@ -183,6 +183,15 @@ GameContent::MapDefinition ReadMap(const std::string &path)
                 reader.Require(npc.column >= 0 && npc.column < 4 && npc.row >= 0 && npc.row < 2 && Range(npc.phase,-1000,1000), "invalid NPC variant");
                 map.npcs.push_back(item); reader.Require(map.npcs.size() <= 128, "too many NPCs");
             }
+            else if (tag == "terrain")
+            {
+                TerrainStrip item; item.id=id;
+                Read(reader,row,item.kind,item.start.x,item.start.z,item.end.x,item.end.z,item.halfWidth,item.height);
+                reader.Require(item.kind>=0 && item.kind<=2 && Range(item.halfWidth,2,8) && Range(item.height,1,12) &&
+                    Range(TerrainGeometry::Length(item),20,120),"invalid terrain strip");
+                map.terrain.push_back(item);
+                reader.Require(map.terrain.size()<=32,"too many terrain strips");
+            }
             else if (tag == "gather")
             {
                 GameContent::GatherDefinition item; item.id = id;
@@ -196,7 +205,8 @@ GameContent::MapDefinition ReadMap(const std::string &path)
                 GameContent::AnimalDefinition item; item.id = id; auto &animal = item.initial;
                 Read(reader, row, animal.position.x, animal.position.z, animal.home.x, animal.home.z,
                      animal.column, animal.row, animal.phase, animal.speed);
-                reader.Require(animal.column >= 0 && animal.column < 3 && animal.row == 2 && Range(animal.phase,-1000,1000) && Range(animal.speed,0,10), "invalid animal variant or motion");
+                reader.Require(animal.column >= 0 && animal.column < 5 && animal.row == 2 && Range(animal.phase,-1000,1000) && Range(animal.speed,0,10), "invalid animal variant or motion");
+                animal.health=GameConstants::World::AnimalHealths[animal.column];
                 map.animals.push_back(item); reader.Require(map.animals.size() <= 128, "too many animals");
             }
             else reader.Fail("unknown map record: "+tag);
@@ -221,6 +231,7 @@ GameContent::MapDefinition ReadMap(const std::string &path)
     for (const auto &item : map.campfires) point(item.position);
     for (const auto &item : map.npcs) point(item.initial.position);
     for (const auto &item : map.animals) { point(item.initial.position); point(item.initial.home); }
+    for (const auto &item : map.terrain) { point(item.start); point(item.end); }
     for (const auto &item : map.gatherNodes)
     {
         const Vec2 p = item.initial.position;
@@ -428,6 +439,8 @@ namespace GameContent
 {
 bool IsBlocked(const MapDefinition &map, Vec2 p)
 {
+    for (const auto &strip : map.terrain)
+        if (TerrainGeometry::Blocked(strip,p)) return true;
     for (const auto &house : map.houses)
         if (std::abs(p.x-house.position.x) < house.halfWidth && std::abs(p.z-house.position.z) < house.halfDepth) return true;
     for (const auto &tree : map.trees)

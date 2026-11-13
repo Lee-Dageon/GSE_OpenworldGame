@@ -24,15 +24,18 @@ campfire id x z
 npc id x z column row phase
 animal id x z home_x home_z column row phase speed
 gather id material_kind x z
+terrain id kind start_x start_z end_x end_z half_width height
 ```
 
 맵의 배치 ID는 종류가 달라도 중복할 수 없다. 필수 단일 레코드와 세 quest_point도 중복할 수 없다.
 집·모닥불은 각각 최대 32개, 나무·지형지물은 각각 512개, NPC·동물은 각각 128개이다.
-나무 variant는 0~3, NPC column은 0~3/row는 0~1, 동물 column은 0~2/row는 2이다.
+나무 variant는 0~3, NPC column은 0~3/row는 0~1, 동물 column은 0~4(사슴·멧돼지·양·도마뱀·낙타)/row는 2이다. 초기 체력은 종별 24/30/20/18/55이다.
 집과 나무의 충돌 크기는 플레이어 여유까지 포함한다. 지형지물은 radius가 0이면 통과하며 양수일 때 플레이어 여유 0.18을 더한다.
 집·나무·지형지물은 같은 데이터로 그리기와 플레이어 이동 차단을 처리한다.
 
 확장 맵 경계는 -900~900이며 차타카브라 위치는 -620,540이다. 이동/조사 거점과 주변 구조물을 함께 재배치했다. `gather`는 최대 2048곳이며 material_kind 0~15 순서는 산딸기·버섯·단단한 목재·식물 섬유·구리·철·은·금·석영·유황·석탄·암염·호박·사막 장미·달꽃·태양석이다. 범위 밖/수중/장애물 위 자원은 거부한다. 상세 위치·채굴·재생·사막 리소스 규칙은 [확장 월드와 사막 채집](../../GSE_MD_codex/MarkDown_codex/20_contracts/frontier_exploration.md)을 따른다.
+
+현재 채집물은 485곳(광맥 49곳), 동물은 48마리(사막 20마리)이다. `terrain`은 최대 32구간, kind 0~2(산길·돌다리·절벽길), 길이 20~120, 반폭 2~8, 높이 1~12를 허용한다. 현재 11구간이며 양 끝은 경사로 연결한다. 돌다리/절벽길 옆 통행 제한은 자원·동물 배치 검증에도 적용한다.
 
 ## 몬스터: monsters.gse
 

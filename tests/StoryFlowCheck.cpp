@@ -75,6 +75,18 @@ int main()
         GameState skipped = CreateInitialGameState();
         assert(StorySystem::DebugEnterStep(skipped, "ancient_hunt"));
         assert(BossIntro::TryStartVisible(skipped));
+        if (key == ' ')
+        {
+            assert(GameInput::OnKeyDown(skipped,key,false) == GameCommand::None);
+            assert(BossIntro::Active(skipped) && skipped.dodge == 0);
+            GameInput::OnKeyUp(skipped,key);
+            GameManager(skipped).UpdateGame(.1f);
+            GameInput::OnKeyDown(skipped,key,false);
+            assert(BossIntro::Active(skipped)); // Repeated dodge taps cannot skip the discovery intro.
+            GameInput::OnKeyDown(skipped,27,false);
+            assert(!BossIntro::Active(skipped));
+            continue;
+        }
         assert(GameInput::OnKeyDown(skipped, key, false) == GameCommand::None);
         assert(!BossIntro::Active(skipped) && skipped.dodge == 0 && skipped.cameraZoom == 1);
     }

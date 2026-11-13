@@ -62,8 +62,8 @@ int main()
     const auto &live = GameContent::Get();
     assert(live.map.id == "greenwake" && live.map.houses.size() == 8 && live.map.trees.size() == 112);
     assert(live.map.landmarks.size() == 70 && live.map.campfires.size() == 10);
-    assert(live.map.gatherNodes.size() >= 250 && live.map.world.maximumCoordinate == 900);
-    assert(live.map.npcs.size() == 21 && live.map.animals.size() == 8);
+    assert(live.map.gatherNodes.size() >= 450 && live.map.world.maximumCoordinate == 900);
+    assert(live.map.npcs.size() == 21 && live.map.animals.size() == 48 && live.map.terrain.size() == 11);
     assert(live.monsters.at("lake_boar").name == L"호숫가 멧돼지");
     assert(!GameContent::IsBlocked(live.map,live.map.world.spawn));
     assert(GameContent::IsBlocked(live.map,live.map.houses[0].position));

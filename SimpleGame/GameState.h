@@ -43,6 +43,9 @@ struct AnimalState
     int health = GameConstants::World::AnimalHealth;
     float hitFlash = 0.0f, respawnTime = 0.0f;
     float deathTime = 0.0f;
+    float fleeTime = 0.0f, hitProtection = 0.0f;
+    Vec2 facing = {0,-1};
+    bool scared = false;
     bool collected = false;
 };
 

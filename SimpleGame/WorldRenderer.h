@@ -64,6 +64,8 @@ class WorldRenderer
     void DrawHerbPatch(Vec2 position) const;
     void DrawInvestigation(Vec2 position, int asset, bool disabled = false) const;
     void DrawDesertProp(Vec2 position, int sprite, float height, bool disabled = false) const;
+    void DrawTerrain() const;
+    bool DrawDesertAnimal(const AnimalState &animal) const;
     void DrawGround() const;
 
     Renderer &m_Renderer;
@@ -91,6 +93,8 @@ class WorldRenderer
     unsigned int m_BoarDeathTexture = 0;
     unsigned int m_QuestGlimmerTexture = 0;
     unsigned int m_DesertPropsTexture = 0, m_DesertSandTexture = 0, m_MiningTexture = 0;
+    unsigned int m_TerrainPropsTexture = 0;
+    std::array<unsigned int,2> m_DesertAnimalTextures = {};
     std::array<unsigned int, 3> m_AnimalHitTextures = {};
     unsigned int m_AncientGuardianTexture = 0;
     unsigned int m_ChatDeathTexture = 0;

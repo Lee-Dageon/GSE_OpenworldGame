@@ -124,7 +124,8 @@ void DrawBossIntro()
         g_Renderer->DrawLabel(width * .5f, y, defeated ? L"퀘스트 완료" : L"차타카브라", 1, .84f, .48f, size, title, true);
         g_Renderer->DrawSolidRect(0, y - height * .5f - 12 * scale, 360 * scale * title, 2 * scale, 0, .95f, .72f, .3f, title);
     }
-    g_Renderer->DrawLabel(width - 210 * scale, 24 * scale, L"공백 / ESC  건너뛰기", .8f, .82f, .78f, .6f * scale, fade);
+    g_Renderer->DrawLabel(width - 210 * scale, 24 * scale,
+        defeated ? L"공백 / ESC  건너뛰기" : L"ESC  건너뛰기", .8f, .82f, .78f, .6f * scale, fade);
 }
 
 void RenderScene()

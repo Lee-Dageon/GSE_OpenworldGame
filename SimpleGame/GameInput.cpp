@@ -16,7 +16,8 @@ GameCommand OnKeyDown(GameState &state, unsigned char key, bool shiftHeld)
     state.sprint = shiftHeld;
     if (BossIntro::Active(state))
     {
-        if (!repeated && (normalizedKey == 27 || normalizedKey == ' ')) BossIntro::Skip(state);
+        // Combat dodge presses must not dismiss an intro triggered while approaching the boss.
+        if (!repeated && (normalizedKey == 27 || (state.bossDefeatIntro && normalizedKey == ' '))) BossIntro::Skip(state);
         return GameCommand::None;
     }
 

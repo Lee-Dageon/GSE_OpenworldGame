@@ -14,6 +14,7 @@
 #include "LootTable.h"
 #include "BossIntro.h"
 #include "HarvestSystem.h"
+#include "WildlifeSystem.h"
 
 #include <algorithm>
 #include <cmath>
@@ -201,19 +202,7 @@ void GameManager::UpdateGame(float deltaTime)
     if (BossIntro::Active(m_State)) { m_State.moving = false; return; }
     for (AnimalState &animal : m_State.animals)
     {
-        animal.hitFlash = std::max(0.0f, animal.hitFlash - deltaTime);
-        if (animal.collected)
-        {
-            animal.respawnTime = std::max(0.0f, animal.respawnTime - deltaTime);
-            if (animal.respawnTime == 0)
-            { animal.health = GameConstants::World::AnimalHealth; animal.collected = false; animal.position = animal.home; animal.deathTime = 0; }
-            continue;
-        }
-        if (animal.health <= 0) { animal.deathTime += deltaTime; continue; }
-        if (animal.hitFlash > 0) continue;
-        animal.phase += deltaTime * animal.speed;
-        animal.position.x = animal.home.x + std::sin(animal.phase) * 2.4f;
-        animal.position.z = animal.home.z + std::cos(animal.phase * .7f) * 1.8f;
+        WildlifeSystem::Update(animal,m_State,deltaTime);
     }
     const float previousHealth = m_State.health;
     if ((m_State.quest == QuestStage::Hunt || StorySystem::IsHunting(m_State)) &&
@@ -354,9 +343,9 @@ void GameManager::HandleCommand(GameCommand command)
         if (animalIndex>=0)
         {
             auto &animal=m_State.animals[animalIndex];
-            const int damage=std::min(animal.health,std::max(GameConstants::Player::MinimumDamage,m_State.attackPower/GameConstants::Player::DamageDivisor));
-            animal.health-=damage;
-            animal.hitFlash=GameConstants::Feedback::MonsterFlashDuration;
+            const int damage=WildlifeSystem::Hit(animal,m_State.player,
+                std::max(GameConstants::Player::MinimumDamage,m_State.attackPower/GameConstants::Player::DamageDivisor));
+            if (damage==0) return;
             RecordHit(animal.position,damage);
             if (animal.health==0)
             { animal.deathTime = 0; QuestSystem::AddExperience(m_State,GameConstants::World::AnimalExperience); ShowMessage(L"동물을 사냥했습니다. E로 전리품을 수집하세요."); }

@@ -24,6 +24,9 @@
 #include "HarvestSystem.h"
 #include "WorldBiomes.h"
 #include "DesertPropFrames.h"
+#include "TerrainPropFrames.h"
+#include "DesertAnimalFrames.h"
+#include "WildlifeSystem.h"
 
 #include <algorithm>
 #include <array>
@@ -193,6 +196,16 @@ WorldRenderer::WorldRenderer(Renderer &renderer) : m_Renderer(renderer)
     m_DesertPropsTexture = m_Renderer.LoadTexture(L"./Assets/PixelArt/World/desert-props-v1.png");
     m_DesertSandTexture = m_Renderer.LoadTexture(L"./Assets/PixelArt/World/desert-sand-v1.png");
     m_MiningTexture = m_Renderer.LoadTexture(L"./Assets/PixelArt/Effects/frontier-mining.png");
+    m_TerrainPropsTexture = m_Renderer.LoadTexture(L"./Assets/PixelArt/World/frontier-terrain-v1.png");
+    m_DesertAnimalTextures[0] = m_Renderer.LoadTexture(L"./Assets/PixelArt/Animals/Desert/lizard-v1.png");
+    m_DesertAnimalTextures[1] = m_Renderer.LoadTexture(L"./Assets/PixelArt/Animals/Desert/camel-v1.png");
+    for (auto texture : {m_TerrainPropsTexture,m_DesertAnimalTextures[0],m_DesertAnimalTextures[1]})
+        if (texture)
+        {
+            glBindTexture(GL_TEXTURE_2D,texture);
+            glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
+            glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
+        }
     for (auto texture : {m_DesertPropsTexture, m_DesertSandTexture, m_MiningTexture})
         if (texture)
         {
@@ -302,6 +315,8 @@ WorldRenderer::~WorldRenderer()
     if (m_QuestGlimmerTexture != 0) glDeleteTextures(1, &m_QuestGlimmerTexture);
     for (auto texture : {m_DesertPropsTexture, m_DesertSandTexture, m_MiningTexture})
         if (texture) glDeleteTextures(1, &texture);
+    for (auto texture : {m_TerrainPropsTexture,m_DesertAnimalTextures[0],m_DesertAnimalTextures[1]})
+        if (texture) glDeleteTextures(1,&texture);
     if (m_BoarDeathTexture != 0) glDeleteTextures(1, &m_BoarDeathTexture);
     for (const auto &action : m_ChatHdTextures)
         for (auto texture : action)
@@ -370,7 +385,9 @@ Vec2 WorldRenderer::ToScreen(Vec2 position) const
     const Vec2 focus = BossIntro::Focus(*m_State);
     const float x = position.x - focus.x;
     const float z = position.z - focus.z;
-    return {(x - z) * TileWidth * .5f, (x + z) * TileHeight * .5f - BossIntro::FootOffset(*m_State) / BossIntro::Zoom(*m_State)};
+    return {(x - z) * TileWidth * .5f, (x + z) * TileHeight * .5f +
+        (WorldLayout::GroundHeight(position)-WorldLayout::GroundHeight(focus))*TerrainGeometry::HeightPixels -
+        BossIntro::FootOffset(*m_State) / BossIntro::Zoom(*m_State)};
 }
 
 void WorldRenderer::DrawRect(Vec2 position, float width, float height, float rotation, float red, float green,
@@ -662,11 +679,13 @@ void WorldRenderer::DrawLoot(Vec2 position, const LootTable::Drops &drops) const
         const auto item = static_cast<ItemId>(index);
         const auto path = ItemTexture(item);
         const auto texture = path ? m_Renderer.UiTexture(path) : m_BoarLootTexture;
+        const bool animated = index>=static_cast<size_t>(ItemId::WildBerry);
+        const int frame = static_cast<int>(m_State->time*15)%24;
         const float x = screen.x + (slot - (count - 1) * .5f) * 34;
         const float y = screen.z + 35 + std::sin(m_State->time * 3 + slot * 1.7f) * 3;
         if (texture != 0)
-            m_Renderer.DrawSprite(texture, x, y, 36, 36, path ? 0 : (item == ItemId::BoarHide ? 1 : 0),
-                0, path ? 1 : 2, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, .5f);
+            m_Renderer.DrawSprite(texture, x, y, 36, 36, animated ? frame%5 : path ? 0 : (item == ItemId::BoarHide ? 1 : 0),
+                animated ? frame/5 : 0, animated ? 5 : path ? 1 : 2, animated ? 5 : 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, .5f);
         ++slot;
     }
     DrawItemSparkle(position, 100, position.x * .01f + 1);
@@ -1117,6 +1136,105 @@ void WorldRenderer::DrawGround() const
     }
 }
 
+bool WorldRenderer::DrawDesertAnimal(const AnimalState &animal) const
+{
+    if (animal.column<3 || animal.column>4) return false;
+    const int species=animal.column-3;
+    const auto texture=m_DesertAnimalTextures[species];
+    if (!texture) return false;
+    const float dx=animal.facing.x-animal.facing.z, dy=(animal.facing.x+animal.facing.z)*.5f;
+    const int direction=std::abs(dx)>std::abs(dy) ? (dx<0 ? 1 : 2) : (dy<0 ? 0 : 3);
+    const int walk=(static_cast<int>(m_State->time*(animal.fleeTime>0 ? 14 : 6)+animal.phase)%4+4)%4;
+    const int pose=animal.health<=0 ? 5 : animal.hitFlash>0 ? 4 : walk;
+    const auto &frame=DesertAnimalFrames::Frames[species][pose*4+direction];
+    const float scale=(species==0 ? 42.0f : 140.0f)*frame.scale;
+    const auto p=ToScreen(animal.position);
+    DrawShadow(animal.position,species==0 ? 32.0f : 75.0f,8);
+    m_Renderer.SetSpriteFlash(animal.health>0 ? animal.hitFlash/GameConstants::Feedback::MonsterFlashDuration : 0);
+    m_Renderer.DrawSprite(texture,p.x+(frame.width*.5f-frame.footX)*scale,
+        p.z+(frame.footY-frame.height*.5f)*scale,frame.width*scale,frame.height*scale,
+        frame.x,frame.y,DesertAnimalFrames::TextureWidths[species],DesertAnimalFrames::TextureHeights[species],
+        1,1,1,1,0,0,0,static_cast<float>(frame.width),static_cast<float>(frame.height),.5f);
+    m_Renderer.SetSpriteFlash(0);
+    return true;
+}
+
+void WorldRenderer::DrawTerrain() const
+{
+    for (const auto &strip : Map().terrain)
+    {
+        const float length=TerrainGeometry::Length(strip);
+        const Vec2 center={(strip.start.x+strip.end.x)*.5f,(strip.start.z+strip.end.z)*.5f};
+        if (Distance(center,BossIntro::Focus(*m_State))>length*.5f+50) continue;
+        const Vec2 d={(strip.end.x-strip.start.x)/length,(strip.end.z-strip.start.z)/length};
+        const Vec2 n={-d.z,d.x};
+        const int segments=static_cast<int>(std::ceil(length/2));
+        for (int index=0;index<segments;++index)
+        {
+            const float t0=index/static_cast<float>(segments),t1=(index+1)/static_cast<float>(segments);
+            const Vec2 a={strip.start.x+d.x*length*t0,strip.start.z+d.z*length*t0};
+            const Vec2 b={strip.start.x+d.x*length*t1,strip.start.z+d.z*length*t1};
+            const Vec2 mid={(a.x+b.x)*.5f,(a.z+b.z)*.5f};
+            const float ha=TerrainGeometry::Height(strip,a),hb=TerrainGeometry::Height(strip,b),h=(ha+hb)*.5f;
+            const float ax=(b.x-a.x-b.z+a.z)*TileWidth*.25f;
+            const float ay=(b.x-a.x+b.z-a.z)*TileHeight*.25f;
+            const auto floor=ToScreen(mid);
+            if (strip.kind!=0 && t0>.22f && t1<.78f)
+            {
+                const float width=strip.halfWidth+8;
+                const float basis[]={ax,ay,(n.x-n.z)*TileWidth*.5f*width,(n.x+n.z)*TileHeight*.5f*width};
+                m_Renderer.DrawEffectRect(floor.x,floor.z-WorldLayout::GroundHeight(mid)*TerrainGeometry::HeightPixels,
+                    1,1,0,.075f,.07f,.065f,1,0,basis);
+            }
+            if (strip.kind==0)
+            {
+                for (int side : {-1,1})
+                    for (int band=0;band<3;++band)
+                    {
+                        const float inner=strip.halfWidth+band*2;
+                        const Vec2 sideCenter={mid.x+n.x*(inner+1)*side,mid.z+n.z*(inner+1)*side};
+                        const float ih=h*(1-TerrainGeometry::Smooth(band/3.0f));
+                        const float oh=h*(1-TerrainGeometry::Smooth((band+1)/3.0f));
+                        const auto p=ToScreen(sideCenter);
+                        const float shoulder[]={ax,ay,(n.x-n.z)*TileWidth*.5f*side,
+                            (n.x+n.z)*TileHeight*.5f*side+(oh-ih)*TerrainGeometry::HeightPixels*.5f};
+                        m_Renderer.DrawEffectRect(p.x,p.z+((ih+oh)*.5f-WorldLayout::GroundHeight(sideCenter))*TerrainGeometry::HeightPixels,
+                            1,1,0,.28f+band*.025f,.30f+band*.025f,.24f+band*.02f,1,0,shoulder);
+                    }
+            }
+            else for (int side : {-1,1})
+            {
+                const Vec2 edge={mid.x+n.x*strip.halfWidth*side,mid.z+n.z*strip.halfWidth*side};
+                const auto p=ToScreen(edge);
+                const float basis[]={ax,ay,0,h*TerrainGeometry::HeightPixels*.5f};
+                const bool sand=WorldBiomes::IsDesert(mid);
+                m_Renderer.DrawEffectRect(p.x,p.z+(h*.5f-WorldLayout::GroundHeight(edge))*TerrainGeometry::HeightPixels,
+                    1,1,0,sand ? .42f : .27f,sand ? .29f : .29f,sand ? .17f : .28f,1,0,basis);
+            }
+            const float basis[]={ax,ay+(hb-ha)*TerrainGeometry::HeightPixels*.5f,
+                (n.x-n.z)*TileWidth*.5f*strip.halfWidth,(n.x+n.z)*TileHeight*.5f*strip.halfWidth};
+            const bool sand=WorldBiomes::IsDesert(mid);
+            const float grain=index%3*.025f;
+            m_Renderer.DrawEffectRect(floor.x,floor.z+(h-WorldLayout::GroundHeight(mid))*TerrainGeometry::HeightPixels,
+                1,1,0,(sand ? .64f : strip.kind==1 ? .51f : .36f)+grain,
+                (sand ? .46f : strip.kind==1 ? .49f : .38f)+grain,(sand ? .26f : .32f)+grain,1,0,basis);
+        }
+        if (m_TerrainPropsTexture)
+        {
+            const int variant=strip.kind==0 ? 0 : strip.kind==1 ? 1 : WorldBiomes::IsDesert(center) ? 3 : 2;
+            const auto &frame=TerrainPropFrames::Frames[variant];
+            const Vec2 prop={center.x+n.x*(strip.halfWidth+11),center.z+n.z*(strip.halfWidth+11)};
+            const auto p=ToScreen(prop);
+            const float height=strip.kind==1 ? 175.0f : 300.0f;
+            const float scale=height/frame.bodyHeight;
+            m_Renderer.DrawSprite(m_TerrainPropsTexture,p.x+(frame.width*.5f-frame.footX)*scale,
+                p.z+(frame.footY-frame.height*.5f)*scale,frame.width*scale,frame.height*scale,
+                frame.x,frame.y,TerrainPropFrames::TextureWidth,TerrainPropFrames::TextureHeight,
+                1,1,1,1,0,0,0,static_cast<float>(frame.width),static_cast<float>(frame.height),.5f);
+        }
+    }
+}
+
 void WorldRenderer::RenderWorld(const GameState &state)
 {
     m_Renderer.SetDamageFeedback(state.playerHitTime);
@@ -1124,6 +1242,7 @@ void WorldRenderer::RenderWorld(const GameState &state)
     m_State = &state;
     m_Renderer.SetWorldScale(WorldScale * state.height / 720.0f * BossIntro::Zoom(state));
     DrawGround();
+    DrawTerrain();
     enum class DrawType { House, Tree, Campfire, Npc, Animal, Tracks, Herb, Monster, Player, NoticeBoard, Decoration, Scenery, Investigation, StoryMarker, GatherNode };
     struct DrawItem { Vec2 position; DrawType type; int index; };
     std::vector<DrawItem> items;
@@ -1153,6 +1272,7 @@ void WorldRenderer::RenderWorld(const GameState &state)
                             (z + .15f + ((seed >> 8) & 255u) / 365.0f) * 1.4f};
             if (p.x < state.world.minimumCoordinate || p.x > state.world.maximumCoordinate ||
                 p.z < state.world.minimumCoordinate || p.z > state.world.maximumCoordinate) continue;
+            if (WorldLayout::IsBlocked(p)) continue;
             const Vec2 screen = ToScreen(p);
             const float scale = WorldScale * state.height / 720.0f * BossIntro::Zoom(state);
             if (std::abs(screen.x) * scale > state.width * .5f + 30 ||
@@ -1399,11 +1519,23 @@ void WorldRenderer::RenderWorld(const GameState &state)
         {
             const AnimalState &animal = state.animals[item.index];
             if (animal.collected) break;
+            if (animal.column>=3)
+            {
+                DrawDesertAnimal(animal);
+                if (animal.health<=0) DrawLoot(animal.position,LootTable::Animal(animal.column));
+                else if (animal.health<WildlifeSystem::Health(animal.column))
+                {
+                    const auto p=ToScreen(animal.position);
+                    const float y=animal.column==3 ? 65.0f : 155.0f;
+                    m_Renderer.DrawSolidRect(p.x,p.z+y,45,4,0,.12f,.08f,.05f,1);
+                    m_Renderer.DrawSolidRect(p.x,p.z+y,45.0f*animal.health/WildlifeSystem::Health(animal.column),4,0,.9f,.25f,.15f,1);
+                }
+                break;
+            }
             if (animal.health <= 0)
             {
                 const Vec2 p=ToScreen(animal.position);
-                const Vec2 facing = {std::cos(animal.phase) * 2.4f,
-                    -std::sin(animal.phase * .7f) * 1.8f * .7f};
+                const Vec2 facing = animal.facing;
                 const bool boarDeath = animal.column == 1 && DrawBoarDeath(animal.position, facing,
                     GameConstants::World::BoarSpriteSize, animal.deathTime);
                 if (!boarDeath)
@@ -1416,10 +1548,9 @@ void WorldRenderer::RenderWorld(const GameState &state)
                 break;
             }
             m_Renderer.SetSpriteFlash(animal.hitFlash/GameConstants::Feedback::MonsterFlashDuration);
-            const Vec2 facing = {std::cos(animal.phase) * 2.4f,
-                                  -std::sin(animal.phase * .7f) * 1.8f * .7f};
+            const Vec2 facing = animal.facing;
             const unsigned int texture = animal.column == 0 ? m_DeerTexture : (animal.column == 1 ? m_BoarTexture : m_SheepTexture);
-            const int frame = static_cast<int>(state.time * 8.0f + animal.phase) % 4;
+            const int frame = (static_cast<int>(state.time * (animal.fleeTime>0 ? 14.0f : 8.0f) + animal.phase) % 4+4)%4;
             const float animalHeight = animal.column == 0 ? GameConstants::World::DeerSpriteSize :
                 animal.column == 1 ? GameConstants::World::BoarSpriteSize : GameConstants::World::SheepSpriteSize;
             if (!DrawAnimalHit(animal.position, animal.column, facing, animalHeight, animal.hitFlash) &&
@@ -1429,11 +1560,11 @@ void WorldRenderer::RenderWorld(const GameState &state)
                 !DrawAtlasSprite(animal.position, texture, facing, frame, animal.column == 0 ? 128.0f : 110.0f, AnimalPivotY))
                 DrawSprite(animal.position, animal.column, animal.row, 105, 82);
             m_Renderer.SetSpriteFlash(0);
-            if (animal.health < GameConstants::World::AnimalHealth)
+            if (animal.health < WildlifeSystem::Health(animal.column))
             {
                 const Vec2 p=ToScreen(animal.position);
                 m_Renderer.DrawSolidRect(p.x,p.z+85,45,4,0,.12f,.08f,.05f,1);
-                m_Renderer.DrawSolidRect(p.x,p.z+85,45*animal.health/GameConstants::World::AnimalHealth,4,0,.9f,.25f,.15f,1);
+                m_Renderer.DrawSolidRect(p.x,p.z+85,45.0f*animal.health/WildlifeSystem::Health(animal.column),4,0,.9f,.25f,.15f,1);
             }
             break;
         }

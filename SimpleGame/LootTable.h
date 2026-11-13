@@ -21,6 +21,18 @@ inline Drops Animal(int species)
         drops[static_cast<size_t>(ItemId::BoarTusk)] = 1;
     }
     else if (species == 2) drops[static_cast<size_t>(ItemId::Wool)] = 2;
+    else if (species == 3)
+    {
+        drops.fill(0);
+        drops[static_cast<size_t>(ItemId::LizardScale)] = 2;
+        drops[static_cast<size_t>(ItemId::ReptileTail)] = 1;
+    }
+    else if (species == 4)
+    {
+        drops[static_cast<size_t>(ItemId::RawMeat)] = 3;
+        drops[static_cast<size_t>(ItemId::CamelHide)] = 2;
+        drops[static_cast<size_t>(ItemId::CamelMilk)] = 1;
+    }
     else drops.fill(0);
     return drops;
 }

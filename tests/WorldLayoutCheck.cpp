@@ -5,6 +5,18 @@
 
 int main()
 {
+    for (const auto &strip : GameContent::Get().map.terrain)
+    {
+        const Vec2 mid={(strip.start.x+strip.end.x)*.5f,(strip.start.z+strip.end.z)*.5f};
+        assert(std::abs(TerrainGeometry::Height(strip,mid)-strip.height)<.001f);
+        assert(std::abs(TerrainGeometry::Height(strip,strip.start))<.001f && std::abs(TerrainGeometry::Height(strip,strip.end))<.001f);
+        assert(!TerrainGeometry::Blocked(strip,mid));
+        const float length=TerrainGeometry::Length(strip);
+        const Vec2 side={mid.x-(strip.end.z-strip.start.z)/length*(strip.halfWidth+3),
+            mid.z+(strip.end.x-strip.start.x)/length*(strip.halfWidth+3)};
+        if (strip.kind==0) assert(TerrainGeometry::Height(strip,side)>0 && !TerrainGeometry::Blocked(strip,side));
+        else assert(TerrainGeometry::Blocked(strip,side));
+    }
     assert(!WorldLayout::IsBlocked({0, -2.5f}));
     assert(!WorldLayout::IsBlocked({0, 1.4f}));
     for (const auto &house : WorldLayout::Houses())

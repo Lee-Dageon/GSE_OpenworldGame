@@ -1,5 +1,6 @@
 #pragma once
 #include "GameState.h"
+#include "TerrainGeometry.h"
 #include <map>
 
 namespace GameContent
@@ -45,6 +46,7 @@ struct MapDefinition
     std::vector<NpcDefinition> npcs;
     std::vector<AnimalDefinition> animals;
     std::vector<GatherDefinition> gatherNodes;
+    std::vector<TerrainStrip> terrain;
 };
 struct QuestStep
 {

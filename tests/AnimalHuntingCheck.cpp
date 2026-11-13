@@ -2,6 +2,7 @@
 #include "../SimpleGame/BoarDeathFrames.h"
 #include "../SimpleGame/LootTable.h"
 #include "../SimpleGame/AnimalHitFrames.h"
+#include "../SimpleGame/WildlifeSystem.h"
 #include <cassert>
 
 int main()
@@ -20,6 +21,27 @@ int main()
     assert(reward.Count(ItemId::RawMeat) == 0);
     assert(BoarDeathFrames::Pose(-1) == 0 && BoarDeathFrames::Pose(0) == 0);
     assert(BoarDeathFrames::Pose(.21f) == 1 && BoarDeathFrames::Pose(100) == 3);
+    for (int species=0;species<5;++species)
+    {
+        auto state=CreateInitialGameState();
+        AnimalState animal={}; animal.column=species;
+        animal.position=animal.home={state.player.x+1,state.player.z};
+        animal.health=WildlifeSystem::Health(species);
+        const auto before=animal.position;
+        assert(WildlifeSystem::Hit(animal,state.player,2)==2 && animal.fleeTime>0);
+        assert(WildlifeSystem::Hit(animal,state.player,2)==0);
+        WildlifeSystem::Update(animal,state,.1f);
+        assert(animal.position.x-before.x>.3f); // Keeps fleeing during hit flash.
+        assert(animal.position.x-before.x<GameConstants::Player::SprintSpeed*.1f);
+        state.player={800,800}; animal.fleeTime=0;
+        const auto fleeing=animal.position;
+        WildlifeSystem::Update(animal,state,.1f);
+        assert(std::hypot(animal.position.x-fleeing.x,animal.position.z-fleeing.z)<=.081f);
+    }
+    assert(LootTable::Animal(3)[static_cast<size_t>(ItemId::LizardScale)]==2);
+    assert(LootTable::Animal(3)[static_cast<size_t>(ItemId::BoarTusk)]==0);
+    assert(LootTable::Animal(4)[static_cast<size_t>(ItemId::CamelMilk)]==1);
+    assert(LootTable::Animal(4)[static_cast<size_t>(ItemId::CamelHide)]==2);
     for (int species=0;species<3;++species)
     {
         auto state=CreateInitialGameState();
@@ -56,7 +78,7 @@ int main()
         game.HandleCommand(GameCommand::Interact);
         assert(state.inventory.Count(ItemId::BoarHide)==hides);
         game.UpdateGame(GameConstants::World::AnimalRespawnSeconds+.1f);
-        assert(!state.animals[0].collected && state.animals[0].health==GameConstants::World::AnimalHealth);
+        assert(!state.animals[0].collected && state.animals[0].health==WildlifeSystem::Health(species));
         assert(state.animals[0].deathTime == 0);
         state.animals[0].health=0;
         state.player=state.animals[0].position;

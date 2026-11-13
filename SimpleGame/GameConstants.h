@@ -106,6 +106,9 @@ constexpr int TradeHideCost=2;
 namespace World
 {
 constexpr int AnimalHealth = 12, AnimalExperience = 3;
+constexpr std::array<int,5> AnimalHealths = {{24,30,20,18,55}};
+constexpr std::array<float,5> AnimalFleeSpeeds = {{3.7f,3.5f,3.2f,3.9f,3.4f}};
+constexpr float AnimalFleeDuration = 5.0f, AnimalHitProtection = .45f;
 constexpr float AnimalHitRange = 1.9f, AnimalLootRange = 1.5f, AnimalRespawnSeconds = 60.0f;
 constexpr float Scale = 2.6f;
 constexpr float ZoomMinimum = .4f, ZoomMaximum = 1.6f, ZoomStep = 1.12f;
