@@ -1,0 +1,826 @@
+{
+  "generator": "Built-in image_gen; RGBA outputs copied unchanged",
+  "directions": [
+    "down",
+    "left",
+    "right",
+    "up"
+  ],
+  "poses": [
+    "ready",
+    "flinch",
+    "strong recoil",
+    "recovery"
+  ],
+  "timing_source": "GameConstants::Feedback::MonsterFlashDuration",
+  "alpha_cutoff": 0.5,
+  "atlases": [
+    {
+      "species": "deer",
+      "image": "deer-hit-v1.png",
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "frames": [
+        {
+          "box": [
+            102,
+            17,
+            225,
+            295
+          ],
+          "cell_size": [
+            314,
+            314
+          ],
+          "x": 0.5207006369426752,
+          "y": 0.9394904458598726,
+          "body_width": 0.39171974522292996,
+          "scale": 0.9516129032258065
+        },
+        {
+          "box": [
+            33,
+            19,
+            262,
+            294
+          ],
+          "cell_size": [
+            313,
+            314
+          ],
+          "x": 0.4712460063897764,
+          "y": 0.9363057324840764,
+          "body_width": 0.731629392971246,
+          "scale": 1.0292134831460675
+        },
+        {
+          "box": [
+            51,
+            19,
+            280,
+            294
+          ],
+          "cell_size": [
+            313,
+            314
+          ],
+          "x": 0.5287539936102237,
+          "y": 0.9363057324840764,
+          "body_width": 0.731629392971246,
+          "scale": 1.0292134831460673
+        },
+        {
+          "box": [
+            90,
+            17,
+            212,
+            295
+          ],
+          "cell_size": [
+            314,
+            314
+          ],
+          "x": 0.48089171974522293,
+          "y": 0.9394904458598726,
+          "body_width": 0.3885350318471338,
+          "scale": 0.9523809523809524
+        },
+        {
+          "box": [
+            95,
+            12,
+            227,
+            290
+          ],
+          "cell_size": [
+            314,
+            313
+          ],
+          "x": 0.5127388535031847,
+          "y": 0.9265175718849841,
+          "body_width": 0.42038216560509556,
+          "scale": 0.9516129032258065
+        },
+        {
+          "box": [
+            41,
+            12,
+            257,
+            288
+          ],
+          "cell_size": [
+            313,
+            313
+          ],
+          "x": 0.476038338658147,
+          "y": 0.9201277955271565,
+          "body_width": 0.6900958466453674,
+          "scale": 1.0292134831460675
+        },
+        {
+          "box": [
+            56,
+            12,
+            272,
+            288
+          ],
+          "cell_size": [
+            313,
+            313
+          ],
+          "x": 0.5239616613418531,
+          "y": 0.9201277955271565,
+          "body_width": 0.6900958466453674,
+          "scale": 1.0292134831460673
+        },
+        {
+          "box": [
+            89,
+            14,
+            223,
+            288
+          ],
+          "cell_size": [
+            314,
+            313
+          ],
+          "x": 0.4968152866242038,
+          "y": 0.9201277955271565,
+          "body_width": 0.4267515923566879,
+          "scale": 0.9523809523809524
+        },
+        {
+          "box": [
+            99,
+            11,
+            224,
+            289
+          ],
+          "cell_size": [
+            314,
+            313
+          ],
+          "x": 0.5143312101910829,
+          "y": 0.9233226837060703,
+          "body_width": 0.3980891719745223,
+          "scale": 0.9516129032258065
+        },
+        {
+          "box": [
+            55,
+            15,
+            251,
+            292
+          ],
+          "cell_size": [
+            313,
+            313
+          ],
+          "x": 0.48881789137380194,
+          "y": 0.9329073482428115,
+          "body_width": 0.6261980830670927,
+          "scale": 1.0292134831460675
+        },
+        {
+          "box": [
+            62,
+            15,
+            264,
+            291
+          ],
+          "cell_size": [
+            313,
+            313
+          ],
+          "x": 0.5207667731629393,
+          "y": 0.9297124600638977,
+          "body_width": 0.645367412140575,
+          "scale": 1.0292134831460673
+        },
+        {
+          "box": [
+            87,
+            12,
+            215,
+            289
+          ],
+          "cell_size": [
+            314,
+            313
+          ],
+          "x": 0.48089171974522293,
+          "y": 0.9233226837060703,
+          "body_width": 0.40764331210191085,
+          "scale": 0.9523809523809524
+        },
+        {
+          "box": [
+            100,
+            18,
+            223,
+            296
+          ],
+          "cell_size": [
+            314,
+            314
+          ],
+          "x": 0.5143312101910829,
+          "y": 0.9426751592356688,
+          "body_width": 0.39171974522292996,
+          "scale": 0.9516129032258065
+        },
+        {
+          "box": [
+            33,
+            21,
+            262,
+            295
+          ],
+          "cell_size": [
+            313,
+            314
+          ],
+          "x": 0.4712460063897764,
+          "y": 0.9394904458598726,
+          "body_width": 0.731629392971246,
+          "scale": 1.0292134831460675
+        },
+        {
+          "box": [
+            49,
+            22,
+            280,
+            295
+          ],
+          "cell_size": [
+            313,
+            314
+          ],
+          "x": 0.5255591054313099,
+          "y": 0.9394904458598726,
+          "body_width": 0.7380191693290735,
+          "scale": 1.0292134831460673
+        },
+        {
+          "box": [
+            91,
+            19,
+            215,
+            297
+          ],
+          "cell_size": [
+            314,
+            314
+          ],
+          "x": 0.4872611464968153,
+          "y": 0.945859872611465,
+          "body_width": 0.39490445859872614,
+          "scale": 0.9523809523809524
+        }
+      ],
+      "sha256": "86fcd4ac51897d81781a9994eea0af82061a6031e548b0eb167268becf8ca7eb",
+      "prompt": "Create a nonfatal HIT-REACTION game animation atlas for the EXACT deer shown in this reference. Preserve the animal's existing face, fur or wool markings, antlers or tusks, palette and proportions. FOUR equal columns x FOUR equal rows, square transparent PNG. Columns front/down, left, right, back/up, same as reference. Rows: ready stance, startled recoil, strongest flinch leaning back with bent legs, recovery to standing. Different clear poses in each row, no death or wounds, no blood, no hit effects or shadows. Same character scale within each direction, entire body contained within each cell with at least 12% transparent margin on all sides. Crisp matching pixel-art outlines and material detail, high native resolution. Genuine transparent alpha background; no painted backdrop, labels, grid or UI.",
+      "source": "exec-4e812104-0eb6-40a6-82d6-0706aa36dc2a.png"
+    },
+    {
+      "species": "boar",
+      "image": "boar-hit-v1.png",
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "frames": [
+        {
+          "box": [
+            59,
+            11,
+            259,
+            297
+          ],
+          "cell_size": [
+            314,
+            314
+          ],
+          "x": 0.5063694267515924,
+          "y": 0.945859872611465,
+          "body_width": 0.6369426751592356,
+          "scale": 1.0255102040816326
+        },
+        {
+          "box": [
+            8,
+            32,
+            298,
+            284
+          ],
+          "cell_size": [
+            313,
+            314
+          ],
+          "x": 0.48881789137380194,
+          "y": 0.9044585987261147,
+          "body_width": 0.9265175718849841,
+          "scale": 1.0263620386643235
+        },
+        {
+          "box": [
+            10,
+            32,
+            306,
+            281
+          ],
+          "cell_size": [
+            313,
+            314
+          ],
+          "x": 0.5047923322683706,
+          "y": 0.8949044585987261,
+          "body_width": 0.9456869009584664,
+          "scale": 1.0348432055749128
+        },
+        {
+          "box": [
+            66,
+            11,
+            247,
+            299
+          ],
+          "cell_size": [
+            314,
+            314
+          ],
+          "x": 0.4984076433121019,
+          "y": 0.9522292993630573,
+          "body_width": 0.5764331210191083,
+          "scale": 0.9830985915492956
+        },
+        {
+          "box": [
+            62,
+            9,
+            251,
+            279
+          ],
+          "cell_size": [
+            314,
+            313
+          ],
+          "x": 0.4984076433121019,
+          "y": 0.8913738019169329,
+          "body_width": 0.6019108280254777,
+          "scale": 1.0255102040816326
+        },
+        {
+          "box": [
+            14,
+            22,
+            294,
+            283
+          ],
+          "cell_size": [
+            313,
+            313
+          ],
+          "x": 0.49201277955271566,
+          "y": 0.9041533546325878,
+          "body_width": 0.8945686900958466,
+          "scale": 1.0263620386643235
+        },
+        {
+          "box": [
+            18,
+            22,
+            297,
+            283
+          ],
+          "cell_size": [
+            313,
+            313
+          ],
+          "x": 0.5031948881789138,
+          "y": 0.9041533546325878,
+          "body_width": 0.8913738019169329,
+          "scale": 1.0348432055749128
+        },
+        {
+          "box": [
+            68,
+            9,
+            248,
+            285
+          ],
+          "cell_size": [
+            314,
+            313
+          ],
+          "x": 0.5031847133757962,
+          "y": 0.9105431309904153,
+          "body_width": 0.5732484076433121,
+          "scale": 0.9830985915492956
+        },
+        {
+          "box": [
+            65,
+            8,
+            257,
+            278
+          ],
+          "cell_size": [
+            314,
+            313
+          ],
+          "x": 0.5127388535031847,
+          "y": 0.8881789137380192,
+          "body_width": 0.6114649681528662,
+          "scale": 1.0255102040816326
+        },
+        {
+          "box": [
+            36,
+            15,
+            282,
+            278
+          ],
+          "cell_size": [
+            313,
+            313
+          ],
+          "x": 0.5079872204472844,
+          "y": 0.8881789137380192,
+          "body_width": 0.7859424920127795,
+          "scale": 1.0263620386643235
+        },
+        {
+          "box": [
+            24,
+            15,
+            279,
+            279
+          ],
+          "cell_size": [
+            313,
+            313
+          ],
+          "x": 0.4840255591054313,
+          "y": 0.8913738019169329,
+          "body_width": 0.8146964856230032,
+          "scale": 1.0348432055749128
+        },
+        {
+          "box": [
+            72,
+            7,
+            247,
+            274
+          ],
+          "cell_size": [
+            314,
+            313
+          ],
+          "x": 0.5079617834394905,
+          "y": 0.8753993610223643,
+          "body_width": 0.5573248407643312,
+          "scale": 0.9830985915492956
+        },
+        {
+          "box": [
+            60,
+            18,
+            261,
+            291
+          ],
+          "cell_size": [
+            314,
+            314
+          ],
+          "x": 0.5111464968152867,
+          "y": 0.9267515923566879,
+          "body_width": 0.6401273885350318,
+          "scale": 1.0255102040816326
+        },
+        {
+          "box": [
+            11,
+            28,
+            300,
+            283
+          ],
+          "cell_size": [
+            313,
+            314
+          ],
+          "x": 0.4968051118210863,
+          "y": 0.9012738853503185,
+          "body_width": 0.9233226837060703,
+          "scale": 1.0263620386643235
+        },
+        {
+          "box": [
+            10,
+            34,
+            305,
+            283
+          ],
+          "cell_size": [
+            313,
+            314
+          ],
+          "x": 0.5031948881789138,
+          "y": 0.9012738853503185,
+          "body_width": 0.9424920127795527,
+          "scale": 1.0348432055749128
+        },
+        {
+          "box": [
+            71,
+            16,
+            245,
+            291
+          ],
+          "cell_size": [
+            314,
+            314
+          ],
+          "x": 0.5031847133757962,
+          "y": 0.9267515923566879,
+          "body_width": 0.554140127388535,
+          "scale": 0.9830985915492956
+        }
+      ],
+      "sha256": "e149519d0be5ef7e90ad9ac02a198f06a62eaaa56a59806204d3c215c6b13128",
+      "prompt": "Create a nonfatal HIT-REACTION game animation atlas for the EXACT boar shown in this reference. Preserve the animal's existing face, fur or wool markings, antlers or tusks, palette and proportions. FOUR equal columns x FOUR equal rows, square transparent PNG. Columns front/down, left, right, back/up, same as reference. Rows: ready stance, startled recoil, strongest flinch leaning back with bent legs, recovery to standing. Different clear poses in each row, no death or wounds, no blood, no hit effects or shadows. Same character scale within each direction, entire body contained within each cell with at least 12% transparent margin on all sides. Crisp matching pixel-art outlines and material detail, high native resolution. Genuine transparent alpha background; no painted backdrop, labels, grid or UI.",
+      "source": "exec-f3313f10-4a86-4088-9ade-5aa5f5db6c1a.png"
+    },
+    {
+      "species": "sheep",
+      "image": "sheep-hit-v1.png",
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "frames": [
+        {
+          "box": [
+            54,
+            31,
+            260,
+            286
+          ],
+          "cell_size": [
+            314,
+            314
+          ],
+          "x": 0.5,
+          "y": 0.910828025477707,
+          "body_width": 0.6560509554140127,
+          "scale": 0.9855072463768116
+        },
+        {
+          "box": [
+            14,
+            44,
+            286,
+            276
+          ],
+          "cell_size": [
+            313,
+            314
+          ],
+          "x": 0.4792332268370607,
+          "y": 0.8789808917197452,
+          "body_width": 0.8690095846645367,
+          "scale": 1.005586592178771
+        },
+        {
+          "box": [
+            26,
+            42,
+            298,
+            276
+          ],
+          "cell_size": [
+            313,
+            314
+          ],
+          "x": 0.5175718849840255,
+          "y": 0.8789808917197452,
+          "body_width": 0.8690095846645367,
+          "scale": 1.0
+        },
+        {
+          "box": [
+            57,
+            31,
+            252,
+            283
+          ],
+          "cell_size": [
+            314,
+            314
+          ],
+          "x": 0.49203821656050956,
+          "y": 0.9012738853503185,
+          "body_width": 0.6210191082802548,
+          "scale": 0.9744897959183674
+        },
+        {
+          "box": [
+            54,
+            24,
+            262,
+            285
+          ],
+          "cell_size": [
+            314,
+            313
+          ],
+          "x": 0.5031847133757962,
+          "y": 0.9105431309904153,
+          "body_width": 0.6624203821656051,
+          "scale": 0.9855072463768116
+        },
+        {
+          "box": [
+            18,
+            30,
+            283,
+            282
+          ],
+          "cell_size": [
+            313,
+            313
+          ],
+          "x": 0.48083067092651754,
+          "y": 0.9009584664536742,
+          "body_width": 0.8466453674121406,
+          "scale": 1.005586592178771
+        },
+        {
+          "box": [
+            26,
+            31,
+            296,
+            283
+          ],
+          "cell_size": [
+            313,
+            313
+          ],
+          "x": 0.5143769968051118,
+          "y": 0.9041533546325878,
+          "body_width": 0.8626198083067093,
+          "scale": 1.0
+        },
+        {
+          "box": [
+            54,
+            24,
+            256,
+            282
+          ],
+          "cell_size": [
+            314,
+            313
+          ],
+          "x": 0.49363057324840764,
+          "y": 0.9009584664536742,
+          "body_width": 0.643312101910828,
+          "scale": 0.9744897959183674
+        },
+        {
+          "box": [
+            63,
+            26,
+            259,
+            282
+          ],
+          "cell_size": [
+            314,
+            313
+          ],
+          "x": 0.5127388535031847,
+          "y": 0.9009584664536742,
+          "body_width": 0.6242038216560509,
+          "scale": 0.9855072463768116
+        },
+        {
+          "box": [
+            38,
+            26,
+            281,
+            283
+          ],
+          "cell_size": [
+            313,
+            313
+          ],
+          "x": 0.5095846645367412,
+          "y": 0.9041533546325878,
+          "body_width": 0.7763578274760383,
+          "scale": 1.005586592178771
+        },
+        {
+          "box": [
+            26,
+            26,
+            272,
+            280
+          ],
+          "cell_size": [
+            313,
+            313
+          ],
+          "x": 0.476038338658147,
+          "y": 0.8945686900958466,
+          "body_width": 0.7859424920127795,
+          "scale": 1.0
+        },
+        {
+          "box": [
+            56,
+            29,
+            250,
+            280
+          ],
+          "cell_size": [
+            314,
+            313
+          ],
+          "x": 0.4872611464968153,
+          "y": 0.8945686900958466,
+          "body_width": 0.6178343949044586,
+          "scale": 0.9744897959183674
+        },
+        {
+          "box": [
+            53,
+            27,
+            262,
+            278
+          ],
+          "cell_size": [
+            314,
+            314
+          ],
+          "x": 0.5015923566878981,
+          "y": 0.8853503184713376,
+          "body_width": 0.6656050955414012,
+          "scale": 0.9855072463768116
+        },
+        {
+          "box": [
+            14,
+            42,
+            286,
+            277
+          ],
+          "cell_size": [
+            313,
+            314
+          ],
+          "x": 0.4792332268370607,
+          "y": 0.8821656050955414,
+          "body_width": 0.8690095846645367,
+          "scale": 1.005586592178771
+        },
+        {
+          "box": [
+            27,
+            41,
+            298,
+            277
+          ],
+          "cell_size": [
+            313,
+            314
+          ],
+          "x": 0.5191693290734825,
+          "y": 0.8821656050955414,
+          "body_width": 0.865814696485623,
+          "scale": 1.0
+        },
+        {
+          "box": [
+            55,
+            30,
+            252,
+            282
+          ],
+          "cell_size": [
+            314,
+            314
+          ],
+          "x": 0.4888535031847134,
+          "y": 0.8980891719745223,
+          "body_width": 0.6273885350318471,
+          "scale": 0.9744897959183674
+        }
+      ],
+      "sha256": "341b8878ad594c794cb8734a0a113d9bc26fa3c8b12c37a8f1d61c4aaf0f7bb1",
+      "prompt": "Create a nonfatal HIT-REACTION game animation atlas for the EXACT sheep shown in this reference. Preserve the animal's existing face, fur or wool markings, antlers or tusks, palette and proportions. FOUR equal columns x FOUR equal rows, square transparent PNG. Columns front/down, left, right, back/up, same as reference. Rows: ready stance, startled recoil, strongest flinch leaning back with bent legs, recovery to standing. Different clear poses in each row, no death or wounds, no blood, no hit effects or shadows. Same character scale within each direction, entire body contained within each cell with at least 12% transparent margin on all sides. Crisp matching pixel-art outlines and material detail, high native resolution. Genuine transparent alpha background; no painted backdrop, labels, grid or UI.",
+      "source": "exec-8cac1852-59ad-4339-98c6-d69b9f1c5ecb.png"
+    }
+  ]
+}

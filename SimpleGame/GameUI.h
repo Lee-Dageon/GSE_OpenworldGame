@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <array>
 #include "GameInput.h"
+#include "Inventory.h"
 
 class Renderer;
 
@@ -20,6 +21,7 @@ struct GameUiState
     int herbs = 0;
     int trophies = 0;
     int hides = 0;
+    std::array<int, static_cast<size_t>(ItemId::Count)> itemCounts = {};
     bool inventoryOpen = false, hunterBladeCrafted = false, nearWorkbench = false, huntReported = false;
     bool armorRecipeUnlocked = false, hunterArmorCrafted = false;
     int defense = 0;

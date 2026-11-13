@@ -73,7 +73,7 @@ constexpr float TongueSweepTime = .75f, TongueRetractTime = 1.2f, SlamRaiseTime 
 constexpr float CoatLickTime = .4f, CoatReadyTime = 1.1f;
 constexpr float TelegraphWidthPerUnit = 90.51f, TelegraphHeightPerUnit = 45.25f;
 constexpr float ImpactScale = 1.15f, ArmoredImpactScale = 1.5f;
-constexpr float SpriteScale = 2.0f; // Compensate atlas padding; body widths align all eight-direction sheets.
+constexpr float SpriteScale = 5.0f; // Giant on-screen body; keep atlas alignment and combat distances independent.
 constexpr float DeathFrameDuration = .22f;
 }
 namespace Inventory
@@ -83,7 +83,7 @@ constexpr int MaxStack = 99;
 namespace Npc
 {
 constexpr float InteractRange=1.2f, LabelRange=3.0f, MealHealing=25.0f;
-constexpr float SpriteHeight=100.0f;
+constexpr float SpriteHeight=70.0f;
 constexpr int TradeHideCost=2;
 }
 namespace World

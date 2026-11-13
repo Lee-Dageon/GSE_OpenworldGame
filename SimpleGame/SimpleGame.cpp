@@ -100,6 +100,7 @@ void RenderScene()
     uiState.herbs = g_GameState.inventory.Count(ItemId::Herb);
     uiState.trophies = g_GameState.inventory.Count(ItemId::BoarTusk);
     uiState.hides = g_GameState.inventory.Count(ItemId::BoarHide);
+    uiState.itemCounts = g_GameState.inventory.stacks;
     uiState.inventoryOpen = g_GameState.inventoryOpen;
     uiState.hunterBladeCrafted = g_GameState.hunterBladeCrafted;
     uiState.hunterArmorCrafted = g_GameState.hunterArmorCrafted;

@@ -2,6 +2,7 @@
 
 #include "GameState.h"
 #include "ModelCache.h"
+#include "LootTable.h"
 #include <array>
 #include <map>
 #include <vector>
@@ -49,6 +50,10 @@ class WorldRenderer
     bool DrawPixelAnimal(Vec2 position, int species, Vec2 facing, int frame,
                          float height, bool fallen = false) const;
     bool DrawChapter1Boar(const MonsterState &monster) const;
+    bool DrawBoarDeath(Vec2 position, Vec2 facing, float height, float elapsed) const;
+    bool DrawAnimalHit(Vec2 position, int species, Vec2 facing, float height, float remaining) const;
+    void DrawLoot(Vec2 position, const LootTable::Drops &drops) const;
+    void DrawQuestGlimmer(Vec2 position, float height = 112, float phase = 0) const;
     void DrawTree(Vec2 position, int variant) const;
     void DrawPixelPlayer(const GameState &state) const;
     void DrawGeneralPlayer(const GameState &state) const;
@@ -56,6 +61,7 @@ class WorldRenderer
                          float pivotY, float sway = 0.0f) const;
     void DrawCampfire(Vec2 position) const;
     void DrawHerbPatch(Vec2 position) const;
+    void DrawInvestigation(Vec2 position, int asset, bool disabled = false) const;
     void DrawGround() const;
 
     Renderer &m_Renderer;
@@ -80,11 +86,16 @@ class WorldRenderer
     unsigned int m_PlayerHitTexture = 0;
     unsigned int m_BoarLootTexture = 0, m_SearchTexture = 0;
     unsigned int m_AnimalCarcassTexture = 0;
+    unsigned int m_BoarDeathTexture = 0;
+    unsigned int m_QuestGlimmerTexture = 0;
+    std::array<unsigned int, 3> m_AnimalHitTextures = {};
     unsigned int m_AncientGuardianTexture = 0;
     unsigned int m_ChatDeathTexture = 0;
     std::array<unsigned int, 3> m_ChatAttackTextures = {};
+    std::array<std::array<unsigned int, 2>, 5> m_ChatHdTextures = {};
     std::array<unsigned int, 2> m_ChatImpactTextures = {};
     unsigned int m_PixelSceneryTexture = 0;
+    std::array<unsigned int, 7> m_InvestigationTextures = {};
     std::array<unsigned int, 3> m_AttackHitTextures = {};
     std::array<unsigned int, 3> m_PixelAnimalTextures = {};
     std::array<unsigned int, 3> m_Chapter1BoarTextures = {};

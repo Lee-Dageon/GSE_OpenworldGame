@@ -212,20 +212,30 @@ static void DrawInventoryPanel(Renderer &renderer, const GameUiState &state)
     text(490,88,line,.95f,1,.84f,.48f);
     text(24,148,L"보유 재료",.8f,1,.87f,.58f);
     text(318,148,L"야영지 제작",.8f,1,.87f,.58f);
-    const wchar_t *names[] = {L"회복 물약",L"약초",L"가죽",L"이빨"};
-    const int counts[] = {state.potions,state.herbs,state.hides,state.trophies};
     const int itemIcons[] = {0,1,5,4};
-    for (int item=0;item<4;++item)
+    const int basicCounts[] = {state.potions,state.herbs,state.hides,state.trophies};
+    for (int item=0;item<static_cast<int>(ItemId::Count);++item)
     {
-        const float x=24+(item%2)*136.0f, y=174+(item/2)*134.0f;
-        rect(x,y,124,122,.14f,.20f,.23f);
-        rect(x+1,y+1,122,120,.055f,.085f,.105f);
-        icon(x+28,y+9,68,itemIcons[item]);
-        text(x+10,y+82,names[item],.8f);
-        std::swprintf(line,120,L"%d",counts[item]);
-        text(x+86,y+9,line,.95f,1,.87f,.5f);
-        rect(x+10,y+110,104,3,.025f,.04f,.05f);
-        rect(x+10,y+110,104*std::min(1.0f,counts[item]/static_cast<float>(GameConstants::Inventory::MaxStack)),3,.48f,.65f,.38f);
+        const auto id = static_cast<ItemId>(item);
+        const int count = item < 4 ? basicCounts[item] : state.itemCounts[item];
+        const float x=24+(item%2)*136.0f, y=174+(item/2)*54.0f;
+        rect(x,y,124,48,.14f,.20f,.23f);
+        rect(x+1,y+1,122,46,.055f,.085f,.105f);
+        if (item < 4) icon(x+3,y+4,36,itemIcons[item]);
+        else
+        {
+            const auto texture = renderer.UiTexture(ItemTexture(id));
+            if (texture) renderer.DrawSprite(texture,
+                panel.x+(x+21)*s-state.windowWidth*.5f,
+                state.windowHeight*.5f-panel.y-(y+22)*s,36*s,36*s,0,0,1,1,1,1,1,1,0,0,0,1,1,.5f);
+        }
+        const wchar_t *name = id == ItemId::GuardianScale ? L"갑각" :
+            id == ItemId::BeastBone ? L"짐승 뼈" : ItemName(id);
+        text(x+43,y+4,name,.52f);
+        std::swprintf(line,120,L"%d",count);
+        text(x+43,y+23,line,.65f,1,.87f,.5f);
+        rect(x+43,y+43,72,2,.025f,.04f,.05f);
+        rect(x+43,y+43,72*std::min(1.0f,count/static_cast<float>(GameConstants::Inventory::MaxStack)),2,.48f,.65f,.38f);
     }
     const std::wstring stackLimit = L"아이템별 최대 " + std::to_wstring(GameConstants::Inventory::MaxStack) + L"개";
     text(24,449,stackLimit.c_str(),.6f,.52f,.63f,.65f);

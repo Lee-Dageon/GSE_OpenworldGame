@@ -1,0 +1,212 @@
+{
+  "generator": "Built-in image_gen; one transparent image per asset; originals copied without modification",
+  "date": "2026-11-12",
+  "alpha_cutoff": 0.5,
+  "style": "Single isolated orthographic isometric quarter-view fantasy frontier environmental prop, crisp detailed pixel art, earthy moss/brown palette, dark outlines, transparent alpha, no UI or labels.",
+  "assets": [
+    {
+      "id": "tracks",
+      "file": "tracks-v1.png",
+      "size": 110,
+      "pivot": [
+        0.5,
+        0.47926634768740034
+      ],
+      "visible_bounds": [
+        37,
+        109,
+        1217,
+        1093
+      ],
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "sha256": "9e75b28672e9ab1bb2f7e28765ec2c18e5f73fd2c345b16c92957a7f0483e447",
+      "source": "exec-41afb6b1-da61-4e69-9461-af5a35670f9a.png",
+      "prompt": "Cloven boar hoofprints in churned mud, torn grass and snapped twigs."
+    },
+    {
+      "id": "camp",
+      "file": "camp-v1.png",
+      "size": 165,
+      "pivot": [
+        0.5,
+        0.7603508771929824
+      ],
+      "visible_bounds": [
+        12,
+        137,
+        1242,
+        1109
+      ],
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "sha256": "c30b0a95a2a4fbbb4a8073a87481dd963578b002d98900ed153bccd4d733f71b",
+      "source": "exec-87ed5f04-f30b-4186-a1f4-04aa0d88bc6c.png",
+      "prompt": "Abandoned expedition campsite: collapsed teal tent, cold campfire, overturned crate and bedroll."
+    },
+    {
+      "id": "records",
+      "file": "records-v1.png",
+      "size": 120,
+      "pivot": [
+        0.4996012759170654,
+        0.7634768740031898
+      ],
+      "visible_bounds": [
+        39,
+        149,
+        1214,
+        1089
+      ],
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "sha256": "62a619947bb418e26c7a38111f8b741d989e74e79d966c35149b5a033ff39953",
+      "source": "exec-cc329413-8a91-4d39-a04d-b49f011f3314.png",
+      "prompt": "Research record cache: open leather journal, parchment map, compass, scrolls, quill and satchel on broken field desk."
+    },
+    {
+      "id": "signal",
+      "file": "signal-v1.png",
+      "size": 145,
+      "pivot": [
+        0.49401913875598086,
+        0.8557416267942585
+      ],
+      "visible_bounds": [
+        131,
+        48,
+        1108,
+        1187
+      ],
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "sha256": "351327dc5cf9a14f99c3bf1a5cd37030296899aebb306096909ac4d2e4d0157f",
+      "source": "exec-e7928e33-b404-433a-8443-7c4330256742.png",
+      "prompt": "Ancient mossy signal obelisk with fractured stone, turquoise carved channels and bronze rings."
+    },
+    {
+      "id": "fragment",
+      "file": "fragment-v1.png",
+      "size": 80,
+      "pivot": [
+        0.4996012759170654,
+        0.5743062200956939
+      ],
+      "visible_bounds": [
+        26,
+        231,
+        1227,
+        1020
+      ],
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "sha256": "635d41b4d87d2e434c94993dbee3db3419bc882a7a9ce6590ee8ea980faa9c52",
+      "source": "exec-1df220ef-94d5-49bc-9dd4-f1d7bccdbdf0.png",
+      "prompt": "Jagged turquoise-inlaid bronze-and-stone fragment on burgundy cloth, boar tusk, magnifying lens and parchment sketch."
+    },
+    {
+      "id": "entrance",
+      "file": "entrance-v1.png",
+      "size": 205,
+      "pivot": [
+        0.5,
+        0.8882615629984052
+      ],
+      "visible_bounds": [
+        78,
+        43,
+        1176,
+        1207
+      ],
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "sha256": "7fe0ac1a5c2784672101d6c63ce29c9e33ffcec9568418b1218b71afc133e480",
+      "source": "exec-1bbd9174-74b4-4378-a126-76438c2dca99.png",
+      "prompt": "Ruined stone doorway arch with carved bands, roots, moss, dark opening and inset teal crystal."
+    },
+    {
+      "id": "control",
+      "file": "control-v1.png",
+      "size": 135,
+      "pivot": [
+        0.5003987240829346,
+        0.8215948963317384
+      ],
+      "visible_bounds": [
+        214,
+        79,
+        1041,
+        1160
+      ],
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "sha256": "5eebc66bf7cdcdb6eaae720d1c49ae867b8d4edf669d2d265e1eac1d0bd7c0c8",
+      "source": "exec-035c97cf-1144-4ec6-99e7-5d66165d3148.png",
+      "prompt": "Stone-and-bronze ecological control pedestal with turquoise crystal, concentric rings and four radial arms."
+    }
+  ],
+  "sites": [
+    {
+      "step_id": "south_travel",
+      "asset": 0
+    },
+    {
+      "step_id": "south_tracks",
+      "asset": 0
+    },
+    {
+      "step_id": "forest_travel",
+      "asset": 0
+    },
+    {
+      "step_id": "forest_tracks",
+      "asset": 1
+    },
+    {
+      "step_id": "sand_travel",
+      "asset": 5
+    },
+    {
+      "step_id": "sand_records",
+      "asset": 2
+    },
+    {
+      "step_id": "ruin_signal",
+      "asset": 3
+    },
+    {
+      "step_id": "ancient_fragment",
+      "asset": 4
+    },
+    {
+      "step_id": "expedition_travel",
+      "asset": 1
+    },
+    {
+      "step_id": "expedition_records",
+      "asset": 2
+    },
+    {
+      "step_id": "ruin_entrance",
+      "asset": 5
+    },
+    {
+      "step_id": "ruin_control",
+      "asset": 6
+    }
+  ]
+}

@@ -1,4 +1,5 @@
 #include "stdafx.h"
+#include "LootTable.h"
 #include "QuestSystem.h"
 #include "GameContent.h"
 
@@ -75,12 +76,8 @@ InteractionResult TryInteract(GameState &state, Vec2 elder, Vec2 tracks, Vec2 he
     }
     if (state.quest == QuestStage::Trophy && MonsterSystem::IsInteractableDrop(state.monster, state.player))
     {
-        const auto &loot = state.monster.definition;
-        if (state.inventory.Count(ItemId::BoarHide) > Inventory::MaxStack-loot.hideDrop ||
-            state.inventory.Count(ItemId::BoarTusk) > Inventory::MaxStack-loot.tuskDrop)
+        if (!LootTable::Grant(state.inventory, LootTable::Monster(state.monster.definition)))
             return InteractionResult::InventoryFull;
-        state.inventory.Add(ItemId::BoarHide, loot.hideDrop);
-        state.inventory.Add(ItemId::BoarTusk, loot.tuskDrop);
         ++state.completedHunts;
         state.quest = GameContent::Step(state.quest).next;
         return InteractionResult::TrophyCollected;

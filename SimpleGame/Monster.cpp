@@ -4,6 +4,7 @@
 #include "Renderer.h"
 #include "GameContent.h"
 #include "Chapter1BoarAnimation.h"
+#include "LootTable.h"
 
 #include <algorithm>
 #include <cmath>
@@ -30,15 +31,17 @@ void DrawDrop(const MonsterState &monster, const MonsterDrawContext &context)
     context.renderer->DrawEffectRect(s.x + 7, s.z + 10, 18, 7, .45f, .82f, .72f, .50f, 1, 4);
     context.renderer->DrawSolidRect(s.x, s.z + 9, 7, 7, 0, 1.0f, .88f, .38f, glow);
 
-    context.renderer->DrawLabel(context.screenWidth * .5f + s.x - 64, context.screenHeight * .5f + s.z + 30,
-                                L"전리품: 가죽·이빨", 1.0f, .86f, .42f);
+    const auto label = L"전리품: " + LootTable::Summary(LootTable::Monster(monster.definition));
+    context.renderer->DrawLabel(context.screenWidth * .5f + s.x, context.screenHeight * .5f + s.z + 75,
+                                label.c_str(), 1.0f, .86f, .42f, .5f, 1, true);
 }
 
 void DrawInfo(const MonsterState &monster, const MonsterDrawContext &context, const Vec2 &s)
 {
     const float healthRatio = std::max(0.0f, std::min(1.0f, static_cast<float>(monster.health) / monster.maxHealth));
 
-    const float top = monster.definition.spriteHeight * .75f;
+    const float top = monster.definition.spriteHeight * (monster.definition.id == "ancient_guardian" ?
+        GameConstants::Chatacabra::SpriteScale * .55f : .75f);
     context.renderer->DrawLabel(context.screenWidth * .5f + s.x - 76, context.screenHeight * .5f + s.z + top + 10,
                                 monster.definition.name.c_str(), 1.0f, .86f, .62f);
     context.renderer->DrawSolidRect(s.x, s.z + top - 8, 132, 12, 0, .05f, .04f, .03f, .88f);
@@ -171,7 +174,7 @@ MonsterHitResult Hit(MonsterState &monster, Vec2 player, int attackPower)
         return {true, false};
     }
 
-    if (monster.definition.id == "ancient_guardian" && !committedChatDirection &&
+    if ((monster.definition.id != "ancient_guardian" || !committedChatDirection) &&
         Distance(player,monster.position) > .001f)
         monster.animationFacing = {player.x-monster.position.x,player.z-monster.position.z};
     monster.deathTime = .01f;

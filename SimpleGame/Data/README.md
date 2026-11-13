@@ -68,16 +68,34 @@ stage id elder|tracks|herb|hunt|trophy|return|complete next_id "목표" "힌트"
 ```text
 SimpleGame.exe --debug-chapter unfamiliar
 SimpleGame.exe --debug-chapter displaced
+SimpleGame.exe --debug-chapter awakened
+SimpleGame.exe --debug-step ancient_hunt
 SimpleGame.exe --debug-step forest_hunt
 SimpleGame.exe --debug-step first_armor
 ```
 
-`--debug-chapter`는 해당 장의 첫 목표로, `--debug-step`은 해당 목표로 진입한다. 두 옵션의 동시 지정·반복 지정, 없는 ID, 누락된 인자는 오류로 종료한다. 현재 장 ID는 `unfamiliar`(1장), `displaced`(2장)이다. 3장 이후는 데이터에 추가된 뒤 사용할 수 있다. 옵션 없이 실행하면 기존 튜토리얼로 시작한다.
+`--debug-chapter`는 해당 장의 첫 목표로, `--debug-step`은 해당 목표로 진입한다. 두 옵션의 동시 지정·반복 지정, 없는 ID, 누락된 인자는 오류로 종료한다. 현재 장 ID는 `unfamiliar`(1장), `displaced`(2장), `awakened`(3장)이다. 옵션 없이 실행하면 기존 튜토리얼로 시작한다.
 
 | 장 | 목표 ID (진행 순서) |
 | --- | --- |
 | 1장 | south_travel, south_tracks, border_hunt, border_loot, border_report, first_armor |
 | 2장 | forest_travel, forest_tracks, sand_travel, sand_records, forest_hunt, forest_loot, ruin_signal, second_report |
+| 3장 | ancient_fragment, expedition_travel, expedition_records, ruin_entrance, ruin_control, ancient_hunt, ancient_loot, third_report |
+
+### 3장 목표별 바로 진입
+
+3장 처음부터: `SimpleGame.exe --debug-chapter awakened`. 차타카브라 전투만 확인하려면 `SimpleGame.exe --debug-step ancient_hunt`를 사용한다.
+
+| 진입 위치 | 실행 인자 |
+| --- | --- |
+| 장로에게 고대 파편 조사 | `--debug-step ancient_fragment` |
+| 서쪽 조사대 야영지로 이동 | `--debug-step expedition_travel` |
+| 조사대 기록 수색 | `--debug-step expedition_records` |
+| 고대 유적 입구 이동 | `--debug-step ruin_entrance` |
+| 경계 장치 정지 | `--debug-step ruin_control` |
+| 차타카브라 사냥 | `--debug-step ancient_hunt` |
+| 차타카브라 전리품 수집 | `--debug-step ancient_loot` |
+| 장로에게 유적 조사 보고 | `--debug-step third_report` |
 
 코드 진입점은 `StorySystem::DebugEnterChapter(state, chapterId)`와 `StorySystem::DebugEnterStep(state, stepId)`이다. 기존 플레이 상태를 초기화한 테스트 상태로 교체하고, 검·이전 사냥 경험치/재료·제작 완료 방어구를 준비한다. 현재 목표가 사냥이면 몬스터, 수집이면 시체를 생성한다. 이동 목표는 시작점에서, 다른 목표는 목표점에서 시작한다. 창 크기·프레임 시간은 보존한다. 실패하면 원래 GameState를 변경하지 않는다.
 

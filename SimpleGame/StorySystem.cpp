@@ -1,4 +1,5 @@
 #include "stdafx.h"
+#include "LootTable.h"
 #include "StorySystem.h"
 #include "QuestSystem.h"
 #include "CraftingSystem.h"
@@ -83,9 +84,8 @@ bool DebugEnterStep(GameState &state, const std::string &stepId)
         if (previous.action == GameContent::StoryAction::Collect)
         {
             if (index == 0) return false;
-            const auto &loot = content.monsters.at(steps[index - 1].monsterId);
-            if ((loot.hideDrop > 0 && !prepared.inventory.Add(ItemId::BoarHide, loot.hideDrop)) ||
-                (loot.tuskDrop > 0 && !prepared.inventory.Add(ItemId::BoarTusk, loot.tuskDrop))) return false;
+            if (!LootTable::Grant(prepared.inventory, LootTable::Monster(content.monsters.at(steps[index - 1].monsterId))))
+                return false;
             ++prepared.completedHunts;
         }
         if (previous.action == GameContent::StoryAction::CraftArmor)
@@ -178,12 +178,8 @@ const wchar_t *Interact(GameState &state)
     if (!step) return nullptr;
     if (HasDrop(state) && MonsterSystem::IsInteractableDrop(state.monster,state.player))
     {
-        const auto &loot = state.monster.definition;
-        if (state.inventory.Count(ItemId::BoarHide) > Inventory::MaxStack-loot.hideDrop ||
-            state.inventory.Count(ItemId::BoarTusk) > Inventory::MaxStack-loot.tuskDrop)
+        if (!LootTable::Grant(state.inventory, LootTable::Monster(state.monster.definition)))
             return L"재료 보관 한도에 도달했습니다. 전리품은 남아 있습니다.";
-        state.inventory.Add(ItemId::BoarHide,loot.hideDrop);
-        state.inventory.Add(ItemId::BoarTusk,loot.tuskDrop);
         ++state.completedHunts;
         return Advance(state);
     }

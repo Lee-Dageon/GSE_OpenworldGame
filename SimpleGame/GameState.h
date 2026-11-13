@@ -42,6 +42,7 @@ struct AnimalState
     float speed;
     int health = GameConstants::World::AnimalHealth;
     float hitFlash = 0.0f, respawnTime = 0.0f;
+    float deathTime = 0.0f;
     bool collected = false;
 };
 

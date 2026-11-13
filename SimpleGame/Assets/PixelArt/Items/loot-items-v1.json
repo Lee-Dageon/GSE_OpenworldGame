@@ -1,0 +1,72 @@
+{
+  "generator": "Built-in image_gen; 6 independent transparent items; outputs copied unchanged",
+  "date": "2026-11-13",
+  "items": [
+    {
+      "id": "raw-meat",
+      "image": "raw-meat-v1.png",
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "sha256": "0f11c2ce731dd6e4a206c0ca54a147db248a6a03bd2c88a8de007967f33d0dd7",
+      "prompt": "One isolated game loot and inventory item: a clean small cut of wild game meat with red marbling and pale fat edge, food ingredient, no blood. Fantasy frontier RPG crisp detailed pixel art, dark clean outline, earthy warm palette, readable at 36 pixels. Object centered in the middle 65% of a square canvas, generous transparent margins. Genuine transparent alpha. No text, icon frame, scene, people, blood, cast shadows or large glow. High native resolution, clean material shading.",
+      "source": "exec-4b726e18-82b1-4cd2-aba1-c6fc489aa167.png"
+    },
+    {
+      "id": "wool",
+      "image": "wool-v1.png",
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "sha256": "b051e8c8f2300f635afbbedd6cfc6b3d70174f052f0602a207d2c4c2e476e864",
+      "prompt": "One isolated game loot and inventory item: a cream sheep-wool bundle tied with brown cord. Fantasy frontier RPG crisp detailed pixel art, dark clean outline, earthy warm palette, readable at 36 pixels. Object centered in the middle 65% of a square canvas, generous transparent margins. Genuine transparent alpha. No text, icon frame, scene, people, blood, cast shadows or large glow. High native resolution, clean material shading.",
+      "source": "exec-2c42e6fb-6f0e-45f6-9744-f7cbb441b21b.png"
+    },
+    {
+      "id": "antler",
+      "image": "antler-v1.png",
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "sha256": "43f6ecc8cfba0e906f59ef9dd001bb78e671994dde3994fe095590f6fe3422e3",
+      "prompt": "One isolated game loot and inventory item: a naturally shed branching deer antler with ivory tips and brown textured base. Fantasy frontier RPG crisp detailed pixel art, dark clean outline, earthy warm palette, readable at 36 pixels. Object centered in the middle 65% of a square canvas, generous transparent margins. Genuine transparent alpha. No text, icon frame, scene, people, blood, cast shadows or large glow. High native resolution, clean material shading.",
+      "source": "exec-aea7e9df-118e-4b65-a99d-4454a37f6ef2.png"
+    },
+    {
+      "id": "beast-bone",
+      "image": "beast-bone-v1.png",
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "sha256": "c52bcaac82978a9fa4744e756e2a7220e178382421e16f68c00860c826fe8708",
+      "prompt": "One isolated game loot and inventory item: a sturdy ivory crafting bone with rounded ends, no blood. Fantasy frontier RPG crisp detailed pixel art, dark clean outline, earthy warm palette, readable at 36 pixels. Object centered in the middle 65% of a square canvas, generous transparent margins. Genuine transparent alpha. No text, icon frame, scene, people, blood, cast shadows or large glow. High native resolution, clean material shading.",
+      "source": "exec-63ecf065-b774-42ef-9001-c33dd499c3c5.png"
+    },
+    {
+      "id": "guardian-scale",
+      "image": "guardian-scale-v1.png",
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "sha256": "c29f52649dd31919ad8542ba13022b5c3b35edf6c4d76c9d510d69031a6d4d03",
+      "prompt": "One isolated game loot and inventory item: two heavy overlapping teal armored scales with chipped ochre edges. Fantasy frontier RPG crisp detailed pixel art, dark clean outline, earthy warm palette, readable at 36 pixels. Object centered in the middle 65% of a square canvas, generous transparent margins. Genuine transparent alpha. No text, icon frame, scene, people, blood, cast shadows or large glow. High native resolution, clean material shading.",
+      "source": "exec-5dad02c9-dce8-4ceb-8052-4aaab12cbeae.png"
+    },
+    {
+      "id": "ancient-crystal",
+      "image": "ancient-crystal-v1.png",
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "sha256": "eb5ff819a0565afd21770bbfb9b4bca1c642024e1c19bb46f38ef7b24fa62e0f",
+      "prompt": "One isolated game loot and inventory item: a faceted turquoise ancient crystal seated in a broken bronze socket. Fantasy frontier RPG crisp detailed pixel art, dark clean outline, earthy warm palette, readable at 36 pixels. Object centered in the middle 65% of a square canvas, generous transparent margins. Genuine transparent alpha. No text, icon frame, scene, people, blood, cast shadows or large glow. High native resolution, clean material shading.",
+      "source": "exec-9efda742-b35e-46e7-b8d7-50a6ac1ec85a.png"
+    }
+  ]
+}

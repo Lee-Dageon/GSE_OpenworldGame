@@ -1,0 +1,3929 @@
+{
+  "date": "2026-11-13",
+  "generator": "Built-in image_gen edits; generated RGBA originals copied unchanged, no interpolation upscale",
+  "columns_per_atlas": 4,
+  "rows": 4,
+  "actions": [
+    "walk",
+    "tongue",
+    "slam",
+    "coat",
+    "death"
+  ],
+  "directions": [
+    "down",
+    "down-left",
+    "left",
+    "up-left",
+    "up",
+    "up-right",
+    "right",
+    "down-right"
+  ],
+  "alpha_cutoff": 0.5,
+  "body_mask": "alpha >= 128, excluding pixels r>70 and r>1.3*g and r>1.08*b",
+  "scale_reference": [
+    0.41666666666666663,
+    0.45045045045045046,
+    0.4773755656108597,
+    0.44144144144144143,
+    0.43918918918918914,
+    0.43665158371040724,
+    0.45945945945945943,
+    0.42342342342342343
+  ],
+  "atlases": [
+    {
+      "image": "chatacabra-walk-hd-a-v1.png",
+      "action": 0,
+      "half": 0,
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "old_dimensions": [
+        1774,
+        887
+      ],
+      "old_body_pixel_median": 99.0,
+      "body_pixel_median": 218.0,
+      "body_pixel_ratio": 2.202020202020202,
+      "frames": [
+        {
+          "body_box": [
+            51,
+            72,
+            265,
+            243
+          ],
+          "visible_box": [
+            51,
+            72,
+            265,
+            243
+          ],
+          "cell_size": [
+            314,
+            314
+          ],
+          "x": 0.5031847133757962,
+          "y": 0.7738853503184714,
+          "body_pixels": 214,
+          "body_fraction": 0.6815286624203821,
+          "scale": 0.6200631911532385
+        },
+        {
+          "body_box": [
+            48,
+            74,
+            264,
+            241
+          ],
+          "visible_box": [
+            48,
+            74,
+            264,
+            241
+          ],
+          "cell_size": [
+            313,
+            314
+          ],
+          "x": 0.4984025559105431,
+          "y": 0.767515923566879,
+          "body_pixels": 216,
+          "body_fraction": 0.6900958466453674,
+          "scale": 0.646747665096289
+        },
+        {
+          "body_box": [
+            44,
+            80,
+            273,
+            243
+          ],
+          "visible_box": [
+            36,
+            80,
+            273,
+            243
+          ],
+          "cell_size": [
+            313,
+            314
+          ],
+          "x": 0.5063897763578274,
+          "y": 0.7738853503184714,
+          "body_pixels": 229,
+          "body_fraction": 0.731629392971246,
+          "scale": 0.6399081457653066
+        },
+        {
+          "body_box": [
+            54,
+            74,
+            267,
+            240
+          ],
+          "visible_box": [
+            49,
+            74,
+            267,
+            240
+          ],
+          "cell_size": [
+            314,
+            314
+          ],
+          "x": 0.5111464968152867,
+          "y": 0.7643312101910829,
+          "body_pixels": 213,
+          "body_fraction": 0.678343949044586,
+          "scale": 0.6402430143769636
+        },
+        {
+          "body_box": [
+            51,
+            71,
+            262,
+            240
+          ],
+          "visible_box": [
+            51,
+            71,
+            262,
+            240
+          ],
+          "cell_size": [
+            314,
+            313
+          ],
+          "x": 0.4984076433121019,
+          "y": 0.7667731629392971,
+          "body_pixels": 211,
+          "body_fraction": 0.6719745222929936,
+          "scale": 0.6200631911532385
+        },
+        {
+          "body_box": [
+            48,
+            71,
+            265,
+            240
+          ],
+          "visible_box": [
+            48,
+            71,
+            265,
+            240
+          ],
+          "cell_size": [
+            313,
+            313
+          ],
+          "x": 0.5,
+          "y": 0.7667731629392971,
+          "body_pixels": 217,
+          "body_fraction": 0.6932907348242812,
+          "scale": 0.646747665096289
+        },
+        {
+          "body_box": [
+            35,
+            81,
+            270,
+            240
+          ],
+          "visible_box": [
+            34,
+            81,
+            270,
+            240
+          ],
+          "cell_size": [
+            313,
+            313
+          ],
+          "x": 0.48722044728434505,
+          "y": 0.7667731629392971,
+          "body_pixels": 235,
+          "body_fraction": 0.7507987220447284,
+          "scale": 0.6399081457653066
+        },
+        {
+          "body_box": [
+            53,
+            74,
+            266,
+            235
+          ],
+          "visible_box": [
+            46,
+            74,
+            266,
+            235
+          ],
+          "cell_size": [
+            314,
+            313
+          ],
+          "x": 0.5079617834394905,
+          "y": 0.7507987220447284,
+          "body_pixels": 213,
+          "body_fraction": 0.678343949044586,
+          "scale": 0.6402430143769636
+        },
+        {
+          "body_box": [
+            51,
+            71,
+            262,
+            239
+          ],
+          "visible_box": [
+            51,
+            71,
+            262,
+            239
+          ],
+          "cell_size": [
+            314,
+            313
+          ],
+          "x": 0.4984076433121019,
+          "y": 0.7635782747603834,
+          "body_pixels": 211,
+          "body_fraction": 0.6719745222929936,
+          "scale": 0.6200631911532385
+        },
+        {
+          "body_box": [
+            45,
+            77,
+            266,
+            241
+          ],
+          "visible_box": [
+            45,
+            77,
+            266,
+            241
+          ],
+          "cell_size": [
+            313,
+            313
+          ],
+          "x": 0.4968051118210863,
+          "y": 0.7699680511182109,
+          "body_pixels": 221,
+          "body_fraction": 0.7060702875399361,
+          "scale": 0.646747665096289
+        },
+        {
+          "body_box": [
+            32,
+            86,
+            270,
+            241
+          ],
+          "visible_box": [
+            31,
+            86,
+            270,
+            241
+          ],
+          "cell_size": [
+            313,
+            313
+          ],
+          "x": 0.48242811501597443,
+          "y": 0.7699680511182109,
+          "body_pixels": 238,
+          "body_fraction": 0.7603833865814696,
+          "scale": 0.6399081457653066
+        },
+        {
+          "body_box": [
+            43,
+            80,
+            268,
+            241
+          ],
+          "visible_box": [
+            39,
+            80,
+            268,
+            241
+          ],
+          "cell_size": [
+            314,
+            313
+          ],
+          "x": 0.49522292993630573,
+          "y": 0.7699680511182109,
+          "body_pixels": 225,
+          "body_fraction": 0.7165605095541401,
+          "scale": 0.6402430143769636
+        },
+        {
+          "body_box": [
+            54,
+            72,
+            260,
+            243
+          ],
+          "visible_box": [
+            54,
+            72,
+            260,
+            243
+          ],
+          "cell_size": [
+            314,
+            314
+          ],
+          "x": 0.5,
+          "y": 0.7738853503184714,
+          "body_pixels": 206,
+          "body_fraction": 0.6560509554140127,
+          "scale": 0.6200631911532385
+        },
+        {
+          "body_box": [
+            45,
+            77,
+            264,
+            246
+          ],
+          "visible_box": [
+            45,
+            77,
+            264,
+            246
+          ],
+          "cell_size": [
+            313,
+            314
+          ],
+          "x": 0.4936102236421725,
+          "y": 0.7834394904458599,
+          "body_pixels": 219,
+          "body_fraction": 0.6996805111821086,
+          "scale": 0.646747665096289
+        },
+        {
+          "body_box": [
+            39,
+            93,
+            271,
+            246
+          ],
+          "visible_box": [
+            33,
+            93,
+            271,
+            246
+          ],
+          "cell_size": [
+            313,
+            314
+          ],
+          "x": 0.4952076677316294,
+          "y": 0.7834394904458599,
+          "body_pixels": 232,
+          "body_fraction": 0.7412140575079872,
+          "scale": 0.6399081457653066
+        },
+        {
+          "body_box": [
+            51,
+            89,
+            271,
+            246
+          ],
+          "visible_box": [
+            48,
+            89,
+            271,
+            246
+          ],
+          "cell_size": [
+            314,
+            314
+          ],
+          "x": 0.5127388535031847,
+          "y": 0.7834394904458599,
+          "body_pixels": 220,
+          "body_fraction": 0.7006369426751592,
+          "scale": 0.6402430143769636
+        }
+      ],
+      "sha256": "2eb55f1fdda8627d86137da449ad7f6e860d490dee8306c4e931609183f1ed9b",
+      "source": "exec-8e414e06-ee38-4374-9c29-6e284678ee4d.png",
+      "prompt": "Edit the attached EXACT game sprite atlas into a sharp high-resolution detail remaster of ONLY columns 1-4 ONLY: front/down, down-left, left, up-left. Output ONE SQUARE atlas 4 equal columns by 4 equal rows, highest native resolution, target 2048x2048. Thus sixteen sprites total. The original contains eight columns; EXTRACT only the specified four direction columns into this new 4-column sheet and preserve their exact order. Do NOT include any other directions. Row animation phases: four consecutive original walk cycle poses. The ORIGINAL REFERENCE is the edit target: retain exactly the same monster silhouette, distinctive face, tan rocky knuckled forearms, teal layered back plates, proportions, palette and pink tongue, with no redesign or new body parts. Reconstruct crisp intricate scale edges and stone/flesh shading; no blur or smeary interpolation. Each pose fully inside its own equal square cell, body occupying roughly 70-78% of cell width, with clear transparent gutters on all sides. Identical body scale within each direction over all four rows; for death, keep the naturally lowered corpse silhouette rather than stretching it upright. Keep all original animation poses and facing angles. No effects, shadows, lettering, labels or checkerboard. Genuine transparent alpha background. Pixel-art finish with sharp material boundaries, visually the SAME existing artwork at much greater usable resolution per sprite."
+    },
+    {
+      "image": "chatacabra-walk-hd-b-v1.png",
+      "action": 0,
+      "half": 1,
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "old_dimensions": [
+        1774,
+        887
+      ],
+      "old_body_pixel_median": 97.0,
+      "body_pixel_median": 200.0,
+      "body_pixel_ratio": 2.0618556701030926,
+      "frames": [
+        {
+          "body_box": [
+            71,
+            74,
+            264,
+            242
+          ],
+          "visible_box": [
+            71,
+            74,
+            264,
+            242
+          ],
+          "cell_size": [
+            314,
+            314
+          ],
+          "x": 0.5334394904458599,
+          "y": 0.7707006369426752,
+          "body_pixels": 193,
+          "body_fraction": 0.6146496815286624,
+          "scale": 0.710852605182502
+        },
+        {
+          "body_box": [
+            51,
+            82,
+            258,
+            242
+          ],
+          "visible_box": [
+            51,
+            82,
+            258,
+            242
+          ],
+          "cell_size": [
+            313,
+            314
+          ],
+          "x": 0.4936102236421725,
+          "y": 0.7707006369426752,
+          "body_pixels": 207,
+          "body_fraction": 0.6613418530351438,
+          "scale": 0.6634560470939683
+        },
+        {
+          "body_box": [
+            39,
+            91,
+            262,
+            242
+          ],
+          "visible_box": [
+            39,
+            91,
+            262,
+            242
+          ],
+          "cell_size": [
+            313,
+            314
+          ],
+          "x": 0.48083067092651754,
+          "y": 0.7707006369426752,
+          "body_pixels": 223,
+          "body_fraction": 0.7124600638977636,
+          "scale": 0.6507276507276507
+        },
+        {
+          "body_box": [
+            56,
+            84,
+            247,
+            243
+          ],
+          "visible_box": [
+            56,
+            84,
+            247,
+            243
+          ],
+          "cell_size": [
+            314,
+            314
+          ],
+          "x": 0.482484076433121,
+          "y": 0.7738853503184714,
+          "body_pixels": 191,
+          "body_fraction": 0.60828025477707,
+          "scale": 0.6924737237237237
+        },
+        {
+          "body_box": [
+            73,
+            67,
+            264,
+            233
+          ],
+          "visible_box": [
+            73,
+            67,
+            264,
+            233
+          ],
+          "cell_size": [
+            314,
+            313
+          ],
+          "x": 0.5366242038216561,
+          "y": 0.744408945686901,
+          "body_pixels": 191,
+          "body_fraction": 0.60828025477707,
+          "scale": 0.710852605182502
+        },
+        {
+          "body_box": [
+            53,
+            74,
+            262,
+            225
+          ],
+          "visible_box": [
+            53,
+            74,
+            262,
+            225
+          ],
+          "cell_size": [
+            313,
+            313
+          ],
+          "x": 0.5031948881789138,
+          "y": 0.7188498402555911,
+          "body_pixels": 209,
+          "body_fraction": 0.6677316293929713,
+          "scale": 0.6634560470939683
+        },
+        {
+          "body_box": [
+            39,
+            81,
+            260,
+            229
+          ],
+          "visible_box": [
+            39,
+            81,
+            260,
+            229
+          ],
+          "cell_size": [
+            313,
+            313
+          ],
+          "x": 0.4776357827476038,
+          "y": 0.731629392971246,
+          "body_pixels": 221,
+          "body_fraction": 0.7060702875399361,
+          "scale": 0.6507276507276507
+        },
+        {
+          "body_box": [
+            57,
+            72,
+            246,
+            237
+          ],
+          "visible_box": [
+            57,
+            72,
+            246,
+            237
+          ],
+          "cell_size": [
+            314,
+            313
+          ],
+          "x": 0.482484076433121,
+          "y": 0.7571884984025559,
+          "body_pixels": 189,
+          "body_fraction": 0.6019108280254777,
+          "scale": 0.6924737237237237
+        },
+        {
+          "body_box": [
+            71,
+            66,
+            266,
+            235
+          ],
+          "visible_box": [
+            71,
+            66,
+            266,
+            235
+          ],
+          "cell_size": [
+            314,
+            313
+          ],
+          "x": 0.5366242038216561,
+          "y": 0.7507987220447284,
+          "body_pixels": 195,
+          "body_fraction": 0.6210191082802548,
+          "scale": 0.710852605182502
+        },
+        {
+          "body_box": [
+            54,
+            75,
+            258,
+            233
+          ],
+          "visible_box": [
+            54,
+            75,
+            258,
+            233
+          ],
+          "cell_size": [
+            313,
+            313
+          ],
+          "x": 0.4984025559105431,
+          "y": 0.744408945686901,
+          "body_pixels": 204,
+          "body_fraction": 0.6517571884984026,
+          "scale": 0.6634560470939683
+        },
+        {
+          "body_box": [
+            42,
+            84,
+            263,
+            234
+          ],
+          "visible_box": [
+            42,
+            84,
+            263,
+            234
+          ],
+          "cell_size": [
+            313,
+            313
+          ],
+          "x": 0.48722044728434505,
+          "y": 0.7476038338658147,
+          "body_pixels": 221,
+          "body_fraction": 0.7060702875399361,
+          "scale": 0.6507276507276507
+        },
+        {
+          "body_box": [
+            56,
+            80,
+            251,
+            238
+          ],
+          "visible_box": [
+            56,
+            80,
+            251,
+            238
+          ],
+          "cell_size": [
+            314,
+            313
+          ],
+          "x": 0.4888535031847134,
+          "y": 0.7603833865814696,
+          "body_pixels": 195,
+          "body_fraction": 0.6210191082802548,
+          "scale": 0.6924737237237237
+        },
+        {
+          "body_box": [
+            71,
+            75,
+            267,
+            240
+          ],
+          "visible_box": [
+            71,
+            75,
+            267,
+            240
+          ],
+          "cell_size": [
+            314,
+            314
+          ],
+          "x": 0.5382165605095541,
+          "y": 0.7643312101910829,
+          "body_pixels": 196,
+          "body_fraction": 0.6242038216560509,
+          "scale": 0.710852605182502
+        },
+        {
+          "body_box": [
+            50,
+            85,
+            255,
+            241
+          ],
+          "visible_box": [
+            50,
+            85,
+            255,
+            241
+          ],
+          "cell_size": [
+            313,
+            314
+          ],
+          "x": 0.48722044728434505,
+          "y": 0.767515923566879,
+          "body_pixels": 205,
+          "body_fraction": 0.6549520766773163,
+          "scale": 0.6634560470939683
+        },
+        {
+          "body_box": [
+            43,
+            91,
+            260,
+            240
+          ],
+          "visible_box": [
+            43,
+            91,
+            260,
+            240
+          ],
+          "cell_size": [
+            313,
+            314
+          ],
+          "x": 0.4840255591054313,
+          "y": 0.7643312101910829,
+          "body_pixels": 217,
+          "body_fraction": 0.6932907348242812,
+          "scale": 0.6507276507276507
+        },
+        {
+          "body_box": [
+            56,
+            83,
+            249,
+            242
+          ],
+          "visible_box": [
+            56,
+            83,
+            249,
+            242
+          ],
+          "cell_size": [
+            314,
+            314
+          ],
+          "x": 0.4856687898089172,
+          "y": 0.7707006369426752,
+          "body_pixels": 193,
+          "body_fraction": 0.6146496815286624,
+          "scale": 0.6924737237237237
+        }
+      ],
+      "sha256": "8a9935c5d36d234a43718b4f28023e57dd9a7f90eeb1c2402d1f47f9c070f0de",
+      "source": "exec-a1176368-1098-4d5e-bc99-269100d65738.png",
+      "prompt": "Edit the attached EXACT game sprite atlas into a sharp high-resolution detail remaster of ONLY columns 5-8 ONLY: back/up, up-right, right, down-right. Output ONE SQUARE atlas 4 equal columns by 4 equal rows, highest native resolution, target 2048x2048. Thus sixteen sprites total. The original contains eight columns; EXTRACT only the specified four direction columns into this new 4-column sheet and preserve their exact order. Do NOT include any other directions. Row animation phases: four consecutive original walk cycle poses. The ORIGINAL REFERENCE is the edit target: retain exactly the same monster silhouette, distinctive face, tan rocky knuckled forearms, teal layered back plates, proportions, palette and pink tongue, with no redesign or new body parts. Reconstruct crisp intricate scale edges and stone/flesh shading; no blur or smeary interpolation. Each pose fully inside its own equal square cell, body occupying roughly 70-78% of cell width, with clear transparent gutters on all sides. Identical body scale within each direction over all four rows; for death, keep the naturally lowered corpse silhouette rather than stretching it upright. Keep all original animation poses and facing angles. No effects, shadows, lettering, labels or checkerboard. Genuine transparent alpha background. Pixel-art finish with sharp material boundaries, visually the SAME existing artwork at much greater usable resolution per sprite."
+    },
+    {
+      "image": "chatacabra-tongue-hd-a-v1.png",
+      "action": 1,
+      "half": 0,
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "old_dimensions": [
+        1774,
+        887
+      ],
+      "old_body_pixel_median": 149.5,
+      "body_pixel_median": 211.5,
+      "body_pixel_ratio": 1.414715719063545,
+      "frames": [
+        {
+          "body_box": [
+            59,
+            69,
+            258,
+            235
+          ],
+          "visible_box": [
+            59,
+            69,
+            258,
+            235
+          ],
+          "cell_size": [
+            314,
+            314
+          ],
+          "x": 0.5047770700636943,
+          "y": 0.7484076433121019,
+          "body_pixels": 199,
+          "body_fraction": 0.6337579617834395,
+          "scale": 0.6541666666666667
+        },
+        {
+          "body_box": [
+            58,
+            77,
+            263,
+            235
+          ],
+          "visible_box": [
+            58,
+            77,
+            263,
+            235
+          ],
+          "cell_size": [
+            313,
+            314
+          ],
+          "x": 0.512779552715655,
+          "y": 0.7484076433121019,
+          "body_pixels": 205,
+          "body_fraction": 0.6549520766773163,
+          "scale": 0.663487016428193
+        },
+        {
+          "body_box": [
+            55,
+            80,
+            266,
+            235
+          ],
+          "visible_box": [
+            55,
+            80,
+            266,
+            235
+          ],
+          "cell_size": [
+            313,
+            314
+          ],
+          "x": 0.512779552715655,
+          "y": 0.7484076433121019,
+          "body_pixels": 211,
+          "body_fraction": 0.6741214057507987,
+          "scale": 0.6949700094706934
+        },
+        {
+          "body_box": [
+            56,
+            80,
+            259,
+            235
+          ],
+          "visible_box": [
+            56,
+            80,
+            259,
+            235
+          ],
+          "cell_size": [
+            314,
+            314
+          ],
+          "x": 0.5015923566878981,
+          "y": 0.7484076433121019,
+          "body_pixels": 203,
+          "body_fraction": 0.6464968152866242,
+          "scale": 0.6447098261051749
+        },
+        {
+          "body_box": [
+            59,
+            57,
+            259,
+            246
+          ],
+          "visible_box": [
+            59,
+            57,
+            259,
+            246
+          ],
+          "cell_size": [
+            314,
+            313
+          ],
+          "x": 0.5063694267515924,
+          "y": 0.7859424920127795,
+          "body_pixels": 200,
+          "body_fraction": 0.6369426751592356,
+          "scale": 0.6541666666666667
+        },
+        {
+          "body_box": [
+            45,
+            70,
+            265,
+            238
+          ],
+          "visible_box": [
+            41,
+            70,
+            265,
+            238
+          ],
+          "cell_size": [
+            313,
+            313
+          ],
+          "x": 0.4952076677316294,
+          "y": 0.7603833865814696,
+          "body_pixels": 220,
+          "body_fraction": 0.7028753993610224,
+          "scale": 0.663487016428193
+        },
+        {
+          "body_box": [
+            34,
+            74,
+            273,
+            225
+          ],
+          "visible_box": [
+            25,
+            74,
+            273,
+            225
+          ],
+          "cell_size": [
+            313,
+            313
+          ],
+          "x": 0.4904153354632588,
+          "y": 0.7188498402555911,
+          "body_pixels": 239,
+          "body_fraction": 0.7635782747603834,
+          "scale": 0.6949700094706934
+        },
+        {
+          "body_box": [
+            50,
+            79,
+            266,
+            228
+          ],
+          "visible_box": [
+            39,
+            76,
+            266,
+            228
+          ],
+          "cell_size": [
+            314,
+            313
+          ],
+          "x": 0.5031847133757962,
+          "y": 0.7284345047923323,
+          "body_pixels": 216,
+          "body_fraction": 0.6878980891719745,
+          "scale": 0.6447098261051749
+        },
+        {
+          "body_box": [
+            59,
+            56,
+            259,
+            233
+          ],
+          "visible_box": [
+            59,
+            56,
+            259,
+            233
+          ],
+          "cell_size": [
+            314,
+            313
+          ],
+          "x": 0.5063694267515924,
+          "y": 0.744408945686901,
+          "body_pixels": 200,
+          "body_fraction": 0.6369426751592356,
+          "scale": 0.6541666666666667
+        },
+        {
+          "body_box": [
+            45,
+            67,
+            267,
+            228
+          ],
+          "visible_box": [
+            36,
+            67,
+            267,
+            228
+          ],
+          "cell_size": [
+            313,
+            313
+          ],
+          "x": 0.4984025559105431,
+          "y": 0.7284345047923323,
+          "body_pixels": 222,
+          "body_fraction": 0.7092651757188498,
+          "scale": 0.663487016428193
+        },
+        {
+          "body_box": [
+            54,
+            73,
+            272,
+            224
+          ],
+          "visible_box": [
+            44,
+            73,
+            272,
+            224
+          ],
+          "cell_size": [
+            313,
+            313
+          ],
+          "x": 0.5207667731629393,
+          "y": 0.7156549520766773,
+          "body_pixels": 218,
+          "body_fraction": 0.6964856230031949,
+          "scale": 0.6949700094706934
+        },
+        {
+          "body_box": [
+            51,
+            75,
+            268,
+            228
+          ],
+          "visible_box": [
+            39,
+            69,
+            268,
+            228
+          ],
+          "cell_size": [
+            314,
+            313
+          ],
+          "x": 0.5079617834394905,
+          "y": 0.7284345047923323,
+          "body_pixels": 217,
+          "body_fraction": 0.6910828025477707,
+          "scale": 0.6447098261051749
+        },
+        {
+          "body_box": [
+            59,
+            63,
+            259,
+            231
+          ],
+          "visible_box": [
+            59,
+            63,
+            259,
+            231
+          ],
+          "cell_size": [
+            314,
+            314
+          ],
+          "x": 0.5063694267515924,
+          "y": 0.7356687898089171,
+          "body_pixels": 200,
+          "body_fraction": 0.6369426751592356,
+          "scale": 0.6541666666666667
+        },
+        {
+          "body_box": [
+            60,
+            73,
+            264,
+            230
+          ],
+          "visible_box": [
+            58,
+            73,
+            264,
+            230
+          ],
+          "cell_size": [
+            313,
+            314
+          ],
+          "x": 0.5175718849840255,
+          "y": 0.732484076433121,
+          "body_pixels": 204,
+          "body_fraction": 0.6517571884984026,
+          "scale": 0.663487016428193
+        },
+        {
+          "body_box": [
+            55,
+            77,
+            267,
+            230
+          ],
+          "visible_box": [
+            55,
+            77,
+            267,
+            230
+          ],
+          "cell_size": [
+            313,
+            314
+          ],
+          "x": 0.5143769968051118,
+          "y": 0.732484076433121,
+          "body_pixels": 212,
+          "body_fraction": 0.6773162939297125,
+          "scale": 0.6949700094706934
+        },
+        {
+          "body_box": [
+            46,
+            80,
+            260,
+            232
+          ],
+          "visible_box": [
+            46,
+            80,
+            260,
+            232
+          ],
+          "cell_size": [
+            314,
+            314
+          ],
+          "x": 0.4872611464968153,
+          "y": 0.7388535031847133,
+          "body_pixels": 214,
+          "body_fraction": 0.6815286624203821,
+          "scale": 0.6447098261051749
+        }
+      ],
+      "sha256": "af22afcc7d20c87132f61edd8530b9f66bc1c04a9118bbdaff83ec737b7824d8",
+      "source": "exec-2443c9b5-1b37-4f23-94cd-2205c5a4c380.png",
+      "prompt": "Edit the attached EXACT game sprite atlas into a sharp high-resolution detail remaster of ONLY columns 1-4 ONLY: front/down, down-left, left, up-left. Output ONE SQUARE atlas 4 equal columns by 4 equal rows, highest native resolution, target 2048x2048. Thus sixteen sprites total. The original contains eight columns; EXTRACT only the specified four direction columns into this new 4-column sheet and preserve their exact order. Do NOT include any other directions. Row animation phases: closed-mouth preparation, straight extended tongue attack, curved tongue sweep, tongue retraction. The ORIGINAL REFERENCE is the edit target: retain exactly the same monster silhouette, distinctive face, tan rocky knuckled forearms, teal layered back plates, proportions, palette and pink tongue, with no redesign or new body parts. Reconstruct crisp intricate scale edges and stone/flesh shading; no blur or smeary interpolation. Each pose fully inside its own equal square cell, body occupying roughly 70-78% of cell width, with clear transparent gutters on all sides. Identical body scale within each direction over all four rows; for death, keep the naturally lowered corpse silhouette rather than stretching it upright. Keep all original animation poses and facing angles. No effects, shadows, lettering, labels or checkerboard. Genuine transparent alpha background. Pixel-art finish with sharp material boundaries, visually the SAME existing artwork at much greater usable resolution per sprite.",
+      "padding_edit_source": "exec-b4838fb6-45b5-4d70-8f52-63c7efc028dc.png",
+      "padding_edit_prompt": "Padding correction ONLY for this exact fantasy amphibian game animation atlas. Preserve its artwork, armor design, colors, all 16 poses, four direction columns and four animation rows. Reduce EACH sprite uniformly to 85 percent of its current size within its own 4x4 grid cell. Center the entire sprite including the longest extended ranged-attack appendage horizontally in its own cell. Every visible pixel must remain at least 6 percent of a cell width away from all cell boundaries. In particular row 2 column 3 must not touch or cross the left cell border. Keep all details sharp; keep genuine transparent alpha; no painted background, effects, text or shadows. Same square resolution, same 4 columns and 4 rows. No character redesign."
+    },
+    {
+      "image": "chatacabra-tongue-hd-b-v1.png",
+      "action": 1,
+      "half": 1,
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "old_dimensions": [
+        1774,
+        887
+      ],
+      "old_body_pixel_median": 149.0,
+      "body_pixel_median": 225.0,
+      "body_pixel_ratio": 1.5100671140939597,
+      "frames": [
+        {
+          "body_box": [
+            59,
+            65,
+            280,
+            247
+          ],
+          "visible_box": [
+            59,
+            65,
+            280,
+            247
+          ],
+          "cell_size": [
+            314,
+            314
+          ],
+          "x": 0.5398089171974523,
+          "y": 0.7866242038216561,
+          "body_pixels": 221,
+          "body_fraction": 0.7038216560509554,
+          "scale": 0.6240063593004769
+        },
+        {
+          "body_box": [
+            47,
+            66,
+            269,
+            245
+          ],
+          "visible_box": [
+            47,
+            66,
+            269,
+            245
+          ],
+          "cell_size": [
+            313,
+            314
+          ],
+          "x": 0.5047923322683706,
+          "y": 0.7802547770700637,
+          "body_pixels": 222,
+          "body_fraction": 0.7092651757188498,
+          "scale": 0.59293685770654
+        },
+        {
+          "body_box": [
+            46,
+            81,
+            277,
+            245
+          ],
+          "visible_box": [
+            46,
+            81,
+            277,
+            245
+          ],
+          "cell_size": [
+            313,
+            314
+          ],
+          "x": 0.5159744408945687,
+          "y": 0.7802547770700637,
+          "body_pixels": 231,
+          "body_fraction": 0.7380191693290735,
+          "scale": 0.6004626756192518
+        },
+        {
+          "body_box": [
+            36,
+            81,
+            259,
+            249
+          ],
+          "visible_box": [
+            36,
+            81,
+            259,
+            249
+          ],
+          "cell_size": [
+            314,
+            314
+          ],
+          "x": 0.4697452229299363,
+          "y": 0.7929936305732485,
+          "body_pixels": 223,
+          "body_fraction": 0.7101910828025477,
+          "scale": 0.5818597591026476
+        },
+        {
+          "body_box": [
+            59,
+            33,
+            280,
+            250
+          ],
+          "visible_box": [
+            59,
+            33,
+            280,
+            250
+          ],
+          "cell_size": [
+            314,
+            313
+          ],
+          "x": 0.5398089171974523,
+          "y": 0.7987220447284346,
+          "body_pixels": 221,
+          "body_fraction": 0.7038216560509554,
+          "scale": 0.6240063593004769
+        },
+        {
+          "body_box": [
+            43,
+            68,
+            288,
+            247
+          ],
+          "visible_box": [
+            43,
+            68,
+            288,
+            247
+          ],
+          "cell_size": [
+            313,
+            313
+          ],
+          "x": 0.5287539936102237,
+          "y": 0.7891373801916933,
+          "body_pixels": 245,
+          "body_fraction": 0.7827476038338658,
+          "scale": 0.59293685770654
+        },
+        {
+          "body_box": [
+            36,
+            87,
+            306,
+            247
+          ],
+          "visible_box": [
+            36,
+            87,
+            306,
+            247
+          ],
+          "cell_size": [
+            313,
+            313
+          ],
+          "x": 0.5463258785942492,
+          "y": 0.7891373801916933,
+          "body_pixels": 270,
+          "body_fraction": 0.8626198083067093,
+          "scale": 0.6004626756192518
+        },
+        {
+          "body_box": [
+            37,
+            84,
+            271,
+            266
+          ],
+          "visible_box": [
+            37,
+            84,
+            271,
+            266
+          ],
+          "cell_size": [
+            314,
+            313
+          ],
+          "x": 0.49044585987261147,
+          "y": 0.8498402555910544,
+          "body_pixels": 234,
+          "body_fraction": 0.7452229299363057,
+          "scale": 0.5818597591026476
+        },
+        {
+          "body_box": [
+            59,
+            41,
+            280,
+            250
+          ],
+          "visible_box": [
+            59,
+            41,
+            280,
+            250
+          ],
+          "cell_size": [
+            314,
+            313
+          ],
+          "x": 0.5398089171974523,
+          "y": 0.7987220447284346,
+          "body_pixels": 221,
+          "body_fraction": 0.7038216560509554,
+          "scale": 0.6240063593004769
+        },
+        {
+          "body_box": [
+            46,
+            73,
+            285,
+            248
+          ],
+          "visible_box": [
+            46,
+            73,
+            285,
+            248
+          ],
+          "cell_size": [
+            313,
+            313
+          ],
+          "x": 0.5287539936102237,
+          "y": 0.792332268370607,
+          "body_pixels": 239,
+          "body_fraction": 0.7635782747603834,
+          "scale": 0.59293685770654
+        },
+        {
+          "body_box": [
+            36,
+            87,
+            284,
+            248
+          ],
+          "visible_box": [
+            36,
+            87,
+            284,
+            248
+          ],
+          "cell_size": [
+            313,
+            313
+          ],
+          "x": 0.5111821086261981,
+          "y": 0.792332268370607,
+          "body_pixels": 248,
+          "body_fraction": 0.792332268370607,
+          "scale": 0.6004626756192518
+        },
+        {
+          "body_box": [
+            36,
+            83,
+            271,
+            253
+          ],
+          "visible_box": [
+            36,
+            83,
+            271,
+            253
+          ],
+          "cell_size": [
+            314,
+            313
+          ],
+          "x": 0.4888535031847134,
+          "y": 0.8083067092651757,
+          "body_pixels": 235,
+          "body_fraction": 0.7484076433121019,
+          "scale": 0.5818597591026476
+        },
+        {
+          "body_box": [
+            59,
+            73,
+            280,
+            248
+          ],
+          "visible_box": [
+            59,
+            73,
+            280,
+            248
+          ],
+          "cell_size": [
+            314,
+            314
+          ],
+          "x": 0.5398089171974523,
+          "y": 0.7898089171974523,
+          "body_pixels": 221,
+          "body_fraction": 0.7038216560509554,
+          "scale": 0.6240063593004769
+        },
+        {
+          "body_box": [
+            46,
+            81,
+            262,
+            248
+          ],
+          "visible_box": [
+            46,
+            81,
+            262,
+            248
+          ],
+          "cell_size": [
+            313,
+            314
+          ],
+          "x": 0.49201277955271566,
+          "y": 0.7898089171974523,
+          "body_pixels": 216,
+          "body_fraction": 0.6900958466453674,
+          "scale": 0.59293685770654
+        },
+        {
+          "body_box": [
+            44,
+            88,
+            271,
+            248
+          ],
+          "visible_box": [
+            44,
+            88,
+            271,
+            248
+          ],
+          "cell_size": [
+            313,
+            314
+          ],
+          "x": 0.5031948881789138,
+          "y": 0.7898089171974523,
+          "body_pixels": 227,
+          "body_fraction": 0.7252396166134185,
+          "scale": 0.6004626756192518
+        },
+        {
+          "body_box": [
+            36,
+            84,
+            257,
+            248
+          ],
+          "visible_box": [
+            36,
+            84,
+            257,
+            248
+          ],
+          "cell_size": [
+            314,
+            314
+          ],
+          "x": 0.46656050955414013,
+          "y": 0.7898089171974523,
+          "body_pixels": 221,
+          "body_fraction": 0.7038216560509554,
+          "scale": 0.5818597591026476
+        }
+      ],
+      "sha256": "14efa954078e555d321d6fc2c3f453765a49faf5b199cf0ef5da986178a42cb1",
+      "source": "exec-9e40631a-ddb5-4c6b-b8cb-9b97e5d04747.png",
+      "prompt": "Faithful high-definition remaster of the attached fantasy amphibian game animation atlas. This is a nonhuman armored cartoon creature for an adventure game. Preserve the existing character design, armor colors, proportions, exact poses, and angle of view. Output one square transparent PNG, FOUR columns by FOUR rows (16 sprites). Use ONLY original columns 5,6,7,8: up, up-right, right, down-right, in that exact order. Keep the original four animation rows: four original ranged combat phases. The four included direction columns must have their own distinct original view; no extra columns. Sharp detailed game pixel artwork, clean outlines and clear material edges, no blur. Each character occupies about 70 percent of the cell width, fully contained within each equal cell with generous transparent gutters. Same character size throughout each column. Use highest native square resolution. Maintain genuine transparent background, no painted background, text, labels, shadows, effects or UI. This is an enhancement of the supplied game sprites, not a redesign."
+    },
+    {
+      "image": "chatacabra-slam-hd-a-v1.png",
+      "action": 2,
+      "half": 0,
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "old_dimensions": [
+        1774,
+        887
+      ],
+      "old_body_pixel_median": 165.5,
+      "body_pixel_median": 249.0,
+      "body_pixel_ratio": 1.5045317220543806,
+      "frames": [
+        {
+          "body_box": [
+            48,
+            44,
+            279,
+            281
+          ],
+          "visible_box": [
+            48,
+            44,
+            279,
+            281
+          ],
+          "cell_size": [
+            314,
+            314
+          ],
+          "x": 0.5207006369426752,
+          "y": 0.8949044585987261,
+          "body_pixels": 231,
+          "body_fraction": 0.7356687898089171,
+          "scale": 0.5340136054421768
+        },
+        {
+          "body_box": [
+            34,
+            47,
+            291,
+            282
+          ],
+          "visible_box": [
+            34,
+            47,
+            291,
+            282
+          ],
+          "cell_size": [
+            313,
+            314
+          ],
+          "x": 0.5191693290734825,
+          "y": 0.8980891719745223,
+          "body_pixels": 257,
+          "body_fraction": 0.8210862619808307,
+          "scale": 0.5443667605829768
+        },
+        {
+          "body_box": [
+            47,
+            53,
+            296,
+            284
+          ],
+          "visible_box": [
+            47,
+            53,
+            296,
+            284
+          ],
+          "cell_size": [
+            313,
+            314
+          ],
+          "x": 0.547923322683706,
+          "y": 0.9044585987261147,
+          "body_pixels": 249,
+          "body_fraction": 0.7955271565495208,
+          "scale": 0.576905606317371
+        },
+        {
+          "body_box": [
+            47,
+            49,
+            288,
+            284
+          ],
+          "visible_box": [
+            47,
+            49,
+            288,
+            284
+          ],
+          "cell_size": [
+            314,
+            314
+          ],
+          "x": 0.5334394904458599,
+          "y": 0.9044585987261147,
+          "body_pixels": 241,
+          "body_fraction": 0.767515923566879,
+          "scale": 0.5657657657657658
+        },
+        {
+          "body_box": [
+            39,
+            48,
+            282,
+            281
+          ],
+          "visible_box": [
+            39,
+            48,
+            282,
+            281
+          ],
+          "cell_size": [
+            314,
+            313
+          ],
+          "x": 0.5111464968152867,
+          "y": 0.8977635782747604,
+          "body_pixels": 243,
+          "body_fraction": 0.7738853503184714,
+          "scale": 0.5340136054421768
+        },
+        {
+          "body_box": [
+            34,
+            51,
+            295,
+            276
+          ],
+          "visible_box": [
+            34,
+            51,
+            295,
+            276
+          ],
+          "cell_size": [
+            313,
+            313
+          ],
+          "x": 0.5255591054313099,
+          "y": 0.8817891373801917,
+          "body_pixels": 261,
+          "body_fraction": 0.8338658146964856,
+          "scale": 0.5443667605829768
+        },
+        {
+          "body_box": [
+            43,
+            56,
+            299,
+            274
+          ],
+          "visible_box": [
+            43,
+            56,
+            299,
+            274
+          ],
+          "cell_size": [
+            313,
+            313
+          ],
+          "x": 0.5463258785942492,
+          "y": 0.8753993610223643,
+          "body_pixels": 256,
+          "body_fraction": 0.8178913738019169,
+          "scale": 0.576905606317371
+        },
+        {
+          "body_box": [
+            38,
+            61,
+            289,
+            274
+          ],
+          "visible_box": [
+            38,
+            61,
+            289,
+            274
+          ],
+          "cell_size": [
+            314,
+            313
+          ],
+          "x": 0.5207006369426752,
+          "y": 0.8753993610223643,
+          "body_pixels": 251,
+          "body_fraction": 0.7993630573248408,
+          "scale": 0.5657657657657658
+        },
+        {
+          "body_box": [
+            40,
+            36,
+            288,
+            266
+          ],
+          "visible_box": [
+            40,
+            36,
+            288,
+            266
+          ],
+          "cell_size": [
+            314,
+            313
+          ],
+          "x": 0.5222929936305732,
+          "y": 0.8498402555910544,
+          "body_pixels": 248,
+          "body_fraction": 0.7898089171974523,
+          "scale": 0.5340136054421768
+        },
+        {
+          "body_box": [
+            42,
+            37,
+            287,
+            269
+          ],
+          "visible_box": [
+            42,
+            37,
+            287,
+            269
+          ],
+          "cell_size": [
+            313,
+            313
+          ],
+          "x": 0.5255591054313099,
+          "y": 0.8594249201277955,
+          "body_pixels": 245,
+          "body_fraction": 0.7827476038338658,
+          "scale": 0.5443667605829768
+        },
+        {
+          "body_box": [
+            29,
+            42,
+            294,
+            270
+          ],
+          "visible_box": [
+            29,
+            42,
+            294,
+            270
+          ],
+          "cell_size": [
+            313,
+            313
+          ],
+          "x": 0.5159744408945687,
+          "y": 0.8626198083067093,
+          "body_pixels": 265,
+          "body_fraction": 0.8466453674121406,
+          "scale": 0.576905606317371
+        },
+        {
+          "body_box": [
+            46,
+            32,
+            282,
+            272
+          ],
+          "visible_box": [
+            46,
+            32,
+            282,
+            272
+          ],
+          "cell_size": [
+            314,
+            313
+          ],
+          "x": 0.5222929936305732,
+          "y": 0.8690095846645367,
+          "body_pixels": 236,
+          "body_fraction": 0.7515923566878981,
+          "scale": 0.5657657657657658
+        },
+        {
+          "body_box": [
+            41,
+            62,
+            288,
+            235
+          ],
+          "visible_box": [
+            41,
+            62,
+            288,
+            235
+          ],
+          "cell_size": [
+            314,
+            314
+          ],
+          "x": 0.5238853503184714,
+          "y": 0.7484076433121019,
+          "body_pixels": 247,
+          "body_fraction": 0.7866242038216561,
+          "scale": 0.5340136054421768
+        },
+        {
+          "body_box": [
+            29,
+            66,
+            291,
+            235
+          ],
+          "visible_box": [
+            29,
+            66,
+            291,
+            235
+          ],
+          "cell_size": [
+            313,
+            314
+          ],
+          "x": 0.5111821086261981,
+          "y": 0.7484076433121019,
+          "body_pixels": 262,
+          "body_fraction": 0.8370607028753994,
+          "scale": 0.5443667605829768
+        },
+        {
+          "body_box": [
+            37,
+            67,
+            299,
+            235
+          ],
+          "visible_box": [
+            37,
+            67,
+            299,
+            235
+          ],
+          "cell_size": [
+            313,
+            314
+          ],
+          "x": 0.536741214057508,
+          "y": 0.7484076433121019,
+          "body_pixels": 262,
+          "body_fraction": 0.8370607028753994,
+          "scale": 0.576905606317371
+        },
+        {
+          "body_box": [
+            38,
+            69,
+            287,
+            236
+          ],
+          "visible_box": [
+            38,
+            69,
+            287,
+            236
+          ],
+          "cell_size": [
+            314,
+            314
+          ],
+          "x": 0.517515923566879,
+          "y": 0.7515923566878981,
+          "body_pixels": 249,
+          "body_fraction": 0.7929936305732485,
+          "scale": 0.5657657657657658
+        }
+      ],
+      "sha256": "281e6b17458f5ff1abb3d37e73926c252ed6b82fc724c96abb43b25ccb9b6836",
+      "source": "exec-75ac5d0d-0bd8-492b-ae43-4b340e717d55.png",
+      "prompt": "Faithful high-definition remaster of the attached fantasy amphibian game animation atlas. This is a nonhuman armored cartoon creature for an adventure game. Preserve the existing character design, armor colors, proportions, exact poses, and angle of view. Output one square transparent PNG, FOUR columns by FOUR rows (16 sprites). Use ONLY original columns 1,2,3,4: down, down-left, left, up-left, in that exact order. Keep the original four animation rows: four original fist-strike combat phases. The four included direction columns must have their own distinct original view; no extra columns. Sharp detailed game pixel artwork, clean outlines and clear material edges, no blur. Each character occupies about 70 percent of the cell width, fully contained within each equal cell with generous transparent gutters. Same character size throughout each column. Use highest native square resolution. Maintain genuine transparent background, no painted background, text, labels, shadows, effects or UI. This is an enhancement of the supplied game sprites, not a redesign."
+    },
+    {
+      "image": "chatacabra-slam-hd-b-v1.png",
+      "action": 2,
+      "half": 1,
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "old_dimensions": [
+        1774,
+        887
+      ],
+      "old_body_pixel_median": 161.0,
+      "body_pixel_median": 243.0,
+      "body_pixel_ratio": 1.5093167701863355,
+      "frames": [
+        {
+          "body_box": [
+            47,
+            51,
+            275,
+            285
+          ],
+          "visible_box": [
+            47,
+            51,
+            275,
+            285
+          ],
+          "cell_size": [
+            314,
+            314
+          ],
+          "x": 0.5127388535031847,
+          "y": 0.9076433121019108,
+          "body_pixels": 228,
+          "body_fraction": 0.7261146496815286,
+          "scale": 0.5995887191539365
+        },
+        {
+          "body_box": [
+            36,
+            51,
+            275,
+            285
+          ],
+          "visible_box": [
+            36,
+            51,
+            275,
+            285
+          ],
+          "cell_size": [
+            313,
+            314
+          ],
+          "x": 0.4968051118210863,
+          "y": 0.9076433121019108,
+          "body_pixels": 239,
+          "body_fraction": 0.7635782747603834,
+          "scale": 0.5730479903620858
+        },
+        {
+          "body_box": [
+            35,
+            53,
+            289,
+            285
+          ],
+          "visible_box": [
+            35,
+            53,
+            289,
+            285
+          ],
+          "cell_size": [
+            313,
+            314
+          ],
+          "x": 0.5175718849840255,
+          "y": 0.9076433121019108,
+          "body_pixels": 254,
+          "body_fraction": 0.8115015974440895,
+          "scale": 0.5752432432432433
+        },
+        {
+          "body_box": [
+            27,
+            61,
+            268,
+            283
+          ],
+          "visible_box": [
+            27,
+            61,
+            268,
+            283
+          ],
+          "cell_size": [
+            314,
+            314
+          ],
+          "x": 0.4697452229299363,
+          "y": 0.9012738853503185,
+          "body_pixels": 241,
+          "body_fraction": 0.767515923566879,
+          "scale": 0.5382791698581172
+        },
+        {
+          "body_box": [
+            48,
+            54,
+            273,
+            264
+          ],
+          "visible_box": [
+            48,
+            54,
+            273,
+            264
+          ],
+          "cell_size": [
+            314,
+            313
+          ],
+          "x": 0.5111464968152867,
+          "y": 0.8434504792332268,
+          "body_pixels": 225,
+          "body_fraction": 0.7165605095541401,
+          "scale": 0.5995887191539365
+        },
+        {
+          "body_box": [
+            42,
+            54,
+            279,
+            264
+          ],
+          "visible_box": [
+            42,
+            54,
+            279,
+            264
+          ],
+          "cell_size": [
+            313,
+            313
+          ],
+          "x": 0.512779552715655,
+          "y": 0.8434504792332268,
+          "body_pixels": 237,
+          "body_fraction": 0.7571884984025559,
+          "scale": 0.5730479903620858
+        },
+        {
+          "body_box": [
+            31,
+            52,
+            280,
+            264
+          ],
+          "visible_box": [
+            31,
+            52,
+            280,
+            264
+          ],
+          "cell_size": [
+            313,
+            313
+          ],
+          "x": 0.4968051118210863,
+          "y": 0.8434504792332268,
+          "body_pixels": 249,
+          "body_fraction": 0.7955271565495208,
+          "scale": 0.5752432432432433
+        },
+        {
+          "body_box": [
+            30,
+            57,
+            276,
+            264
+          ],
+          "visible_box": [
+            30,
+            57,
+            276,
+            264
+          ],
+          "cell_size": [
+            314,
+            313
+          ],
+          "x": 0.4872611464968153,
+          "y": 0.8434504792332268,
+          "body_pixels": 246,
+          "body_fraction": 0.7834394904458599,
+          "scale": 0.5382791698581172
+        },
+        {
+          "body_box": [
+            40,
+            26,
+            272,
+            257
+          ],
+          "visible_box": [
+            40,
+            26,
+            272,
+            257
+          ],
+          "cell_size": [
+            314,
+            313
+          ],
+          "x": 0.4968152866242038,
+          "y": 0.8210862619808307,
+          "body_pixels": 232,
+          "body_fraction": 0.7388535031847133,
+          "scale": 0.5995887191539365
+        },
+        {
+          "body_box": [
+            37,
+            30,
+            275,
+            257
+          ],
+          "visible_box": [
+            37,
+            30,
+            275,
+            257
+          ],
+          "cell_size": [
+            313,
+            313
+          ],
+          "x": 0.4984025559105431,
+          "y": 0.8210862619808307,
+          "body_pixels": 238,
+          "body_fraction": 0.7603833865814696,
+          "scale": 0.5730479903620858
+        },
+        {
+          "body_box": [
+            28,
+            30,
+            273,
+            257
+          ],
+          "visible_box": [
+            28,
+            30,
+            273,
+            257
+          ],
+          "cell_size": [
+            313,
+            313
+          ],
+          "x": 0.48083067092651754,
+          "y": 0.8210862619808307,
+          "body_pixels": 245,
+          "body_fraction": 0.7827476038338658,
+          "scale": 0.5752432432432433
+        },
+        {
+          "body_box": [
+            32,
+            34,
+            280,
+            253
+          ],
+          "visible_box": [
+            32,
+            34,
+            280,
+            253
+          ],
+          "cell_size": [
+            314,
+            313
+          ],
+          "x": 0.4968152866242038,
+          "y": 0.8083067092651757,
+          "body_pixels": 248,
+          "body_fraction": 0.7898089171974523,
+          "scale": 0.5382791698581172
+        },
+        {
+          "body_box": [
+            41,
+            56,
+            290,
+            233
+          ],
+          "visible_box": [
+            41,
+            56,
+            290,
+            233
+          ],
+          "cell_size": [
+            314,
+            314
+          ],
+          "x": 0.5270700636942676,
+          "y": 0.7420382165605095,
+          "body_pixels": 249,
+          "body_fraction": 0.7929936305732485,
+          "scale": 0.5995887191539365
+        },
+        {
+          "body_box": [
+            35,
+            56,
+            275,
+            233
+          ],
+          "visible_box": [
+            35,
+            56,
+            275,
+            233
+          ],
+          "cell_size": [
+            313,
+            314
+          ],
+          "x": 0.4952076677316294,
+          "y": 0.7420382165605095,
+          "body_pixels": 240,
+          "body_fraction": 0.7667731629392971,
+          "scale": 0.5730479903620858
+        },
+        {
+          "body_box": [
+            28,
+            61,
+            279,
+            226
+          ],
+          "visible_box": [
+            28,
+            61,
+            279,
+            226
+          ],
+          "cell_size": [
+            313,
+            314
+          ],
+          "x": 0.4904153354632588,
+          "y": 0.7197452229299363,
+          "body_pixels": 251,
+          "body_fraction": 0.8019169329073482,
+          "scale": 0.5752432432432433
+        },
+        {
+          "body_box": [
+            27,
+            56,
+            280,
+            230
+          ],
+          "visible_box": [
+            27,
+            56,
+            280,
+            230
+          ],
+          "cell_size": [
+            314,
+            314
+          ],
+          "x": 0.4888535031847134,
+          "y": 0.732484076433121,
+          "body_pixels": 253,
+          "body_fraction": 0.8057324840764332,
+          "scale": 0.5382791698581172
+        }
+      ],
+      "sha256": "297cda7b29855b3173417c6849d202271ab8c0f0e50339c591ee13e1efcc3e3c",
+      "source": "exec-95117f2c-1ac5-4fd5-96df-ac5051dfdcaa.png",
+      "prompt": "Faithful high-definition remaster of the attached fantasy amphibian game animation atlas. This is a nonhuman armored cartoon creature for an adventure game. Preserve the existing character design, armor colors, proportions, exact poses, and angle of view. Output one square transparent PNG, FOUR columns by FOUR rows (16 sprites). Use ONLY original columns 5,6,7,8: up, up-right, right, down-right, in that exact order. Keep the original four animation rows: four original fist-strike combat phases. The four included direction columns must have their own distinct original view; no extra columns. Sharp detailed game pixel artwork, clean outlines and clear material edges, no blur. Each character occupies about 70 percent of the cell width, fully contained within each equal cell with generous transparent gutters. Same character size throughout each column. Use highest native square resolution. Maintain genuine transparent background, no painted background, text, labels, shadows, effects or UI. This is an enhancement of the supplied game sprites, not a redesign."
+    },
+    {
+      "image": "chatacabra-coat-hd-a-v1.png",
+      "action": 3,
+      "half": 0,
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "old_dimensions": [
+        1774,
+        887
+      ],
+      "old_body_pixel_median": 191.0,
+      "body_pixel_median": 274.0,
+      "body_pixel_ratio": 1.4345549738219896,
+      "frames": [
+        {
+          "body_box": [
+            41,
+            61,
+            285,
+            271
+          ],
+          "visible_box": [
+            41,
+            61,
+            285,
+            271
+          ],
+          "cell_size": [
+            314,
+            314
+          ],
+          "x": 0.5191082802547771,
+          "y": 0.8630573248407644,
+          "body_pixels": 244,
+          "body_fraction": 0.7770700636942676,
+          "scale": 0.5181518151815181
+        },
+        {
+          "body_box": [
+            29,
+            65,
+            299,
+            271
+          ],
+          "visible_box": [
+            29,
+            65,
+            299,
+            271
+          ],
+          "cell_size": [
+            313,
+            314
+          ],
+          "x": 0.5239616613418531,
+          "y": 0.8630573248407644,
+          "body_pixels": 270,
+          "body_fraction": 0.8626198083067093,
+          "scale": 0.5126945126945127
+        },
+        {
+          "body_box": [
+            14,
+            76,
+            302,
+            267
+          ],
+          "visible_box": [
+            14,
+            76,
+            302,
+            267
+          ],
+          "cell_size": [
+            313,
+            314
+          ],
+          "x": 0.5047923322683706,
+          "y": 0.8503184713375797,
+          "body_pixels": 288,
+          "body_fraction": 0.9201277955271565,
+          "scale": 0.5206221325303104
+        },
+        {
+          "body_box": [
+            30,
+            61,
+            289,
+            271
+          ],
+          "visible_box": [
+            30,
+            61,
+            289,
+            271
+          ],
+          "cell_size": [
+            314,
+            314
+          ],
+          "x": 0.5079617834394905,
+          "y": 0.8630573248407644,
+          "body_pixels": 259,
+          "body_fraction": 0.8248407643312102,
+          "scale": 0.5068102837755488
+        },
+        {
+          "body_box": [
+            39,
+            52,
+            286,
+            263
+          ],
+          "visible_box": [
+            39,
+            52,
+            286,
+            263
+          ],
+          "cell_size": [
+            314,
+            313
+          ],
+          "x": 0.517515923566879,
+          "y": 0.8402555910543131,
+          "body_pixels": 247,
+          "body_fraction": 0.7866242038216561,
+          "scale": 0.5181518151815181
+        },
+        {
+          "body_box": [
+            25,
+            62,
+            302,
+            266
+          ],
+          "visible_box": [
+            25,
+            62,
+            302,
+            266
+          ],
+          "cell_size": [
+            313,
+            313
+          ],
+          "x": 0.5223642172523961,
+          "y": 0.8498402555910544,
+          "body_pixels": 277,
+          "body_fraction": 0.8849840255591054,
+          "scale": 0.5126945126945127
+        },
+        {
+          "body_box": [
+            10,
+            69,
+            306,
+            260
+          ],
+          "visible_box": [
+            10,
+            69,
+            306,
+            260
+          ],
+          "cell_size": [
+            313,
+            313
+          ],
+          "x": 0.5047923322683706,
+          "y": 0.8306709265175719,
+          "body_pixels": 296,
+          "body_fraction": 0.9456869009584664,
+          "scale": 0.5206221325303104
+        },
+        {
+          "body_box": [
+            17,
+            52,
+            293,
+            262
+          ],
+          "visible_box": [
+            17,
+            52,
+            293,
+            262
+          ],
+          "cell_size": [
+            314,
+            313
+          ],
+          "x": 0.49363057324840764,
+          "y": 0.8370607028753994,
+          "body_pixels": 276,
+          "body_fraction": 0.8789808917197452,
+          "scale": 0.5068102837755488
+        },
+        {
+          "body_box": [
+            32,
+            52,
+            290,
+            263
+          ],
+          "visible_box": [
+            32,
+            52,
+            290,
+            263
+          ],
+          "cell_size": [
+            314,
+            313
+          ],
+          "x": 0.5127388535031847,
+          "y": 0.8402555910543131,
+          "body_pixels": 258,
+          "body_fraction": 0.821656050955414,
+          "scale": 0.5181518151815181
+        },
+        {
+          "body_box": [
+            24,
+            62,
+            302,
+            266
+          ],
+          "visible_box": [
+            24,
+            62,
+            302,
+            266
+          ],
+          "cell_size": [
+            313,
+            313
+          ],
+          "x": 0.5207667731629393,
+          "y": 0.8498402555910544,
+          "body_pixels": 278,
+          "body_fraction": 0.8881789137380192,
+          "scale": 0.5126945126945127
+        },
+        {
+          "body_box": [
+            16,
+            67,
+            302,
+            266
+          ],
+          "visible_box": [
+            16,
+            67,
+            302,
+            266
+          ],
+          "cell_size": [
+            313,
+            313
+          ],
+          "x": 0.5079872204472844,
+          "y": 0.8498402555910544,
+          "body_pixels": 286,
+          "body_fraction": 0.9137380191693291,
+          "scale": 0.5206221325303104
+        },
+        {
+          "body_box": [
+            21,
+            56,
+            293,
+            266
+          ],
+          "visible_box": [
+            21,
+            56,
+            293,
+            266
+          ],
+          "cell_size": [
+            314,
+            313
+          ],
+          "x": 0.5,
+          "y": 0.8498402555910544,
+          "body_pixels": 272,
+          "body_fraction": 0.8662420382165605,
+          "scale": 0.5068102837755488
+        },
+        {
+          "body_box": [
+            32,
+            51,
+            293,
+            259
+          ],
+          "visible_box": [
+            32,
+            51,
+            293,
+            259
+          ],
+          "cell_size": [
+            314,
+            314
+          ],
+          "x": 0.517515923566879,
+          "y": 0.8248407643312102,
+          "body_pixels": 261,
+          "body_fraction": 0.8312101910828026,
+          "scale": 0.5181518151815181
+        },
+        {
+          "body_box": [
+            27,
+            65,
+            300,
+            261
+          ],
+          "visible_box": [
+            27,
+            65,
+            300,
+            261
+          ],
+          "cell_size": [
+            313,
+            314
+          ],
+          "x": 0.5223642172523961,
+          "y": 0.8312101910828026,
+          "body_pixels": 273,
+          "body_fraction": 0.8722044728434505,
+          "scale": 0.5126945126945127
+        },
+        {
+          "body_box": [
+            21,
+            65,
+            303,
+            263
+          ],
+          "visible_box": [
+            21,
+            65,
+            303,
+            263
+          ],
+          "cell_size": [
+            313,
+            314
+          ],
+          "x": 0.5175718849840255,
+          "y": 0.8375796178343949,
+          "body_pixels": 282,
+          "body_fraction": 0.9009584664536742,
+          "scale": 0.5206221325303104
+        },
+        {
+          "body_box": [
+            21,
+            56,
+            296,
+            263
+          ],
+          "visible_box": [
+            21,
+            56,
+            296,
+            263
+          ],
+          "cell_size": [
+            314,
+            314
+          ],
+          "x": 0.5047770700636943,
+          "y": 0.8375796178343949,
+          "body_pixels": 275,
+          "body_fraction": 0.8757961783439491,
+          "scale": 0.5068102837755488
+        }
+      ],
+      "sha256": "875bef51df2569c6b10647e0c917474598efa2e835ae91da0e7c3cf09ebbf258",
+      "source": "exec-9acae6c1-b865-4db9-ae59-8a80434ba0cb.png",
+      "prompt": "Faithful high-definition remaster of the attached fantasy amphibian game animation atlas. This is a nonhuman armored cartoon creature for an adventure game. Preserve the existing character design, armor colors, proportions, exact poses, and angle of view. Output one square transparent PNG, FOUR columns by FOUR rows (16 sprites). Use ONLY original columns 1,2,3,4: down, down-left, left, up-left, in that exact order. Keep the original four animation rows: four original stone-armor preparation phases. The four included direction columns must have their own distinct original view; no extra columns. Sharp detailed game pixel artwork, clean outlines and clear material edges, no blur. Each character occupies about 70 percent of the cell width, fully contained within each equal cell with generous transparent gutters. Same character size throughout each column. Use highest native square resolution. Maintain genuine transparent background, no painted background, text, labels, shadows, effects or UI. This is an enhancement of the supplied game sprites, not a redesign."
+    },
+    {
+      "image": "chatacabra-coat-hd-b-v1.png",
+      "action": 3,
+      "half": 1,
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "old_dimensions": [
+        1774,
+        887
+      ],
+      "old_body_pixel_median": 189.5,
+      "body_pixel_median": 269.0,
+      "body_pixel_ratio": 1.4195250659630607,
+      "frames": [
+        {
+          "body_box": [
+            40,
+            42,
+            294,
+            260
+          ],
+          "visible_box": [
+            40,
+            42,
+            294,
+            260
+          ],
+          "cell_size": [
+            314,
+            314
+          ],
+          "x": 0.5318471337579618,
+          "y": 0.8280254777070064,
+          "body_pixels": 254,
+          "body_fraction": 0.8089171974522293,
+          "scale": 0.5324533027235729
+        },
+        {
+          "body_box": [
+            24,
+            48,
+            286,
+            258
+          ],
+          "visible_box": [
+            24,
+            48,
+            286,
+            258
+          ],
+          "cell_size": [
+            313,
+            314
+          ],
+          "x": 0.4952076677316294,
+          "y": 0.821656050955414,
+          "body_pixels": 262,
+          "body_fraction": 0.8370607028753994,
+          "scale": 0.518679110821091
+        },
+        {
+          "body_box": [
+            12,
+            63,
+            291,
+            250
+          ],
+          "visible_box": [
+            12,
+            63,
+            291,
+            250
+          ],
+          "cell_size": [
+            313,
+            314
+          ],
+          "x": 0.4840255591054313,
+          "y": 0.7961783439490446,
+          "body_pixels": 279,
+          "body_fraction": 0.8913738019169329,
+          "scale": 0.5117822448783302
+        },
+        {
+          "body_box": [
+            16,
+            55,
+            285,
+            259
+          ],
+          "visible_box": [
+            16,
+            55,
+            285,
+            259
+          ],
+          "cell_size": [
+            314,
+            314
+          ],
+          "x": 0.47929936305732485,
+          "y": 0.8248407643312102,
+          "body_pixels": 269,
+          "body_fraction": 0.856687898089172,
+          "scale": 0.48084974667253144
+        },
+        {
+          "body_box": [
+            39,
+            39,
+            298,
+            254
+          ],
+          "visible_box": [
+            39,
+            39,
+            298,
+            254
+          ],
+          "cell_size": [
+            314,
+            313
+          ],
+          "x": 0.5366242038216561,
+          "y": 0.8115015974440895,
+          "body_pixels": 259,
+          "body_fraction": 0.8248407643312102,
+          "scale": 0.5324533027235729
+        },
+        {
+          "body_box": [
+            23,
+            51,
+            289,
+            248
+          ],
+          "visible_box": [
+            23,
+            51,
+            289,
+            248
+          ],
+          "cell_size": [
+            313,
+            313
+          ],
+          "x": 0.4984025559105431,
+          "y": 0.792332268370607,
+          "body_pixels": 266,
+          "body_fraction": 0.8498402555910544,
+          "scale": 0.518679110821091
+        },
+        {
+          "body_box": [
+            12,
+            64,
+            295,
+            247
+          ],
+          "visible_box": [
+            12,
+            64,
+            295,
+            247
+          ],
+          "cell_size": [
+            313,
+            313
+          ],
+          "x": 0.4904153354632588,
+          "y": 0.7891373801916933,
+          "body_pixels": 283,
+          "body_fraction": 0.9041533546325878,
+          "scale": 0.5117822448783302
+        },
+        {
+          "body_box": [
+            14,
+            56,
+            291,
+            247
+          ],
+          "visible_box": [
+            14,
+            56,
+            291,
+            247
+          ],
+          "cell_size": [
+            314,
+            313
+          ],
+          "x": 0.4856687898089172,
+          "y": 0.7891373801916933,
+          "body_pixels": 277,
+          "body_fraction": 0.8821656050955414,
+          "scale": 0.48084974667253144
+        },
+        {
+          "body_box": [
+            39,
+            37,
+            298,
+            255
+          ],
+          "visible_box": [
+            39,
+            37,
+            298,
+            255
+          ],
+          "cell_size": [
+            314,
+            313
+          ],
+          "x": 0.5366242038216561,
+          "y": 0.8146964856230032,
+          "body_pixels": 259,
+          "body_fraction": 0.8248407643312102,
+          "scale": 0.5324533027235729
+        },
+        {
+          "body_box": [
+            25,
+            47,
+            281,
+            252
+          ],
+          "visible_box": [
+            25,
+            47,
+            281,
+            252
+          ],
+          "cell_size": [
+            313,
+            313
+          ],
+          "x": 0.48881789137380194,
+          "y": 0.805111821086262,
+          "body_pixels": 256,
+          "body_fraction": 0.8178913738019169,
+          "scale": 0.518679110821091
+        },
+        {
+          "body_box": [
+            11,
+            63,
+            294,
+            250
+          ],
+          "visible_box": [
+            11,
+            63,
+            294,
+            250
+          ],
+          "cell_size": [
+            313,
+            313
+          ],
+          "x": 0.48722044728434505,
+          "y": 0.7987220447284346,
+          "body_pixels": 283,
+          "body_fraction": 0.9041533546325878,
+          "scale": 0.5117822448783302
+        },
+        {
+          "body_box": [
+            14,
+            59,
+            290,
+            257
+          ],
+          "visible_box": [
+            14,
+            59,
+            290,
+            257
+          ],
+          "cell_size": [
+            314,
+            313
+          ],
+          "x": 0.4840764331210191,
+          "y": 0.8210862619808307,
+          "body_pixels": 276,
+          "body_fraction": 0.8789808917197452,
+          "scale": 0.48084974667253144
+        },
+        {
+          "body_box": [
+            35,
+            38,
+            304,
+            257
+          ],
+          "visible_box": [
+            35,
+            38,
+            304,
+            257
+          ],
+          "cell_size": [
+            314,
+            314
+          ],
+          "x": 0.5398089171974523,
+          "y": 0.8184713375796179,
+          "body_pixels": 269,
+          "body_fraction": 0.856687898089172,
+          "scale": 0.5324533027235729
+        },
+        {
+          "body_box": [
+            22,
+            52,
+            287,
+            251
+          ],
+          "visible_box": [
+            22,
+            52,
+            287,
+            251
+          ],
+          "cell_size": [
+            313,
+            314
+          ],
+          "x": 0.4936102236421725,
+          "y": 0.7993630573248408,
+          "body_pixels": 265,
+          "body_fraction": 0.8466453674121406,
+          "scale": 0.518679110821091
+        },
+        {
+          "body_box": [
+            12,
+            66,
+            281,
+            250
+          ],
+          "visible_box": [
+            12,
+            66,
+            281,
+            250
+          ],
+          "cell_size": [
+            313,
+            314
+          ],
+          "x": 0.4680511182108626,
+          "y": 0.7961783439490446,
+          "body_pixels": 269,
+          "body_fraction": 0.8594249201277955,
+          "scale": 0.5117822448783302
+        },
+        {
+          "body_box": [
+            14,
+            56,
+            291,
+            254
+          ],
+          "visible_box": [
+            14,
+            56,
+            291,
+            254
+          ],
+          "cell_size": [
+            314,
+            314
+          ],
+          "x": 0.4856687898089172,
+          "y": 0.8089171974522293,
+          "body_pixels": 277,
+          "body_fraction": 0.8821656050955414,
+          "scale": 0.48084974667253144
+        }
+      ],
+      "sha256": "850093579d13b78b2ce6827db9bbc7ea4ddef816f0698853f60e597df380b824",
+      "source": "exec-d95d4e06-da5f-43e4-815f-d9f99ab396e8.png",
+      "prompt": "Faithful high-definition remaster of the attached fantasy amphibian game animation atlas. This is a nonhuman armored cartoon creature for an adventure game. Preserve the existing character design, armor colors, proportions, exact poses, and angle of view. Output one square transparent PNG, FOUR columns by FOUR rows (16 sprites). Use ONLY original columns 5,6,7,8: up, up-right, right, down-right, in that exact order. Keep the original four animation rows: four original stone-armor preparation phases. The four included direction columns must have their own distinct original view; no extra columns. Sharp detailed game pixel artwork, clean outlines and clear material edges, no blur. Each character occupies about 70 percent of the cell width, fully contained within each equal cell with generous transparent gutters. Same character size throughout each column. Use highest native square resolution. Maintain genuine transparent background, no painted background, text, labels, shadows, effects or UI. This is an enhancement of the supplied game sprites, not a redesign."
+    },
+    {
+      "image": "chatacabra-death-hd-a-v1.png",
+      "action": 4,
+      "half": 0,
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "old_dimensions": [
+        1774,
+        887
+      ],
+      "old_body_pixel_median": 143.5,
+      "body_pixel_median": 243.5,
+      "body_pixel_ratio": 1.6968641114982579,
+      "frames": [
+        {
+          "body_box": [
+            70,
+            78,
+            295,
+            291
+          ],
+          "visible_box": [
+            70,
+            78,
+            295,
+            291
+          ],
+          "cell_size": [
+            314,
+            314
+          ],
+          "x": 0.5812101910828026,
+          "y": 0.9267515923566879,
+          "body_pixels": 225,
+          "body_fraction": 0.7165605095541401,
+          "scale": 0.5814814814814815
+        },
+        {
+          "body_box": [
+            67,
+            89,
+            282,
+            296
+          ],
+          "visible_box": [
+            67,
+            89,
+            282,
+            296
+          ],
+          "cell_size": [
+            313,
+            314
+          ],
+          "x": 0.5575079872204473,
+          "y": 0.9426751592356688,
+          "body_pixels": 215,
+          "body_fraction": 0.6869009584664537,
+          "scale": 0.6557720511208883
+        },
+        {
+          "body_box": [
+            63,
+            97,
+            281,
+            298
+          ],
+          "visible_box": [
+            63,
+            97,
+            281,
+            298
+          ],
+          "cell_size": [
+            313,
+            314
+          ],
+          "x": 0.549520766773163,
+          "y": 0.9490445859872612,
+          "body_pixels": 218,
+          "body_fraction": 0.6964856230031949,
+          "scale": 0.6854062020009132
+        },
+        {
+          "body_box": [
+            35,
+            86,
+            254,
+            295
+          ],
+          "visible_box": [
+            35,
+            86,
+            254,
+            295
+          ],
+          "cell_size": [
+            314,
+            314
+          ],
+          "x": 0.4601910828025478,
+          "y": 0.9394904458598726,
+          "body_pixels": 219,
+          "body_fraction": 0.697452229299363,
+          "scale": 0.6329343041671809
+        },
+        {
+          "body_box": [
+            56,
+            78,
+            296,
+            266
+          ],
+          "visible_box": [
+            56,
+            78,
+            296,
+            266
+          ],
+          "cell_size": [
+            314,
+            313
+          ],
+          "x": 0.5605095541401274,
+          "y": 0.8498402555910544,
+          "body_pixels": 240,
+          "body_fraction": 0.7643312101910829,
+          "scale": 0.5814814814814815
+        },
+        {
+          "body_box": [
+            57,
+            84,
+            306,
+            269
+          ],
+          "visible_box": [
+            57,
+            84,
+            306,
+            269
+          ],
+          "cell_size": [
+            313,
+            313
+          ],
+          "x": 0.5798722044728435,
+          "y": 0.8594249201277955,
+          "body_pixels": 249,
+          "body_fraction": 0.7955271565495208,
+          "scale": 0.6557720511208883
+        },
+        {
+          "body_box": [
+            42,
+            91,
+            298,
+            266
+          ],
+          "visible_box": [
+            42,
+            91,
+            298,
+            266
+          ],
+          "cell_size": [
+            313,
+            313
+          ],
+          "x": 0.5431309904153354,
+          "y": 0.8498402555910544,
+          "body_pixels": 256,
+          "body_fraction": 0.8178913738019169,
+          "scale": 0.6854062020009132
+        },
+        {
+          "body_box": [
+            27,
+            85,
+            264,
+            265
+          ],
+          "visible_box": [
+            27,
+            85,
+            264,
+            265
+          ],
+          "cell_size": [
+            314,
+            313
+          ],
+          "x": 0.46337579617834396,
+          "y": 0.8466453674121406,
+          "body_pixels": 237,
+          "body_fraction": 0.7547770700636943,
+          "scale": 0.6329343041671809
+        },
+        {
+          "body_box": [
+            55,
+            89,
+            300,
+            233
+          ],
+          "visible_box": [
+            55,
+            89,
+            300,
+            233
+          ],
+          "cell_size": [
+            314,
+            313
+          ],
+          "x": 0.5652866242038217,
+          "y": 0.744408945686901,
+          "body_pixels": 245,
+          "body_fraction": 0.7802547770700637,
+          "scale": 0.5814814814814815
+        },
+        {
+          "body_box": [
+            53,
+            91,
+            300,
+            232
+          ],
+          "visible_box": [
+            53,
+            91,
+            300,
+            232
+          ],
+          "cell_size": [
+            313,
+            313
+          ],
+          "x": 0.5638977635782748,
+          "y": 0.7412140575079872,
+          "body_pixels": 247,
+          "body_fraction": 0.7891373801916933,
+          "scale": 0.6557720511208883
+        },
+        {
+          "body_box": [
+            34,
+            97,
+            293,
+            227
+          ],
+          "visible_box": [
+            34,
+            97,
+            293,
+            227
+          ],
+          "cell_size": [
+            313,
+            313
+          ],
+          "x": 0.5223642172523961,
+          "y": 0.7252396166134185,
+          "body_pixels": 259,
+          "body_fraction": 0.8274760383386581,
+          "scale": 0.6854062020009132
+        },
+        {
+          "body_box": [
+            22,
+            98,
+            265,
+            227
+          ],
+          "visible_box": [
+            22,
+            98,
+            265,
+            227
+          ],
+          "cell_size": [
+            314,
+            313
+          ],
+          "x": 0.4570063694267516,
+          "y": 0.7252396166134185,
+          "body_pixels": 243,
+          "body_fraction": 0.7738853503184714,
+          "scale": 0.6329343041671809
+        },
+        {
+          "body_box": [
+            56,
+            82,
+            300,
+            217
+          ],
+          "visible_box": [
+            56,
+            82,
+            300,
+            217
+          ],
+          "cell_size": [
+            314,
+            314
+          ],
+          "x": 0.5668789808917197,
+          "y": 0.6910828025477707,
+          "body_pixels": 244,
+          "body_fraction": 0.7770700636942676,
+          "scale": 0.5814814814814815
+        },
+        {
+          "body_box": [
+            53,
+            91,
+            300,
+            217
+          ],
+          "visible_box": [
+            53,
+            91,
+            300,
+            217
+          ],
+          "cell_size": [
+            313,
+            314
+          ],
+          "x": 0.5638977635782748,
+          "y": 0.6910828025477707,
+          "body_pixels": 247,
+          "body_fraction": 0.7891373801916933,
+          "scale": 0.6557720511208883
+        },
+        {
+          "body_box": [
+            37,
+            94,
+            293,
+            215
+          ],
+          "visible_box": [
+            37,
+            94,
+            293,
+            215
+          ],
+          "cell_size": [
+            313,
+            314
+          ],
+          "x": 0.5271565495207667,
+          "y": 0.6847133757961783,
+          "body_pixels": 256,
+          "body_fraction": 0.8178913738019169,
+          "scale": 0.6854062020009132
+        },
+        {
+          "body_box": [
+            24,
+            91,
+            265,
+            215
+          ],
+          "visible_box": [
+            24,
+            91,
+            265,
+            215
+          ],
+          "cell_size": [
+            314,
+            314
+          ],
+          "x": 0.4601910828025478,
+          "y": 0.6847133757961783,
+          "body_pixels": 241,
+          "body_fraction": 0.767515923566879,
+          "scale": 0.6329343041671809
+        }
+      ],
+      "sha256": "a13d27cf44a38db2187e56011787413477d375b7a6990838c41af3a38aca449a",
+      "source": "exec-6d072fe5-27a9-4a3b-b867-0b7e8195fd8e.png",
+      "prompt": "Faithful high-definition remaster of the attached fantasy amphibian game animation atlas. This is a nonhuman armored cartoon creature for an adventure game. Preserve the existing character design, armor colors, proportions, exact poses, and angle of view. Output one square transparent PNG, FOUR columns by FOUR rows (16 sprites). Use ONLY original columns 1,2,3,4: down, down-left, left, up-left, in that exact order. Keep the original four animation rows: four original defeat and resting phases. The four included direction columns must have their own distinct original view; no extra columns. Sharp detailed game pixel artwork, clean outlines and clear material edges, no blur. Each character occupies about 70 percent of the cell width, fully contained within each equal cell with generous transparent gutters. Same character size throughout each column. Use highest native square resolution. Maintain genuine transparent background, no painted background, text, labels, shadows, effects or UI. This is an enhancement of the supplied game sprites, not a redesign."
+    },
+    {
+      "image": "chatacabra-death-hd-b-v1.png",
+      "action": 4,
+      "half": 1,
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "old_dimensions": [
+        1774,
+        887
+      ],
+      "old_body_pixel_median": 145.5,
+      "body_pixel_median": 229.0,
+      "body_pixel_ratio": 1.5738831615120275,
+      "frames": [
+        {
+          "body_box": [
+            64,
+            67,
+            272,
+            274
+          ],
+          "visible_box": [
+            64,
+            67,
+            272,
+            274
+          ],
+          "cell_size": [
+            314,
+            314
+          ],
+          "x": 0.535031847133758,
+          "y": 0.8726114649681529,
+          "body_pixels": 208,
+          "body_fraction": 0.6624203821656051,
+          "scale": 0.6630067567567567
+        },
+        {
+          "body_box": [
+            64,
+            67,
+            261,
+            276
+          ],
+          "visible_box": [
+            64,
+            67,
+            261,
+            276
+          ],
+          "cell_size": [
+            313,
+            314
+          ],
+          "x": 0.5191693290734825,
+          "y": 0.8789808917197452,
+          "body_pixels": 197,
+          "body_fraction": 0.6293929712460063,
+          "scale": 0.6937662218343019
+        },
+        {
+          "body_box": [
+            46,
+            69,
+            259,
+            276
+          ],
+          "visible_box": [
+            46,
+            69,
+            259,
+            276
+          ],
+          "cell_size": [
+            313,
+            314
+          ],
+          "x": 0.48722044728434505,
+          "y": 0.8789808917197452,
+          "body_pixels": 213,
+          "body_fraction": 0.6805111821086262,
+          "scale": 0.6751681258723512
+        },
+        {
+          "body_box": [
+            47,
+            80,
+            263,
+            268
+          ],
+          "visible_box": [
+            47,
+            80,
+            263,
+            268
+          ],
+          "cell_size": [
+            314,
+            314
+          ],
+          "x": 0.49363057324840764,
+          "y": 0.8535031847133758,
+          "body_pixels": 216,
+          "body_fraction": 0.6878980891719745,
+          "scale": 0.6155321988655322
+        },
+        {
+          "body_box": [
+            58,
+            83,
+            281,
+            252
+          ],
+          "visible_box": [
+            58,
+            83,
+            281,
+            252
+          ],
+          "cell_size": [
+            314,
+            313
+          ],
+          "x": 0.5398089171974523,
+          "y": 0.805111821086262,
+          "body_pixels": 223,
+          "body_fraction": 0.7101910828025477,
+          "scale": 0.6630067567567567
+        },
+        {
+          "body_box": [
+            55,
+            77,
+            275,
+            252
+          ],
+          "visible_box": [
+            55,
+            77,
+            275,
+            252
+          ],
+          "cell_size": [
+            313,
+            313
+          ],
+          "x": 0.5271565495207667,
+          "y": 0.805111821086262,
+          "body_pixels": 220,
+          "body_fraction": 0.7028753993610224,
+          "scale": 0.6937662218343019
+        },
+        {
+          "body_box": [
+            32,
+            80,
+            270,
+            252
+          ],
+          "visible_box": [
+            32,
+            80,
+            270,
+            252
+          ],
+          "cell_size": [
+            313,
+            313
+          ],
+          "x": 0.48242811501597443,
+          "y": 0.805111821086262,
+          "body_pixels": 238,
+          "body_fraction": 0.7603833865814696,
+          "scale": 0.6751681258723512
+        },
+        {
+          "body_box": [
+            39,
+            95,
+            272,
+            249
+          ],
+          "visible_box": [
+            39,
+            95,
+            272,
+            249
+          ],
+          "cell_size": [
+            314,
+            313
+          ],
+          "x": 0.49522292993630573,
+          "y": 0.7955271565495208,
+          "body_pixels": 233,
+          "body_fraction": 0.7420382165605095,
+          "scale": 0.6155321988655322
+        },
+        {
+          "body_box": [
+            53,
+            103,
+            283,
+            232
+          ],
+          "visible_box": [
+            53,
+            103,
+            283,
+            232
+          ],
+          "cell_size": [
+            314,
+            313
+          ],
+          "x": 0.535031847133758,
+          "y": 0.7412140575079872,
+          "body_pixels": 230,
+          "body_fraction": 0.732484076433121,
+          "scale": 0.6630067567567567
+        },
+        {
+          "body_box": [
+            48,
+            103,
+            276,
+            229
+          ],
+          "visible_box": [
+            48,
+            103,
+            276,
+            229
+          ],
+          "cell_size": [
+            313,
+            313
+          ],
+          "x": 0.5175718849840255,
+          "y": 0.731629392971246,
+          "body_pixels": 228,
+          "body_fraction": 0.7284345047923323,
+          "scale": 0.6937662218343019
+        },
+        {
+          "body_box": [
+            36,
+            103,
+            278,
+            228
+          ],
+          "visible_box": [
+            36,
+            103,
+            278,
+            228
+          ],
+          "cell_size": [
+            313,
+            313
+          ],
+          "x": 0.5015974440894568,
+          "y": 0.7284345047923323,
+          "body_pixels": 242,
+          "body_fraction": 0.7731629392971247,
+          "scale": 0.6751681258723512
+        },
+        {
+          "body_box": [
+            39,
+            103,
+            271,
+            229
+          ],
+          "visible_box": [
+            39,
+            103,
+            271,
+            229
+          ],
+          "cell_size": [
+            314,
+            313
+          ],
+          "x": 0.49363057324840764,
+          "y": 0.731629392971246,
+          "body_pixels": 232,
+          "body_fraction": 0.7388535031847133,
+          "scale": 0.6155321988655322
+        },
+        {
+          "body_box": [
+            53,
+            98,
+            283,
+            219
+          ],
+          "visible_box": [
+            53,
+            98,
+            283,
+            219
+          ],
+          "cell_size": [
+            314,
+            314
+          ],
+          "x": 0.535031847133758,
+          "y": 0.697452229299363,
+          "body_pixels": 230,
+          "body_fraction": 0.732484076433121,
+          "scale": 0.6630067567567567
+        },
+        {
+          "body_box": [
+            45,
+            98,
+            271,
+            215
+          ],
+          "visible_box": [
+            45,
+            98,
+            271,
+            215
+          ],
+          "cell_size": [
+            313,
+            314
+          ],
+          "x": 0.5047923322683706,
+          "y": 0.6847133757961783,
+          "body_pixels": 226,
+          "body_fraction": 0.7220447284345048,
+          "scale": 0.6937662218343019
+        },
+        {
+          "body_box": [
+            34,
+            98,
+            275,
+            215
+          ],
+          "visible_box": [
+            34,
+            98,
+            275,
+            215
+          ],
+          "cell_size": [
+            313,
+            314
+          ],
+          "x": 0.4936102236421725,
+          "y": 0.6847133757961783,
+          "body_pixels": 241,
+          "body_fraction": 0.7699680511182109,
+          "scale": 0.6751681258723512
+        },
+        {
+          "body_box": [
+            40,
+            94,
+            275,
+            218
+          ],
+          "visible_box": [
+            40,
+            94,
+            275,
+            218
+          ],
+          "cell_size": [
+            314,
+            314
+          ],
+          "x": 0.5015923566878981,
+          "y": 0.6942675159235668,
+          "body_pixels": 235,
+          "body_fraction": 0.7484076433121019,
+          "scale": 0.6155321988655322
+        }
+      ],
+      "sha256": "ca533bc192b12b880694360e98b672ebbbf0f5161283da5152ff13648eadaa3e",
+      "source": "exec-05baec7e-eba8-4956-a6db-357c06c90f4b.png",
+      "prompt": "Faithful high-definition remaster of the attached fantasy amphibian game animation atlas. This is a nonhuman armored cartoon creature for an adventure game. Preserve the existing character design, armor colors, proportions, exact poses, and angle of view. Output one square transparent PNG, FOUR columns by FOUR rows (16 sprites). Use ONLY original columns 5,6,7,8: up, up-right, right, down-right, in that exact order. Keep the original four animation rows: four original defeat and resting phases. The four included direction columns must have their own distinct original view; no extra columns. Sharp detailed game pixel artwork, clean outlines and clear material edges, no blur. Each character occupies about 70 percent of the cell width, fully contained within each equal cell with generous transparent gutters. Same character size throughout each column. Use highest native square resolution. Maintain genuine transparent background, no painted background, text, labels, shadows, effects or UI. This is an enhancement of the supplied game sprites, not a redesign."
+    }
+  ]
+}

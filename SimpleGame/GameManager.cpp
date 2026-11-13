@@ -11,6 +11,7 @@
 #include "WorldLayout.h"
 #include "DamageFeedback.h"
 #include "NpcSystem.h"
+#include "LootTable.h"
 
 #include <algorithm>
 #include <cmath>
@@ -147,16 +148,13 @@ void GameManager::UpdateGame(float deltaTime)
             auto &animal = m_State.animals[index];
             const float x = animal.position.x - m_State.player.x, z = animal.position.z - m_State.player.z;
             if (animal.health > 0 || animal.collected || x*x+z*z >= GameConstants::World::AnimalLootRange*GameConstants::World::AnimalLootRange) return;
-            const int teeth = animal.column == 1 ? 1 : 0;
-            if (m_State.inventory.Count(ItemId::BoarHide) >= Inventory::MaxStack ||
-                m_State.inventory.Count(ItemId::BoarTusk) > Inventory::MaxStack - teeth)
+            const auto drops = LootTable::Animal(animal.column);
+            if (!LootTable::Grant(m_State.inventory, drops))
             { ShowMessage(L"가방이 가득 찼습니다. 전리품은 남아 있습니다."); return; }
-            m_State.inventory.Add(ItemId::BoarHide);
-            if (teeth) m_State.inventory.Add(ItemId::BoarTusk);
             animal.collected = true;
             animal.respawnTime = GameConstants::World::AnimalRespawnSeconds;
             m_State.lootPickupTime = GameConstants::Loot::PickupDuration;
-            ShowMessage(teeth ? L"가죽 · 이빨 획득!" : L"가죽 획득!");
+            ShowMessage((LootTable::Summary(drops) + L" 획득!").c_str());
         }
         else if (m_State.lootTime == 0 && MonsterSystem::IsInteractableDrop(m_State.monster, m_State.player))
         {
@@ -168,7 +166,9 @@ void GameManager::UpdateGame(float deltaTime)
             else if (m_State.quest == QuestStage::Trophy)
             {
                 const auto result = QuestSystem::TryInteract(m_State, m_State.world.elder, m_State.world.tracks, m_State.world.herb);
-                if (const wchar_t *message = QuestSystem::GetInteractionMessage(result)) ShowMessage(message);
+                if (result == QuestSystem::InteractionResult::TrophyCollected)
+                    ShowMessage((LootTable::Summary(LootTable::Monster(m_State.monster.definition)) + L" 획득!").c_str());
+                else if (const wchar_t *message = QuestSystem::GetInteractionMessage(result)) ShowMessage(message);
             }
             if (m_State.completedHunts > hunts) m_State.lootPickupTime = GameConstants::Loot::PickupDuration;
         }
@@ -189,10 +189,11 @@ void GameManager::UpdateGame(float deltaTime)
         {
             animal.respawnTime = std::max(0.0f, animal.respawnTime - deltaTime);
             if (animal.respawnTime == 0)
-            { animal.health = GameConstants::World::AnimalHealth; animal.collected = false; animal.position = animal.home; }
+            { animal.health = GameConstants::World::AnimalHealth; animal.collected = false; animal.position = animal.home; animal.deathTime = 0; }
             continue;
         }
-        if (animal.health <= 0) continue;
+        if (animal.health <= 0) { animal.deathTime += deltaTime; continue; }
+        if (animal.hitFlash > 0) continue;
         animal.phase += deltaTime * animal.speed;
         animal.position.x = animal.home.x + std::sin(animal.phase) * 2.4f;
         animal.position.z = animal.home.z + std::cos(animal.phase * .7f) * 1.8f;
@@ -333,7 +334,7 @@ void GameManager::HandleCommand(GameCommand command)
             animal.hitFlash=GameConstants::Feedback::MonsterFlashDuration;
             RecordHit(animal.position,damage);
             if (animal.health==0)
-            { QuestSystem::AddExperience(m_State,GameConstants::World::AnimalExperience); ShowMessage(L"동물을 사냥했습니다. E로 전리품을 수집하세요."); }
+            { animal.deathTime = 0; QuestSystem::AddExperience(m_State,GameConstants::World::AnimalExperience); ShowMessage(L"동물을 사냥했습니다. E로 전리품을 수집하세요."); }
             return;
         }
         if (m_State.quest != QuestStage::Hunt && !StorySystem::IsHunting(m_State))

@@ -24,3 +24,4 @@ $licenses = Join-Path $destinationRoot 'Licenses'
 New-Item -ItemType Directory -Force -Path $licenses | Out-Null
 Copy-Item -LiteralPath (Join-Path $sourceRoot 'Dependencies/glfw/LICENSE.md') -Destination (Join-Path $licenses 'GLFW.txt') -Force
 Copy-Item -LiteralPath (Join-Path $sourceRoot 'Dependencies/glew/LICENSE.txt') -Destination (Join-Path $licenses 'GLEW.txt') -Force
+Copy-Item -LiteralPath (Join-Path $sourceRoot 'Assets/PixelArt/Effects/quest-glimmer-LICENSE.txt') -Destination (Join-Path $licenses 'PixelfxQuestGlimmer.txt') -Force

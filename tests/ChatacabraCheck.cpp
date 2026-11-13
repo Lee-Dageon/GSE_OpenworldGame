@@ -1,6 +1,7 @@
 #include "../SimpleGame/Monster.h"
 #include "../SimpleGame/GameConstants.h"
 #include "../SimpleGame/ChatacabraFrames.h"
+#include "../SimpleGame/ChatacabraHDFrames.h"
 #include <cassert>
 
 namespace
@@ -30,6 +31,13 @@ int main()
         assert(ChatacabraFrames::Direction((screen.x+2*screen.z)*.5f,(2*screen.z-screen.x)*.5f)==direction);
     }
     assert(ChatacabraFrames::Direction(0,0)==0);
+    for (const auto &sheet : ChatacabraHDFrames::Frames)
+        for (const auto &frame : sheet)
+        {
+            assert(frame.x > 0 && frame.x < 1 && frame.y > 0 && frame.y < 1);
+            assert(frame.widthScale > .1f && frame.widthScale < 2);
+            assert(frame.widthScale == frame.heightScale);
+        }
     for (const auto &sheet : ChatacabraFrames::Frames)
         for (const auto &frame : sheet)
         {

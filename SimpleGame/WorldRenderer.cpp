@@ -16,6 +16,10 @@
 #include "PixelPropFrames.h"
 #include "ChatacabraFrames.h"
 #include "PixelGeneralFrames.h"
+#include "InvestigationSprites.h"
+#include "BoarDeathFrames.h"
+#include "ChatacabraHDFrames.h"
+#include "AnimalHitFrames.h"
 
 #include <algorithm>
 #include <array>
@@ -180,6 +184,30 @@ WorldRenderer::WorldRenderer(Renderer &renderer) : m_Renderer(renderer)
     m_PlayerHitTexture = m_Renderer.LoadTexture(L"./Assets/PixelArt/Effects/boar-player-hit.png");
     m_BoarLootTexture = m_Renderer.LoadTexture(L"./Assets/PixelArt/Items/boar-loot-v1.png");
     m_AnimalCarcassTexture = m_Renderer.LoadTexture(L"./Assets/PixelArt/Animals/carcasses-v1.png");
+    m_BoarDeathTexture = m_Renderer.LoadTexture(L"./Assets/PixelArt/Animals/boar-death-v1.png");
+    m_QuestGlimmerTexture = m_Renderer.LoadTexture(L"./Assets/PixelArt/Effects/quest-glimmer.png");
+    for (int species = 0; species < 3; ++species)
+        m_AnimalHitTextures[species] = m_Renderer.LoadTexture(AnimalHitFrames::Files[species]);
+    for (auto texture : {m_QuestGlimmerTexture, m_AnimalHitTextures[0], m_AnimalHitTextures[1], m_AnimalHitTextures[2]})
+        if (texture != 0)
+        {
+            glBindTexture(GL_TEXTURE_2D, texture);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        }
+    for (size_t action = 0; action < m_ChatHdTextures.size(); ++action)
+        for (size_t half = 0; half < m_ChatHdTextures[action].size(); ++half)
+        {
+            const auto path = std::wstring(L"./Assets/PixelArt/Monsters/Chapter3/") + ChatacabraHDFrames::Files[action][half];
+            auto &texture = m_ChatHdTextures[action][half];
+            texture = m_Renderer.LoadTexture(path.c_str());
+            if (texture != 0)
+            {
+                glBindTexture(GL_TEXTURE_2D, texture);
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+            }
+        }
     m_AncientGuardianTexture = m_Renderer.LoadTexture(L"./Assets/PixelArt/Monsters/Chapter3/chatacabra-walk-8dir-v2.png");
     m_ChatDeathTexture = m_Renderer.LoadTexture(L"./Assets/PixelArt/Monsters/Chapter3/chatacabra-death-8dir-v1.png");
     m_ChatAttackTextures[0] = m_Renderer.LoadTexture(L"./Assets/PixelArt/Monsters/Chapter3/chatacabra-tongue-8dir-v2.png");
@@ -188,6 +216,18 @@ WorldRenderer::WorldRenderer(Renderer &renderer) : m_Renderer(renderer)
     m_ChatImpactTextures[0] = m_Renderer.LoadTexture(L"./Assets/PixelArt/Effects/chatacabra-saliva.png");
     m_ChatImpactTextures[1] = m_Renderer.LoadTexture(L"./Assets/PixelArt/Effects/chatacabra-slam.png");
     m_PixelSceneryTexture = m_Renderer.LoadTexture(L"./Assets/PixelArt/World/frontier-props-v1.png");
+    for (size_t index = 0; index < m_InvestigationTextures.size(); ++index)
+    {
+        const auto path = std::wstring(L"./Assets/PixelArt/Investigation/") + InvestigationSprites::Assets[index].file;
+        auto &texture = m_InvestigationTextures[index];
+        texture = m_Renderer.LoadTexture(path.c_str());
+        if (texture != 0)
+        {
+            glBindTexture(GL_TEXTURE_2D, texture);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        }
+    }
     m_SearchTexture = m_Renderer.LoadTexture(L"./Assets/PixelArt/Characters/hero-search-v1.png");
     m_AttackHitTextures[0] = m_Renderer.LoadTexture(L"./Assets/PixelArt/Effects/attack-hit-spark.png");
     m_AttackHitTextures[1] = m_Renderer.LoadTexture(L"./Assets/PixelArt/Effects/attack-hit-heavy.png");
@@ -217,7 +257,7 @@ WorldRenderer::WorldRenderer(Renderer &renderer) : m_Renderer(renderer)
                                  m_PixelAnimalTextures[0], m_PixelAnimalTextures[1], m_PixelAnimalTextures[2],
                                  m_Chapter1BoarTextures[0], m_Chapter1BoarTextures[1], m_Chapter1BoarTextures[2], m_PlayerHitTexture,
                                  m_AttackHitTextures[0], m_AttackHitTextures[1], m_AttackHitTextures[2], m_BoarLootTexture, m_SearchTexture, m_AnimalCarcassTexture, m_AncientGuardianTexture, m_PixelSceneryTexture,
-                                 m_ChatAttackTextures[0], m_ChatAttackTextures[1], m_ChatAttackTextures[2], m_ChatImpactTextures[0], m_ChatImpactTextures[1], m_ChatDeathTexture})
+                                 m_ChatAttackTextures[0], m_ChatAttackTextures[1], m_ChatAttackTextures[2], m_ChatImpactTextures[0], m_ChatImpactTextures[1], m_ChatDeathTexture, m_BoarDeathTexture})
         if (texture != 0)
         {
             glBindTexture(GL_TEXTURE_2D, texture);
@@ -229,6 +269,15 @@ WorldRenderer::WorldRenderer(Renderer &renderer) : m_Renderer(renderer)
 
 WorldRenderer::~WorldRenderer()
 {
+    for (auto texture : m_AnimalHitTextures)
+        if (texture != 0) glDeleteTextures(1, &texture);
+    if (m_QuestGlimmerTexture != 0) glDeleteTextures(1, &m_QuestGlimmerTexture);
+    if (m_BoarDeathTexture != 0) glDeleteTextures(1, &m_BoarDeathTexture);
+    for (const auto &action : m_ChatHdTextures)
+        for (auto texture : action)
+            if (texture != 0) glDeleteTextures(1, &texture);
+    for (auto texture : m_InvestigationTextures)
+        if (texture != 0) glDeleteTextures(1, &texture);
     for (auto texture:m_RosterNpcTextures)
         if (texture) glDeleteTextures(1,&texture);
     if (m_ChatDeathTexture) glDeleteTextures(1, &m_ChatDeathTexture);
@@ -381,6 +430,30 @@ void WorldRenderer::DrawPixelSprite(Vec2 position, unsigned int texture, float w
                           width, height, 0, 0, 1, 1, 1, 1, 1, 1, sway, pivotY, 0, 1, 1, .5f);
 }
 
+void WorldRenderer::DrawInvestigation(Vec2 position, int asset, bool disabled) const
+{
+    const auto &sprite = InvestigationSprites::Assets[asset];
+    const Vec2 screen = ToScreen(position);
+    if (m_InvestigationTextures[asset] != 0)
+    {
+        const float tint = disabled ? .48f : 1.0f;
+        m_Renderer.DrawSprite(m_InvestigationTextures[asset],
+            screen.x + (.5f - sprite.pivotX) * sprite.size,
+            screen.z + (sprite.pivotY - .5f) * sprite.size,
+            sprite.size, sprite.size, 0, 0, 1, 1,
+            1, tint, tint, tint, 0, 0, 0, 1, 1, .5f);
+        return;
+    }
+    // Keep missing textures readable as physical clues, without a yellow placeholder.
+    for (int index = 0; index < 3; ++index)
+    {
+        const float x = screen.x + (index - 1) * 12;
+        const float y = screen.z + (index - 1) * 5;
+        m_Renderer.DrawEffectRect(x - 3, y, 5, 9, 0, .20f, .13f, .07f, 1, 3);
+        m_Renderer.DrawEffectRect(x + 3, y, 5, 9, 0, .20f, .13f, .07f, 1, 3);
+    }
+}
+
 void WorldRenderer::DrawGeneralPlayer(const GameState &state) const
 {
     const bool running = state.moving && state.sprint && state.attack <= 0.0f && m_GeneralRunTexture != 0;
@@ -500,6 +573,77 @@ bool WorldRenderer::DrawPixelAnimal(Vec2 position, int species, Vec2 facing, int
     return true;
 }
 
+void WorldRenderer::DrawQuestGlimmer(Vec2 position, float height, float phase) const
+{
+    const Vec2 screen = ToScreen(position);
+    const float scale = height / 112;
+    const float alpha = Distance(position, m_State->player) < 4 ? 1.0f : .65f;
+    const int frame = static_cast<int>((m_State->time + phase) * 30) % 72;
+    if (m_QuestGlimmerTexture != 0)
+        m_Renderer.DrawSprite(m_QuestGlimmerTexture, screen.x, screen.z + 44 * scale,
+            96 * scale, height, frame % 10, frame / 10, 10, 8, alpha);
+}
+
+void WorldRenderer::DrawLoot(Vec2 position, const LootTable::Drops &drops) const
+{
+    const Vec2 screen = ToScreen(position);
+    int count = 0;
+    for (int quantity : drops) if (quantity > 0) ++count;
+    int slot = 0;
+    for (size_t index = 0; index < drops.size(); ++index)
+    {
+        if (drops[index] <= 0) continue;
+        const auto item = static_cast<ItemId>(index);
+        const auto path = ItemTexture(item);
+        const auto texture = path ? m_Renderer.UiTexture(path) : m_BoarLootTexture;
+        const float x = screen.x + (slot - (count - 1) * .5f) * 34;
+        const float y = screen.z + 35 + std::sin(m_State->time * 3 + slot * 1.7f) * 3;
+        if (texture != 0)
+            m_Renderer.DrawSprite(texture, x, y, 36, 36, path ? 0 : (item == ItemId::BoarHide ? 1 : 0),
+                0, path ? 1 : 2, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, .5f);
+        ++slot;
+    }
+    DrawQuestGlimmer(position, 90, position.x * .01f + 1);
+    if (Distance(position, m_State->player) < 3)
+    {
+        const auto label = LootTable::Summary(drops);
+        m_Renderer.DrawLabel(m_State->width * .5f + screen.x, m_State->height * .5f + screen.z + 85,
+            label.c_str(), 1, .9f, .6f, .45f, 1, true);
+    }
+}
+
+bool WorldRenderer::DrawAnimalHit(Vec2 position, int species, Vec2 facing, float height, float remaining) const
+{
+    if (species < 0 || species >= 3 || remaining <= 0 || m_AnimalHitTextures[species] == 0) return false;
+    const float dx = facing.x - facing.z, dy = (facing.x + facing.z) * .5f;
+    const int direction = std::abs(dx) > std::abs(dy) ? (dx < 0 ? 1 : 2) : (dy < 0 ? 0 : 3);
+    const int pose = AnimalHitFrames::Pose(remaining);
+    const auto frame = AnimalHitFrames::Frames[species][pose * 4 + direction];
+    const float size = height * frame.scale;
+    const Vec2 screen = ToScreen(position);
+    DrawShadow(position, height * .55f, 9);
+    m_Renderer.DrawSprite(m_AnimalHitTextures[species], screen.x + (.5f - frame.x) * size,
+        screen.z + (frame.y - .5f) * size, size, size, direction, pose, 4, 4,
+        1, 1, 1, 1, 0, 0, 0, 1, 1, .5f);
+    return true;
+}
+
+bool WorldRenderer::DrawBoarDeath(Vec2 position, Vec2 facing, float height, float elapsed) const
+{
+    if (m_BoarDeathTexture == 0) return false;
+    const float dx = facing.x - facing.z, dy = (facing.x + facing.z) * .5f;
+    const int direction = std::abs(dx) > std::abs(dy) ? (dx < 0 ? 1 : 2) : (dy < 0 ? 0 : 3);
+    const int pose = BoarDeathFrames::Pose(elapsed);
+    const auto frame = BoarDeathFrames::Frames[pose * 4 + direction];
+    const float size = height * frame.scale;
+    const Vec2 screen = ToScreen(position);
+    DrawShadow(position, height * .55f, 12);
+    m_Renderer.DrawSprite(m_BoarDeathTexture, screen.x + (.5f - frame.x) * size,
+        screen.z + (frame.y - .5f) * size, size, size, direction, pose, 4, 4,
+        1, 1, 1, 1, 0, 0, 0, 1, 1, .5f);
+    return true;
+}
+
 bool WorldRenderer::DrawChapter1Boar(const MonsterState &monster) const
 {
     if (monster.definition.id != "rampaging_boar") return false;
@@ -547,7 +691,7 @@ bool WorldRenderer::DrawRosterNpc(const NpcState &npc) const
     const auto frame=NpcRosterFrames::Frames[visual][pose*4+direction];
     const float size=GameConstants::Npc::SpriteHeight*frame.scale;
     const Vec2 screen=ToScreen(npc.position);
-    DrawShadow(npc.position,32,9);
+    DrawShadow(npc.position,32*GameConstants::Npc::SpriteHeight/100,9*GameConstants::Npc::SpriteHeight/100);
     m_Renderer.DrawSprite(m_RosterNpcTextures[visual],screen.x+(.5f-frame.x)*size,
         screen.z+(frame.y-.5f)*size,size,size,direction,pose,4,4,1,1,1,1,0,0,0,1,1,.5f);
     return true;
@@ -559,9 +703,9 @@ void WorldRenderer::DrawPixelNpc(const NpcState &npc, int variant) const
     const int direction = std::abs(dx) > std::abs(dy) ? (dx < 0 ? 1 : 2) : (dy < 0 ? 0 : 3);
     const int frame = npc.moving ? (static_cast<int>(npc.phase) % 4 + 4) % 4 : 1;
     const auto &region = PixelNpcFrames::Frames[variant][frame][direction];
-    const float scale = PixelNpcFrames::Scale[variant];
+    const float scale = PixelNpcFrames::Scale[variant]*GameConstants::Npc::SpriteHeight/100;
     const Vec2 screen = ToScreen(npc.position);
-    DrawShadow(npc.position, 32, 9);
+    DrawShadow(npc.position, 32*GameConstants::Npc::SpriteHeight/100, 9*GameConstants::Npc::SpriteHeight/100);
     const int role=NpcSystem::Role(npc);
     static constexpr float tint[8][3]={{1,1,1},{.85f,.8f,.75f},{.8f,1,.85f},{1,.85f,.65f},
         {.8f,.9f,.7f},{.8f,.85f,1},{1,1,.85f},{.85f,.8f,1}};
@@ -902,7 +1046,7 @@ void WorldRenderer::RenderWorld(const GameState &state)
     m_State = &state;
     m_Renderer.SetWorldScale(WorldScale * state.height / 720.0f);
     DrawGround();
-    enum class DrawType { House, Tree, Campfire, Npc, Animal, Tracks, Herb, Monster, Player, NoticeBoard, Decoration, Scenery, StoryMarker };
+    enum class DrawType { House, Tree, Campfire, Npc, Animal, Tracks, Herb, Monster, Player, NoticeBoard, Decoration, Scenery, Investigation, StoryMarker };
     struct DrawItem { Vec2 position; DrawType type; int index; };
     std::vector<DrawItem> items;
     for (int index = 0; index < static_cast<int>(Map().houses.size()); ++index)
@@ -951,14 +1095,18 @@ void WorldRenderer::RenderWorld(const GameState &state)
         items.push_back({state.npcs[index].position, DrawType::Npc, index});
     for (int index = 0; index < static_cast<int>(state.animals.size()); ++index)
         items.push_back({state.animals[index].position, DrawType::Animal, index});
-    if (state.quest == QuestStage::Tracks)
-        items.push_back({state.world.tracks, DrawType::Tracks, 0});
+    items.push_back({state.world.tracks, DrawType::Tracks, 0});
     if (state.quest == QuestStage::Herb || (state.herbRegrowTime <= 0 &&
         state.quest != QuestStage::Elder && state.quest != QuestStage::Tracks))
         items.push_back({state.world.herb, DrawType::Herb, 0});
     if (state.quest == QuestStage::Hunt || state.quest == QuestStage::Trophy || StorySystem::IsHunting(state) || StorySystem::HasDrop(state))
         items.push_back({state.monster.position, DrawType::Monster, 0});
-    if (StorySystem::Current(state) && !StorySystem::IsHunting(state) && !StorySystem::HasDrop(state))
+    const auto &storySteps = GameContent::Get().story.steps;
+    for (int index = 0; index < static_cast<int>(storySteps.size()); ++index)
+        if (InvestigationSprites::Find(storySteps[index].id) >= 0)
+            items.push_back({storySteps[index].position, DrawType::Investigation, index});
+    if (StorySystem::Current(state) && !StorySystem::IsHunting(state) && !StorySystem::HasDrop(state) &&
+        InvestigationSprites::Find(StorySystem::Current(state)->id) < 0)
         items.push_back({StorySystem::Target(state),DrawType::StoryMarker,0});
     items.push_back({state.player, DrawType::Player, 0});
 
@@ -971,11 +1119,26 @@ void WorldRenderer::RenderWorld(const GameState &state)
         ApplyLocalLight(m_Renderer, item.position, state.time);
         switch (item.type)
         {
+        case DrawType::Investigation:
+        {
+            const auto &step = storySteps[item.index];
+            const int asset = InvestigationSprites::Find(step.id);
+            const Vec2 p = ToScreen(item.position);
+            if (StorySystem::Current(state) == &step)
+                m_Renderer.DrawEffectRect(p.x, p.z, 65, 24, 0, .35f, .85f, .72f,
+                    .22f + .06f * std::sin(state.time * 2), 3);
+            const bool control = step.id == "ruin_control";
+            DrawInvestigation(item.position, asset, control && state.ruinDeviceDisabled);
+            if (control && !state.ruinDeviceDisabled)
+                m_Renderer.DrawEffectRect(p.x, p.z + 48, 28, 70, 0, .25f, .85f, 1,
+                    .22f + .06f * std::sin(state.time * 4), 15);
+            break;
+        }
         case DrawType::StoryMarker:
         {
             const Vec2 p = ToScreen(item.position);
-            m_Renderer.DrawEffectRect(p.x,p.z,28,13,0,.95f,.75f,.25f,.22f,3);
-            m_Renderer.DrawSolidRect(p.x,p.z+15+std::sin(state.time*2)*2,6,6,Pi*.25f,.95f,.78f,.30f,.9f);
+            m_Renderer.DrawEffectRect(p.x,p.z,34,14,0,.35f,.85f,.72f,.28f,3);
+            m_Renderer.DrawEffectRect(p.x,p.z+18+std::sin(state.time*2)*2,7,9,0,.65f,1,.85f,.8f,3);
             break;
         }
         case DrawType::Scenery:
@@ -1065,19 +1228,20 @@ void WorldRenderer::RenderWorld(const GameState &state)
         case DrawType::Npc:
         {
             const NpcState &npc = state.npcs[item.index];
+            const bool elder = Distance(npc.wanderSeed != 0 ? npc.home : npc.position, state.world.elder) < .1f;
+            const float displayHeight=elder ? 100.0f : GameConstants::Npc::SpriteHeight;
             if (Distance(npc.position,state.player)<GameConstants::Npc::LabelRange)
             {
                 const Vec2 label=ToScreen(npc.position);
                 const auto name=std::wstring(NpcSystem::Name(npc))+L" · "+NpcSystem::Job(npc);
-                m_Renderer.DrawLabel(state.width*.5f+label.x,state.height*.5f+label.z+108,
+                m_Renderer.DrawLabel(state.width*.5f+label.x,state.height*.5f+label.z+displayHeight+8,
                     name.c_str(),1,.9f,.65f,.75f,1,true);
             }
-            const bool elder = Distance(npc.wanderSeed != 0 ? npc.home : npc.position, state.world.elder) < .1f;
             if (DrawRosterNpc(npc)) break;
             if (m_ElderTexture != 0 && elder)
             {
                 DrawShadow(npc.position, 35, 9);
-                DrawPixelSprite(npc.position, m_ElderTexture, 100 * (2.0f / 3.0f), 100, .0332f);
+                DrawPixelSprite(npc.position, m_ElderTexture, displayHeight * (2.0f / 3.0f), displayHeight, .0332f);
                 break;
             }
             const int variant=(NpcSystem::Role(npc)==3 || NpcSystem::Role(npc)==5) ? 1 : 0;
@@ -1088,8 +1252,8 @@ void WorldRenderer::RenderWorld(const GameState &state)
             }
             const Vec2 facing = npc.moving ? npc.facing : Vec2{state.player.x - npc.position.x, state.player.z - npc.position.z};
             const int frame = npc.moving ? (static_cast<int>(npc.phase) % 4 + 4) % 4 : 0;
-            if (!DrawAtlasSprite(npc.position, m_HumanTexture, facing, frame, 100, HumanPivotY))
-                DrawSprite(npc.position, npc.column, npc.row, 88, 112);
+            if (!DrawAtlasSprite(npc.position, m_HumanTexture, facing, frame, displayHeight, HumanPivotY))
+                DrawSprite(npc.position, npc.column, npc.row, 88*displayHeight/100, 112*displayHeight/100);
             break;
         }
         case DrawType::Animal:
@@ -1099,13 +1263,17 @@ void WorldRenderer::RenderWorld(const GameState &state)
             if (animal.health <= 0)
             {
                 const Vec2 p=ToScreen(animal.position);
-                if (m_AnimalCarcassTexture)
-                    m_Renderer.DrawSprite(m_AnimalCarcassTexture,p.x,p.z+18,90,90,animal.column,0,3,1);
-                else DrawPixelAnimal(animal.position,animal.column,{1,0},1,90,true);
-                const float bob=std::sin(state.time*3)*3;
-                m_Renderer.DrawEffectRect(p.x,p.z+20,60,35,0,1,.76f,.2f,.5f,15);
-                m_Renderer.DrawSprite(m_BoarLootTexture,p.x,p.z+40+bob,32,32,1,0,2,1);
-                if (animal.column==1) m_Renderer.DrawSprite(m_BoarLootTexture,p.x+25,p.z+40+bob,32,32,0,0,2,1);
+                const Vec2 facing = {std::cos(animal.phase) * 2.4f,
+                    -std::sin(animal.phase * .7f) * 1.8f * .7f};
+                const bool boarDeath = animal.column == 1 && DrawBoarDeath(animal.position, facing,
+                    GameConstants::World::BoarSpriteSize, animal.deathTime);
+                if (!boarDeath)
+                {
+                    if (m_AnimalCarcassTexture)
+                        m_Renderer.DrawSprite(m_AnimalCarcassTexture,p.x,p.z+18,90,90,animal.column,0,3,1);
+                    else DrawPixelAnimal(animal.position,animal.column,{1,0},1,90,true);
+                }
+                DrawLoot(animal.position, LootTable::Animal(animal.column));
                 break;
             }
             m_Renderer.SetSpriteFlash(animal.hitFlash/GameConstants::Feedback::MonsterFlashDuration);
@@ -1113,7 +1281,10 @@ void WorldRenderer::RenderWorld(const GameState &state)
                                   -std::sin(animal.phase * .7f) * 1.8f * .7f};
             const unsigned int texture = animal.column == 0 ? m_DeerTexture : (animal.column == 1 ? m_BoarTexture : m_SheepTexture);
             const int frame = static_cast<int>(state.time * 8.0f + animal.phase) % 4;
-            if (!DrawPixelAnimal(animal.position, animal.column == 0 ? 0 : (animal.column == 1 ? 1 : 2), facing, frame,
+            const float animalHeight = animal.column == 0 ? GameConstants::World::DeerSpriteSize :
+                animal.column == 1 ? GameConstants::World::BoarSpriteSize : GameConstants::World::SheepSpriteSize;
+            if (!DrawAnimalHit(animal.position, animal.column, facing, animalHeight, animal.hitFlash) &&
+                !DrawPixelAnimal(animal.position, animal.column == 0 ? 0 : (animal.column == 1 ? 1 : 2), facing, frame,
                                  animal.column == 0 ? GameConstants::World::DeerSpriteSize :
                                      (animal.column == 1 ? GameConstants::World::BoarSpriteSize : GameConstants::World::SheepSpriteSize)) &&
                 !DrawAtlasSprite(animal.position, texture, facing, frame, animal.column == 0 ? 128.0f : 110.0f, AnimalPivotY))
@@ -1127,7 +1298,14 @@ void WorldRenderer::RenderWorld(const GameState &state)
             }
             break;
         }
-        case DrawType::Tracks: DrawRect(item.position, 30, 9, Pi * .2f, .12f, .07f, .03f); break;
+        case DrawType::Tracks:
+            if (state.quest == QuestStage::Tracks)
+            {
+                const Vec2 p = ToScreen(item.position);
+                m_Renderer.DrawEffectRect(p.x, p.z, 65, 24, 0, .35f, .85f, .72f, .25f, 3);
+            }
+            DrawInvestigation(item.position, 0);
+            break;
         case DrawType::Herb: DrawHerbPatch(item.position); break;
         case DrawType::Monster:
         {
@@ -1139,7 +1317,8 @@ void WorldRenderer::RenderWorld(const GameState &state)
                                                   distance > state.monster.definition.attackRange && distance < state.monster.definition.chaseRange;
                                               const bool chapterAnimation = state.monster.health <= 0 ||
                                                   state.monster.hitAnimation > 0 || state.monster.attackAnimation > 0;
-                                              if (state.monster.definition.id == "ancient_guardian" && m_AncientGuardianTexture)
+                                              if (state.monster.definition.id == "ancient_guardian" &&
+                                                  (m_AncientGuardianTexture || m_ChatHdTextures[0][0] || m_ChatHdTextures[0][1]))
                                               {
                                                   const auto &monster=state.monster;
                                                   const Vec2 aim=monster.health<=0 || monster.chatPattern>=0 ? monster.animationFacing : facing;
@@ -1152,7 +1331,7 @@ void WorldRenderer::RenderWorld(const GameState &state)
                                                   auto texture=m_AncientGuardianTexture;
                                                   const int action=monster.health>0 ? (monster.chatPattern>=0 ? monster.chatPattern :
                                                       (monster.chatArmorHits>0 && !guardianWalking ? 2 : -1)) : -1;
-                                                  if (action>=0 && m_ChatAttackTextures[action])
+                                                  if (action>=0 && (m_ChatAttackTextures[action] || m_ChatHdTextures[action+1][direction/4]))
                                                   {
                                                       pose=monster.chatPattern<0 ? 3 : ChatacabraFrames::Pose(action,monster.chatElapsed);
                                                       sheet=action+1;
@@ -1164,17 +1343,32 @@ void WorldRenderer::RenderWorld(const GameState &state)
                                                       pose=ChatacabraFrames::DeathPose(monster.deathTime);
                                                       texture=m_ChatDeathTexture;
                                                   }
-                                                  const auto frame=deathSprite ? ChatacabraFrames::DeathFrames[pose*8+direction] :
+                                                  auto frame=deathSprite ? ChatacabraFrames::DeathFrames[pose*8+direction] :
                                                       ChatacabraFrames::Frames[sheet][pose*8+direction];
+                                                  int columns = 8, column = direction;
+                                                  const int hdAction = monster.health <= 0 ? 4 : sheet;
+                                                  if (const auto hdTexture = m_ChatHdTextures[hdAction][direction / 4])
+                                                  {
+                                                      if (monster.health <= 0) pose = ChatacabraFrames::DeathPose(monster.deathTime);
+                                                      texture = hdTexture;
+                                                      frame = ChatacabraHDFrames::Frames[hdAction][pose * 8 + direction];
+                                                      columns = 4;
+                                                      column = direction % 4;
+                                                  }
                                                   const float width=size*frame.widthScale;
-                                                  const float height=size*frame.heightScale*(monster.health<=0 && !deathSprite ? .45f : 1.0f);
-                                                  DrawShadow(p,state.monster.definition.spriteHeight*.55f,12);
+                                                  const float height=size*frame.heightScale*(monster.health<=0 && !deathSprite && columns==8 ? .45f : 1.0f);
+                                                  DrawShadow(p,state.monster.definition.spriteHeight*.55f * GameConstants::Chatacabra::SpriteScale / 2,
+                                                      12 * GameConstants::Chatacabra::SpriteScale / 2);
                                                   m_Renderer.DrawSprite(texture,screen.x+(.5f-frame.x)*width,
                                                       screen.z+(frame.y-.5f)*height,
-                                                      width,height,direction,pose,8,4,1,1,1,1,0,0,0,1,1,.5f);
+                                                      width,height,column,pose,columns,4,1,1,1,1,0,0,0,1,1,.5f);
                                                   return;
                                               }
                                               if ((!walking || chapterAnimation) && DrawChapter1Boar(state.monster)) return;
+                                              if (state.monster.health > 0 && DrawAnimalHit(p, 1, facing,
+                                                  state.monster.definition.spriteHeight, state.monster.hitFlash)) return;
+                                              if (state.monster.health <= 0 && DrawBoarDeath(p, state.monster.animationFacing,
+                                                  state.monster.definition.spriteHeight, state.monster.deathTime)) return;
                                               const int frame = walking ? static_cast<int>(state.time * 8.0f) % 4 : 0;
                                               if (!DrawPixelAnimal(p, 1, facing, frame, state.monster.definition.spriteHeight, state.monster.health <= 0) &&
                                                   !DrawAtlasSprite(p, m_BoarTexture, facing, frame, state.monster.definition.spriteHeight, AnimalPivotY, state.monster.health <= 0))
@@ -1194,21 +1388,8 @@ void WorldRenderer::RenderWorld(const GameState &state)
                 if (pending) m_Renderer.DrawEffectRect(target.x,target.z,TelegraphWidthPerUnit*radius,
                     TelegraphHeightPerUnit*radius,0,1,.38f,.12f,.4f,3);
             }
-            MonsterSystem::Draw(state.monster, context, hasLoot && m_BoarLootTexture == 0);
-            if (hasLoot && m_BoarLootTexture != 0)
-            {
-                const Vec2 foot = ToScreen(state.monster.position);
-                for (int item = 0; item < 2; ++item)
-                {
-                    const float x = foot.x + (item == 0 ? -24 : 24);
-                    const float bob = std::sin(state.time * 3 + item * 2) * 3;
-                    m_Renderer.DrawSolidRect(x, foot.z + 32, 8, 65, 0, 1, .68f, .18f, .16f);
-                    m_Renderer.DrawEffectRect(x, foot.z + 14, 48, 18, 0, 1, .76f, .25f, .4f, 3);
-                    m_Renderer.DrawSprite(m_BoarLootTexture, x, foot.z + 35 + bob, 42, 42, item, 0, 2, 1);
-                    m_Renderer.DrawEffectRect(x + 12, foot.z + 52 + bob, 14, 14, state.time, 1, .95f, .6f,
-                        .45f + .3f * std::sin(state.time * 5 + item), 15);
-                }
-            }
+            MonsterSystem::Draw(state.monster, context, false);
+            if (hasLoot) DrawLoot(state.monster.position, LootTable::Monster(state.monster.definition));
             m_Renderer.SetSpriteFlash(0);
             break;
         }
@@ -1408,14 +1589,18 @@ void WorldRenderer::RenderWorld(const GameState &state)
             m_Renderer.DrawEffectRect(screen.x, screen.z + 40, 100, 80, state.time,
                 1, .8f, .25f, state.lootPickupTime, 15);
     }
-    for (const auto &step : GameContent::Get().story.steps)
-        if (step.id == "ruin_control")
+    if (const auto *step = StorySystem::Current(state))
+    {
+        if (!StorySystem::IsHunting(state) && !StorySystem::HasDrop(state))
         {
-            const Vec2 p=ToScreen(step.position);
-            const float power=state.ruinDeviceDisabled ? .15f : .65f+.2f*std::sin(state.time*4);
-            m_Renderer.DrawEffectRect(p.x,p.z+45,60,110,0,.25f,.85f,1,power,15);
-            if (!state.ruinDeviceDisabled)
-                m_Renderer.DrawSolidRect(p.x,p.z+65,7,120,0,.25f,.85f,1,.3f);
+            const int asset = InvestigationSprites::Find(step->id);
+            const float height = asset >= 0 ? std::max(112.0f, InvestigationSprites::Assets[asset].size) : 125.0f;
+            DrawQuestGlimmer(StorySystem::Target(state), height);
         }
+    }
+    else if (state.quest == QuestStage::Tracks) DrawQuestGlimmer(state.world.tracks);
+    else if (state.quest == QuestStage::Herb) DrawQuestGlimmer(state.world.herb, 95);
+    else if (state.quest == QuestStage::Elder || state.quest == QuestStage::Return || state.quest == QuestStage::Complete)
+        DrawQuestGlimmer(state.world.elder, 135);
     m_State = nullptr;
 }
