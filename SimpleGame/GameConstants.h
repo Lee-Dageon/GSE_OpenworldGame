@@ -75,6 +75,8 @@ constexpr float TelegraphWidthPerUnit = 90.51f, TelegraphHeightPerUnit = 45.25f;
 constexpr float ImpactScale = 1.15f, ArmoredImpactScale = 1.5f;
 constexpr float SpriteScale = 5.0f; // Giant on-screen body; keep atlas alignment and combat distances independent.
 constexpr float DeathFrameDuration = .22f;
+constexpr float IntroDuration = 4.8f, IntroPanDuration = 1.0f, IntroReturnDuration = 1.0f;
+constexpr float IntroZoom = .5f, IntroImpactTime = 1.85f;
 }
 namespace Inventory
 {
@@ -91,6 +93,7 @@ namespace World
 constexpr int AnimalHealth = 12, AnimalExperience = 3;
 constexpr float AnimalHitRange = 1.9f, AnimalLootRange = 1.5f, AnimalRespawnSeconds = 60.0f;
 constexpr float Scale = 2.6f;
+constexpr float ZoomMinimum = .4f, ZoomMaximum = 1.6f, ZoomStep = 1.12f;
 constexpr float DeerSpriteSize = 88.0f, BoarSpriteSize = 110.0f, SheepSpriteSize = 72.0f;
 }
 namespace Ui

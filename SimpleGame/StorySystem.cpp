@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "LootTable.h"
+#include "BossIntro.h"
 #include "StorySystem.h"
 #include "QuestSystem.h"
 #include "CraftingSystem.h"
@@ -16,7 +17,10 @@ void EnterStep(GameState &state)
     const auto *step = StorySystem::Current(state);
     if (!step) return;
     if (step->action == GameContent::StoryAction::Hunt)
+    {
         state.monster = MonsterSystem::Create(GameContent::Get().monsters.at(step->monsterId),step->position);
+        if (step->monsterId == "ancient_guardian") BossIntro::Start(state);
+    }
     if (step->action == GameContent::StoryAction::CraftArmor)
         state.armorRecipeUnlocked = true;
 }
@@ -67,6 +71,7 @@ bool DebugEnterStep(GameState &state, const std::string &stepId)
     GameState prepared = CreateInitialGameState();
     prepared.width = state.width;
     prepared.height = state.height;
+    prepared.cameraZoom = state.cameraZoom;
     prepared.lastTime = state.lastTime;
     prepared.time = state.time;
     prepared.quest = QuestStage::Complete;

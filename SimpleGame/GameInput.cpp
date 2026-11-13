@@ -1,7 +1,10 @@
 #include "stdafx.h"
 #include "GameInput.h"
+#include "BossIntro.h"
 
 #include <cctype>
+#include <algorithm>
+#include <cmath>
 
 namespace GameInput
 {
@@ -11,6 +14,11 @@ GameCommand OnKeyDown(GameState &state, unsigned char key, bool shiftHeld)
     const bool repeated = state.keys[normalizedKey];
     state.keys[normalizedKey] = true;
     state.sprint = shiftHeld;
+    if (BossIntro::Active(state))
+    {
+        if (!repeated && (normalizedKey == 27 || normalizedKey == ' ')) BossIntro::Skip(state);
+        return GameCommand::None;
+    }
 
     switch (normalizedKey)
     {
@@ -44,5 +52,13 @@ void OnKeyUp(GameState &state, unsigned char key)
 GameCommand OnMouseButton(bool isLeftButton, bool isPressed)
 {
     return isLeftButton && isPressed ? GameCommand::Attack : GameCommand::None;
+}
+void OnScroll(GameState &state, double verticalOffset)
+{
+    if (state.inventoryOpen || BossIntro::Active(state) || !std::isfinite(verticalOffset) || verticalOffset == 0) return;
+    using namespace GameConstants::World;
+    const double steps = std::max(-20.0, std::min(20.0, verticalOffset));
+    state.cameraZoom = std::max(ZoomMinimum, std::min(ZoomMaximum,
+        static_cast<float>(state.cameraZoom * std::pow(ZoomStep, steps))));
 }
 } // namespace GameInput

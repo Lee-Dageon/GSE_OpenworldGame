@@ -75,6 +75,8 @@ struct GameState
     std::vector<NpcState> npcs;
     std::vector<AnimalState> animals;
     WorldState world;
+    float cameraZoom = 1.0f;
+    float bossIntroTime = -1.0f;
     float health = 100.0f, maxHealth = 100.0f, dodge = 0.0f, attack = 0.0f, messageTime = 7.0f, time = 0.0f;
     Inventory inventory;
     bool inventoryOpen = false, hunterBladeCrafted = false;

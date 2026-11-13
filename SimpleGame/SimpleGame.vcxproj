@@ -184,6 +184,7 @@
     <ClInclude Include="InvestigationSprites.h" />
     <ClInclude Include="BoarDeathFrames.h" />
     <ClInclude Include="AnimalHitFrames.h" />
+    <ClInclude Include="BossIntro.h" />
     <ClInclude Include="LootTable.h" />
     <ClInclude Include="ChatacabraHDFrames.h" />
     <ClInclude Include="Inventory.h" />

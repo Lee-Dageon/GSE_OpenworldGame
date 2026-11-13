@@ -14,6 +14,7 @@
 #include "CraftingSystem.h"
 #include "GameContent.h"
 #include "StorySystem.h"
+#include "BossIntro.h"
 
 #include <Windows.h>
 #include <algorithm>
@@ -80,6 +81,29 @@ void DrawChapterIntro()
                           1, .94f, .79f, 1.5f * scale, alpha, true);
 }
 
+void DrawBossIntro()
+{
+    if (!BossIntro::Active(g_GameState)) return;
+    const float width = static_cast<float>(g_GameState.width), height = static_cast<float>(g_GameState.height);
+    const float scale = GameUiScale(g_GameState.width, g_GameState.height);
+    const float time = g_GameState.bossIntroTime, fade = BossIntro::Fade(g_GameState);
+    const float bar = height * .11f * fade;
+    g_Renderer->DrawSolidRect(0, height * .5f - bar * .5f, width, bar, 0, .006f, .008f, .012f, .98f);
+    g_Renderer->DrawSolidRect(0, -height * .5f + bar * .5f, width, bar, 0, .006f, .008f, .012f, .98f);
+    const float title = BossIntro::Smooth((time - 1.55f) / .4f) * BossIntro::Smooth((4.2f - time) / .5f);
+    if (title > 0)
+    {
+        const float y = height * .23f;
+        g_Renderer->DrawSolidRect(0, y - height * .5f + 35 * scale, width, 140 * scale, 0, .02f, .025f, .03f, .55f * title);
+        g_Renderer->DrawLabel(width * .5f, y + 76 * scale, L"깨어난 유적의 수호자", .84f, .76f, .55f, .75f * scale, title, true);
+        const float size = (2.05f + .2f * title) * scale;
+        g_Renderer->DrawLabel(width * .5f + 2 * scale, y - 2 * scale, L"차타카브라", .03f, .02f, .01f, size, title, true);
+        g_Renderer->DrawLabel(width * .5f, y, L"차타카브라", 1, .84f, .48f, size, title, true);
+        g_Renderer->DrawSolidRect(0, y - height * .5f - 12 * scale, 360 * scale * title, 2 * scale, 0, .95f, .72f, .3f, title);
+    }
+    g_Renderer->DrawLabel(width - 210 * scale, 24 * scale, L"공백 / ESC  건너뛰기", .8f, .82f, .78f, .6f * scale, fade);
+}
+
 void RenderScene()
 {
     static int fpsStartTime = ElapsedMilliseconds();
@@ -142,8 +166,8 @@ void RenderScene()
     if (const wchar_t *hint = g_GameManager.GetHint())
         uiState.hint = hint;
     uiState.message = g_GameState.message;
-    DrawGameUi(*g_Renderer, uiState);
-    if (g_GameState.combo > 1 && g_GameState.comboTime > 0)
+    if (!BossIntro::Active(g_GameState)) DrawGameUi(*g_Renderer, uiState);
+    if (!BossIntro::Active(g_GameState) && g_GameState.combo > 1 && g_GameState.comboTime > 0)
     {
         const std::wstring comboText = std::to_wstring(g_GameState.combo) + L" COMBO";
         const float pop = std::max(0.0f, 1.0f - (GameConstants::Combo::Window - g_GameState.comboTime) / GameConstants::Combo::PopDuration);
@@ -157,7 +181,8 @@ void RenderScene()
             g_Renderer->DrawLabel(x + side * GameConstants::Combo::OutlineOffset, y - GameConstants::Combo::OutlineOffset, comboText.c_str(), .15f, .04f, .02f, scale, alpha, true);
         g_Renderer->DrawLabel(x, y, comboText.c_str(), 1, .78f + .22f * pop, .3f + .7f * pop, scale, alpha, true);
     }
-    DrawChapterIntro();
+    if (!BossIntro::Active(g_GameState)) DrawChapterIntro();
+    DrawBossIntro();
     if (g_CapturePath && ++g_CaptureFrames == 5)
     {
         wchar_t filename[MAX_PATH];
@@ -261,6 +286,11 @@ void MouseInput(GLFWwindow *window, int button, int action, int)
     }
     g_GameManager.HandleCommand(GameInput::OnMouseButton(button == GLFW_MOUSE_BUTTON_LEFT, action == GLFW_PRESS));
 }
+void ScrollInput(GLFWwindow *window, double, double verticalOffset)
+{
+    if (glfwGetWindowAttrib(window, GLFW_FOCUSED) == GLFW_TRUE)
+        GameInput::OnScroll(g_GameState, verticalOffset);
+}
 } // namespace
 
 int main(int argc, char **argv)
@@ -357,6 +387,7 @@ int main(int argc, char **argv)
         glfwSetKeyCallback(g_Window, KeyInput);
         glfwSetWindowFocusCallback(g_Window, FocusChanged);
         glfwSetMouseButtonCallback(g_Window, MouseInput);
+        glfwSetScrollCallback(g_Window, ScrollInput);
         while (!glfwWindowShouldClose(g_Window))
         {
             glfwPollEvents();

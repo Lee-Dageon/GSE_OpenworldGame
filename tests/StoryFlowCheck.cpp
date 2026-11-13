@@ -7,11 +7,43 @@
 #include "../SimpleGame/Chapter1BoarAnimation.h"
 #include "../SimpleGame/DamageFeedback.h"
 #include "../SimpleGame/GameConstants.h"
+#include "../SimpleGame/BossIntro.h"
+#include <cmath>
 #include <cassert>
 #include <iostream>
 
 int main()
 {
+    GameState cinematic = CreateInitialGameState();
+    cinematic.cameraZoom = 1.3f;
+    assert(StorySystem::DebugEnterStep(cinematic, "ancient_hunt"));
+    assert(BossIntro::Active(cinematic) && BossIntro::Weight(cinematic) == 0);
+    GameManager cinematicGame(cinematic);
+    const auto playerBefore = cinematic.player;
+    const float timeBefore = cinematic.time, healthBefore = cinematic.health;
+    const int bossBefore = cinematic.monster.health;
+    cinematicGame.HandleCommand(GameCommand::Attack);
+    cinematicGame.HandleCommand(GameCommand::ToggleInventory);
+    GameInput::OnScroll(cinematic, 1);
+    assert(cinematic.monster.health == bossBefore && !cinematic.inventoryOpen && cinematic.cameraZoom == 1.3f);
+    cinematicGame.UpdateGame(2);
+    assert(cinematic.time == timeBefore && cinematic.health == healthBefore);
+    assert(cinematic.player.x == playerBefore.x && cinematic.player.z == playerBefore.z);
+    assert(cinematic.monster.chatPattern == -1 && BossIntro::Weight(cinematic) == 1);
+    assert(std::abs(BossIntro::Zoom(cinematic) - GameConstants::Chatacabra::IntroZoom) < .00001f);
+    cinematicGame.UpdateGame(GameConstants::Chatacabra::IntroDuration);
+    assert(!BossIntro::Active(cinematic) && BossIntro::Zoom(cinematic) == 1.3f);
+    assert(BossIntro::Focus(cinematic).x == cinematic.player.x && BossIntro::Focus(cinematic).z == cinematic.player.z);
+    assert(cinematic.time == timeBefore && cinematic.health == healthBefore);
+    for (unsigned char key : {static_cast<unsigned char>(27), static_cast<unsigned char>(' ')})
+    {
+        GameState skipped = CreateInitialGameState();
+        assert(StorySystem::DebugEnterStep(skipped, "ancient_hunt"));
+        assert(GameInput::OnKeyDown(skipped, key, false) == GameCommand::None);
+        assert(!BossIntro::Active(skipped) && skipped.dodge == 0 && skipped.cameraZoom == 1);
+    }
+    assert(BossIntro::SlamPose(.5f) == -1 && BossIntro::SlamPose(1) == 0);
+    assert(BossIntro::SlamPose(1.6f) == 2 && BossIntro::SlamPose(2) == 3 && BossIntro::SlamPose(3) == -1);
     auto gatherer=CreateInitialGameState();
     gatherer.quest=QuestStage::Complete;
     gatherer.player=gatherer.world.herb;
@@ -139,6 +171,7 @@ int main()
         GameState debug = CreateInitialGameState();
         debug.width = 1920; debug.height = 1080; debug.time = 12.0f;
         assert(StorySystem::DebugEnterStep(debug, step.id));
+        BossIntro::Skip(debug); // Progression checks bypass the separately tested presentation delay.
         assert(StorySystem::Current(debug)->id == step.id);
         assert(!debug.storyFinished && debug.quest == QuestStage::Complete && debug.hunterBladeCrafted);
         assert(debug.width == 1920 && debug.height == 1080 && debug.time == 12.0f);
@@ -218,6 +251,7 @@ int main()
     while (const auto *step = StorySystem::Current(state))
     {
         state.hitStop = 0; // This existing state-flow test skips presentation delays.
+        BossIntro::Skip(state);
         assert(++steps <= 128);
         const int before = state.storyStep;
         state.player = StorySystem::Target(state);

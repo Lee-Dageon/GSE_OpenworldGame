@@ -12,6 +12,7 @@
 #include "DamageFeedback.h"
 #include "NpcSystem.h"
 #include "LootTable.h"
+#include "BossIntro.h"
 
 #include <algorithm>
 #include <cmath>
@@ -127,6 +128,13 @@ void GameManager::UpdateGame(float deltaTime)
         return;
     }
     deltaTime = std::max(0.0f, deltaTime);
+    if (BossIntro::Active(m_State))
+    {
+        m_State.moving = false;
+        m_State.bossIntroTime += deltaTime;
+        if (m_State.bossIntroTime >= GameConstants::Chatacabra::IntroDuration) BossIntro::Skip(m_State);
+        return;
+    }
     m_State.playerHitTime = std::max(0.0f, m_State.playerHitTime - deltaTime);
     m_State.attackHitTime = std::max(0.0f, m_State.attackHitTime - deltaTime);
     const float frozen = std::min(deltaTime, m_State.hitStop);
@@ -182,6 +190,7 @@ void GameManager::UpdateGame(float deltaTime)
     PlayerController::UpdateMovement(m_State, deltaTime);
     UpdateNpcs(deltaTime);
     StorySystem::Update(m_State);
+    if (BossIntro::Active(m_State)) { m_State.moving = false; return; }
     for (AnimalState &animal : m_State.animals)
     {
         animal.hitFlash = std::max(0.0f, animal.hitFlash - deltaTime);
@@ -223,6 +232,7 @@ void GameManager::UpdateGame(float deltaTime)
 
 void GameManager::HandleCommand(GameCommand command)
 {
+    if (BossIntro::Active(m_State)) return;
     if (command == GameCommand::ToggleInventory)
     {
         m_State.inventoryOpen = !m_State.inventoryOpen;

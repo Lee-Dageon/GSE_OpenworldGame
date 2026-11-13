@@ -20,6 +20,7 @@
 #include "BoarDeathFrames.h"
 #include "ChatacabraHDFrames.h"
 #include "AnimalHitFrames.h"
+#include "BossIntro.h"
 
 #include <algorithm>
 #include <array>
@@ -335,9 +336,10 @@ void WorldRenderer::EndFrame(float time)
 
 Vec2 WorldRenderer::ToScreen(Vec2 position) const
 {
-    const float x = position.x - m_State->player.x;
-    const float z = position.z - m_State->player.z;
-    return {(x - z) * TileWidth * .5f, (x + z) * TileHeight * .5f - 86.0f};
+    const Vec2 focus = BossIntro::Focus(*m_State);
+    const float x = position.x - focus.x;
+    const float z = position.z - focus.z;
+    return {(x - z) * TileWidth * .5f, (x + z) * TileHeight * .5f - 86.0f / BossIntro::Zoom(*m_State)};
 }
 
 void WorldRenderer::DrawRect(Vec2 position, float width, float height, float rotation, float red, float green,
@@ -892,7 +894,7 @@ void WorldRenderer::DrawGround() const
     if (m_State->width <= 0 || m_State->height <= 0)
         return;
     const Vec2 origin = ToScreen({0, 0});
-    const float worldScale = WorldScale * m_State->height / 720.0f;
+    const float worldScale = WorldScale * m_State->height / 720.0f * BossIntro::Zoom(*m_State);
     const float halfWidth = m_State->width / (2.0f * worldScale);
     const float halfHeight = m_State->height / (2.0f * worldScale);
     const int centerX = static_cast<int>(std::floor(-origin.x / GroundChunkSize));
@@ -1044,7 +1046,7 @@ void WorldRenderer::RenderWorld(const GameState &state)
     m_Renderer.SetDamageFeedback(state.playerHitTime);
     m_Renderer.SetAttackFeedback(state.attackHitTime);
     m_State = &state;
-    m_Renderer.SetWorldScale(WorldScale * state.height / 720.0f);
+    m_Renderer.SetWorldScale(WorldScale * state.height / 720.0f * BossIntro::Zoom(state));
     DrawGround();
     enum class DrawType { House, Tree, Campfire, Npc, Animal, Tracks, Herb, Monster, Player, NoticeBoard, Decoration, Scenery, Investigation, StoryMarker };
     struct DrawItem { Vec2 position; DrawType type; int index; };
@@ -1061,9 +1063,11 @@ void WorldRenderer::RenderWorld(const GameState &state)
     for (const auto &campfire : Map().campfires)
         items.push_back({campfire.position, DrawType::Campfire, 0});
     // Stable world cells: camera movement never changes an existing decoration's placement.
-    const int centerX = static_cast<int>(std::floor(state.player.x / 1.4f));
-    const int centerZ = static_cast<int>(std::floor(state.player.z / 1.4f));
-    const int radius = static_cast<int>(std::ceil(10.0f + 5.0f * state.width / std::max(1.0f, static_cast<float>(state.height))));
+    const Vec2 focus = BossIntro::Focus(state);
+    const int centerX = static_cast<int>(std::floor(focus.x / 1.4f));
+    const int centerZ = static_cast<int>(std::floor(focus.z / 1.4f));
+    const int radius = static_cast<int>(std::ceil((10.0f + 5.0f * state.width /
+        std::max(1.0f, static_cast<float>(state.height))) / BossIntro::Zoom(state)));
     for (int z = centerZ - radius; z <= centerZ + radius; ++z)
         for (int x = centerX - radius; x <= centerX + radius; ++x)
         {
@@ -1072,7 +1076,7 @@ void WorldRenderer::RenderWorld(const GameState &state)
             const Vec2 p = {(x + .15f + (seed & 255u) / 365.0f) * 1.4f,
                             (z + .15f + ((seed >> 8) & 255u) / 365.0f) * 1.4f};
             const Vec2 screen = ToScreen(p);
-            const float scale = WorldScale * state.height / 720.0f;
+            const float scale = WorldScale * state.height / 720.0f * BossIntro::Zoom(state);
             if (std::abs(screen.x) * scale > state.width * .5f + 30 ||
                 std::abs(screen.z) * scale > state.height * .5f + 35 ||
                 Distance(p, state.world.lake) < state.world.lakeRadius + .35f)
@@ -1321,7 +1325,7 @@ void WorldRenderer::RenderWorld(const GameState &state)
                                                   (m_AncientGuardianTexture || m_ChatHdTextures[0][0] || m_ChatHdTextures[0][1]))
                                               {
                                                   const auto &monster=state.monster;
-                                                  const Vec2 aim=monster.health<=0 || monster.chatPattern>=0 ? monster.animationFacing : facing;
+                                                  const Vec2 aim=monster.health<=0 || monster.chatPattern>=0 || BossIntro::Active(state) ? monster.animationFacing : facing;
                                                   const int direction=ChatacabraFrames::Direction(aim.x,aim.z);
                                                   const bool guardianWalking=walking && distance>GameConstants::Chatacabra::EngageRange && monster.chatPattern<0;
                                                   int pose=guardianWalking && monster.health>0 && monster.chatStagger<=0 ? static_cast<int>(state.time*6)%4 : 0;
@@ -1342,6 +1346,13 @@ void WorldRenderer::RenderWorld(const GameState &state)
                                                   {
                                                       pose=ChatacabraFrames::DeathPose(monster.deathTime);
                                                       texture=m_ChatDeathTexture;
+                                                  }
+                                                  if (BossIntro::Active(state))
+                                                  {
+                                                      const int introPose = BossIntro::SlamPose(state.bossIntroTime);
+                                                      sheet = introPose >= 0 ? 2 : 0;
+                                                      pose = introPose >= 0 ? introPose : 0;
+                                                      texture = sheet == 2 && m_ChatAttackTextures[1] ? m_ChatAttackTextures[1] : m_AncientGuardianTexture;
                                                   }
                                                   auto frame=deathSprite ? ChatacabraFrames::DeathFrames[pose*8+direction] :
                                                       ChatacabraFrames::Frames[sheet][pose*8+direction];
@@ -1388,7 +1399,8 @@ void WorldRenderer::RenderWorld(const GameState &state)
                 if (pending) m_Renderer.DrawEffectRect(target.x,target.z,TelegraphWidthPerUnit*radius,
                     TelegraphHeightPerUnit*radius,0,1,.38f,.12f,.4f,3);
             }
-            MonsterSystem::Draw(state.monster, context, false);
+            if (BossIntro::Active(state)) context.drawSprite(state.monster.position, 1, 2, 128, 96, true);
+            else MonsterSystem::Draw(state.monster, context, false);
             if (hasLoot) DrawLoot(state.monster.position, LootTable::Monster(state.monster.definition));
             m_Renderer.SetSpriteFlash(0);
             break;
@@ -1512,6 +1524,15 @@ void WorldRenderer::RenderWorld(const GameState &state)
             break;
         }
         }
+    }
+    if (BossIntro::Active(state) && state.bossIntroTime >= GameConstants::Chatacabra::IntroImpactTime && m_ChatImpactTextures[1])
+    {
+        const float age = state.bossIntroTime - GameConstants::Chatacabra::IntroImpactTime;
+        const int frame = std::min(96, static_cast<int>(age * 30));
+        const Vec2 point = ToScreen(state.monster.position);
+        m_Renderer.SetLocalLight(0, 0, 0);
+        m_Renderer.DrawSprite(m_ChatImpactTextures[1], point.x, point.z + 60,
+            288 * 1.3f, 208 * 1.3f, frame % 9, frame / 9, 9, 11);
     }
     if (state.monster.definition.id=="ancient_guardian" && state.monster.chatImpactTime>0)
     {

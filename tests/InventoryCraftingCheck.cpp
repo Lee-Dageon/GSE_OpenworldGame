@@ -5,10 +5,32 @@
 #include "../SimpleGame/GameConstants.h"
 #include <cassert>
 #include <climits>
+#include <cmath>
+#include <limits>
 #include <iostream>
 
 int main()
 {
+    GameState zoom;
+    GameInput::OnScroll(zoom, .5);
+    assert(zoom.cameraZoom > 1 && zoom.cameraZoom < GameConstants::World::ZoomStep);
+    zoom.cameraZoom = 1;
+    GameInput::OnScroll(zoom, 1);
+    assert(zoom.cameraZoom > 1);
+    GameInput::OnScroll(zoom, -1);
+    assert(std::abs(zoom.cameraZoom - 1) < .00001f);
+    GameInput::OnScroll(zoom, 1000);
+    assert(zoom.cameraZoom == GameConstants::World::ZoomMaximum);
+    GameInput::OnScroll(zoom, -1000);
+    assert(zoom.cameraZoom == GameConstants::World::ZoomMinimum);
+    const float heldZoom = zoom.cameraZoom;
+    zoom.inventoryOpen = true;
+    GameInput::OnScroll(zoom, 1);
+    assert(zoom.cameraZoom == heldZoom);
+    zoom.inventoryOpen = false;
+    GameInput::OnScroll(zoom, std::numeric_limits<double>::infinity());
+    GameInput::OnScroll(zoom, std::numeric_limits<double>::quiet_NaN());
+    assert(zoom.cameraZoom == heldZoom);
     Inventory bag;
     assert(bag.Count(ItemId::Potion) == 2);
     assert(!bag.Add(ItemId::Herb, -1) && !bag.Remove(ItemId::Potion, -1));
