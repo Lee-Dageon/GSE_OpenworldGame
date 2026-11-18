@@ -1,0 +1,13 @@
+{
+  "generator": "built-in image_gen",
+  "date": "2026-11-16",
+  "purpose": "Material for world-projected 2:1 isometric stair treads and vertical risers; not a billboard staircase",
+  "prompt": "Seamless square orthographic pixel-art hand-cut golden sandstone masonry, staggered irregular blocks, chipped bevels, fine chisel marks and pits, honey ochre palette, fully opaque edge-to-edge, no perspective or objects.",
+  "dimensions": [
+    1254,
+    1254
+  ],
+  "sha256": "8befadffedb53bbc0996cbc24af3ac06d127e366da3e16c6b7e60db7da68e10f",
+  "sampling": "nearest; repeated every 4 world units; UV continuous along each terrain strip",
+  "geometry": "horizontal treads at strip midpoint height; vertical risers; segments at most 0.65 world units, subdivided further on tall terrain (at least 24 segments per height unit); existing smooth movement height retained"
+}

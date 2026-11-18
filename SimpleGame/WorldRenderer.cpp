@@ -1161,6 +1161,22 @@ bool WorldRenderer::DrawDesertAnimal(const AnimalState &animal) const
 
 void WorldRenderer::DrawTerrain() const
 {
+    const auto stone=m_Renderer.UiTexture(L"./Assets/PixelArt/World/frontier-sandstone-steps-v2.png");
+    m_Renderer.DrawSolidRect(0,0,0,0,0,1,1,1,0);
+    GLint program=0,previousUnit=0,previousTexture=0;
+    glGetIntegerv(GL_CURRENT_PROGRAM,&program);
+    glGetIntegerv(GL_ACTIVE_TEXTURE,&previousUnit);
+    glActiveTexture(GL_TEXTURE2);
+    glGetIntegerv(GL_TEXTURE_BINDING_2D,&previousTexture);
+    glBindTexture(GL_TEXTURE_2D,stone);
+    glUniform1i(glGetUniformLocation(program,"u_StepTexture"),2);
+    glActiveTexture(previousUnit);
+    const auto masonry=[&](float x,float y,const float *basis,bool sand,bool wall,float u,float v,float du,float dv) {
+        glUseProgram(program);
+        glUniform4f(glGetUniformLocation(program,"u_StepUV"),u,v,du,dv);
+        const float shade=(wall ? .53f : 1.0f)*(sand ? 1.0f : .96f);
+        m_Renderer.DrawEffectRect(x,y,1,1,0,shade,shade,shade,1,stone ? 23 : 0,basis);
+    };
     for (const auto &strip : Map().terrain)
     {
         const float length=TerrainGeometry::Length(strip);
@@ -1168,25 +1184,35 @@ void WorldRenderer::DrawTerrain() const
         if (Distance(center,BossIntro::Focus(*m_State))>length*.5f+50) continue;
         const Vec2 d={(strip.end.x-strip.start.x)/length,(strip.end.z-strip.start.z)/length};
         const Vec2 n={-d.z,d.x};
-        const int segments=static_cast<int>(std::ceil(length/2));
-        for (int index=0;index<segments;++index)
+        const int segments=static_cast<int>(std::ceil(std::max(length/.65f,strip.height*24)));
+        const float stepHeight=strip.height/std::ceil(strip.height/.65f);
+        const auto stairHeight=[&](Vec2 p) {
+            return std::floor(TerrainGeometry::Height(strip,p)/stepHeight+.5f)*stepHeight;
+        };
+        // Finish lower layers first so a later ravine tile cannot cover an elevated path.
+        for (int layer=0;layer<4;++layer)
+        for (int order=0;order<segments;++order)
         {
+            const int index=d.x+d.z>0 ? segments-1-order : order;
             const float t0=index/static_cast<float>(segments),t1=(index+1)/static_cast<float>(segments);
             const Vec2 a={strip.start.x+d.x*length*t0,strip.start.z+d.z*length*t0};
             const Vec2 b={strip.start.x+d.x*length*t1,strip.start.z+d.z*length*t1};
             const Vec2 mid={(a.x+b.x)*.5f,(a.z+b.z)*.5f};
-            const float ha=TerrainGeometry::Height(strip,a),hb=TerrainGeometry::Height(strip,b),h=(ha+hb)*.5f;
+            const float ha=TerrainGeometry::Height(strip,a);
+            const float h=stairHeight(mid);
             const float ax=(b.x-a.x-b.z+a.z)*TileWidth*.25f;
             const float ay=(b.x-a.x+b.z-a.z)*TileHeight*.25f;
             const auto floor=ToScreen(mid);
-            if (strip.kind!=0 && t0>.22f && t1<.78f)
+            if (layer==0 && strip.kind!=0)
             {
-                const float width=strip.halfWidth+8;
-                const float basis[]={ax,ay,(n.x-n.z)*TileWidth*.5f*width,(n.x+n.z)*TileHeight*.5f*width};
+                // Keep the original ground visible; only soften the structure's contact shadow.
+                const float width=strip.halfWidth+1;
+                const float basis[]={ax*3,ay*3,(n.x-n.z)*TileWidth*.5f*width,(n.x+n.z)*TileHeight*.5f*width};
                 m_Renderer.DrawEffectRect(floor.x,floor.z-WorldLayout::GroundHeight(mid)*TerrainGeometry::HeightPixels,
-                    1,1,0,.075f,.07f,.065f,1,0,basis);
+                    1,1,0,.16f,.13f,.10f,.10f*h/strip.height,3,basis);
             }
-            if (strip.kind==0)
+            if (layer==0) continue;
+            if (layer==1 && strip.kind==0)
             {
                 for (int side : {-1,1})
                     for (int band=0;band<3;++band)
@@ -1202,22 +1228,58 @@ void WorldRenderer::DrawTerrain() const
                             1,1,0,.28f+band*.025f,.30f+band*.025f,.24f+band*.02f,1,0,shoulder);
                     }
             }
-            else for (int side : {-1,1})
+            else if (layer==1) for (int side : {-1,1})
             {
                 const Vec2 edge={mid.x+n.x*strip.halfWidth*side,mid.z+n.z*strip.halfWidth*side};
                 const auto p=ToScreen(edge);
                 const float basis[]={ax,ay,0,h*TerrainGeometry::HeightPixels*.5f};
                 const bool sand=WorldBiomes::IsDesert(mid);
-                m_Renderer.DrawEffectRect(p.x,p.z+(h*.5f-WorldLayout::GroundHeight(edge))*TerrainGeometry::HeightPixels,
-                    1,1,0,sand ? .42f : .27f,sand ? .29f : .29f,sand ? .17f : .28f,1,0,basis);
+                masonry(p.x,p.z+(h*.5f-WorldLayout::GroundHeight(edge))*TerrainGeometry::HeightPixels,
+                    basis,sand,true,t0*length/4,0,(t1-t0)*length/4,h/4);
             }
-            const float basis[]={ax,ay+(hb-ha)*TerrainGeometry::HeightPixels*.5f,
+            if (layer==3 && index>0)
+            {
+                const Vec2 previousMid={a.x-d.x*length/segments*.5f,a.z-d.z*length/segments*.5f};
+                const float previousHeight=stairHeight(previousMid);
+                if (std::abs(h-previousHeight)>.001f)
+                {
+                    const auto p=ToScreen(a);
+                    const float riser[]={(n.x-n.z)*TileWidth*.5f*strip.halfWidth,
+                        (n.x+n.z)*TileHeight*.5f*strip.halfWidth,0,std::abs(h-previousHeight)*TerrainGeometry::HeightPixels*.5f};
+                    masonry(p.x,p.z+((h+previousHeight)*.5f-ha)*TerrainGeometry::HeightPixels,
+                        riser,WorldBiomes::IsDesert(a),true,0,previousHeight/4,strip.halfWidth*.5f,std::abs(h-previousHeight)/4);
+                    // Bevel and contact shadow keep even nearly edge-on steps readable.
+                    const float sign=h>previousHeight ? 1.0f : -1.0f;
+                    const Vec2 lip={a.x+d.x*.07f*sign,a.z+d.z*.07f*sign};
+                    const auto lipScreen=ToScreen(lip);
+                    const float edge[]={(n.x-n.z)*TileWidth*.5f*strip.halfWidth,
+                        (n.x+n.z)*TileHeight*.5f*strip.halfWidth,
+                        d.x*TileWidth*.035f-d.z*TileWidth*.035f,(d.x+d.z)*TileHeight*.035f};
+                    m_Renderer.DrawEffectRect(lipScreen.x,lipScreen.z+
+                        (std::max(h,previousHeight)-WorldLayout::GroundHeight(lip))*TerrainGeometry::HeightPixels,
+                        1,1,0,.78f,.85f,.91f,1,0,edge);
+                    const Vec2 shadow={a.x-d.x*.10f*sign,a.z-d.z*.10f*sign};
+                    const auto shadowScreen=ToScreen(shadow);
+                    m_Renderer.DrawEffectRect(shadowScreen.x,shadowScreen.z+
+                        (std::min(h,previousHeight)-WorldLayout::GroundHeight(shadow))*TerrainGeometry::HeightPixels,
+                        1,1,0,.24f,.29f,.35f,.85f,0,edge);
+                }
+            }
+            if (layer!=2) continue;
+            // Horizontal treads and vertical risers share the world's 2:1 isometric axes.
+            const float basis[]={ax,ay,
                 (n.x-n.z)*TileWidth*.5f*strip.halfWidth,(n.x+n.z)*TileHeight*.5f*strip.halfWidth};
             const bool sand=WorldBiomes::IsDesert(mid);
-            const float grain=index%3*.025f;
-            m_Renderer.DrawEffectRect(floor.x,floor.z+(h-WorldLayout::GroundHeight(mid))*TerrainGeometry::HeightPixels,
-                1,1,0,(sand ? .64f : strip.kind==1 ? .51f : .36f)+grain,
-                (sand ? .46f : strip.kind==1 ? .49f : .38f)+grain,(sand ? .26f : .32f)+grain,1,0,basis);
+            const float topY=floor.z+(h-WorldLayout::GroundHeight(mid))*TerrainGeometry::HeightPixels;
+            masonry(floor.x,topY,basis,sand,false,t0*length/4,0,(t1-t0)*length/4,strip.halfWidth*.5f);
+            for (int side : {-1,1})
+            {
+                const float inset=strip.halfWidth-.10f;
+                const float rim[]={ax,ay,(n.x-n.z)*TileWidth*.05f,(n.x+n.z)*TileHeight*.05f};
+                m_Renderer.DrawEffectRect(floor.x+(n.x-n.z)*TileWidth*.5f*inset*side,
+                    topY+(n.x+n.z)*TileHeight*.5f*inset*side,
+                    1,1,0,.76f,.83f,.89f,1,0,rim);
+            }
         }
         if (m_TerrainPropsTexture)
         {
@@ -1233,6 +1295,9 @@ void WorldRenderer::DrawTerrain() const
                 1,1,1,1,0,0,0,static_cast<float>(frame.width),static_cast<float>(frame.height),.5f);
         }
     }
+    glActiveTexture(GL_TEXTURE2);
+    glBindTexture(GL_TEXTURE_2D,previousTexture);
+    glActiveTexture(previousUnit);
 }
 
 void WorldRenderer::RenderWorld(const GameState &state)

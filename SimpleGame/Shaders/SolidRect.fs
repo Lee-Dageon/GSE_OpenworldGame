@@ -6,6 +6,8 @@ uniform vec4 u_Color;
 uniform float u_Time;
 uniform int u_EffectType;
 uniform sampler2D u_TerrainTexture;
+uniform sampler2D u_StepTexture;
+uniform vec4 u_StepUV;
 uniform sampler2D u_DesertTexture;
 uniform bool u_HasDesertTexture;
 uniform int u_DesertCount;
@@ -352,6 +354,15 @@ void main()
 		vec2 p=v_LocalPosition;
 		float rays=1.0-smoothstep(.025,.065,abs(p.x*p.y));
 		color.a *= rays*(1.0-smoothstep(.4,1.0,length(p)));
+	}
+	if (u_EffectType == 23)
+	{
+		vec2 uv = u_StepUV.xy + (v_LocalPosition * .5 + .5) * u_StepUV.zw;
+		vec4 stone = texture(u_StepTexture, fract(uv));
+		float value = dot(stone.rgb, vec3(.299, .587, .114));
+		// Cool limestone stays distinct from the warm sand even under desert lighting.
+		color.rgb *= mix(vec3(.20,.25,.31),vec3(.78,.85,.91),smoothstep(.12,.90,value));
+		color.a *= stone.a;
 	}
 	if (u_WorldLighting && u_EffectType != 6 && u_EffectType != 20 && u_EffectType != 21 && u_EffectType != 22)
 	{
