@@ -17,6 +17,8 @@ std::wstring Objective(const GameState &state);
 const wchar_t *Hint(const GameState &state);
 const wchar_t *RegionName(Vec2 position);
 const wchar_t *Interact(GameState &state);
+const wchar_t *Choose(GameState &state, int choice);
+const wchar_t *Ending(const GameState &state);
 const wchar_t *EnemyDefeated(GameState &state);
-void Update(GameState &state);
+void Update(GameState &state,float deltaTime=0);
 }

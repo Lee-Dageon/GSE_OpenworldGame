@@ -68,7 +68,7 @@ int main()
     assert(!GameContent::IsBlocked(live.map,live.map.world.spawn));
     assert(GameContent::IsBlocked(live.map,live.map.houses[0].position));
     assert(GameContent::Step(QuestStage::Hunt).next == QuestStage::Trophy);
-    assert(live.story.chapters.size() == 3 && live.story.steps.size() == 22);
+    assert(live.story.chapters.size() == 5 && live.story.steps.size() == 39);
     assert(live.monsters.at("rampaging_boar").spriteHeight == 170);
     Fixture fixture;
     const auto &map = fixture.originals.at("map.gse");
@@ -80,7 +80,7 @@ int main()
     assert(GameContent::Load(fixture.root.string()).map.houses.size() == 9);
     WriteFile(fixture.root/"map.gse",Replace(map,"encounter lake_boar","encounter forest_boar"));
     const auto alternate = GameContent::Load(fixture.root.string());
-    assert(alternate.monsters.at(alternate.map.monsterId).health == 18);
+    assert(alternate.monsters.at(alternate.map.monsterId).health == 36);
     assert(live.map.monsterId == "lake_boar");
     WriteFile(fixture.root/"map.gse",Replace(map,"gse_map 1","gse_map 2")); fixture.Reject();
     WriteFile(fixture.root/"map.gse",map+"tree tree_00 -20 -20 pine 0 .42\n"); fixture.Reject();
@@ -93,7 +93,7 @@ int main()
     for (int i = 0; i < 25; ++i)
         excess += "house extra_"+std::to_string(i)+" -40 -40 -35 -38 -20 1.55 1.4\n";
     WriteFile(fixture.root/"map.gse",excess); fixture.Reject(); fixture.Reset();
-    WriteFile(fixture.root/"monsters.gse",Replace(monsters," 12 1.9"," -1 1.9")); fixture.Reject();
+    WriteFile(fixture.root/"monsters.gse",Replace(monsters," 24 1.9"," -1 1.9")); fixture.Reject();
     WriteFile(fixture.root/"monsters.gse",Replace(monsters,"호숫가 멧돼지",std::string(1,static_cast<char>(0xff)))); fixture.Reject(); fixture.Reset();
     WriteFile(fixture.root/"quests.gse",Replace(quests,"stage elder elder tracks","stage elder elder missing")); fixture.Reject();
     WriteFile(fixture.root/"quests.gse",Replace(quests,"stage tracks tracks herb","stage tracks tracks tracks")); fixture.Reject();
@@ -105,7 +105,9 @@ int main()
         {"travel 70 -60","travel -6 -1.7"},
         {"1.5 rampaging_boar","1.5 missing_boar"},
         {"unfamiliar collect","unfamiliar report"},
-        {"unfamiliar hunt","missing_chapter hunt"}})
+        {"unfamiliar hunt","missing_chapter hunt"},
+        {"unbalanced route_choice","unbalanced final_choice"},
+        {"step migration_hunt unbalanced hunt","step migration_hunt unbalanced investigate"}})
     {
         WriteFile(fixture.root/"story.gse",Replace(story,replacement.first,replacement.second));
         fixture.Reject(); fixture.Reset();

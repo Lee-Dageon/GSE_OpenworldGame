@@ -34,6 +34,7 @@ struct Scenery
 struct NpcDefinition { std::string id; NpcState initial = {}; };
 struct AnimalDefinition { std::string id; AnimalState initial = {}; };
 struct GatherDefinition { std::string id; GatherNodeState initial = {}; };
+struct FieldEncounter { std::string id,monsterId; Vec2 position = {}; };
 struct MapDefinition
 {
     std::string id, monsterId;
@@ -47,6 +48,7 @@ struct MapDefinition
     std::vector<AnimalDefinition> animals;
     std::vector<GatherDefinition> gatherNodes;
     std::vector<TerrainStrip> terrain;
+    std::vector<FieldEncounter> encounters;
 };
 struct QuestStep
 {
@@ -63,7 +65,7 @@ struct QuestDefinition
     std::wstring welcome, repeatObjective, repeatHint, repeatMessage;
     std::wstring elderHint, elderDialogue, npcDialogue;
 };
-enum class StoryAction { Travel, Investigate, Hunt, Collect, Report, CraftArmor };
+enum class StoryAction { Travel, Investigate, Hunt, Collect, Report, CraftArmor, Rescue, RouteChoice, FinalChoice };
 struct StoryChapter { std::string id; std::wstring title; };
 struct StoryRegion
 {

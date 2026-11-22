@@ -23,5 +23,13 @@ GameState CreateInitialGameState()
         state.animals.push_back(animal.initial);
     for (const auto &node : content.map.gatherNodes)
         state.gatherNodes.push_back(node.initial);
+    for (const auto &encounter : content.map.encounters)
+    {
+        FieldMonster field;
+        field.home=encounter.position;
+        field.monster=MonsterSystem::Create(content.monsters.at(encounter.monsterId),field.home);
+        state.fieldMonsters.push_back(field);
+    }
+    state.companion=state.world.elder;
     return state;
 }

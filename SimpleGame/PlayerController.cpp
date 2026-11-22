@@ -44,23 +44,26 @@ void UpdateMovement(GameState &state, float deltaTime)
     move.z /= length;
     state.facing = move;
     const float slow = state.playerSlowTime > 0 ? GameConstants::Player::HitSlowSpeed : 1.0f;
+    const float weatherSpeed=state.weather==3 ? .88f : state.weather==4 ? .93f : 1;
     const float speed = state.dodge > 0.0f ? GameConstants::Player::DodgeSpeed :
-        (state.sprint ? GameConstants::Player::SprintSpeed : GameConstants::Player::WalkSpeed) * slow;
-    Vec2 next = {state.player.x + move.x * speed * deltaTime, state.player.z + move.z * speed * deltaTime};
-    next.x = std::max(state.world.minimumCoordinate, std::min(state.world.maximumCoordinate, next.x));
-    next.z = std::max(state.world.minimumCoordinate, std::min(state.world.maximumCoordinate, next.z));
-    const auto canMove = [&](Vec2 position) {
-        const float dx = position.x - state.world.lake.x, dz = position.z - state.world.lake.z;
-        return dx*dx + dz*dz > state.world.lakeRadius*state.world.lakeRadius && !WorldLayout::IsBlocked(position);
-    };
+        (state.sprint ? GameConstants::Player::SprintSpeed : GameConstants::Player::WalkSpeed) * slow * weatherSpeed;
     const Vec2 previous = state.player;
-    if (canMove(next)) state.player = next;
-    else
+    const float distance=std::max(0.0f,std::min(deltaTime,1.0f))*speed;
+    const int steps=std::max(1,static_cast<int>(std::ceil(distance/.12f)));
+    for (int i=0;i<steps;++i)
     {
-        const Vec2 alongX = {next.x, previous.z};
-        if (canMove(alongX)) state.player = alongX;
-        const Vec2 alongZ = {state.player.x, next.z};
-        if (canMove(alongZ)) state.player = alongZ;
+        const Vec2 next={state.player.x+move.x*distance/steps,state.player.z+move.z*distance/steps};
+        const auto canMove=[&](Vec2 p) {
+            return !(p.x>=790 && p.z>=620 && state.endingChoice==0) && WorldLayout::CanMove(state.world,state.player,p);
+        };
+        if (canMove(next)) state.player=next;
+        else
+        {
+            const Vec2 x={next.x,state.player.z};
+            if (canMove(x)) state.player=x;
+            const Vec2 z={state.player.x,next.z};
+            if (canMove(z)) state.player=z;
+        }
     }
     state.moving = state.player.x != previous.x || state.player.z != previous.z;
 }

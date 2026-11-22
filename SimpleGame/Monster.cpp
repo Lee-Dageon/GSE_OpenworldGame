@@ -383,6 +383,53 @@ bool UpdateChaseAndAttack(MonsterState &monster, Vec2 player, float dodgeTime, f
     if (monster.definition.id == "ancient_guardian")
         return UpdateChatacabra(monster,player,dodgeTime,std::max(0.0f,deltaTime),playerHealth,defense);
 
+    if (monster.definition.id=="forest_predator")
+    {
+        if (monster.chatPattern>=0)
+        {
+            monster.chatElapsed+=std::max(0.0f,deltaTime);
+            if (monster.chatElapsed<.7f) return false;
+            const float length=std::max(.001f,std::hypot(monster.animationFacing.x,monster.animationFacing.z));
+            monster.position.x+=monster.animationFacing.x/length*12*deltaTime;
+            monster.position.z+=monster.animationFacing.z/length*12*deltaTime;
+            bool hit=false;
+            if (distance<1.8f && !monster.chatHitMask && dodgeTime<=0)
+            { playerHealth-=std::max(1.0f,monster.definition.damage-std::max(0,defense)); monster.chatHitMask=1; hit=true; }
+            if (monster.chatElapsed>=1.2f) { monster.chatPattern=-1; monster.attackCooldown=2.2f; }
+            return hit;
+        }
+        if (distance<6 && monster.attackCooldown<=0)
+        {
+            monster.chatPattern=0; monster.chatElapsed=0; monster.chatHitMask=0;
+            monster.animationFacing={player.x-monster.position.x,player.z-monster.position.z}; return false;
+        }
+    }
+
+    if (IsEcologyGuardian(monster))
+    {
+        const float radius=monster.definition.id=="final_guardian" ? 3.4f : 2.4f;
+        if (monster.chatPattern>=0)
+        {
+            monster.chatElapsed+=std::max(0.0f,deltaTime);
+            if (monster.chatElapsed<1.1f) return false;
+            monster.chatPattern=-1;
+            monster.attackCooldown=monster.definition.cooldown;
+            monster.chatImpactTime=.5f;
+            monster.chatImpactPosition=monster.chatTarget;
+            if (Distance(player,monster.chatTarget)>radius || dodgeTime>0) return false;
+            playerHealth-=std::max(1.0f,monster.definition.damage-std::max(0,defense));
+            return true;
+        }
+        if (distance<=radius+1 && monster.attackCooldown<=0)
+        {
+            monster.chatPattern=0;
+            monster.chatElapsed=0;
+            monster.chatTarget=player;
+            monster.animationFacing={player.x-monster.position.x,player.z-monster.position.z};
+            return false;
+        }
+    }
+
     if (monster.definition.id == "rampaging_boar" && distance > .001f &&
         monster.attackAnimation <= 0.0f && monster.hitAnimation <= 0.0f)
         monster.animationFacing = {player.x - monster.position.x, player.z - monster.position.z};
@@ -394,7 +441,7 @@ bool UpdateChaseAndAttack(MonsterState &monster, Vec2 player, float dodgeTime, f
         return false;
     }
 
-    if (distance <= monster.definition.attackRange && monster.attackCooldown <= 0 && dodgeTime <= 0)
+    if (!IsEcologyGuardian(monster) && distance <= monster.definition.attackRange && monster.attackCooldown <= 0 && dodgeTime <= 0)
     {
         playerHealth -= monster.definition.damage <= 0 ? 0 : std::max(1.0f,monster.definition.damage-std::max(0,defense));
         monster.attackCooldown = monster.definition.cooldown;

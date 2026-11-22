@@ -29,7 +29,7 @@ int main()
 
     GameState state = CreateInitialGameState();
     state.keys['w'] = state.keys['a'] = true; // Along world +Z toward the elder.
-    for (int i = 0; i < 11; ++i)
+    for (int i = 0; i < 18; ++i)
         PlayerController::UpdateMovement(state, .1f);
     assert(std::abs(state.player.x) < .001f && state.player.z > 1.2f);
     const Vec2 house = WorldLayout::Houses()[0].position;

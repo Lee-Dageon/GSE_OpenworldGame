@@ -15,6 +15,7 @@
 #include "GameContent.h"
 #include "StorySystem.h"
 #include "BossIntro.h"
+#include "LivingWorld.h"
 
 #include <Windows.h>
 #include <algorithm>
@@ -82,6 +83,91 @@ void DrawChapterIntro()
                           1, .94f, .79f, 1.5f * scale, alpha, true);
 }
 
+void DrawWeather()
+{
+    const auto &s=g_GameState;
+    const float cycle=std::fmod(s.worldTime,600.0f)/600;
+    const float night=std::max(0.0f,-std::sin(cycle*6.2831853f))*.32f;
+    if (night>0) g_Renderer->DrawSolidRect(0,0,static_cast<float>(s.width),static_cast<float>(s.height),0,.025f,.04f,.15f,night);
+    if (s.weather==3) g_Renderer->DrawSolidRect(0,0,static_cast<float>(s.width),static_cast<float>(s.height),0,.7f,.44f,.12f,.09f);
+    if (s.weather==1 || s.weather==2 || s.weather==4)
+    {
+        for (int i=0;i<(s.weather==2 ? 120 : 60);++i)
+        {
+            const float x=std::fmod(i*97.3f+s.time*(s.weather==2 ? 60 : 15),static_cast<float>(s.width))-s.width*.5f;
+            const float y=s.height*.5f-std::fmod(i*61.7f+s.time*(s.weather==4 ? 25 : 280),static_cast<float>(s.height));
+            g_Renderer->DrawSolidRect(x,y,s.weather==4 ? 3.0f : 2.0f,s.weather==4 ? 3.0f : 18.0f,.22f,.72f,.85f,1,.4f);
+        }
+    }
+}
+
+void DrawJournal()
+{
+    const auto &s=g_GameState;
+    const float scale=GameUiScale(s.width,s.height);
+    const auto line=[&](float y,const std::wstring &text,float size=.6f) {
+        g_Renderer->DrawLabel(s.width*.5f,s.height*.5f+y*scale,text.c_str(),1,.88f,.65f,size*scale,1,true);
+    };
+    if (s.prologueTime>=0)
+    {
+        g_Renderer->DrawSolidRect(0,s.height*.36f,static_cast<float>(s.width),70*scale,0,.01f,.025f,.035f,.9f);
+        line(110,L"프롤로그 · 미개척지로 향하던 사냥꾼",1);
+        line(65,s.prologueTime<3 ? L"갑작스러운 포식자의 습격!" : s.prologueTime<5 ? L"장비를 잃고 야영지로 향합니다." : L"미라 장로에게서 생존과 사냥을 배우세요.",.8f);
+        line(-100,L"ESC 건너뛰기"); return;
+    }
+    const std::wstring sky=std::wstring(LivingWorld::SeasonName(s))+L" · "+LivingWorld::WeatherName(s)+L" · "+
+        std::to_wstring(LivingWorld::Day(s)+1)+L"일 · J 의뢰/거점 · Z 무기";
+    g_Renderer->DrawLabel(18*scale,s.height-83*scale,sky.c_str(),.85f,.85f,.72f,.43f*scale);
+    if (!s.journalOpen) return;
+    g_Renderer->DrawSolidRect(0,0,620*scale,490*scale,0,.025f,.045f,.06f,.98f);
+    line(208,L"모험 일지 · 동시 의뢰와 거점",1);
+    for (int i=0;i<5;++i)
+    {
+        const auto &c=s.contracts[i];
+        const std::wstring status=std::wstring(LivingWorld::ContractName(i))+L"  "+std::to_wstring(c.progress)+L"/"+
+            std::to_wstring(LivingWorld::Goals[i])+(c.active ? L" 진행" : L" 미수락")+L" · 완료 "+std::to_wstring(c.completed);
+        line(153.0f-i*37.0f,status,.58f);
+    }
+    line(-46,L"주화 "+std::to_wstring(s.coins)+L" · 집/농장/상점/동료 "+std::to_wstring(s.baseLevels[0])+L"/"+
+        std::to_wstring(s.baseLevels[1])+L"/"+std::to_wstring(s.baseLevels[2])+L"/"+std::to_wstring(s.baseLevels[3]));
+    line(-85,L"1 모두 수락 · 2 보고 · 3 농장 수확 · 4 교역/지난 축제",.54f);
+    line(-118,L"5 집에서 하루 휴식 · G 거점 확장 · J/ESC 닫기",.54f);
+    line(-150,L"보고·거점은 장로 옆 · 가방 [ ] 선택 O 정렬 X 폐기",.48f);
+    line(-179,L"가방 B/V 보관/꺼내기 T/Y 장비 F 창/활 · K 저장 L 복원",.48f);
+    if (s.messageTime>0) line(-215,s.message.substr(0,45),.5f);
+}
+
+void DrawStoryDecision()
+{
+    if (g_GameState.inventoryOpen || BossIntro::Active(g_GameState)) return;
+    const auto *step=StorySystem::Current(g_GameState);
+    const bool choice=step && (step->action==GameContent::StoryAction::RouteChoice ||
+        step->action==GameContent::StoryAction::FinalChoice);
+    const float dx=step ? step->position.x-g_GameState.player.x : 0;
+    const float dz=step ? step->position.z-g_GameState.player.z : 0;
+    if (choice && dx*dx+dz*dz>=step->radius*step->radius) return;
+    if (!choice && g_GameState.endingTime<=0) return;
+    const float scale=GameUiScale(g_GameState.width,g_GameState.height);
+    const float cx=g_GameState.width*.5f, cy=g_GameState.height*.5f;
+    g_Renderer->DrawSolidRect(0,0,620*scale,190*scale,0,.025f,.05f,.065f,.96f);
+    const auto label=[&](float y,const wchar_t *text,float size) {
+        g_Renderer->DrawLabel(cx,cy+y*scale,text,1,.88f,.64f,size*scale,1,true);
+    };
+    if (choice)
+    {
+        label(54,step->objective.c_str(),.8f);
+        const bool route=step->action==GameContent::StoryAction::RouteChoice;
+        label(8,route ? L"1  위협 사냥: 주민 보호, 짐승 희생" : L"1  장치 복구: 기후 안정, 지속적인 관리",.65f);
+        label(-34,route ? L"2  이동로 개방: 주민과 짐승 대피" : L"2  장치 정지: 자연 회복, 당분간 기후 불안",.65f);
+        return;
+    }
+    label(60,g_GameState.endingChoice==1 ? L"장치 복구 · 균형의 계승" : L"장치 정지 · 자연의 귀환",1);
+    label(15,g_GameState.migrationChoice==2 ? L"이동로를 열어 주민과 짐승을 대피시켰습니다." : L"마을을 지켰습니다. 사냥의 희생을 기억합니다.",.65f);
+    const auto rescued=L"구조 완료: "+std::to_wstring(g_GameState.rescuedSurvivors)+L"명 · 별빛 골짜기 개방";
+    label(-24,rescued.c_str(),.65f);
+    label(-65,L"장로에게 변종 사냥 받기 · C / R 장비 강화 · K 저장",.55f);
+}
+
 void DrawBossIntro()
 {
     if (!BossIntro::Active(g_GameState)) return;
@@ -136,6 +222,7 @@ void RenderScene()
     g_WorldRenderer->BeginFrame(g_GameState.time);
     g_WorldRenderer->RenderWorld(g_GameState);
     g_WorldRenderer->EndFrame(g_GameState.time);
+    DrawWeather();
 
     GameUiState uiState;
     uiState.windowWidth = g_GameState.width;
@@ -152,6 +239,12 @@ void RenderScene()
     uiState.inventoryOpen = g_GameState.inventoryOpen;
     uiState.inventoryPage = g_GameState.inventoryPage;
     uiState.hunterBladeCrafted = g_GameState.hunterBladeCrafted;
+    uiState.weaponTier = g_GameState.weaponTier;
+    uiState.armorTier = g_GameState.armorTier;
+    uiState.equippedWeapon=g_GameState.equippedWeapon; uiState.equippedArmor=g_GameState.equippedArmor;
+    uiState.weaponStyle=g_GameState.weaponStyle;
+    uiState.inventorySelection=g_GameState.inventorySelection; uiState.inventorySort=g_GameState.inventorySort;
+    uiState.storedCounts=g_GameState.storage.stacks;
     uiState.hunterArmorCrafted = g_GameState.hunterArmorCrafted;
     uiState.armorRecipeUnlocked = g_GameState.armorRecipeUnlocked;
     uiState.defense = g_GameState.defense;
@@ -191,7 +284,7 @@ void RenderScene()
     if (const wchar_t *hint = g_GameManager.GetHint())
         uiState.hint = hint;
     uiState.message = g_GameState.message;
-    if (!BossIntro::Active(g_GameState)) DrawGameUi(*g_Renderer, uiState);
+    if (!BossIntro::Active(g_GameState) && g_GameState.prologueTime<0) DrawGameUi(*g_Renderer, uiState);
     if (!BossIntro::Active(g_GameState) && g_GameState.combo > 1 && g_GameState.comboTime > 0)
     {
         const std::wstring comboText = std::to_wstring(g_GameState.combo) + L" COMBO";
@@ -208,6 +301,8 @@ void RenderScene()
     }
     if (!BossIntro::Active(g_GameState)) DrawChapterIntro();
     DrawBossIntro();
+    DrawStoryDecision();
+    if (!BossIntro::Active(g_GameState)) DrawJournal();
     if (g_CapturePath && ++g_CaptureFrames == 5)
     {
         wchar_t filename[MAX_PATH];
@@ -374,6 +469,8 @@ int main(int argc, char **argv)
             debugEntrySelected = true;
         }
     }
+    if (!debugEntrySelected && !g_CapturePath)
+    { g_GameState.prologueTime=0; g_GameState.player={g_GameState.world.spawn.x-18,g_GameState.world.spawn.z-15}; }
     glfwSetErrorCallback([](int code, const char *message) {
         std::cerr << "GLFW " << code << ": " << message << '\n';
     });

@@ -97,13 +97,15 @@ class WorldRenderer
     std::array<unsigned int,2> m_DesertAnimalTextures = {};
     std::array<unsigned int, 3> m_AnimalHitTextures = {};
     unsigned int m_AncientGuardianTexture = 0;
+    unsigned int m_EcologyGuardianTexture = 0;
+    unsigned int m_PredatorTexture = 0;
     unsigned int m_ChatDeathTexture = 0;
     std::array<unsigned int, 3> m_ChatAttackTextures = {};
     std::array<std::array<unsigned int, 2>, 5> m_ChatHdTextures = {};
     std::array<unsigned int, 2> m_ChatImpactTextures = {};
     std::array<unsigned int, 4> m_ChatHardTextures = {}; // rage emblem, roar, armor break, player slow
     unsigned int m_PixelSceneryTexture = 0;
-    std::array<unsigned int, 7> m_InvestigationTextures = {};
+    std::array<unsigned int, 8> m_InvestigationTextures = {};
     std::array<unsigned int, 3> m_AttackHitTextures = {};
     std::array<unsigned int, 3> m_PixelAnimalTextures = {};
     std::array<unsigned int, 3> m_Chapter1BoarTextures = {};

@@ -181,6 +181,10 @@
     <ClInclude Include="NpcRosterFrames.h" />
     <ClInclude Include="GameContent.h" />
     <ClInclude Include="StorySystem.h" />
+    <ClInclude Include="SaveGame.h" />
+    <ClInclude Include="InventoryActions.h" />
+    <ClInclude Include="LivingWorld.h" />
+    <ClInclude Include="WorldStreaming.h" />
     <ClInclude Include="InvestigationSprites.h" />
     <ClInclude Include="BoarDeathFrames.h" />
     <ClInclude Include="AnimalHitFrames.h" />

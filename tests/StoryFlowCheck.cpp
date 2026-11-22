@@ -330,6 +330,11 @@ int main()
             debug.player = step.position;
             debugGame.UpdateGame(0);
             break;
+        case GameContent::StoryAction::Rescue:
+            debugGame.HandleCommand(GameCommand::Interact);
+            debug.player=StorySystem::Target(debug);
+            for (int i=0;i<100 && debug.storyStep==before;++i) debugGame.UpdateGame(.05f);
+            break;
         case GameContent::StoryAction::Investigate:
         case GameContent::StoryAction::Report:
         case GameContent::StoryAction::Collect:
@@ -345,6 +350,10 @@ int main()
             assert(debug.monster.definition.id == step.monsterId && debug.monster.health > 0);
             debug.monster.health = 1;
             debugGame.HandleCommand(GameCommand::Attack);
+            break;
+        case GameContent::StoryAction::RouteChoice:
+        case GameContent::StoryAction::FinalChoice:
+            debugGame.HandleCommand(GameCommand::ChooseFirst);
             break;
         }
         assert(debug.storyStep == before + 1);
@@ -404,6 +413,11 @@ int main()
         case GameContent::StoryAction::Travel:
             game.UpdateGame(0);
             break;
+        case GameContent::StoryAction::Rescue:
+            game.HandleCommand(GameCommand::Interact);
+            state.player=StorySystem::Target(state);
+            for (int i=0;i<100 && state.storyStep==before;++i) game.UpdateGame(.05f);
+            break;
         case GameContent::StoryAction::Investigate:
         case GameContent::StoryAction::Report:
             game.HandleCommand(GameCommand::Interact);
@@ -448,6 +462,10 @@ int main()
             assert(state.inventory.Count(ItemId::BoarHide) == hide+hideReward);
             break;
         }
+        case GameContent::StoryAction::RouteChoice:
+        case GameContent::StoryAction::FinalChoice:
+            game.HandleCommand(GameCommand::ChooseFirst);
+            break;
         case GameContent::StoryAction::CraftArmor:
         {
             assert(state.armorRecipeUnlocked);
@@ -468,7 +486,7 @@ int main()
         }
         assert(state.storyStep == before+1);
     }
-    assert(steps == 22 && hunts == 3 && state.storyFinished && !StorySystem::CanStart(state));
+    assert(steps == 39 && hunts == 6 && state.storyFinished && !StorySystem::CanStart(state));
     assert(state.ruinDeviceDisabled);
     const auto profile = GameContent::Get().monsters.at("displaced_boar");
     auto enemy = MonsterSystem::Create(profile,state.player);
@@ -490,6 +508,6 @@ int main()
     game.HandleCommand(GameCommand::Interact);
     if (state.lootTime > 0) game.UpdateGame(GameConstants::Loot::Duration + .01f);
     assert(state.quest == QuestStage::Hunt && !StorySystem::IsHunting(state));
-    assert(state.monster.definition.id == GameContent::Get().map.monsterId);
-    std::cout << "PASS: three chapters/22 objectives, device state, renewable herbs, loot/armor/pause and repeat hunt\n";
+    assert(state.monster.definition.id == "valley_variant");
+    std::cout << "PASS: five chapters/39 objectives, device state, renewable herbs, loot/armor/pause and repeat hunt\n";
 }

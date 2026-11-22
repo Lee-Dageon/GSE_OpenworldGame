@@ -3,11 +3,13 @@
 
 #include "Monster.h"
 #include "Inventory.h"
+#include "RegionalState.h"
 
 #include <array>
 #include <cstdint>
 #include <string>
 #include <vector>
+#include <map>
 
 enum class QuestStage
 {
@@ -31,6 +33,7 @@ struct NpcState
     std::uint32_t wanderSeed = 0;
     bool moving = false;
     int identity = -1, conversations = 0;
+    float health = 100;
 };
 struct AnimalState
 {
@@ -75,6 +78,18 @@ struct GatherNodeState
     float regrowTime = 0;
 };
 
+struct FieldMonster
+{
+    MonsterState monster = {};
+    Vec2 home = {};
+    bool collected = false, rewardGranted = false;
+    float respawnTime = 0;
+};
+struct EscortState { Vec2 position = {}; bool following=false, arrived=false; };
+struct ContractState { bool active=false; int progress=0, completed=0; };
+struct ChunkObject { int kind=0, index=0; };
+struct LoadedChunk { std::vector<ChunkObject> objects; };
+
 struct GameState
 {
     int width = 1280, height = 720, lastTime = 0;
@@ -92,10 +107,44 @@ struct GameState
     bool bossIntroPending = false;
     float health = 100.0f, maxHealth = 100.0f, dodge = 0.0f, attack = 0.0f, messageTime = 7.0f, time = 0.0f;
     Inventory inventory;
+    Inventory storage = {{}};
+    int inventorySelection = 0, inventorySort = 0;
+    int equippedWeapon = -1, equippedArmor = -1, weaponStyle = 0;
+    bool spearCrafted = false, bowCrafted = false;
+    std::vector<FieldMonster> fieldMonsters;
+    std::array<EscortState,2> escorts = {};
+    std::array<ContractState,5> contracts = {};
+    std::array<int,4> baseLevels = {};
+    float worldTime=0, farmTime=0, companionCooldown=0;
+    int coins=0, festivalClaimDay=-1, regionVisits=0, nextBaseUpgrade=0;
+    Vec2 companion = {};
+    bool journalOpen=false, prologueSeen=false;
+    float prologueTime=-1;
+    bool prologueLossApplied=false;
+    int lostWeaponTier=-1,lostArmorTier=-1;
+    std::map<std::string,RegionRuntime> regions;
+    std::map<std::string,RegionProgress> regionProgress;
+    std::map<std::string,std::string> orphanRecords;
+    int regionLoads=0,regionUnloads=0;
+    bool trackingActive=false,variantResearchActive=false;
+    int trackingStep=0,trackingCompleted=0,variantSamples=0,variantResearchCompleted=0;
+    int festivalRound=-1,festivalStage=0,festivalScore=0,festivalFinished=-1;
+    int worldEventStage=0,worldEventKills=0,worldEventCompleted=0;
+    float worldEventTime=0;
+    int weather=0;
+    float arrowTime=0;
+    Vec2 arrowFrom = {}, arrowTo = {};
+    std::map<std::pair<int,int>,LoadedChunk> loadedChunks;
+    int streamX=100000,streamZ=100000,chunkLoads=0,chunkUnloads=0;
     bool inventoryOpen = false, hunterBladeCrafted = false;
     int inventoryPage = 0;
     bool armorRecipeUnlocked = false, hunterArmorCrafted = false, storyFinished = false;
     bool ruinDeviceDisabled = false;
+    int rescuedSurvivors = 0;
+    // 0 undecided, 1 hunt/restore, 2 open migration route/shut down.
+    int migrationChoice = 0, endingChoice = 0;
+    int weaponTier = 0, armorTier = 0;
+    float endingTime = 0;
     float herbRegrowTime = 0.0f;
     int defense = 0, storyStep = -1;
     float playerHitTime = 0.0f, hitStop = 0.0f;
@@ -107,6 +156,7 @@ struct GameState
     float lootTime = 0.0f, lootPickupTime = 0.0f;
     int lootAnimal = -1;
     int lootNode = -1;
+    int lootField = -1;
     int completedHunts = 0;
     int level = 1, experience = 0, experienceToNextLevel = 20, attackPower = 2;
     QuestStage quest = QuestStage::Elder;

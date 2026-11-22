@@ -423,6 +423,7 @@ FodyWeavers.xsd
 
 # Game-ready pixel art and its metadata must travel with the renderer changes.
 !/SimpleGame/Assets/PixelArt/**/*.png
+/SimpleGame/Saves/
 !/SimpleGame/Assets/PixelArt/**/*.json
 
 # Preserve folder structure for ignored folders
@@ -527,4 +528,5 @@ EisenValor-Server/docs/rio-ring-buffer-preview.png
 !/SimpleGame/Dependencies/glfw/**
 !/SimpleGame/Dependencies/glew/**
 !/SimpleGame/Fonts/**
-/tools
+/tools/*
+!/tools/RunGameplayChecks.ps1

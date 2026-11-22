@@ -13,7 +13,11 @@ enum class GameCommand
     ToggleInventory,
     CraftHunterBlade,
     CraftHealingPotion,
-    CraftHunterArmor
+    CraftHunterArmor,
+    ChooseFirst, ChooseSecond, SaveProgress, LoadProgress,
+    SelectPrevious, SelectNext, SortInventory, DiscardItem, DepositItem, WithdrawItem,
+    EquipWeapon, EquipArmor, CraftStyles, SwitchStyle, Journal, BuildBase,
+    ChooseThird, ChooseFourth, Rest
 };
 
 namespace GameInput

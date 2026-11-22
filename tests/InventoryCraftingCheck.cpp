@@ -100,13 +100,15 @@ int main()
         while (MonsterSystem::IsAlive(state.monster))
         {
             game.BeginFrame(.33f);
+            state.hitStop=0; // Presentation delay is exercised separately by feedback checks.
             game.HandleCommand(GameCommand::Attack);
             assert(++attacks < 100);
         }
         assert(state.quest == QuestStage::Trophy);
+        state.hitStop=0;
         return attacks;
     };
-    assert(kill() == 6);
+    assert(kill() == 24);
     const int xp = state.experience;
     game.BeginFrame(.33f);
     game.HandleCommand(GameCommand::Attack);
@@ -151,8 +153,8 @@ int main()
     state.storyFinished = true; // This check covers post-story repeat hunts; StoryFlowCheck covers the campaign.
     game.HandleCommand(GameCommand::Interact);
     if (state.lootTime > 0) game.UpdateGame(GameConstants::Loot::Duration + .01f);
-    assert(state.quest == QuestStage::Hunt && state.monster.health == 18);
-    assert(kill() == 3);
+    assert(state.quest == QuestStage::Hunt && state.monster.health == 30);
+    assert(kill() == 10);
     game.HandleCommand(GameCommand::Interact);
     if (state.lootTime > 0) game.UpdateGame(GameConstants::Loot::Duration + .01f);
     assert(state.completedHunts == 2 && state.quest == QuestStage::Return);

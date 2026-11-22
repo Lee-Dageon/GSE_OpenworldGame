@@ -157,6 +157,28 @@
       "sha256": "5eebc66bf7cdcdb6eaae720d1c49ae867b8d4edf669d2d265e1eac1d0bd7c0c8",
       "source": "exec-035c97cf-1144-4ec6-99e7-5d66165d3148.png",
       "prompt": "Stone-and-bronze ecological control pedestal with turquoise crystal, concentric rings and four radial arms."
+    },
+    {
+      "id": "ecology_core",
+      "file": "ecology-core-v1.png",
+      "size": 205,
+      "pivot": [
+        0.5,
+        0.93
+      ],
+      "visible_bounds": [
+        80,
+        15,
+        1168,
+        1229
+      ],
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "sha256": "e6bd23b5282d65c1752b64599ae5462bb84402b3e566bb7358453ea9abe154f3",
+      "source": "exec-e1924f4d-fe51-436e-bc7d-8c6cb924a33f.png",
+      "prompt": "Quarter-view pixel art ancient ecology control core, sandstone plinth, bronze rings and turquoise crystal, transparent background."
     }
   ],
   "sites": [
@@ -207,6 +229,46 @@
     {
       "step_id": "ruin_control",
       "asset": 6
+    },
+    {
+      "step_id": "storm_investigation",
+      "asset": 1
+    },
+    {
+      "step_id": "rescue_traveler",
+      "asset": 1
+    },
+    {
+      "step_id": "rescue_scout",
+      "asset": 1
+    },
+    {
+      "step_id": "migration_decision",
+      "asset": 0
+    },
+    {
+      "step_id": "drought_control",
+      "asset": 7
+    },
+    {
+      "step_id": "synthesis",
+      "asset": 2
+    },
+    {
+      "step_id": "first_expedition",
+      "asset": 2
+    },
+    {
+      "step_id": "central_entrance",
+      "asset": 5
+    },
+    {
+      "step_id": "ecology_truth",
+      "asset": 7
+    },
+    {
+      "step_id": "final_decision",
+      "asset": 7
     }
   ]
 }

@@ -1,0 +1,44 @@
+{
+  "version": 1,
+  "assets": [
+    {
+      "file": "ecology-core-v1.png",
+      "columns": 1,
+      "rows": 1,
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "sha256": "e6bd23b5282d65c1752b64599ae5462bb84402b3e566bb7358453ea9abe154f3",
+      "source": "exec-e1924f4d-fe51-436e-bc7d-8c6cb924a33f.png",
+      "prompt": "Quarter-view pixel art ancient ecology control core, sandstone plinth, bronze rings and turquoise crystal, transparent background.",
+      "provider": "built-in image_gen"
+    },
+    {
+      "file": "ecology-guardian-v1.png",
+      "columns": 4,
+      "rows": 4,
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "sha256": "0bcc2584a52017e84564698e6e1188d243e80b759b57aa1bec93efd07f90458d",
+      "source": "exec-12994f03-c1f1-4b6a-a302-1eaf2e85c32f.png",
+      "prompt": "Four directions by four poses of an original stone-armored feline ecology guardian, bronze legs, crystalline mane, amber tail, quarter-view pixel art, transparent background.",
+      "provider": "built-in image_gen"
+    },
+    {
+      "file": "forest-predator-v1.png",
+      "columns": 4,
+      "rows": 4,
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "sha256": "0e99c717b893ecf3d41e86f14407e566ea012b38c9e37fcbc95d3b95e31be36e",
+      "source": "exec-779817cd-cf18-4f6c-813d-eaa5f20d43d0.png",
+      "provider": "built-in image_gen",
+      "prompt": "4x4 quarter-view pixel art sprite sheet: original rusty-brown saber-tooth lynx, pale shoulder stripes, ivory fangs, directions down/left/right/up, poses idle/walk/walk/crouch, transparent background."
+    }
+  ]
+}

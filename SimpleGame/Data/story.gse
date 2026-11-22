@@ -1,9 +1,11 @@
 gse_story 1 greenwake_main
 intro "미라 장로: 첫 사냥은 잘 해냈어요. 이제 남쪽 길목에서 마을을 위협하는 짐승의 흔적을 찾아주세요."
-ending "미라 장로: 고대 시설이 환경을 조절하고 있었군요. 장치 일부를 멈췄지만 지역의 균형은 아직 불안정합니다. 다음에는 기후 변화와 피난민을 조사해야 해요."
+ending "세계의 균형을 위한 결정을 내렸습니다. 미라 장로에게 돌아가 새로운 변종 사냥을 시작하세요."
 chapter unfamiliar "1장: 낯선 땅"
 chapter displaced "2장: 떠나온 몬스터들"
 chapter awakened "3장: 잠에서 깨어난 유적"
+chapter unbalanced "4장: 무너지는 균형"
+chapter exodus "5장: 대이동의 원인"
 region village "그린웨이크" -40 -40 40 40 .23 .32 .16
 region south_border "남쪽 길목" 45 -150 250 -35 .30 .29 .16
 region north_forest "북부 숲" -30 120 230 470 .17 .24 .11
@@ -12,6 +14,10 @@ region ancient_edge "유적 외곽" 140 390 240 490 .29 .30 .25
 region expedition_camp "폐허가 된 조사대 야영지" -380 120 -160 320 .27 .29 .19
 region ancient_hall "깨어난 유적" -850 290 -380 780 .23 .29 .29
 region desert_wastes "황금 모래 대사막" -900 80 -140 900 .66 .46 .24
+region storm_front "폭풍에 무너진 길" 300 -480 620 -180 .25 .29 .30
+region dry_basin "메마른 생태 분지" 480 -130 790 230 .48 .36 .22
+region central_ruins "중앙 생태 유적" 380 480 790 780 .24 .34 .32
+region hidden_valley "별빛 골짜기" 790 620 895 890 .18 .28 .31
 step south_travel unfamiliar travel 70 -60 1.5 none "남쪽 길목으로 이동하기" "목표 표시를 따라 남쪽 길목으로 이동하세요." "울타리 바깥에 낯선 발자국이 이어집니다."
 step south_tracks unfamiliar investigate 140 -110 1.3 none "남쪽 울타리 주변의 흔적 조사하기" "E  남쪽 길목의 흔적 조사" "큰 발자국은 숲에서 마을 쪽으로 향합니다. 먹이를 찾으러 내려온 것 같습니다."
 step border_hunt unfamiliar hunt 210 -70 1.5 rampaging_boar "마을을 위협하는 거대 멧돼지 사냥하기" "좌클릭 공격 · 공백 키 회피 · Q 회복" "거대 멧돼지를 쓰러뜨렸습니다. 몸에 남은 흔적을 확인하세요."
@@ -22,7 +28,7 @@ step forest_travel displaced travel 20 160 1.8 none "북부 숲의 옛길 입구
 step forest_tracks displaced investigate 110 220 1.3 none "버려진 숲 야영지의 흔적 조사하기" "E  숲 야영지 조사" "짐승뿐 아니라 조사대도 자리를 떠났습니다. 기록에는 동쪽 모래 지대가 표시되어 있습니다."
 step sand_travel displaced travel 300 100 1.8 none "동쪽 모래 지대의 폐허로 이동하기" "목표 표시를 따라 모래 폐허로 이동하세요." "풀밭이 끝나고 모래에 묻힌 건물 흔적이 나타납니다."
 step sand_records displaced investigate 390 160 1.3 none "모래 폐허의 버려진 기록 조사하기" "E  모래 폐허의 기록 조사" "숲과 모래 지대의 짐승들이 모두 북쪽 유적을 피해 이동했습니다. 숲에 남은 난폭한 개체를 추적하세요."
-step forest_hunt displaced hunt 120 330 1.5 displaced_boar "서식지를 잃은 난폭한 멧돼지 사냥하기" "좌클릭 공격 · 공백 키 회피 · Q 회복" "난폭한 개체를 쓰러뜨렸습니다. 몸에 묻은 유적의 흔적을 수집하세요."
+step forest_hunt displaced hunt 120 330 1.5 forest_predator "영역을 잃은 검치 포식자 사냥하기" "웅크리면 옆으로 회피 · 도약 뒤 반격" "서식지를 잃은 포식자를 쓰러뜨렸습니다. 몸에 묻은 유적의 흔적을 수집하세요."
 step forest_loot displaced collect 120 330 1.5 none "난폭한 멧돼지의 재료와 유적 흔적 수집하기" "E  재료와 유적 흔적 수집" "가죽에 오래된 돌가루가 묻어 있습니다. 가까운 유적 외곽을 조사할 단서입니다."
 step ruin_signal displaced investigate 180 430 1.3 none "유적 외곽의 이상 징후 조사하기" "E  유적 외곽 조사" "멈춰 있어야 할 장치에서 진동이 느껴집니다. 짐승들의 이동과 관련이 있어 보입니다."
 step second_report displaced report 0 1.4 1.5 none "미라 장로에게 두 지역의 조사 결과 보고하기" "E  두 번째 조사 보고" "미라 장로: 서로 다른 지역에서 같은 흔적이 나왔군요. 이제 유적이 깨어난 원인을 찾아야 합니다."
@@ -34,3 +40,20 @@ step ruin_control awakened investigate -520 450 1.5 none "유적의 경계 장�
 step ancient_hunt awakened hunt -620 540 1.6 ancient_guardian "차타카브라 사냥하기" "좌클릭 공격 · 공백 회피 · Q 회복" "차타카브라를 쓰러뜨렸습니다. 몸에 남은 장치의 흔적을 조사하세요."
 step ancient_loot awakened collect -620 540 1.6 none "차타카브라의 재료와 장치 흔적 수집하기" "E  차타카브라 전리품 수집" "굳은 피부 사이에 장치의 금속 가루가 박혀 있습니다. 고대 시설이 주변 생태에 영향을 주고 있었습니다."
 step third_report awakened report 0 1.4 1.5 none "장로에게 고대 시설의 조사 결과 보고하기" "E  유적 조사 보고" "미라 장로: 이 시설은 자연환경을 조절하던 곳이군요. 남은 장치가 다른 지역에 미칠 영향도 알아봐야 합니다."
+step storm_investigation unbalanced investigate 360 -240 2 none "동남쪽 폭풍 피해 조사하기" "E  폭풍의 흔적 조사" "갑작스러운 폭풍이 길을 끊었습니다. 부서진 수레 곁에서 사람의 목소리가 들립니다."
+step rescue_traveler unbalanced rescue 410 -300 2 none "고립된 피난민 구조하기" "E  피난민을 안전한 길로 안내" "피난민을 구조했습니다. 미라 장로가 보낸 구조대가 마을까지 동행합니다. 남쪽의 부상자도 확인하세요."
+step rescue_scout unbalanced rescue 480 -360 2 none "부상당한 정찰병 구조하기" "E  정찰병 응급 처치와 구조 요청" "정찰병을 치료하고 구조대에 인계했습니다. 동쪽 장치가 지하수를 빼앗아 짐승들이 길목에 몰렸다고 합니다."
+step migration_decision unbalanced route_choice 540 -200 2 none "마을 방어 또는 짐승의 이동로 선택하기" "1  위협 사냥 · 2  주민을 대피시키고 이동로 열기" "피난민을 대피시켰습니다. 생태 장치의 영향을 조사하세요."
+step migration_hunt unbalanced hunt 590 -180 2 displaced_boar "길목을 위협하는 난폭한 개체 사냥하기" "좌클릭 공격 · 공백 회피 · Q 회복" "마을로 향하던 위협을 막았습니다. 장치의 영향을 받은 흔적을 수집하세요."
+step migration_loot unbalanced collect 590 -180 2 none "방어 사냥의 흔적 수집하기" "E  방어 사냥 재료 수집" "주민 피해는 막았지만 짐승은 돌아가지 못했습니다. 이런 희생이 반복되지 않도록 원인을 찾아야 합니다."
+step drought_control unbalanced investigate 640 -80 2 none "가뭄을 일으킨 생태 장치 확인하기" "E  생태 장치의 수문 기록 조사" "생태 장치가 모든 물을 중앙 유적으로 보내고 있습니다. 유출된 동력에 노출된 변이 개체가 나타났습니다."
+step mutated_hunt unbalanced hunt 710 80 2 mutated_guardian "장치 동력에 노출된 변이종 사냥하기" "붉은 전조를 보고 회피 · 공격 뒤 반격" "변이종을 쓰러뜨렸습니다. 결정에서 중앙 장치와 같은 진동이 느껴집니다."
+step mutated_loot unbalanced collect 710 80 2 none "변이종의 동력 결정 수집하기" "E  변이종 전리품 수집" "변이는 고대 동력의 과다 노출 때문입니다. 구조한 사람들의 증언과 함께 장로에게 보고하세요."
+step fourth_report unbalanced report 0 1.4 2 none "구조와 생태 장치 조사 결과 보고하기" "E  네 번째 조사 보고" "미라 장로: 주민들은 무사히 돌아왔어요. 조사 자료를 모아 최초 조사대의 기록과 비교합시다."
+step synthesis exodus investigate 0 1.4 2 none "각 지역의 조사 자료 모으기" "E  조사 자료 대조" "폭풍과 가뭄, 짐승의 이탈은 모두 중앙 장치의 과부하로 이어집니다. 북동쪽 기록 보관소로 향하세요."
+step first_expedition exodus investigate 430 510 2 none "최초 조사대의 기록 찾기" "E  최초 조사대 기록 읽기" "시설은 큰 재해를 막기 위해 만들어졌습니다. 조절 기능이 고장 나 자연의 균형을 깨뜨리고 있습니다."
+step central_entrance exodus travel 520 580 2 none "중앙 생태 유적에 진입하기" "중앙 유적 입구로 이동하세요." "모든 생태 장치의 동력이 이곳에 모입니다. 최종 수호자가 제어핵을 지키고 있습니다."
+step final_hunt exodus hunt 620 660 2 final_guardian "난폭해진 최종 수호자 쓰러뜨리기" "공격 전조를 관찰하고 회피한 뒤 반격" "최종 수호자가 쓰러졌습니다. 제어핵에 접근할 수 있습니다."
+step final_loot exodus collect 620 660 2 none "최종 수호자의 제어 결정 수집하기" "E  제어 결정 수집" "제어 결정을 확보했습니다. 장치를 복구할지 완전히 멈출지 직접 결정해야 합니다."
+step ecology_truth exodus investigate 720 710 2 none "생태계 조절 시설의 진실 확인하기" "E  제어핵 기록 읽기" "복구하면 기후를 안정시키지만 계속 관리해야 합니다. 정지하면 자연이 스스로 회복하되 당분간 기후가 불안정합니다."
+step final_decision exodus final_choice 745 735 2 none "생태 장치의 운명 결정하기" "1  장치 복구 · 2  장치 영구 정지" "사냥꾼은 세계가 변한 이유를 발견하고 자신의 답을 선택했습니다."

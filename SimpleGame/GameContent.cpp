@@ -192,6 +192,13 @@ GameContent::MapDefinition ReadMap(const std::string &path)
                 map.terrain.push_back(item);
                 reader.Require(map.terrain.size()<=32,"too many terrain strips");
             }
+            else if (tag == "field_monster")
+            {
+                GameContent::FieldEncounter item; item.id=id; item.monsterId=reader.Id(row);
+                Read(reader,row,item.position.x,item.position.z);
+                map.encounters.push_back(item);
+                reader.Require(map.encounters.size()<=128,"too many field monsters");
+            }
             else if (tag == "gather")
             {
                 GameContent::GatherDefinition item; item.id = id;
@@ -350,7 +357,7 @@ GameContent::StoryDefinition ReadStory(const std::string &path, const GameConten
     Reader reader(path); std::istringstream row; Header(reader,row,"gse_story");
     GameContent::StoryDefinition story; story.id = reader.Id(row); reader.End(row);
     std::set<std::string> ids, required; std::map<std::string,int> chapters;
-    const std::array<std::string,6> actions = {{"travel","investigate","hunt","collect","report","craft_armor"}};
+    const std::array<std::string,9> actions = {{"travel","investigate","hunt","collect","report","craft_armor","rescue","route_choice","final_choice"}};
     const auto point = [&](Vec2 p) {
         reader.Require(Range(p.x,map.world.minimumCoordinate,map.world.maximumCoordinate) &&
             Range(p.z,map.world.minimumCoordinate,map.world.maximumCoordinate) && !GameContent::IsBlocked(map,p), "blocked or invalid story target");
@@ -416,6 +423,12 @@ GameContent::StoryDefinition ReadStory(const std::string &path, const GameConten
     int hideBudget = 0, tuskBudget = 0; bool armorMade = false;
     for (size_t index = 0; index < story.steps.size(); ++index)
     {
+        if (story.steps[index].action == GameContent::StoryAction::RouteChoice)
+            reader.Require(index+3 < story.steps.size() && story.steps[index+1].action == GameContent::StoryAction::Hunt &&
+                story.steps[index+2].action == GameContent::StoryAction::Collect &&
+                story.steps[index+3].chapterId == story.steps[index].chapterId, "route choice requires hunt/collect and a merge in the same chapter");
+        if (story.steps[index].action == GameContent::StoryAction::FinalChoice)
+            reader.Require(index+1 == story.steps.size(), "final choice must end the story");
         if (story.steps[index].action == GameContent::StoryAction::Hunt)
             reader.Require(index+1 < story.steps.size() && story.steps[index+1].action == GameContent::StoryAction::Collect &&
                 story.steps[index+1].chapterId == story.steps[index].chapterId, "hunt must lead directly to collection in the same chapter");
@@ -455,6 +468,14 @@ Content Load(const std::string &directory)
     result.map = ReadMap(directory+"/map.gse");
     result.monsters = ReadMonsters(directory+"/monsters.gse");
     result.quest = ReadQuest(directory+"/quests.gse");
+    for (const auto &encounter : result.map.encounters)
+    {
+        const auto p=encounter.position;
+        if (!result.monsters.count(encounter.monsterId) || !Range(p.x,result.map.world.minimumCoordinate,result.map.world.maximumCoordinate) ||
+            !Range(p.z,result.map.world.minimumCoordinate,result.map.world.maximumCoordinate) || IsBlocked(result.map,p) ||
+            std::hypot(p.x-result.map.world.lake.x,p.z-result.map.world.lake.z)<=result.map.world.lakeRadius)
+            throw std::runtime_error(directory+"/map.gse: invalid field encounter");
+    }
     if (result.monsters.count(result.map.monsterId) == 0)
         throw std::runtime_error(directory+"/map.gse: encounter refers to unknown monster ID '"+result.map.monsterId+"'");
     result.story = ReadStory(directory+"/story.gse",result.map,result.monsters);

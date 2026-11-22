@@ -26,6 +26,9 @@ struct GameUiState
     bool inventoryOpen = false, hunterBladeCrafted = false, nearWorkbench = false, huntReported = false;
     bool armorRecipeUnlocked = false, hunterArmorCrafted = false;
     int defense = 0;
+    int weaponTier = 0, armorTier = 0;
+    int equippedWeapon=-1,equippedArmor=-1,weaponStyle=0,inventorySelection=0,inventorySort=0;
+    std::array<int,static_cast<size_t>(ItemId::Count)> storedCounts = {};
     std::wstring locationName = L"그린웨이크";
     float health = 0.0f;
     float maxHealth = 1.0f;

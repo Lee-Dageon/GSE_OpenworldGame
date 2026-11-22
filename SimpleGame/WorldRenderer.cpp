@@ -17,6 +17,7 @@
 #include "ChatacabraFrames.h"
 #include "PixelGeneralFrames.h"
 #include "InvestigationSprites.h"
+#include "WorldStreaming.h"
 #include "BoarDeathFrames.h"
 #include "ChatacabraHDFrames.h"
 #include "AnimalHitFrames.h"
@@ -236,6 +237,20 @@ WorldRenderer::WorldRenderer(Renderer &renderer) : m_Renderer(renderer)
             }
         }
     m_AncientGuardianTexture = m_Renderer.LoadTexture(L"./Assets/PixelArt/Monsters/Chapter3/chatacabra-walk-8dir-v2.png");
+    m_EcologyGuardianTexture = m_Renderer.LoadTexture(L"./Assets/PixelArt/Investigation/ecology-guardian-v1.png");
+    m_PredatorTexture = m_Renderer.LoadTexture(L"./Assets/PixelArt/Investigation/forest-predator-v1.png");
+    if (m_PredatorTexture)
+    {
+        glBindTexture(GL_TEXTURE_2D,m_PredatorTexture);
+        glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
+    }
+    if (m_EcologyGuardianTexture)
+    {
+        glBindTexture(GL_TEXTURE_2D,m_EcologyGuardianTexture);
+        glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
+    }
     m_ChatDeathTexture = m_Renderer.LoadTexture(L"./Assets/PixelArt/Monsters/Chapter3/chatacabra-death-8dir-v1.png");
     m_ChatAttackTextures[0] = m_Renderer.LoadTexture(L"./Assets/PixelArt/Monsters/Chapter3/chatacabra-tongue-8dir-v2.png");
     m_ChatAttackTextures[1] = m_Renderer.LoadTexture(L"./Assets/PixelArt/Monsters/Chapter3/chatacabra-slam-8dir-v2.png");
@@ -323,6 +338,8 @@ WorldRenderer::~WorldRenderer()
             if (texture != 0) glDeleteTextures(1, &texture);
     for (auto texture : m_InvestigationTextures)
         if (texture != 0) glDeleteTextures(1, &texture);
+    if (m_EcologyGuardianTexture) glDeleteTextures(1,&m_EcologyGuardianTexture);
+    if (m_PredatorTexture) glDeleteTextures(1,&m_PredatorTexture);
     for (auto texture:m_RosterNpcTextures)
         if (texture) glDeleteTextures(1,&texture);
     if (m_ChatDeathTexture) glDeleteTextures(1, &m_ChatDeathTexture);
@@ -519,7 +536,7 @@ void WorldRenderer::DrawGeneralPlayer(const GameState &state) const
     constexpr int directionRows[8] = {9, 0, 12, 21, 18, 6, 15, 3};
     const int atlasFrame = running ? frame : static_cast<int>(state.time * 4) % 4;
     const int atlasRow = directionRows[direction] + (running ? 2 : 0);
-    const bool attacking = state.attack > 0.0f && m_GeneralAttackTexture != 0;
+    const bool attacking = state.attack > 0.0f && state.weaponStyle==0 && m_GeneralAttackTexture != 0;
     const int attackX = frame * 887 / 4, attackY = direction * 1774 / 8;
     const PixelGeneralFrames::Frame region = attacking ?
         PixelGeneralFrames::Frame{attackX, attackY, (frame + 1) * 887 / 4 - attackX,
@@ -548,7 +565,8 @@ void WorldRenderer::DrawGeneralPlayer(const GameState &state) const
                           region.width * scale, region.height * scale, region.x, region.y,
                           attacking ? 887 : newSheet ? 768 : PixelGeneralFrames::Width[mode],
                           attacking ? 1774 : newSheet ? 6144 : PixelGeneralFrames::Height[mode],
-                          1, 1, 1, 1, pulse * .025f, pivotY, 0,
+                          1, state.equippedArmor==2 ? .75f : 1, state.equippedArmor==1 ? .82f : 1,
+                          state.equippedWeapon==2 ? .72f : 1, pulse * .025f, pivotY, 0,
                           static_cast<float>(region.width), static_cast<float>(region.height), .5f);
 }
 
@@ -1308,7 +1326,7 @@ void WorldRenderer::RenderWorld(const GameState &state)
     m_Renderer.SetWorldScale(WorldScale * state.height / 720.0f * BossIntro::Zoom(state));
     DrawGround();
     DrawTerrain();
-    enum class DrawType { House, Tree, Campfire, Npc, Animal, Tracks, Herb, Monster, Player, NoticeBoard, Decoration, Scenery, Investigation, StoryMarker, GatherNode };
+    enum class DrawType { House, Tree, Campfire, Npc, Animal, Tracks, Herb, Monster, Player, NoticeBoard, Decoration, Scenery, Investigation, StoryMarker, GatherNode, FieldMonster, Companion, Prologue };
     struct DrawItem { Vec2 position; DrawType type; int index; };
     std::vector<DrawItem> items;
     for (int index = 0; index < static_cast<int>(Map().houses.size()); ++index)
@@ -1362,6 +1380,12 @@ void WorldRenderer::RenderWorld(const GameState &state)
         items.push_back({state.npcs[index].position, DrawType::Npc, index});
     for (int index = 0; index < static_cast<int>(state.animals.size()); ++index)
         items.push_back({state.animals[index].position, DrawType::Animal, index});
+    for (size_t i=0;i<state.fieldMonsters.size();++i)
+        if (!state.fieldMonsters[i].collected && WorldStreaming::Active(state,state.fieldMonsters[i].home))
+            items.push_back({state.fieldMonsters[i].monster.position,DrawType::FieldMonster,static_cast<int>(i)});
+    if (state.baseLevels[3]>0) items.push_back({state.companion,DrawType::Companion,0});
+    if (state.prologueTime>=0)
+        items.push_back({{state.player.x+std::max(.8f,6-state.prologueTime),state.player.z+1},DrawType::Prologue,0});
     items.push_back({state.world.tracks, DrawType::Tracks, 0});
     if (state.quest == QuestStage::Herb || (state.herbRegrowTime <= 0 &&
         state.quest != QuestStage::Elder && state.quest != QuestStage::Tracks))
@@ -1387,6 +1411,8 @@ void WorldRenderer::RenderWorld(const GameState &state)
 
     const float cullScale = WorldScale * state.height / 720.0f * BossIntro::Zoom(state);
     items.erase(std::remove_if(items.begin(), items.end(), [&](const DrawItem &item) {
+        if (item.type!=DrawType::Player && item.type!=DrawType::Monster && item.type!=DrawType::Companion &&
+            item.type!=DrawType::Prologue && !WorldStreaming::Active(state,item.position)) return true;
         if (item.type != DrawType::House && item.type != DrawType::Tree &&
             item.type != DrawType::Campfire && item.type != DrawType::Npc && item.type != DrawType::Animal)
             return false;
@@ -1410,6 +1436,51 @@ void WorldRenderer::RenderWorld(const GameState &state)
         ApplyLocalLight(m_Renderer, item.position, state.time);
         switch (item.type)
         {
+        case DrawType::Prologue:
+            if (m_PredatorTexture)
+            {
+                const auto p=ToScreen(item.position);
+                m_Renderer.DrawSprite(m_PredatorTexture,p.x,p.z+53,140,140,1,1+static_cast<int>(state.time*8)%2,4,4);
+            }
+            break;
+        case DrawType::Companion:
+            DrawSprite(item.position,2,0,52,78,true);
+            break;
+        case DrawType::FieldMonster:
+        {
+            const auto &field=state.fieldMonsters[item.index];
+            const auto &monster=field.monster;
+            MonsterDrawContext context={&m_Renderer,[this](Vec2 p){return ToScreen(p);},
+                [this,&state,&monster](Vec2 p,int,int,float,float,bool) {
+                    const Vec2 aim=monster.chatPattern>=0 ? monster.animationFacing : Vec2{state.player.x-p.x,state.player.z-p.z};
+                    const unsigned int texture=monster.definition.id=="forest_predator" ? m_PredatorTexture :
+                        MonsterSystem::IsEcologyGuardian(monster) ? m_EcologyGuardianTexture : 0;
+                    if (texture)
+                    {
+                        const float dx=aim.x-aim.z,dz=-(aim.x+aim.z),size=monster.definition.spriteHeight;
+                        const int column=std::abs(dx)>std::abs(dz) ? (dx<0 ? 1 : 2) : (dz<0 ? 0 : 3);
+                        const int row=monster.chatPattern>=0 ? 3 : 1+static_cast<int>(state.time*7)%2;
+                        const Vec2 screen=ToScreen(p);
+                        DrawShadow(p,size*.25f,10);
+                        m_Renderer.DrawSprite(texture,screen.x,screen.z+size*.38f,size,size*(monster.health<=0 ? .3f : 1),
+                            column,row,4,4,1,1,monster.definition.id=="mutated_guardian" ? .7f : 1,1);
+                    }
+                    else DrawPixelAnimal(p,1,aim,static_cast<int>(state.time*7)%4,monster.definition.spriteHeight,monster.health<=0);
+                },state.width,state.height,state.time,Pi};
+            MonsterSystem::Draw(monster,context,monster.health<=0);
+            if (monster.health>0 && monster.chatPattern>=0)
+            {
+                const Vec2 target=monster.definition.id=="forest_predator" ? monster.position : monster.chatTarget;
+                const float radius=MonsterSystem::IsEcologyGuardian(monster) ? 2.4f : 1.8f;
+                for (int i=0;i<32;++i)
+                {
+                    const float angle=i*2*Pi/32;
+                    const auto p=ToScreen({target.x+std::cos(angle)*radius,target.z+std::sin(angle)*radius});
+                    m_Renderer.DrawEffectRect(p.x,p.z,6,4,0,1,.2f,.08f,.8f,3);
+                }
+            }
+            break;
+        }
         case DrawType::GatherNode:
         {
             const auto &node = state.gatherNodes[item.index];
@@ -1441,13 +1512,30 @@ void WorldRenderer::RenderWorld(const GameState &state)
                 m_Renderer.DrawEffectRect(p.x, p.z, 65, 24, 0, .35f, .85f, .72f,
                     .22f + .06f * std::sin(state.time * 2), 3);
             const bool control = step.id == "ruin_control";
-            if (WorldBiomes::IsDesert(item.position))
+            const bool coreStopped = asset == 7 && state.endingChoice == 2;
+            if (WorldBiomes::IsDesert(item.position) && asset < 7)
             {
                 static const int variants[] = {10,8,11,6,12,13,14};
                 DrawDesertProp(item.position,variants[asset],InvestigationSprites::Assets[asset].size,
                     control && state.ruinDeviceDisabled);
             }
-            else DrawInvestigation(item.position, asset, control && state.ruinDeviceDisabled);
+            else DrawInvestigation(item.position, asset, (control && state.ruinDeviceDisabled) || coreStopped);
+            if (step.action == GameContent::StoryAction::Rescue)
+            {
+                const bool rescued = state.storyFinished || state.storyStep > item.index;
+                if (!rescued)
+                {
+                    const auto &escort=state.escorts[step.id=="rescue_scout" ? 1 : 0];
+                    DrawSprite(escort.following ? escort.position : Vec2{item.position.x+.35f,item.position.z}, 0, 0, 52, 78, true);
+                    if (escort.following)
+                    {
+                        const auto safe=ToScreen({step.position.x+6,step.position.z});
+                        m_Renderer.DrawEffectRect(safe.x,safe.z,50,22,0,.3f,1,.7f,.65f,3);
+                    }
+                    m_Renderer.DrawLabel(state.width*.5f+p.x,state.height*.5f+p.z+84,
+                        step.id == "rescue_scout" ? L"부상당한 정찰병" : L"고립된 피난민",1,.82f,.52f,.6f,1,true);
+                }
+            }
             if (control && !state.ruinDeviceDisabled)
                 m_Renderer.DrawEffectRect(p.x, p.z + 48, 28, 70, 0, .25f, .85f, 1,
                     .22f + .06f * std::sin(state.time * 4), 15);
@@ -1567,6 +1655,11 @@ void WorldRenderer::RenderWorld(const GameState &state)
             break;
         case DrawType::Npc:
         {
+            if (state.npcs[item.index].health<100)
+            {
+                const auto p=ToScreen(item.position);
+                m_Renderer.DrawLabel(state.width*.5f+p.x,state.height*.5f+p.z+100,L"부상 · 약초로 치료",1,.35f,.25f,.5f,1,true);
+            }
             const NpcState &npc = state.npcs[item.index];
             const bool elder = Distance(npc.wanderSeed != 0 ? npc.home : npc.position, state.world.elder) < .1f;
             const float displayHeight=elder ? 100.0f : GameConstants::Npc::SpriteHeight;
@@ -1668,6 +1761,24 @@ void WorldRenderer::RenderWorld(const GameState &state)
                                                   distance > state.monster.definition.attackRange && distance < state.monster.definition.chaseRange;
                                               const bool chapterAnimation = state.monster.health <= 0 ||
                                                   state.monster.hitAnimation > 0 || state.monster.attackAnimation > 0;
+                                              if ((MonsterSystem::IsEcologyGuardian(state.monster) && m_EcologyGuardianTexture) ||
+                                                  (state.monster.definition.id=="forest_predator" && m_PredatorTexture))
+                                              {
+                                                  const auto &monster=state.monster;
+                                                  const Vec2 aim=monster.chatPattern>=0 ? monster.animationFacing : facing;
+                                                  const float sx=aim.x-aim.z, sy=-(aim.x+aim.z);
+                                                  const int column=std::abs(sx)>std::abs(sy) ? (sx<0 ? 1 : 2) : (sy<0 ? 0 : 3);
+                                                  const int row=monster.chatPattern>=0 ? 3 : walking ? 1+static_cast<int>(state.time*7)%2 : 0;
+                                                  const float size=monster.definition.spriteHeight;
+                                                  const Vec2 screen=ToScreen(p);
+                                                  const bool dead=monster.health<=0;
+                                                  DrawShadow(p,size*.28f,12);
+                                                  m_Renderer.DrawSprite(monster.definition.id=="forest_predator" ? m_PredatorTexture : m_EcologyGuardianTexture,screen.x,screen.z+size*(dead ? .12f : .38f),
+                                                      size,size*(dead ? .3f : 1),column,row,4,4,1,
+                                                      monster.definition.id=="mutated_guardian" ? 1 : .8f,
+                                                      monster.definition.id=="mutated_guardian" ? .7f : 1,1,0,0,0,1,1,.5f);
+                                                  return;
+                                              }
                                               if (state.monster.definition.id == "ancient_guardian" &&
                                                   (m_AncientGuardianTexture || m_ChatHdTextures[0][0] || m_ChatHdTextures[0][1]))
                                               {
@@ -1750,6 +1861,22 @@ void WorldRenderer::RenderWorld(const GameState &state)
                                           state.width, state.height, state.time, Pi};
             m_Renderer.SetSpriteFlash(state.monster.health > 0 ? state.monster.hitFlash / GameConstants::Feedback::MonsterFlashDuration : 0);
             const bool hasLoot = state.quest == QuestStage::Trophy || StorySystem::HasDrop(state);
+            if (MonsterSystem::IsEcologyGuardian(state.monster))
+            {
+                const auto &monster=state.monster;
+                const float radius=monster.definition.id=="final_guardian" ? 3.4f : 2.4f;
+                if (monster.health>0 && (monster.chatPattern>=0 || monster.chatImpactTime>0))
+                {
+                    const Vec2 center=monster.chatPattern>=0 ? monster.chatTarget : monster.chatImpactPosition;
+                    // Project the same world-space circle used by the damage check.
+                    for (int i=0;i<48;++i)
+                    {
+                        const float angle=i*2*Pi/48;
+                        const Vec2 point=ToScreen({center.x+std::cos(angle)*radius,center.z+std::sin(angle)*radius});
+                        m_Renderer.DrawEffectRect(point.x,point.z,6,4,0,1,.22f,.08f,.8f,3);
+                    }
+                }
+            }
             if (state.monster.definition.id=="ancient_guardian" && state.monster.health>0 &&
                 (state.monster.chatPattern==MonsterSystem::Tongue || state.monster.chatPattern==MonsterSystem::Slam ||
                  state.monster.chatPattern==MonsterSystem::Charge))
@@ -2093,5 +2220,27 @@ void WorldRenderer::RenderWorld(const GameState &state)
     else if (state.quest == QuestStage::Herb) DrawQuestGlimmer(state.world.herb, 95);
     else if (state.quest == QuestStage::Elder || state.quest == QuestStage::Return || state.quest == QuestStage::Complete)
         DrawQuestGlimmer(state.world.elder, 135);
+    if (state.arrowTime>0)
+    {
+        const auto from=ToScreen(state.arrowFrom),to=ToScreen(state.arrowTo);
+        const float phase=1-state.arrowTime/.3f;
+        m_Renderer.DrawSolidRect(from.x+(to.x-from.x)*phase,from.z+(to.z-from.z)*phase+30,24,3,
+            std::atan2(to.z-from.z,to.x-from.x),1,.86f,.52f,.9f);
+    }
+    if (state.attack>0 && state.weaponStyle!=0)
+    {
+        const auto p=ToScreen(state.player);
+        m_Renderer.DrawSolidRect(p.x+14,p.z+35,state.weaponStyle==1 ? 65.0f : 24.0f,4,-.65f,.75f,.54f,.25f,1);
+    }
+    for (int i=0;i<4;++i) if (state.baseLevels[i]>0 && WorldStreaming::Active(state,state.world.elder))
+    {
+        const Vec2 site={state.world.elder.x+(i-1.5f)*2,state.world.elder.z-5};
+        const auto p=ToScreen(site);
+        if (i==0 && m_HouseVariants[0]) DrawPixelSprite(site,m_HouseVariants[0],100.0f+state.baseLevels[i]*10.0f,110,.85f);
+        else if (i==1) DrawHerbPatch(site);
+        else DrawSprite(site,i,0,48,70,true);
+        const wchar_t *names[]={L"내 집",L"농장",L"교역소",L"동료 야영지"};
+        m_Renderer.DrawLabel(state.width*.5f+p.x,state.height*.5f+p.z+90,names[i],1,.9f,.6f,.45f,1,true);
+    }
     m_State = nullptr;
 }

@@ -8,6 +8,21 @@ quest_point elder 0 1.4
 quest_point tracks 70 50
 quest_point herb 130 90
 encounter lake_boar 180 140
+field_monster village_watch_01 forest_boar 18 10
+field_monster village_watch_02 forest_boar -18 8
+field_monster south_pack_01 forest_boar 82 -62
+field_monster south_pack_02 forest_boar 86 -60
+field_monster forest_pack_01 forest_predator 40 165
+field_monster forest_pack_02 forest_boar 44 166
+field_monster northern_den forest_predator 132 322
+field_monster desert_pack_01 displaced_boar 315 110
+field_monster desert_pack_02 displaced_boar 319 112
+field_monster camp_threat forest_predator -210 192
+field_monster drought_pack_01 mutated_guardian 660 -70
+field_monster drought_pack_02 displaced_boar 664 -66
+field_monster central_patrol mutated_guardian 540 594
+field_monster valley_patrol_01 valley_variant 830 730
+field_monster valley_patrol_02 valley_variant 842 748
 landmark expedition_cart cart -303 269 110 .65
 landmark expedition_debris log -295 272 90 .4
 landmark ancient_gate ruin -424 360 150 .75

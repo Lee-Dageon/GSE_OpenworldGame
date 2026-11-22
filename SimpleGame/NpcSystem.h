@@ -45,6 +45,13 @@ inline int Nearby(const GameState &state)
 }
 inline std::wstring Interact(GameState &state, NpcState &npc)
 {
+    if (npc.health<100)
+    {
+        if (!state.inventory.Remove(ItemId::Herb)) return L"주민이 다쳤습니다. 약초 1개로 응급 처치를 도와주세요.";
+        npc.health=std::min(100.0f,npc.health+50);
+        if (state.contracts[3].active) state.contracts[3].progress=1;
+        return L"약초로 주민을 치료했습니다. 구조 지원 의뢰에 기록됩니다.";
+    }
     const int role=Role(npc);
     const bool alternate=(npc.conversations%2)!=0;
     npc.conversations=(npc.conversations+1)%2;

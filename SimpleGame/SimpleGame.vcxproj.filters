@@ -146,6 +146,12 @@
     <ClInclude Include="StorySystem.h">
       <Filter>헤더 파일\Gameplay</Filter>
     </ClInclude>
+    <ClInclude Include="SaveGame.h">
+      <Filter>헤더 파일\Gameplay</Filter>
+    </ClInclude>
+    <ClInclude Include="InventoryActions.h"><Filter>헤더 파일\Gameplay</Filter></ClInclude>
+    <ClInclude Include="LivingWorld.h"><Filter>헤더 파일\Gameplay</Filter></ClInclude>
+    <ClInclude Include="WorldStreaming.h"><Filter>헤더 파일\Content and World</Filter></ClInclude>
     <ClInclude Include="Inventory.h">
       <Filter>헤더 파일\Gameplay</Filter>
     </ClInclude>

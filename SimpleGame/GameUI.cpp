@@ -2,6 +2,7 @@
 #include "GameConstants.h"
 #include "GameUI.h"
 #include "Renderer.h"
+#include "InventoryActions.h"
 
 #include <cmath>
 #include <cwchar>
@@ -208,10 +209,10 @@ static void DrawInventoryPanel(Renderer &renderer, const GameUiState &state)
     rect(2,2,GameConstants::Ui::InventoryWidth-4,GameConstants::Ui::InventoryHeight-4,.035f,.05f,.065f);
     rect(2,2,GameConstants::Ui::InventoryWidth-4,54,.065f,.085f,.10f);
     text(24,12,L"가방",1.2f,1,.88f,.59f);
-    text(110,20,L"재료 · 장비 · 제작",.7f,.57f,.65f,.67f);
+    text(110,20,L"O 정렬 · K 저장 · L 불러오기 · I/ESC 닫기",.53f,.57f,.65f,.67f);
     rect(24,70,712,66,.065f,.09f,.105f);
-    text(38,78,state.hunterBladeCrafted ? L"이빨 검" : L"기본 검",.9f);
-    text(190,78,state.hunterArmorCrafted ? L"가죽 방어구" : L"기본 의상",.9f);
+    text(38,78,state.weaponStyle==1 ? L"사냥 창" : state.weaponStyle==2 ? L"사냥 활" : state.equippedWeapon == 2 ? L"고대 결정 검" : state.equippedWeapon == 1 ? L"철 이빨 검" : state.equippedWeapon==0 ? L"이빨 검" : L"기본 검",.75f);
+    text(190,78,state.equippedArmor == 2 ? L"고대 갑각 방어구" : state.equippedArmor == 1 ? L"철 보강 방어구" : state.equippedArmor==0 ? L"가죽 방어구" : L"기본 의상",.75f);
     text(38,109,L"장착 장비",.55f,.52f,.63f,.63f);
     wchar_t line[120];
     std::swprintf(line,120,L"피해 %d   방어 %d",std::max(GameConstants::Player::MinimumDamage,state.attackPower/GameConstants::Player::DamageDivisor),state.defense);
@@ -224,13 +225,16 @@ static void DrawInventoryPanel(Renderer &renderer, const GameUiState &state)
     const int pageCount = (static_cast<int>(ItemId::Count)+pageSize-1)/pageSize;
     const int page = std::max(0,std::min(pageCount-1,state.inventoryPage));
     const int first = page*pageSize;
-    for (int item=first;item<std::min(first+pageSize,static_cast<int>(ItemId::Count));++item)
+    Inventory listing; listing.stacks=state.itemCounts;
+    const auto order=InventoryActions::Order(listing,state.inventorySort);
+    for (int slot=first;slot<std::min(first+pageSize,static_cast<int>(ItemId::Count));++slot)
     {
+        const int item=order[slot];
         const auto id = static_cast<ItemId>(item);
         const int count = item < 4 ? basicCounts[item] : state.itemCounts[item];
-        const int cell = item-first;
+        const int cell = slot-first;
         const float x=24+(cell%2)*136.0f, y=174+(cell/2)*54.0f;
-        rect(x,y,124,48,.14f,.20f,.23f);
+        rect(x,y,124,48,slot==state.inventorySelection ? .8f : .14f,.40f,.23f);
         rect(x+1,y+1,122,46,.055f,.085f,.105f);
         if (item < 4) icon(x+3,y+4,36,itemIcons[item]);
         else
@@ -252,7 +256,8 @@ static void DrawInventoryPanel(Renderer &renderer, const GameUiState &state)
     }
     const std::wstring stackLimit = L"아이템별 최대 " + std::to_wstring(GameConstants::Inventory::MaxStack) + L"개";
     text(24,449,stackLimit.c_str(),.6f,.52f,.63f,.65f);
-    const auto pageHint = L"휠로 재료 넘기기  " + std::to_wstring(page+1) + L" / " + std::to_wstring(pageCount);
+    const auto selected=order[std::clamp(state.inventorySelection,0,static_cast<int>(ItemId::Count)-1)];
+    const auto pageHint = L"휠 페이지 "+std::to_wstring(page+1)+L"/"+std::to_wstring(pageCount)+L" · 보관 "+std::to_wstring(state.storedCounts[selected]);
     text(24,464,pageHint.c_str(),.46f,.85f,.78f,.55f);
     const auto buttons=InventoryButtons(state.windowWidth,state.windowHeight);
     const wchar_t *titles[]={L"이빨 검",L"회복 물약",L"가죽 방어구"};
@@ -263,17 +268,21 @@ static void DrawInventoryPanel(Renderer &renderer, const GameUiState &state)
     {
         const auto &button=buttons[recipe];
         const float x=(button.x-panel.x)/s, y=(button.y-panel.y)/s;
-        const bool equipped=recipe==0 ? state.hunterBladeCrafted : (recipe==2 && state.hunterArmorCrafted);
+        const bool upgrading = recipe==0 ? state.hunterBladeCrafted : (recipe==2 && state.hunterArmorCrafted);
+        const int tier = recipe==0 ? state.weaponTier : state.armorTier;
+        const bool equipped = upgrading && tier >= 2;
         const bool unlocked=recipe==0 ? state.huntReported : (recipe==1 || state.armorRecipeUnlocked);
-        const bool enough=recipe==0 ? state.hides>=1 && state.trophies>=1 :
+        const bool enough=upgrading ?
+            (state.itemCounts[static_cast<size_t>(tier==0 ? ItemId::IronOre : ItemId::GuardianScale)] >= (tier==0 ? 3 : 4) &&
+             state.itemCounts[static_cast<size_t>(tier==0 ? ItemId::Coal : ItemId::AncientCrystal)] >= 2) : recipe==0 ? state.hides>=1 && state.trophies>=1 :
             (recipe==1 ? state.herbs>=1 : state.hides>=2 && state.trophies>=1);
         const bool full=recipe==1 && state.potions>=GameConstants::Inventory::MaxStack;
         const bool enabled=state.nearWorkbench && !equipped && unlocked && enough && !full;
         rect(x,y,418,78,enabled ? .46f : .16f,enabled ? .48f : .22f,enabled ? .27f : .25f);
         rect(x+1,y+1,416,76,enabled ? .10f : .05f,enabled ? .17f : .075f,.09f);
         icon(x+9,y+9,60,recipeIcons[recipe]);
-        text(x+82,y+8,titles[recipe],.95f,enabled ? 1 : .72f,.88f,.65f);
-        text(x+82,y+42,costs[recipe],.65f,.61f,.72f,.7f);
+        text(x+82,y+8,upgrading ? (tier==0 ? L"철 장비 강화" : L"고대 장비 강화") : titles[recipe],.95f,enabled ? 1 : .72f,.88f,.65f);
+        text(x+82,y+42,upgrading ? (tier==0 ? L"철광석 3 + 석탄 2" : L"갑각 4 + 고대 결정 2") : costs[recipe],.65f,.61f,.72f,.7f);
         const wchar_t *status=equipped ? L"장착 중" : (!unlocked ? L"의뢰 잠김" :
             (!state.nearWorkbench ? L"마을 제작" : (full ? L"보관 가득" : (!enough ? L"재료 부족" : L"제작"))));
         text(x+324,y+11,status,.65f,enabled ? .85f : .53f,enabled ? 1 : .61f,.63f);
@@ -285,7 +294,7 @@ static void DrawInventoryPanel(Renderer &renderer, const GameUiState &state)
     const size_t statusLimit = static_cast<size_t>(712*s/(18*std::max(GameConstants::Ui::MinimumFontScale,.65f*s)));
     if (status.size()>statusLimit) status=status.substr(0,statusLimit-1)+L"…";
     text(24,486,status.c_str(),.65f,.74f,.79f,.72f);
-    text(24,516,L"I / ESC  닫기",.55f,.48f,.58f,.60f);
+    text(24,516,L"[ ] 선택 · X 폐기 · B/V 보관/꺼내기 · Shift 전체 · T/Y 장착 · F 창/활 · Z 전환",.40f,.68f,.73f,.75f);
     text(614,516,L"일시정지",.55f,.70f,.65f,.47f);
     const auto &close=buttons[3];
     rect((close.x-panel.x)/s,(close.y-panel.y)/s,close.width/s,close.height/s,.16f,.21f,.22f);

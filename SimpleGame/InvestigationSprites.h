@@ -12,6 +12,7 @@ constexpr Asset Assets[] = {
     {L"fragment-v1.png", 80.0f, 0.49960128f, 0.57430622f},
     {L"entrance-v1.png", 205.0f, 0.50000000f, 0.88826156f},
     {L"control-v1.png", 135.0f, 0.50039872f, 0.82159490f},
+    {L"ecology-core-v1.png", 205.0f, .5f, .93f},
 };
 struct Site { const char *stepId; int asset; };
 constexpr Site Sites[] = {
@@ -27,6 +28,16 @@ constexpr Site Sites[] = {
     {"expedition_records", 2},
     {"ruin_entrance", 5},
     {"ruin_control", 6},
+    {"storm_investigation", 1},
+    {"rescue_traveler", 1},
+    {"rescue_scout", 1},
+    {"migration_decision", 0},
+    {"drought_control", 7},
+    {"synthesis", 2},
+    {"first_expedition", 2},
+    {"central_entrance", 5},
+    {"ecology_truth", 7},
+    {"final_decision", 7},
 };
 inline int Find(const std::string &stepId)
 {

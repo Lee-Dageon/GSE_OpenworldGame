@@ -12,8 +12,8 @@ assets_dir = root / "SimpleGame/Assets/PixelArt/Investigation"
 manifest = json.loads((assets_dir / "manifest.json").read_text(encoding="utf-8"))
 header = (root / "SimpleGame/InvestigationSprites.h").read_text(encoding="utf-8")
 assets = manifest["assets"]
-assert len(assets) == 7
-assert len({asset["sha256"] for asset in assets}) == 7
+assert len(assets) == 8
+assert len({asset["sha256"] for asset in assets}) == 8
 rows = re.findall(r'\{L"([^"]+)", ([\d.]+)f, ([\d.]+)f, ([\d.]+)f\}', header)
 assert len(rows) == len(assets)
 for asset, row in zip(assets, rows):
@@ -37,10 +37,10 @@ for asset, row in zip(assets, rows):
 
 steps = [shlex.split(line) for line in (root / "SimpleGame/Data/story.gse").read_text(encoding="utf-8").splitlines()
          if line.startswith("step ")]
-expected = {step[1] for step in steps if step[3] in ("travel", "investigate")}
+expected = {step[1] for step in steps if step[3] in ("travel", "investigate", "rescue", "route_choice", "final_choice")}
 sites = manifest["sites"]
 mapping = {site["step_id"]: site["asset"] for site in sites}
-assert len(mapping) == len(sites) == 12 and set(mapping) == expected
+assert len(mapping) == len(sites) == 22 and set(mapping) == expected
 assert dict((step, int(asset)) for step, asset in re.findall(r'\{"([^"]+)", (\d+)\}', header)) == mapping
 assert all(0 <= index < len(assets) for index in mapping.values())
 assert mapping["ruin_control"] == 6 and assets[0]["id"] == "tracks"
@@ -58,4 +58,4 @@ for filename in ("SimpleGame.vcxproj", "SimpleGame.vcxproj.filters"):
     project = ET.parse(root / "SimpleGame" / filename)
     assert any(node.attrib.get("Include") == "InvestigationSprites.h"
                for node in project.findall(".//ms:ClInclude", namespace))
-print("PASS: 7 distinct RGBA assets, measured anchors, 12/12 travel/investigation sites, tutorial tracks, device state, texture release and runtime-copy wiring")
+print("PASS: 8 distinct RGBA assets, anchors, 22/22 investigation/choice/rescue sites, tutorial tracks, device state, texture release and runtime-copy wiring")

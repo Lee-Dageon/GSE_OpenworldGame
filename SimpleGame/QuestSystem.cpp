@@ -54,6 +54,8 @@ InteractionResult TryInteract(GameState &state, Vec2 elder, Vec2 tracks, Vec2 he
         if (state.quest == QuestStage::Complete && state.hunterBladeCrafted)
         {
             state.monster = MonsterSystem::CreateEncounter();
+            if (state.storyFinished && state.endingChoice != 0 && GameContent::Get().monsters.count("valley_variant"))
+                state.monster = MonsterSystem::Create(GameContent::Get().monsters.at("valley_variant"), {840, 740});
             const auto &quest = GameContent::Get().quest;
             state.monster.maxHealth += std::min(quest.repeatHealthLimit / quest.repeatHealthStep, state.completedHunts) * quest.repeatHealthStep;
             state.monster.health = state.monster.maxHealth;
@@ -71,6 +73,7 @@ InteractionResult TryInteract(GameState &state, Vec2 elder, Vec2 tracks, Vec2 he
     {
         if (!state.inventory.Add(ItemId::Herb))
             return InteractionResult::InventoryFull;
+        state.herbRegrowTime=GameConstants::Loot::HerbRegrowSeconds;
         state.quest = GameContent::Step(state.quest).next;
         return InteractionResult::HerbCollected;
     }

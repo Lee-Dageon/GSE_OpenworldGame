@@ -41,7 +41,8 @@ inline Drops Monster(const MonsterDefinition &monster)
     Drops drops = {};
     drops[static_cast<size_t>(ItemId::BoarHide)] = monster.hideDrop;
     drops[static_cast<size_t>(ItemId::BoarTusk)] = monster.tuskDrop;
-    if (monster.id == "ancient_guardian")
+    if (monster.id == "ancient_guardian" || monster.id == "mutated_guardian" ||
+        monster.id == "final_guardian" || monster.id == "valley_variant")
     {
         drops[static_cast<size_t>(ItemId::GuardianScale)] = 2;
         drops[static_cast<size_t>(ItemId::AncientCrystal)] = 1;
@@ -49,7 +50,7 @@ inline Drops Monster(const MonsterDefinition &monster)
     else
     {
         drops[static_cast<size_t>(ItemId::RawMeat)] = monster.id == "displaced_boar" ? 3 : 2;
-        if (monster.id == "rampaging_boar" || monster.id == "displaced_boar")
+        if (monster.id == "rampaging_boar" || monster.id == "displaced_boar" || monster.id == "forest_predator")
             drops[static_cast<size_t>(ItemId::BeastBone)] = 2;
         else if (monster.id == "forest_boar") drops[static_cast<size_t>(ItemId::BeastBone)] = 1;
     }
