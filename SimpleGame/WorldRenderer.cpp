@@ -1385,6 +1385,22 @@ void WorldRenderer::RenderWorld(const GameState &state)
         items.push_back({node.position, DrawType::GatherNode, static_cast<int>(index)});
     }
 
+    const float cullScale = WorldScale * state.height / 720.0f * BossIntro::Zoom(state);
+    items.erase(std::remove_if(items.begin(), items.end(), [&](const DrawItem &item) {
+        if (item.type != DrawType::House && item.type != DrawType::Tree &&
+            item.type != DrawType::Campfire && item.type != DrawType::Npc && item.type != DrawType::Animal)
+            return false;
+        // Conservative anchor bounds include bodies, cast shadows, labels and campfire smoke.
+        float extent = 384.0f;
+        if (item.type == DrawType::Tree)
+            extent = std::max(extent, 240.0f + std::abs(WorldLayout::Trees()[item.index].variant) * 24.0f);
+        if (item.type == DrawType::Npc)
+            extent = std::max(extent, GameConstants::Npc::SpriteHeight * 4.0f);
+        const Vec2 screen = ToScreen(item.position);
+        return (std::abs(screen.x) - extent) * cullScale > state.width * .5f ||
+               (std::abs(screen.z) - extent) * cullScale > state.height * .5f;
+    }), items.end());
+
     // Higher screen coordinates are farther away. Draw them first so foreground objects cover them.
     std::sort(items.begin(), items.end(), [this](const DrawItem &left, const DrawItem &right) {
         return ToScreen(left.position).z > ToScreen(right.position).z;
