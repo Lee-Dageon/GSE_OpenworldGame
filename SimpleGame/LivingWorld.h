@@ -1,6 +1,7 @@
 #pragma once
 #include "GameContent.h"
 #include "WorldLayout.h"
+#include "Navigation.h"
 #include "WorldStreaming.h"
 #include "InventoryActions.h"
 #include "LootTable.h"
@@ -133,8 +134,9 @@ inline void Update(GameState &s,float dt)
     }
     if (s.baseLevels[3]>0)
     {
-        if (std::hypot(s.companion.x-s.player.x,s.companion.z-s.player.z)>30) s.companion=s.player;
-        if (std::hypot(s.companion.x-s.player.x,s.companion.z-s.player.z)>1.5f) Approach(s.world,s.companion,s.player,dt*3.8f);
+        if (std::hypot(s.companion.x-s.player.x,s.companion.z-s.player.z)>30)
+        { s.companion=s.player; s.companionRoute={}; }
+        if (std::hypot(s.companion.x-s.player.x,s.companion.z-s.player.z)>1.5f) Navigation::Move(s.world,s.companion,s.player,dt*3.8f,dt,s.companionRoute);
     }
     for (auto &field:s.fieldMonsters)
     {

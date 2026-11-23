@@ -86,7 +86,14 @@ struct FieldMonster
     bool collected = false, rewardGranted = false;
     float respawnTime = 0;
 };
-struct EscortState { Vec2 position = {}; bool following=false, arrived=false; };
+struct NavigationRoute
+{
+    std::vector<Vec2> points;
+    size_t next=0;
+    Vec2 target={};
+    float retry=0;
+};
+struct EscortState { Vec2 position = {}; bool following=false, arrived=false; NavigationRoute route; };
 struct ContractState { bool active=false; int progress=0, completed=0; };
 struct ChunkObject { int kind=0, index=0; };
 struct LoadedChunk { std::vector<ChunkObject> objects; };
@@ -121,6 +128,7 @@ struct GameState
     float farmTime=0, companionCooldown=0;
     int coins=0, festivalClaimDay=-1, regionVisits=0, nextBaseUpgrade=0;
     Vec2 companion = {};
+    NavigationRoute companionRoute;
     bool journalOpen=false, prologueSeen=false;
     float prologueTime=-1;
     bool prologueLossApplied=false;

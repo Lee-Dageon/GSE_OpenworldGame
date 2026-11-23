@@ -184,6 +184,7 @@
     <ClInclude Include="SaveGame.h" />
     <ClInclude Include="InventoryActions.h" />
     <ClInclude Include="WeaponMotion.h" />
+    <ClInclude Include="Navigation.h" />
     <ClInclude Include="LivingWorld.h" />
     <ClInclude Include="WorldStreaming.h" />
     <ClInclude Include="RegionalState.h" />

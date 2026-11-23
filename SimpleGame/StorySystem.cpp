@@ -5,6 +5,7 @@
 #include "QuestSystem.h"
 #include "CraftingSystem.h"
 #include "WorldLayout.h"
+#include "Navigation.h"
 #include "AdventureEvents.h"
 
 namespace
@@ -259,21 +260,9 @@ void Update(GameState &state,float deltaTime)
         auto &escort=state.escorts[step->id=="rescue_scout" ? 1 : 0];
         if (!escort.following) return;
         const float distance=std::hypot(state.player.x-escort.position.x,state.player.z-escort.position.z);
-        const int moves=std::max(1,static_cast<int>(std::ceil(std::max(0.0f,deltaTime)*3.2f/.12f)));
-        for (int i=0;i<moves && distance<15 && distance>1;++i)
-        {
-            const float length=std::max(.001f,std::hypot(state.player.x-escort.position.x,state.player.z-escort.position.z));
-            const float amount=std::min(length,std::max(0.0f,deltaTime)*3.2f/moves);
-            const Vec2 next={escort.position.x+(state.player.x-escort.position.x)/length*amount,
-                escort.position.z+(state.player.z-escort.position.z)/length*amount};
-            if (WorldLayout::CanMove(state.world,escort.position,next,.12f)) escort.position=next;
-            else
-            {
-                const Vec2 x={next.x,escort.position.z},z={escort.position.x,next.z};
-                if (WorldLayout::CanMove(state.world,escort.position,x,.12f)) escort.position=x;
-                else if (WorldLayout::CanMove(state.world,escort.position,z,.12f)) escort.position=z;
-            }
-        }
+        if (distance<15 && distance>1)
+            Navigation::Move(state.world,escort.position,state.player,std::max(0.0f,deltaTime)*3.2f,
+                             deltaTime,escort.route);
         const Vec2 safe={step->position.x+6,step->position.z};
         if (Near(state.player,safe,2) && Near(escort.position,safe,2))
         {
