@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "GameConstants.h"
+#include "WeaponMotion.h"
 #include "NpcSystem.h"
 #include "WorldRenderer.h"
 
@@ -529,7 +530,7 @@ void WorldRenderer::DrawGeneralPlayer(const GameState &state) const
     const int worldDirection = (static_cast<int>(std::lround(std::atan2(-state.facing.z, -state.facing.x) /
                                                                         (Pi * .25f))) + 8) % 8;
     const int direction = (10 - worldDirection) % 8;
-    const float progress = std::max(0.0f, std::min(1.0f, 1.0f - state.attack / GameConstants::Player::AttackDuration));
+    const float progress = WeaponMotion::Progress(state.weaponStyle,state.attack);
     const int frame = state.attack > 0 ? std::min(3, static_cast<int>(progress * 4)) :
                       (state.moving ? static_cast<int>(state.time * (state.sprint ? 8 : 6)) % 4 : 0);
     const bool newSheet = m_GeneralRunTexture != 0 && state.attack <= 0.0f && (running || !state.moving);
@@ -577,7 +578,7 @@ void WorldRenderer::DrawPixelPlayer(const GameState &state) const
                                                                         (Pi * .25f))) + 8) % 8;
     // Pixel sheet runs SE,S,SW,W,NW,N,NE,E; reflect the Blender ordering horizontally.
     const int direction = (10 - worldDirection) % 8;
-    const float progress = std::max(0.0f, std::min(1.0f, 1.0f - state.attack / GameConstants::Player::AttackDuration));
+    const float progress = WeaponMotion::Progress(state.weaponStyle,state.attack);
     const int frame = state.attack > 0 ? std::min(3, static_cast<int>(progress * 4)) :
                       (state.moving ? static_cast<int>(state.time * (state.sprint ? 8 : 6)) % 4 : 0);
     // Alpha-measured foot anchors for the generated 8x4 sheet (top-to-bottom rows).
@@ -2016,7 +2017,7 @@ void WorldRenderer::RenderWorld(const GameState &state)
                 }
             const auto drawSwordSlash = [&]()
             {
-                if (state.attack <= 0.0f || m_SwordSlashTexture == 0)
+                if (state.weaponStyle != 0 || state.attack <= 0.0f || m_SwordSlashTexture == 0)
                     return;
                 // pixelfx: 24 frames, 5 columns, 136x104 cells; origin is (44, 92) from top-left.
                 const int frame = std::max(0, std::min(23, static_cast<int>((1.0f - state.attack / GameConstants::Player::AttackDuration) * 24)));
@@ -2029,7 +2030,7 @@ void WorldRenderer::RenderWorld(const GameState &state)
                                       136 * scale, 104 * scale, frame % 5, frame / 5, 5, 5,
                                       1, 1, 1, 1, 0, 0, angle);
             };
-            if (m_SwordSlashTexture == 0 && state.attack > .035f && state.attack < .25f)
+            if (state.weaponStyle == 0 && m_SwordSlashTexture == 0 && state.attack > .035f && state.attack < .25f)
             {
                 const float progress = 1.0f - state.attack / GameConstants::Player::AttackDuration;
                 const float angle = std::atan2(state.facing.x + state.facing.z, state.facing.x - state.facing.z);
@@ -2306,7 +2307,43 @@ void WorldRenderer::RenderWorld(const GameState &state)
     if (state.attack>0 && state.weaponStyle!=0)
     {
         const auto p=ToScreen(state.player);
-        m_Renderer.DrawSolidRect(p.x+14,p.z+35,state.weaponStyle==1 ? 65.0f : 24.0f,4,-.65f,.75f,.54f,.25f,1);
+        float dx=(state.facing.x-state.facing.z)*TileWidth;
+        float dy=(state.facing.x+state.facing.z)*TileHeight;
+        const float length=std::sqrt(dx*dx+dy*dy);
+        if (length>.001f) { dx/=length; dy/=length; } else { dx=1; dy=0; }
+        const Vec2 forward={dx,dy}, side={-dy,dx};
+        const Vec2 hand={p.x+forward.x*13,p.z+35+forward.z*13};
+        const auto point=[&](Vec2 origin,float along,float across) {
+            return Vec2{origin.x+forward.x*along+side.x*across,origin.z+forward.z*along+side.z*across};
+        };
+        const auto line=[&](Vec2 a,Vec2 b,float width,float r,float g,float blue) {
+            const float x=b.x-a.x,y=b.z-a.z;
+            m_Renderer.DrawSolidRect((a.x+b.x)*.5f,(a.z+b.z)*.5f,std::sqrt(x*x+y*y),width,std::atan2(y,x),r,g,blue,1);
+        };
+        if (state.weaponStyle==1)
+        {
+            const Vec2 grip=point(hand,WeaponMotion::Reach(1,state.attack)*25,0);
+            line({p.x,p.z+35},grip,6,.8f,.65f,.48f);
+            line(point(grip,-25,0),point(grip,40,0),4,.58f,.36f,.16f);
+            line(point(grip,40,0),point(grip,51,0),7,.8f,.9f,.95f);
+        }
+        else
+        {
+            const float draw=WeaponMotion::Draw(state.attack);
+            const Vec2 grip=point(hand,8,0),pull=point(grip,-5-draw*18,0);
+            Vec2 previous=point(grip,-5,-24);
+            for (int i=1;i<=6;++i)
+            {
+                const float across=-24+i*8.0f;
+                const Vec2 next=point(grip,8*(1-across*across/576)-5,across);
+                line(previous,next,4,.7f,.45f,.2f); previous=next;
+            }
+            line(point(grip,-5,-24),pull,1,.92f,.88f,.72f);
+            line(pull,point(grip,-5,24),1,.92f,.88f,.72f);
+            line({p.x,p.z+35},grip,5,.8f,.65f,.48f);
+            line({p.x-side.x*9,p.z+35-side.z*9},pull,5,.8f,.65f,.48f);
+            if (state.attackPending) line(pull,point(pull,35,0),2,.95f,.86f,.55f);
+        }
     }
     for (int i=0;i<4;++i) if (state.baseLevels[i]>0 && WorldStreaming::Active(state,state.world.elder))
     {

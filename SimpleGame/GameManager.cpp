@@ -20,6 +20,7 @@
 #include "LivingWorld.h"
 #include "RegionSystem.h"
 #include "PrologueSystem.h"
+#include "WeaponMotion.h"
 
 #include <algorithm>
 #include <cmath>
@@ -234,6 +235,7 @@ void GameManager::UpdateGame(float deltaTime)
         [](const DamageNumber &number) { return number.remaining <= 0; }), m_State.damageNumbers.end());
     PlayerController::UpdateMovement(m_State, deltaTime);
     WorldStreaming::Update(m_State);
+    if (WeaponMotion::Release(m_State.weaponStyle,m_State.attack,m_State.attackPending)) ResolveAttack();
     UpdateNpcs(deltaTime);
     StorySystem::Update(m_State,deltaTime);
     BossIntro::TryStartVisible(m_State);
@@ -267,6 +269,7 @@ void GameManager::UpdateGame(float deltaTime)
         m_State.player = m_State.world.spawn;
         m_State.health = m_State.maxHealth;
         m_State.playerSlowTime = 0;
+        m_State.attack = 0; m_State.attackPending = false;
         ShowMessage(L"구조대의 도움으로 마을에 돌아왔습니다.");
     }
 }
@@ -339,6 +342,7 @@ void GameManager::HandleCommand(GameCommand command)
     }
     if (command==GameCommand::SwitchStyle)
     {
+        if (m_State.attack > 0 || m_State.attackPending) return;
         do { m_State.weaponStyle=(m_State.weaponStyle+1)%3; }
         while ((m_State.weaponStyle==1 && !m_State.spearCrafted) || (m_State.weaponStyle==2 && !m_State.bowCrafted));
         ShowMessage(m_State.weaponStyle==0 ? L"검 장착" : m_State.weaponStyle==1 ? L"창 장착 · 긴 사거리" : L"활 장착 · 원거리");
@@ -367,6 +371,7 @@ void GameManager::HandleCommand(GameCommand command)
         return;
     if (command == GameCommand::Interact)
     {
+        if (m_State.attackPending) return;
         if (const auto *message=AdventureEvents::Interact(m_State)) { ShowMessage(message); return; }
         if (const auto *message=RegionSystem::Interact(m_State)) { ShowMessage(message); return; }
         if ((m_State.quest == QuestStage::Trophy || StorySystem::HasDrop(m_State)) &&
@@ -455,93 +460,106 @@ void GameManager::HandleCommand(GameCommand command)
         PlayerController::StartDodge(m_State);
         return;
     }
-    if (command == GameCommand::Attack && m_State.attack <= 0.0f)
+    if (command == GameCommand::Attack && m_State.attack <= 0.0f && !m_State.attackPending)
     {
-        m_State.attack = m_State.weaponStyle==2 ? .65f : m_State.weaponStyle==1 ? .48f : GameConstants::Player::AttackDuration;
-        const bool activeMonster = (m_State.quest == QuestStage::Hunt || StorySystem::IsHunting(m_State)) &&
-            m_State.monster.health > 0;
-        const float mx=m_State.monster.position.x-m_State.player.x, mz=m_State.monster.position.z-m_State.player.z;
-        const float reach=m_State.weaponStyle==0 ? GameConstants::World::AnimalHitRange : InventoryActions::Range(m_State);
-        if (AdventureEvents::HitFestival(m_State,reach)) return;
-        Vec2 extraPosition = {}; int extraDamage=0;
-        if (RegionSystem::Attack(m_State,reach,std::max(1,m_State.attackPower/GameConstants::Player::DamageDivisor),extraPosition,extraDamage) ||
-            AdventureEvents::AttackRaid(m_State,reach,std::max(1,m_State.attackPower/GameConstants::Player::DamageDivisor),extraPosition,extraDamage))
-        {
-            RecordHit(extraPosition,extraDamage);
-            if (m_State.weaponStyle==2) { m_State.arrowTime=.3f; m_State.arrowFrom=m_State.player; m_State.arrowTo=extraPosition; }
-            return;
-        }
-        float nearest = activeMonster ? std::min(reach*reach,mx*mx+mz*mz) : reach*reach;
-        int animalIndex = -1;
-        for (size_t i=0;i<m_State.animals.size();++i)
-        {
-            const auto &animal=m_State.animals[i];
-            const float x=animal.position.x-m_State.player.x,z=animal.position.z-m_State.player.z;
-            if (animal.health>0 && !animal.collected && x*x+z*z<nearest)
-            { nearest=x*x+z*z; animalIndex=static_cast<int>(i); }
-        }
-        int fieldIndex=-1;
-        for (size_t i=0;i<m_State.fieldMonsters.size();++i)
-        {
-            const auto &monster=m_State.fieldMonsters[i].monster;
-            const float distance=std::hypot(monster.position.x-m_State.player.x,monster.position.z-m_State.player.z);
-            if (monster.health>0 && distance*distance<nearest && WorldLayout::ClearLine(m_State.player,monster.position))
-            { fieldIndex=static_cast<int>(i); nearest=distance*distance; }
-        }
-        if (fieldIndex>=0)
-        {
-            auto &field=m_State.fieldMonsters[fieldIndex];
-            const int before=field.monster.health;
-            const float range=field.monster.definition.hitRange;
-            if (m_State.weaponStyle!=0) field.monster.definition.hitRange=reach;
-            MonsterSystem::Hit(field.monster,m_State.player,std::max(1,m_State.attackPower/GameConstants::Player::DamageDivisor));
-            field.monster.definition.hitRange=range;
-            RecordHit(field.monster.position,before-field.monster.health);
-            LivingWorld::RewardKill(m_State,field);
-            if (m_State.weaponStyle==2) { m_State.arrowTime=.3f; m_State.arrowFrom=m_State.player; m_State.arrowTo=field.monster.position; }
-            return;
-        }
-        if (animalIndex>=0)
-        {
-            auto &animal=m_State.animals[animalIndex];
-            if (!WorldLayout::ClearLine(m_State.player,animal.position)) return;
-            const int damage=WildlifeSystem::Hit(animal,m_State.player,
-                std::max(GameConstants::Player::MinimumDamage,m_State.attackPower/GameConstants::Player::DamageDivisor));
-            if (damage==0) return;
-            RecordHit(animal.position,damage);
-            if (m_State.weaponStyle==2) { m_State.arrowTime=.3f; m_State.arrowFrom=m_State.player; m_State.arrowTo=animal.position; }
-            if (animal.health==0)
-            { animal.deathTime = 0; QuestSystem::AddExperience(m_State,GameConstants::World::AnimalExperience); LivingWorld::Record(m_State,0); ShowMessage(L"동물을 사냥했습니다. E로 전리품을 수집하세요."); }
-            return;
-        }
-        if (m_State.quest != QuestStage::Hunt && !StorySystem::IsHunting(m_State))
-            return;
-        if (!WorldLayout::ClearLine(m_State.player,m_State.monster.position)) return;
-        const int healthBefore = m_State.monster.health;
-        const float originalRange=m_State.monster.definition.hitRange;
-        if (m_State.weaponStyle!=0) m_State.monster.definition.hitRange=InventoryActions::Range(m_State);
-        const MonsterHitResult result = MonsterSystem::Hit(m_State.monster, m_State.player, std::max(GameConstants::Player::MinimumDamage, m_State.attackPower / GameConstants::Player::DamageDivisor));
-        m_State.monster.definition.hitRange=originalRange;
-        if (result.hit && m_State.weaponStyle==2) { m_State.arrowTime=.3f; m_State.arrowFrom=m_State.player; m_State.arrowTo=m_State.monster.position; }
-        const int damage = healthBefore - m_State.monster.health;
-        if (result.hit && damage > 0)
-        {
-            RecordHit(m_State.monster.position, damage);
-        }
-        if (!result.defeated)
-            return;
-        LivingWorld::Record(m_State,0);
-        if (m_State.monster.definition.id == "ancient_guardian") BossIntro::StartDefeat(m_State);
-        if (StorySystem::IsHunting(m_State))
-        {
-            QuestSystem::AddExperience(m_State,m_State.monster.definition.experience);
-            if (const wchar_t *message = StorySystem::EnemyDefeated(m_State)) ShowMessage(message);
-            return;
-        }
-        m_State.quest = GameContent::Step(m_State.quest).next;
-        ShowMessage(QuestSystem::AddExperience(m_State, m_State.monster.definition.experience) ? L"레벨이 올랐습니다! 최대 체력과 공격력이 증가했습니다."
-                                                          : GameContent::Step(QuestStage::Hunt).message.c_str());
+        m_State.attack = WeaponMotion::Duration(m_State.weaponStyle);
+        m_State.attackPending = true;
+        if (WeaponMotion::Release(m_State.weaponStyle,m_State.attack,m_State.attackPending)) ResolveAttack();
     }
+}
+
+void GameManager::ResolveAttack()
+{
+    const bool activeMonster = (m_State.quest == QuestStage::Hunt || StorySystem::IsHunting(m_State)) &&
+        m_State.monster.health > 0;
+    const float mx=m_State.monster.position.x-m_State.player.x, mz=m_State.monster.position.z-m_State.player.z;
+    const float reach=m_State.weaponStyle==0 ? GameConstants::World::AnimalHitRange : InventoryActions::Range(m_State);
+    if (m_State.weaponStyle==2)
+    {
+        const float length=std::sqrt(m_State.facing.x*m_State.facing.x+m_State.facing.z*m_State.facing.z);
+        const float scale=reach/std::max(.001f,length);
+        m_State.arrowTime=.3f; m_State.arrowFrom=m_State.player;
+        m_State.arrowTo={m_State.player.x+m_State.facing.x*scale,m_State.player.z+m_State.facing.z*scale};
+    }
+    if (AdventureEvents::HitFestival(m_State,reach)) return;
+    Vec2 extraPosition = {}; int extraDamage=0;
+    if (RegionSystem::Attack(m_State,reach,std::max(1,m_State.attackPower/GameConstants::Player::DamageDivisor),extraPosition,extraDamage) ||
+        AdventureEvents::AttackRaid(m_State,reach,std::max(1,m_State.attackPower/GameConstants::Player::DamageDivisor),extraPosition,extraDamage))
+    {
+        RecordHit(extraPosition,extraDamage);
+        if (m_State.weaponStyle==2) { m_State.arrowTime=.3f; m_State.arrowFrom=m_State.player; m_State.arrowTo=extraPosition; }
+        return;
+    }
+    float nearest = activeMonster ? std::min(reach*reach,mx*mx+mz*mz) : reach*reach;
+    int animalIndex = -1;
+    for (size_t i=0;i<m_State.animals.size();++i)
+    {
+        const auto &animal=m_State.animals[i];
+        const float x=animal.position.x-m_State.player.x,z=animal.position.z-m_State.player.z;
+        if (animal.health>0 && !animal.collected && x*x+z*z<nearest)
+        { nearest=x*x+z*z; animalIndex=static_cast<int>(i); }
+    }
+    int fieldIndex=-1;
+    for (size_t i=0;i<m_State.fieldMonsters.size();++i)
+    {
+        const auto &monster=m_State.fieldMonsters[i].monster;
+        const float distance=std::hypot(monster.position.x-m_State.player.x,monster.position.z-m_State.player.z);
+        if (monster.health>0 && distance*distance<nearest && WorldLayout::ClearLine(m_State.player,monster.position))
+        { fieldIndex=static_cast<int>(i); nearest=distance*distance; }
+    }
+    if (fieldIndex>=0)
+    {
+        auto &field=m_State.fieldMonsters[fieldIndex];
+        const int before=field.monster.health;
+        const float range=field.monster.definition.hitRange;
+        if (m_State.weaponStyle!=0) field.monster.definition.hitRange=reach;
+        MonsterSystem::Hit(field.monster,m_State.player,std::max(1,m_State.attackPower/GameConstants::Player::DamageDivisor));
+        field.monster.definition.hitRange=range;
+        RecordHit(field.monster.position,before-field.monster.health);
+        LivingWorld::RewardKill(m_State,field);
+        if (m_State.weaponStyle==2) { m_State.arrowTime=.3f; m_State.arrowFrom=m_State.player; m_State.arrowTo=field.monster.position; }
+        return;
+    }
+    if (animalIndex>=0)
+    {
+        auto &animal=m_State.animals[animalIndex];
+        if (!WorldLayout::ClearLine(m_State.player,animal.position)) return;
+        const int damage=WildlifeSystem::Hit(animal,m_State.player,
+            std::max(GameConstants::Player::MinimumDamage,m_State.attackPower/GameConstants::Player::DamageDivisor));
+        if (damage==0) return;
+        RecordHit(animal.position,damage);
+        if (m_State.weaponStyle==2) { m_State.arrowTime=.3f; m_State.arrowFrom=m_State.player; m_State.arrowTo=animal.position; }
+        if (animal.health==0)
+        { animal.deathTime = 0; QuestSystem::AddExperience(m_State,GameConstants::World::AnimalExperience); LivingWorld::Record(m_State,0); ShowMessage(L"동물을 사냥했습니다. E로 전리품을 수집하세요."); }
+        return;
+    }
+    if (m_State.quest != QuestStage::Hunt && !StorySystem::IsHunting(m_State))
+        return;
+    if (!WorldLayout::ClearLine(m_State.player,m_State.monster.position)) return;
+    const int healthBefore = m_State.monster.health;
+    const float originalRange=m_State.monster.definition.hitRange;
+    if (m_State.weaponStyle!=0) m_State.monster.definition.hitRange=InventoryActions::Range(m_State);
+    const MonsterHitResult result = MonsterSystem::Hit(m_State.monster, m_State.player, std::max(GameConstants::Player::MinimumDamage, m_State.attackPower / GameConstants::Player::DamageDivisor));
+    m_State.monster.definition.hitRange=originalRange;
+    if (result.hit && m_State.weaponStyle==2) { m_State.arrowTime=.3f; m_State.arrowFrom=m_State.player; m_State.arrowTo=m_State.monster.position; }
+    const int damage = healthBefore - m_State.monster.health;
+    if (result.hit && damage > 0)
+    {
+        RecordHit(m_State.monster.position, damage);
+    }
+    if (!result.defeated)
+        return;
+    LivingWorld::Record(m_State,0);
+    if (m_State.monster.definition.id == "ancient_guardian") BossIntro::StartDefeat(m_State);
+    if (StorySystem::IsHunting(m_State))
+    {
+        QuestSystem::AddExperience(m_State,m_State.monster.definition.experience);
+        if (const wchar_t *message = StorySystem::EnemyDefeated(m_State)) ShowMessage(message);
+        return;
+    }
+    m_State.quest = GameContent::Step(m_State.quest).next;
+    ShowMessage(QuestSystem::AddExperience(m_State, m_State.monster.definition.experience) ? L"레벨이 올랐습니다! 최대 체력과 공격력이 증가했습니다."
+                                                      : GameContent::Step(QuestStage::Hunt).message.c_str());
 }
 
 const wchar_t *GameManager::GetHint() const

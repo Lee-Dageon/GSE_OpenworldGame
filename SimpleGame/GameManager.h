@@ -16,6 +16,7 @@ class GameManager
     void UpdateSceneGraph(Actor &sceneRoot, float deltaTime);
 
   private:
+    void ResolveAttack();
     void ShowMessage(const wchar_t *message);
     void RecordHit(Vec2 position, int damage);
     void UpdateNpcs(float deltaTime);

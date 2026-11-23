@@ -111,6 +111,8 @@ int main()
     assert(WorldLayout::ClearLine(ranger.player,ranger.monster.position));
     const int targetHealth=ranger.monster.health;
     GameManager(ranger).HandleCommand(GameCommand::Attack);
+    assert(ranger.monster.health==targetHealth && ranger.attackPending);
+    GameManager(ranger).UpdateGame(.26f);
     assert(ranger.monster.health<targetHealth && ranger.arrowTime>0);
     assert(!WorldLayout::ClearLine({-9,-1.7f},{-3,-1.7f}));
     auto &patient=s.npcs[1]; patient.health=30; s.inventory.Add(ItemId::Herb);

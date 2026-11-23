@@ -111,6 +111,7 @@ struct GameState
     Inventory storage = {{}};
     int inventorySelection = 0, inventorySort = 0;
     int equippedWeapon = -1, equippedArmor = -1, weaponStyle = 0;
+    bool attackPending = false;
     bool spearCrafted = false, bowCrafted = false;
     std::vector<FieldMonster> fieldMonsters;
     std::array<EscortState,2> escorts = {};

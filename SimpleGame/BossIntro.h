@@ -25,6 +25,7 @@ inline void Start(GameState &state)
     state.inventoryOpen = false;
     state.moving = false;
     state.attack = state.dodge = state.hitStop = 0;
+    state.attackPending = false;
     state.playerHitTime = state.attackHitTime = 0;
     state.playerSlowTime = 0;
     state.damageNumbers.clear();
