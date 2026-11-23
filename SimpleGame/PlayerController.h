@@ -4,7 +4,7 @@
 
 namespace PlayerController
 {
-void UpdateMovement(GameState &state, float deltaTime);
+void UpdateMovement(GameState &state, float deltaTime, float dodgeAtFrameStart=-1.0f);
 bool TryUsePotion(GameState &state);
-void StartDodge(GameState &state);
+bool StartDodge(GameState &state);
 } // namespace PlayerController

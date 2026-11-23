@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "GameConstants.h"
+#include "RollAnimation.h"
 #include "WeaponMotion.h"
 #include "NpcSystem.h"
 #include "WorldRenderer.h"
@@ -163,6 +164,7 @@ WorldRenderer::WorldRenderer(Renderer &renderer) : m_Renderer(renderer)
     m_GeneralWalkTexture = m_Renderer.LoadTexture(L"./Assets/PixelArt/Characters/hero-general-walk-v2.png");
     m_GeneralRunTexture = m_Renderer.LoadTexture(L"./Assets/PixelArt/Characters/hero-general-v3.png");
     m_GeneralAttackTexture = m_Renderer.LoadTexture(L"./Assets/PixelArt/Characters/hero-general-attack-v1.png");
+    m_GeneralRollTexture = m_Renderer.LoadTexture(L"./Assets/PixelArt/Characters/hero-general-roll-v1.png");
     m_PixelPlayer = m_PlayerTexture != 0;
     if (!m_PixelPlayer)
     {
@@ -311,7 +313,7 @@ WorldRenderer::WorldRenderer(Renderer &renderer) : m_Renderer(renderer)
                                  m_PixelTerrain ? m_TerrainTexture : 0u, m_PixelPlayer ? m_PlayerTexture : 0u,
                                  m_ElderTexture, m_NoticeBoardTexture, m_RockTexture, m_PineTexture,
                                  m_NpcTextures[0], m_NpcTextures[1], m_HouseVariants[0], m_HouseVariants[1],
-                                 m_CampfireTexture, m_GeneralWalkTexture, m_GeneralRunTexture, m_GeneralAttackTexture,
+                                 m_CampfireTexture, m_GeneralWalkTexture, m_GeneralRunTexture, m_GeneralAttackTexture, m_GeneralRollTexture,
                                  m_PixelAnimalTextures[0], m_PixelAnimalTextures[1], m_PixelAnimalTextures[2],
                                  m_Chapter1BoarTextures[0], m_Chapter1BoarTextures[1], m_Chapter1BoarTextures[2], m_PlayerHitTexture,
                                  m_AttackHitTextures[0], m_AttackHitTextures[1], m_AttackHitTextures[2], m_BoarLootTexture, m_SearchTexture, m_AnimalCarcassTexture, m_AncientGuardianTexture, m_PixelSceneryTexture,
@@ -365,7 +367,7 @@ WorldRenderer::~WorldRenderer()
     for (unsigned int texture : m_PixelAnimalTextures)
         if (texture != 0)
             glDeleteTextures(1, &texture);
-    for (unsigned int texture : {m_GeneralWalkTexture, m_GeneralRunTexture, m_GeneralAttackTexture})
+    for (unsigned int texture : {m_GeneralWalkTexture, m_GeneralRunTexture, m_GeneralAttackTexture, m_GeneralRollTexture})
         if (texture != 0)
             glDeleteTextures(1, &texture);
     for (unsigned int texture : {m_NpcTextures[0], m_NpcTextures[1], m_HouseVariants[0], m_HouseVariants[1],
@@ -2003,6 +2005,22 @@ void WorldRenderer::RenderWorld(const GameState &state)
                 m_Renderer.DrawSprite(m_SearchTexture, foot.x + (.5f - pivot.x) * GameConstants::Loot::SpriteSize,
                     foot.z + (pivot.y - .5f) * GameConstants::Loot::SpriteSize, GameConstants::Loot::SpriteSize, GameConstants::Loot::SpriteSize, frame, row, 4, 4,
                     1, 1, 1, 1, 0, 0, 0, 1, 1, .5f);
+                break;
+            }
+            if (state.dodge>0 && m_GeneralRollTexture!=0)
+            {
+                const int direction=RollAnimation::Direction(state.dodgeDirection);
+                const auto region=RollAnimation::Frames[direction][RollAnimation::Frame(state.dodge)];
+                const float scale=RollAnimation::Scale[direction];
+                DrawShadow(state.player,38,8);
+                m_Renderer.SetSpriteFlash(DamageFeedback::Fade(state.playerHitTime,DamageFeedback::FlashDuration));
+                m_Renderer.DrawSprite(m_GeneralRollTexture,
+                    foot.x+(region.x+region.width*.5f-region.anchorX)*scale,
+                    foot.z+(region.anchorY-region.y-region.height*.5f)*scale,
+                    region.width*scale,region.height*scale,region.x,region.y,RollAnimation::Width,RollAnimation::Height,
+                    1,1,state.equippedArmor==2 ? .75f : 1,state.equippedWeapon==2 ? .72f : 1,0,0,0,
+                    static_cast<float>(region.width),static_cast<float>(region.height),.5f);
+                m_Renderer.SetSpriteFlash(0);
                 break;
             }
             if (state.moving || state.dodge > 0)

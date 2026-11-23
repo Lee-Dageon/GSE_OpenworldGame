@@ -116,17 +116,19 @@ void DrawGameUi(Renderer &renderer, const GameUiState &state)
     // Existing gameplay commands, with the same circles used by HitTestGameUi.
     const auto controls = GameUiControls(state.windowWidth, state.windowHeight);
     const wchar_t *keys[] = {L"좌클릭", L"공백", L"Q", L"E"};
-    const wchar_t *names[] = {L"공격", L"회피", L"물약", L"상호작용"};
+    wchar_t dodgeLabel[24];
+    std::swprintf(dodgeLabel,24,L"%.1f초",state.dodgeCooldown);
+    const wchar_t *names[] = {L"공격", state.dodgeCooldown>0 ? dodgeLabel : L"구르기", L"물약", L"상호작용"};
     for (size_t i=0; i<controls.size(); ++i)
     {
         const GameUiControl &control = controls[i];
-        const bool enabled = i==2 ? state.potions>0 && hp<1 : (i==3 ? !state.hint.empty() : true);
+        const bool enabled = i==1 ? state.dodgeCooldown<=0 : (i==2 ? state.potions>0 && hp<1 : (i==3 ? !state.hint.empty() : true));
         effect(control.x, control.y+3*s, control.radius+2*s, .015f, .017f, .02f, .7f, 7);
         effect(control.x, control.y, control.radius, enabled ? .77f : .30f, enabled ? .59f : .29f, enabled ? .28f : .26f, .98f, 7);
         effect(control.x, control.y, control.radius-3*s, .065f, .075f, .082f, .78f, 7);
         effect(control.x, control.y-control.radius*.25f, control.radius*.45f, i==2 ? .90f : 1.0f, i==2 ? .15f : .78f, i==2 ? .08f : .35f,
                enabled ? 1.0f : .4f, 10+static_cast<int>(i));
-        const float progress = i==0 ? state.attackTime/.32f : (i==1 ? state.dodgeTime/.24f : 0);
+        const float progress = i==0 ? state.attackTime/.32f : (i==1 ? state.dodgeCooldown/GameConstants::Player::DodgeCooldown : 0);
         if (progress>0) effect(control.x, control.y, control.radius-3*s, std::min(1.0f, progress), 0, 0, .72f, 9);
         const float keyScale=std::max(1.0f,.84f*s);
         label(control.x-std::wcslen(keys[i])*(i<2 ? 9.0f : 5.2f)*keyScale, control.y+control.radius*.30f,

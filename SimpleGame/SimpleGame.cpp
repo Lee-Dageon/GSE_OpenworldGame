@@ -260,6 +260,7 @@ void RenderScene()
     uiState.messageTime = g_GameState.messageTime;
     uiState.attackTime = g_GameState.attack;
     uiState.dodgeTime = g_GameState.dodge;
+    uiState.dodgeCooldown = g_GameState.dodgeCooldown;
     uiState.player = g_GameState.player;
     uiState.elder = g_GameState.world.elder;
     uiState.monster = g_GameState.monster.position;

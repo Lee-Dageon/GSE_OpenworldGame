@@ -9,4 +9,9 @@
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
     <LocalDebuggerCommandArgumentsHistory>--debug-chapter displaced|--debug-step border_hunt|--debug-step ancient_hunt|--debug-chapter awakened|--debug-step ruin_control|</LocalDebuggerCommandArgumentsHistory>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <LocalDebuggerCommandArguments>--debug-step third_report</LocalDebuggerCommandArguments>
+    <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
+    <LocalDebuggerCommandArgumentsHistory>--debug-step third_report|</LocalDebuggerCommandArgumentsHistory>
+  </PropertyGroup>
 </Project>

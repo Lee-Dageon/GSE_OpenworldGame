@@ -1,0 +1,433 @@
+{
+  "prompt": "Create a production GAME SPRITE ATLAS for the SAME small female armored adventurer in the reference: short rose-pink bob hair, dark teal tunic with gold trim, silver shoulder armor and boots, burgundy cape with gold edging. Chibi hand-painted pixel-style RPG, orthographic quarter-view, exactly matching reference identity and colors. New motion is a REAL athletic tucked forward dodge somersault, NOT walking and NOT sword attacks. Sword sheathed, empty hands. Transparent background, NO text, NO grid lines, NO shadows, NO effects. Exact 1536x2048 canvas with SIX equal columns and EIGHT equal rows, 256x256 cells, exactly 48 isolated full-body poses. No art may cross a cell boundary. Every cell has same character scale and a ground/contact baseline at local y=224; horizontal center x=128, generous clear margins. Each ROW is a DIFFERENT screen travel/facing direction. Rows TOP TO BOTTOM: 1 EAST right, 2 SOUTHEAST down-right towards viewer, 3 SOUTH down towards viewer, 4 SOUTHWEST down-left, 5 WEST left, 6 NORTHWEST up-left away from viewer, 7 NORTH up away from viewer showing back/cape, 8 NORTHEAST up-right. Each row contains SIX sequential animation poses LEFT TO RIGHT: 1 crouch and lean into that row's direction, 2 diving head-first with arms tucked and legs pushing off ground, 3 tightly tucked forward roll with head low hips high, 4 upside-down somersault showing boots passing overhead and cape wrapped, 5 feet landing and body unfolding low, 6 rising back to ready stance facing travel direction. The roll must visibly rotate head/torso/hips through a complete forward somersault along the row's travel axis, especially side views. Keep the root fixed within cells, no translation, engine supplies translation. Crisp clean alpha edges and consistent lighting; no duplicate standing poses in middle phases. Reference is identity/style only, do not reuse its attack poses.",
+  "provider": "built-in image_gen",
+  "source": "C:/Users/82105/.codex/generated_images/01a20374-6616-73f1-86be-15299e79ee8e/exec-6b975ceb-1403-4188-b5f3-b46b84e7ca97.png",
+  "sha256": "a7beb1bae334d2929aace647941d9b8353ab74738f06dabe73241379271f1c26",
+  "width": 1086,
+  "height": 1448,
+  "columns": 6,
+  "rows": 8,
+  "directions": [
+    "E",
+    "SE",
+    "S",
+    "SW",
+    "W",
+    "NW",
+    "N",
+    "NE"
+  ],
+  "frames": [
+    [
+      {
+        "x": 35,
+        "y": 49,
+        "width": 121,
+        "height": 129,
+        "anchorX": 90.5,
+        "anchorY": 178
+      },
+      {
+        "x": 204,
+        "y": 66,
+        "width": 140,
+        "height": 112,
+        "anchorX": 271.5,
+        "anchorY": 178
+      },
+      {
+        "x": 392,
+        "y": 67,
+        "width": 127,
+        "height": 112,
+        "anchorX": 452.5,
+        "anchorY": 179
+      },
+      {
+        "x": 584,
+        "y": 55,
+        "width": 118,
+        "height": 123,
+        "anchorX": 633.5,
+        "anchorY": 178
+      },
+      {
+        "x": 755,
+        "y": 83,
+        "width": 132,
+        "height": 96,
+        "anchorX": 814.5,
+        "anchorY": 179
+      },
+      {
+        "x": 946,
+        "y": 44,
+        "width": 112,
+        "height": 135,
+        "anchorX": 995.5,
+        "anchorY": 179
+      }
+    ],
+    [
+      {
+        "x": 28,
+        "y": 237,
+        "width": 115,
+        "height": 122,
+        "anchorX": 90.5,
+        "anchorY": 359
+      },
+      {
+        "x": 207,
+        "y": 253,
+        "width": 135,
+        "height": 103,
+        "anchorX": 271.5,
+        "anchorY": 356
+      },
+      {
+        "x": 392,
+        "y": 250,
+        "width": 119,
+        "height": 112,
+        "anchorX": 452.5,
+        "anchorY": 362
+      },
+      {
+        "x": 578,
+        "y": 233,
+        "width": 122,
+        "height": 117,
+        "anchorX": 633.5,
+        "anchorY": 350
+      },
+      {
+        "x": 751,
+        "y": 269,
+        "width": 127,
+        "height": 93,
+        "anchorX": 814.5,
+        "anchorY": 362
+      },
+      {
+        "x": 942,
+        "y": 227,
+        "width": 111,
+        "height": 134,
+        "anchorX": 995.5,
+        "anchorY": 361
+      }
+    ],
+    [
+      {
+        "x": 29,
+        "y": 426,
+        "width": 102,
+        "height": 114,
+        "anchorX": 90.5,
+        "anchorY": 540
+      },
+      {
+        "x": 212,
+        "y": 434,
+        "width": 112,
+        "height": 108,
+        "anchorX": 271.5,
+        "anchorY": 542
+      },
+      {
+        "x": 405,
+        "y": 434,
+        "width": 108,
+        "height": 109,
+        "anchorX": 452.5,
+        "anchorY": 543
+      },
+      {
+        "x": 572,
+        "y": 414,
+        "width": 122,
+        "height": 124,
+        "anchorX": 633.5,
+        "anchorY": 538
+      },
+      {
+        "x": 756,
+        "y": 451,
+        "width": 113,
+        "height": 92,
+        "anchorX": 814.5,
+        "anchorY": 543
+      },
+      {
+        "x": 940,
+        "y": 413,
+        "width": 110,
+        "height": 130,
+        "anchorX": 995.5,
+        "anchorY": 543
+      }
+    ],
+    [
+      {
+        "x": 39,
+        "y": 609,
+        "width": 105,
+        "height": 111,
+        "anchorX": 90.5,
+        "anchorY": 720
+      },
+      {
+        "x": 209,
+        "y": 614,
+        "width": 114,
+        "height": 107,
+        "anchorX": 271.5,
+        "anchorY": 721
+      },
+      {
+        "x": 399,
+        "y": 615,
+        "width": 110,
+        "height": 109,
+        "anchorX": 452.5,
+        "anchorY": 724
+      },
+      {
+        "x": 567,
+        "y": 595,
+        "width": 120,
+        "height": 124,
+        "anchorX": 633.5,
+        "anchorY": 719
+      },
+      {
+        "x": 756,
+        "y": 632,
+        "width": 116,
+        "height": 90,
+        "anchorX": 814.5,
+        "anchorY": 722
+      },
+      {
+        "x": 946,
+        "y": 595,
+        "width": 110,
+        "height": 126,
+        "anchorX": 995.5,
+        "anchorY": 721
+      }
+    ],
+    [
+      {
+        "x": 43,
+        "y": 792,
+        "width": 116,
+        "height": 109,
+        "anchorX": 90.5,
+        "anchorY": 901
+      },
+      {
+        "x": 206,
+        "y": 800,
+        "width": 135,
+        "height": 100,
+        "anchorX": 271.5,
+        "anchorY": 900
+      },
+      {
+        "x": 386,
+        "y": 797,
+        "width": 132,
+        "height": 103,
+        "anchorX": 452.5,
+        "anchorY": 900
+      },
+      {
+        "x": 566,
+        "y": 779,
+        "width": 116,
+        "height": 118,
+        "anchorX": 633.5,
+        "anchorY": 897
+      },
+      {
+        "x": 750,
+        "y": 815,
+        "width": 132,
+        "height": 89,
+        "anchorX": 814.5,
+        "anchorY": 904
+      },
+      {
+        "x": 945,
+        "y": 776,
+        "width": 110,
+        "height": 128,
+        "anchorX": 995.5,
+        "anchorY": 904
+      }
+    ],
+    [
+      {
+        "x": 35,
+        "y": 969,
+        "width": 117,
+        "height": 112,
+        "anchorX": 90.5,
+        "anchorY": 1081
+      },
+      {
+        "x": 204,
+        "y": 971,
+        "width": 129,
+        "height": 114,
+        "anchorX": 271.5,
+        "anchorY": 1085
+      },
+      {
+        "x": 389,
+        "y": 980,
+        "width": 124,
+        "height": 101,
+        "anchorX": 452.5,
+        "anchorY": 1081
+      },
+      {
+        "x": 568,
+        "y": 958,
+        "width": 119,
+        "height": 123,
+        "anchorX": 633.5,
+        "anchorY": 1081
+      },
+      {
+        "x": 754,
+        "y": 993,
+        "width": 124,
+        "height": 92,
+        "anchorX": 814.5,
+        "anchorY": 1085
+      },
+      {
+        "x": 943,
+        "y": 955,
+        "width": 113,
+        "height": 130,
+        "anchorX": 995.5,
+        "anchorY": 1085
+      }
+    ],
+    [
+      {
+        "x": 36,
+        "y": 1153,
+        "width": 106,
+        "height": 110,
+        "anchorX": 90.5,
+        "anchorY": 1263
+      },
+      {
+        "x": 209,
+        "y": 1148,
+        "width": 112,
+        "height": 116,
+        "anchorX": 271.5,
+        "anchorY": 1264
+      },
+      {
+        "x": 396,
+        "y": 1165,
+        "width": 108,
+        "height": 98,
+        "anchorX": 452.5,
+        "anchorY": 1263
+      },
+      {
+        "x": 573,
+        "y": 1145,
+        "width": 109,
+        "height": 116,
+        "anchorX": 633.5,
+        "anchorY": 1261
+      },
+      {
+        "x": 756,
+        "y": 1165,
+        "width": 115,
+        "height": 99,
+        "anchorX": 814.5,
+        "anchorY": 1264
+      },
+      {
+        "x": 947,
+        "y": 1135,
+        "width": 101,
+        "height": 129,
+        "anchorX": 995.5,
+        "anchorY": 1264
+      }
+    ],
+    [
+      {
+        "x": 30,
+        "y": 1325,
+        "width": 124,
+        "height": 116,
+        "anchorX": 90.5,
+        "anchorY": 1441
+      },
+      {
+        "x": 208,
+        "y": 1319,
+        "width": 133,
+        "height": 121,
+        "anchorX": 271.5,
+        "anchorY": 1440
+      },
+      {
+        "x": 391,
+        "y": 1344,
+        "width": 124,
+        "height": 96,
+        "anchorX": 452.5,
+        "anchorY": 1440
+      },
+      {
+        "x": 571,
+        "y": 1317,
+        "width": 123,
+        "height": 119,
+        "anchorX": 633.5,
+        "anchorY": 1436
+      },
+      {
+        "x": 750,
+        "y": 1340,
+        "width": 125,
+        "height": 101,
+        "anchorX": 814.5,
+        "anchorY": 1441
+      },
+      {
+        "x": 939,
+        "y": 1311,
+        "width": 116,
+        "height": 130,
+        "anchorX": 995.5,
+        "anchorY": 1441
+      }
+    ]
+  ],
+  "scales": [
+    0.5606060606060606,
+    0.578125,
+    0.6065573770491803,
+    0.6244725738396625,
+    0.6244725738396625,
+    0.6115702479338843,
+    0.6192468619246861,
+    0.6016260162601627
+  ],
+  "extraction": "Read-only alpha connected-component bounds; atlas pixels unchanged."
+}

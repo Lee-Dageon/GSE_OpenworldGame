@@ -77,6 +77,7 @@ class WorldRenderer
     unsigned int m_SceneryTexture = 0;
     unsigned int m_PlayerTexture = 0;
     unsigned int m_PlayerAttackTexture = 0;
+    unsigned int m_GeneralRollTexture = 0;
     unsigned int m_GeneralWalkTexture = 0, m_GeneralRunTexture = 0;
     unsigned int m_GeneralAttackTexture = 0;
     unsigned int m_SwordSlashTexture = 0;

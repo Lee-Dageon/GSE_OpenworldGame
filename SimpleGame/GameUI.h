@@ -33,7 +33,7 @@ struct GameUiState
     float health = 0.0f;
     float maxHealth = 1.0f;
     float messageTime = 0.0f;
-    float attackTime = 0.0f, dodgeTime = 0.0f;
+    float attackTime = 0.0f, dodgeTime = 0.0f, dodgeCooldown = 0.0f;
     Vec2 player = {}, elder = {}, monster = {}, lake = {}, objectiveTarget = {};
     float lakeRadius = 0;
     bool monsterVisible = false, hasObjectiveTarget = false;

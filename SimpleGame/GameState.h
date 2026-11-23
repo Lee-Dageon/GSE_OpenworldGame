@@ -129,6 +129,8 @@ struct GameState
     int coins=0, festivalClaimDay=-1, regionVisits=0, nextBaseUpgrade=0;
     Vec2 companion = {};
     NavigationRoute companionRoute;
+    float dodgeCooldown=0;
+    Vec2 dodgeDirection={.70710678f,.70710678f};
     bool journalOpen=false, prologueSeen=false;
     float prologueTime=-1;
     bool prologueLossApplied=false;

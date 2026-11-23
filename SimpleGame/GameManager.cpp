@@ -32,6 +32,7 @@ void GameManager::BeginFrame(float deltaTime)
     m_State.time += deltaTime;
     m_State.endingTime = std::max(0.0f, m_State.endingTime-deltaTime);
     m_State.dodge = std::max(0.0f, m_State.dodge - deltaTime);
+    m_State.dodgeCooldown=std::max(0.0f,m_State.dodgeCooldown-deltaTime);
     m_State.attack = std::max(0.0f, m_State.attack - deltaTime);
     m_State.playerSlowTime = std::max(0.0f, m_State.playerSlowTime - deltaTime);
     m_State.messageTime = std::max(0.0f, m_State.messageTime - deltaTime);
@@ -166,6 +167,7 @@ void GameManager::UpdateGame(float deltaTime)
     m_State.hitStop -= frozen;
     deltaTime -= frozen;
     if (deltaTime <= 0.0f && (frozen > 0.0f || m_State.hitStop > 0.0f)) return;
+    const float dodgeAtFrameStart=m_State.dodge;
     BeginFrame(deltaTime);
     WorldStreaming::Update(m_State);
     m_State.herbRegrowTime = std::max(0.0f, m_State.herbRegrowTime - deltaTime);
@@ -233,7 +235,7 @@ void GameManager::UpdateGame(float deltaTime)
     for (auto &number : m_State.damageNumbers) number.remaining -= deltaTime;
     m_State.damageNumbers.erase(std::remove_if(m_State.damageNumbers.begin(), m_State.damageNumbers.end(),
         [](const DamageNumber &number) { return number.remaining <= 0; }), m_State.damageNumbers.end());
-    PlayerController::UpdateMovement(m_State, deltaTime);
+    PlayerController::UpdateMovement(m_State, deltaTime, dodgeAtFrameStart);
     WorldStreaming::Update(m_State);
     if (WeaponMotion::Release(m_State.weaponStyle,m_State.attack,m_State.attackPending)) ResolveAttack();
     UpdateNpcs(deltaTime);
@@ -269,7 +271,7 @@ void GameManager::UpdateGame(float deltaTime)
         m_State.player = m_State.world.spawn;
         m_State.health = m_State.maxHealth;
         m_State.playerSlowTime = 0;
-        m_State.attack = 0; m_State.attackPending = false;
+        m_State.attack = 0; m_State.attackPending = false; m_State.dodge=0;
         ShowMessage(L"구조대의 도움으로 마을에 돌아왔습니다.");
     }
 }
@@ -371,7 +373,7 @@ void GameManager::HandleCommand(GameCommand command)
         return;
     if (command == GameCommand::Interact)
     {
-        if (m_State.attackPending) return;
+        if (m_State.attackPending || m_State.dodge>0) return;
         if (const auto *message=AdventureEvents::Interact(m_State)) { ShowMessage(message); return; }
         if (const auto *message=RegionSystem::Interact(m_State)) { ShowMessage(message); return; }
         if ((m_State.quest == QuestStage::Trophy || StorySystem::HasDrop(m_State)) &&
@@ -460,7 +462,7 @@ void GameManager::HandleCommand(GameCommand command)
         PlayerController::StartDodge(m_State);
         return;
     }
-    if (command == GameCommand::Attack && m_State.attack <= 0.0f && !m_State.attackPending)
+    if (command == GameCommand::Attack && m_State.attack <= 0.0f && !m_State.attackPending && m_State.dodge<=0)
     {
         m_State.attack = WeaponMotion::Duration(m_State.weaponStyle);
         m_State.attackPending = true;

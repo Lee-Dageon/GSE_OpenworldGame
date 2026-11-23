@@ -9,65 +9,53 @@
 
 namespace PlayerController
 {
-void UpdateMovement(GameState &state, float deltaTime)
+namespace
 {
-    if (state.inventoryOpen || state.lootTime > 0)
+Vec2 InputDirection(const GameState &state)
+{
+    Vec2 move={static_cast<float>(state.keys['w']-state.keys['s']-state.keys['a']+state.keys['d']),
+               static_cast<float>(state.keys['w']-state.keys['s']+state.keys['a']-state.keys['d'])};
+    const float length=std::hypot(move.x,move.z);
+    if (length>0) { move.x/=length; move.z/=length; }
+    return move;
+}
+}
+void UpdateMovement(GameState &state, float deltaTime, float dodgeAtFrameStart)
+{
+    if (state.inventoryOpen || state.journalOpen || state.lootTime>0)
+    { state.moving=false; return; }
+    const float dt=std::clamp(deltaTime,0.0f,1.0f);
+    const float rollTime=std::min(dt,std::max(0.0f,dodgeAtFrameStart<0 ? state.dodge : dodgeAtFrameStart));
+    const Vec2 previous=state.player,input=InputDirection(state);
+    const auto advance=[&](Vec2 move,float distance)
     {
-        state.moving = false;
-        return;
-    }
-    Vec2 move = {0.0f, 0.0f};
-    if (state.keys['w'])
-    {
-        ++move.x;
-        ++move.z;
-    }
-    if (state.keys['s'])
-    {
-        --move.x;
-        --move.z;
-    }
-    if (state.keys['a'])
-    {
-        --move.x;
-        ++move.z;
-    }
-    if (state.keys['d'])
-    {
-        ++move.x;
-        --move.z;
-    }
-    const float length = std::sqrt(move.x * move.x + move.z * move.z);
-    state.moving = length > 0.0f;
-    if (!state.moving)
-        return;
-    move.x /= length;
-    move.z /= length;
-    state.facing = move;
-    const float slow = state.playerSlowTime > 0 ? GameConstants::Player::HitSlowSpeed : 1.0f;
-    const float weatherSpeed=state.weather==3 ? .88f : state.weather==4 ? .93f : 1;
-    const float speed = state.dodge > 0.0f ? GameConstants::Player::DodgeSpeed :
-        (state.sprint ? GameConstants::Player::SprintSpeed : GameConstants::Player::WalkSpeed) * slow * weatherSpeed;
-    const Vec2 previous = state.player;
-    const float distance=std::max(0.0f,std::min(deltaTime,1.0f))*speed;
-    const int steps=std::max(1,static_cast<int>(std::ceil(distance/.12f)));
-    for (int i=0;i<steps;++i)
-    {
-        const Vec2 next={state.player.x+move.x*distance/steps,state.player.z+move.z*distance/steps};
-        const auto canMove=[&](Vec2 p) {
-            return !((p.x>=790 && p.z>=620 || p.x>=940) && state.endingChoice==0) &&
-                !RegionSystem::Blocked(state,p) && WorldLayout::CanMove(state.world,state.player,p);
-        };
-        if (canMove(next)) state.player=next;
-        else
+        if (distance<=0 || std::hypot(move.x,move.z)<.001f) return;
+        const int steps=std::max(1,static_cast<int>(std::ceil(distance/.12f)));
+        for (int i=0;i<steps;++i)
         {
-            const Vec2 x={next.x,state.player.z};
-            if (canMove(x)) state.player=x;
-            const Vec2 z={state.player.x,next.z};
-            if (canMove(z)) state.player=z;
+            const Vec2 next={state.player.x+move.x*distance/steps,state.player.z+move.z*distance/steps};
+            const auto canMove=[&](Vec2 point) {
+                return !((point.x>=790 && point.z>=620 || point.x>=940) && state.endingChoice==0) &&
+                    !RegionSystem::Blocked(state,point) && WorldLayout::CanMove(state.world,state.player,point);
+            };
+            if (canMove(next)) state.player=next;
+            else
+            {
+                const Vec2 x={next.x,state.player.z}; if (canMove(x)) state.player=x;
+                const Vec2 z={state.player.x,next.z}; if (canMove(z)) state.player=z;
+            }
         }
+    };
+    if (rollTime>0)
+    { state.facing=state.dodgeDirection; advance(state.dodgeDirection,rollTime*GameConstants::Player::DodgeSpeed); }
+    if (dt>rollTime && std::hypot(input.x,input.z)>.001f)
+    {
+        state.facing=input;
+        const float slow=state.playerSlowTime>0 ? GameConstants::Player::HitSlowSpeed : 1.0f;
+        const float weather=state.weather==3 ? .88f : state.weather==4 ? .93f : 1;
+        advance(input,(dt-rollTime)*(state.sprint ? GameConstants::Player::SprintSpeed : GameConstants::Player::WalkSpeed)*slow*weather);
     }
-    state.moving = state.player.x != previous.x || state.player.z != previous.z;
+    state.moving=state.player.x!=previous.x || state.player.z!=previous.z;
 }
 
 bool TryUsePotion(GameState &state)
@@ -79,8 +67,19 @@ bool TryUsePotion(GameState &state)
     return true;
 }
 
-void StartDodge(GameState &state)
+bool StartDodge(GameState &state)
 {
-    state.dodge = GameConstants::Player::DodgeDuration;
+    if (state.dodge>0 || state.dodgeCooldown>0 || state.inventoryOpen || state.journalOpen ||
+        state.lootTime>0 || state.health<=0) return false;
+    Vec2 direction=InputDirection(state);
+    if (std::hypot(direction.x,direction.z)<.001f) direction=state.facing;
+    const float length=std::hypot(direction.x,direction.z);
+    state.dodgeDirection=length>.001f ? Vec2{direction.x/length,direction.z/length} : Vec2{.70710678f,.70710678f};
+    state.facing=state.dodgeDirection;
+    state.dodge=GameConstants::Player::DodgeDuration;
+    state.dodgeCooldown=GameConstants::Player::DodgeCooldown;
+    state.attack=0; state.attackPending=false;
+    return true;
 }
+
 } // namespace PlayerController

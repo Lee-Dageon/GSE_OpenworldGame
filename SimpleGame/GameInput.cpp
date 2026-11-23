@@ -68,7 +68,7 @@ GameCommand OnKeyDown(GameState &state, unsigned char key, bool shiftHeld)
     case 'q':
         return GameCommand::UsePotion;
     case ' ':
-        return GameCommand::Dodge;
+        return repeated ? GameCommand::None : GameCommand::Dodge;
     default:
         return GameCommand::None;
     }

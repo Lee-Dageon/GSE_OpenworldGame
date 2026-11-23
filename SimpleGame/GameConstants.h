@@ -18,7 +18,7 @@ constexpr float PickupDuration = .6f;
 namespace Player
 {
 constexpr float WalkSpeed = 2.4f, SprintSpeed = 4.0f, DodgeSpeed = 9.0f;
-constexpr float DodgeDuration = .24f, PotionHealing = 45.0f;
+constexpr float DodgeDuration = .36f, DodgeCooldown = 1.1f, PotionHealing = 45.0f;
 constexpr float AttackDuration = .32f;
 constexpr float HitSlowDuration = 5.0f, HitSlowSpeed = .25f;
 constexpr float WalkFps = 6.0f, SprintFps = 8.0f;

@@ -151,6 +151,7 @@
     </ClInclude>
     <ClInclude Include="InventoryActions.h"><Filter>헤더 파일\Gameplay</Filter></ClInclude>
     <ClInclude Include="WeaponMotion.h"><Filter>헤더 파일\Gameplay</Filter></ClInclude>
+    <ClInclude Include="RollAnimation.h"><Filter>헤더 파일\Gameplay</Filter></ClInclude>
     <ClInclude Include="Navigation.h"><Filter>헤더 파일\Gameplay</Filter></ClInclude>
     <ClInclude Include="LivingWorld.h"><Filter>헤더 파일\Gameplay</Filter></ClInclude>
     <ClInclude Include="WorldStreaming.h"><Filter>헤더 파일\Content and World</Filter></ClInclude>
