@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "GameInput.h"
 #include "BossIntro.h"
+#include "PrologueSystem.h"
 
 #include <cctype>
 #include <algorithm>
@@ -17,7 +18,7 @@ GameCommand OnKeyDown(GameState &state, unsigned char key, bool shiftHeld)
     if (state.prologueTime>=0)
     {
         if (!repeated && normalizedKey==27)
-        { state.prologueTime=-1; state.prologueSeen=true; state.player=state.world.spawn; state.moving=false; }
+        { PrologueSystem::Finish(state); }
         return GameCommand::None;
     }
     if (BossIntro::Active(state))
@@ -46,6 +47,10 @@ GameCommand OnKeyDown(GameState &state, unsigned char key, bool shiftHeld)
     case '3': return repeated ? GameCommand::None : GameCommand::ChooseThird;
     case '4': return repeated ? GameCommand::None : GameCommand::ChooseFourth;
     case '5': return repeated ? GameCommand::None : GameCommand::Rest;
+    case '6': return repeated ? GameCommand::None : GameCommand::ChooseSixth;
+    case '7': return repeated ? GameCommand::None : GameCommand::ChooseSeventh;
+    case '8': return repeated ? GameCommand::None : GameCommand::ChooseEighth;
+    case '9': return repeated ? GameCommand::None : GameCommand::ChooseNinth;
     case 'k': return repeated ? GameCommand::None : GameCommand::SaveProgress;
     case 'l': return repeated ? GameCommand::None : GameCommand::LoadProgress;
     case 27:

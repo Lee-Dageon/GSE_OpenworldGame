@@ -185,6 +185,12 @@
     <ClInclude Include="InventoryActions.h" />
     <ClInclude Include="LivingWorld.h" />
     <ClInclude Include="WorldStreaming.h" />
+    <ClInclude Include="RegionalState.h" />
+    <ClInclude Include="RegionContent.h" />
+    <ClInclude Include="RegionSystem.h" />
+    <ClInclude Include="ExpansionSave.h" />
+    <ClInclude Include="AdventureEvents.h" />
+    <ClInclude Include="PrologueSystem.h" />
     <ClInclude Include="InvestigationSprites.h" />
     <ClInclude Include="BoarDeathFrames.h" />
     <ClInclude Include="AnimalHitFrames.h" />
@@ -243,6 +249,8 @@
     <None Include="Data\monsters.gse" />
     <None Include="Data\quests.gse" />
     <None Include="Data\story.gse" />
+    <None Include="Data\Regions\index.gse" />
+    <None Include="Data\Regions\frost_reach.gse" />
     <None Include="Shaders\PostProcess.vs" />
     <None Include="Shaders\Sprite.fs" />
     <None Include="Shaders\Sprite.vs" />

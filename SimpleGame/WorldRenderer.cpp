@@ -18,6 +18,7 @@
 #include "PixelGeneralFrames.h"
 #include "InvestigationSprites.h"
 #include "WorldStreaming.h"
+#include "RegionSystem.h"
 #include "BoarDeathFrames.h"
 #include "ChatacabraHDFrames.h"
 #include "AnimalHitFrames.h"
@@ -1326,9 +1327,28 @@ void WorldRenderer::RenderWorld(const GameState &state)
     m_Renderer.SetWorldScale(WorldScale * state.height / 720.0f * BossIntro::Zoom(state));
     DrawGround();
     DrawTerrain();
-    enum class DrawType { House, Tree, Campfire, Npc, Animal, Tracks, Herb, Monster, Player, NoticeBoard, Decoration, Scenery, Investigation, StoryMarker, GatherNode, FieldMonster, Companion, Prologue };
+    enum class DrawType { House, Tree, Campfire, Npc, Animal, Tracks, Herb, Monster, Player, NoticeBoard, Decoration, Scenery, Investigation, StoryMarker, GatherNode, FieldMonster, Companion, Prologue, RegionalSite, RegionalEnemy, RegionalGather, RaidMonster, EventSite };
     struct DrawItem { Vec2 position; DrawType type; int index; };
     std::vector<DrawItem> items;
+    std::vector<const RegionSite *> regionalSites;
+    std::vector<const RegionEnemy *> regionalEnemies;
+    std::vector<const RegionGather *> regionalGathers;
+    for (const auto &entry:state.regions)
+    {
+        for (const auto &site:entry.second.sites)
+        { regionalSites.push_back(&site); items.push_back({site.position,DrawType::RegionalSite,static_cast<int>(regionalSites.size())-1}); }
+        for (const auto &enemy:entry.second.enemies) if (!enemy.collected)
+        { regionalEnemies.push_back(&enemy); items.push_back({enemy.monster.position,DrawType::RegionalEnemy,static_cast<int>(regionalEnemies.size())-1}); }
+        for (const auto &gather:entry.second.gathers) if (gather.timer<=0)
+        { regionalGathers.push_back(&gather); items.push_back({gather.position,DrawType::RegionalGather,static_cast<int>(regionalGathers.size())-1}); }
+    }
+    for (size_t i=0;i<state.eventMonsters.size();++i)
+        items.push_back({state.eventMonsters[i].monster.position,DrawType::RaidMonster,static_cast<int>(i)});
+    if (state.trackingActive && state.trackingStep<3)
+        items.push_back({AdventureEvents::TrackSites[state.trackingStep],DrawType::EventSite,0});
+    if (state.festivalStage==2)
+        for (int i=0;i<3;++i) items.push_back({AdventureEvents::LanternSites[i],DrawType::EventSite,i+1});
+    if (state.festivalStage==3) items.push_back({AdventureEvents::FestivalTarget(),DrawType::EventSite,4});
     for (int index = 0; index < static_cast<int>(Map().houses.size()); ++index)
         items.push_back({Map().houses[index].position, DrawType::House, index});
     items.push_back({Map().noticeBoard, DrawType::NoticeBoard, 0});
@@ -1436,6 +1456,50 @@ void WorldRenderer::RenderWorld(const GameState &state)
         ApplyLocalLight(m_Renderer, item.position, state.time);
         switch (item.type)
         {
+        case DrawType::RegionalSite:
+        {
+            const auto &site=*regionalSites[item.index];
+            if (site.kind==0)
+            {
+                NpcState npc={}; npc.position=site.position; npc.identity=20; npc.facing={state.player.x-site.position.x,state.player.z-site.position.z};
+                if (!DrawRosterNpc(npc)) DrawSprite(site.position,2,0,52,78,true);
+            }
+            else if (site.kind==1 && m_HouseVariants[0]) DrawPixelSprite(site.position,m_HouseVariants[0],130,145,.85f);
+            else DrawInvestigation(site.position,site.kind==2 ? 0 : 7);
+            if (Distance(state.player,site.position)<10)
+            {
+                const auto p=ToScreen(site.position);
+                m_Renderer.DrawLabel(state.width*.5f+p.x,state.height*.5f+p.z+110,site.name.c_str(),.8f,.95f,1,.6f,1,true);
+            }
+            break;
+        }
+        case DrawType::RegionalGather:
+        {
+            const auto &node=*regionalGathers[item.index];
+            const auto texture=m_Renderer.UiTexture(ItemTexture(static_cast<ItemId>(node.item)));
+            const auto p=ToScreen(node.position);
+            if (texture) m_Renderer.DrawSprite(texture,p.x,p.z+18,50,50,0,0,1,1);
+            break;
+        }
+        case DrawType::EventSite:
+        {
+            const auto p=ToScreen(item.position);
+            if (item.index==0) DrawInvestigation(item.position,0);
+            else if (item.index==4)
+            {
+                m_Renderer.DrawSolidRect(p.x,p.z+28,9,55,0,.5f,.31f,.12f,1);
+                m_Renderer.DrawEffectRect(p.x,p.z+50,30,30,0,.95f,.55f,.2f,1,3);
+            }
+            else
+            {
+                const bool lit=state.festivalScore & (1<<(item.index-1));
+                m_Renderer.DrawSolidRect(p.x,p.z+20,5,40,0,.45f,.3f,.12f,1);
+                m_Renderer.DrawEffectRect(p.x,p.z+45,20,25,0,1,lit ? .8f : .3f,.15f,1,15);
+            }
+            m_Renderer.DrawLabel(state.width*.5f+p.x,state.height*.5f+p.z+85,
+                item.index==0 ? L"추적 흔적 · E 조사" : item.index==4 ? L"축제 훈련 표적" : L"축제 등불 · E",1,.85f,.4f,.5f,1,true);
+            break;
+        }
         case DrawType::Prologue:
             if (m_PredatorTexture)
             {
@@ -1447,9 +1511,11 @@ void WorldRenderer::RenderWorld(const GameState &state)
             DrawSprite(item.position,2,0,52,78,true);
             break;
         case DrawType::FieldMonster:
+        case DrawType::RegionalEnemy:
+        case DrawType::RaidMonster:
         {
-            const auto &field=state.fieldMonsters[item.index];
-            const auto &monster=field.monster;
+            const auto &monster=item.type==DrawType::FieldMonster ? state.fieldMonsters[item.index].monster :
+                item.type==DrawType::RegionalEnemy ? regionalEnemies[item.index]->monster : state.eventMonsters[item.index].monster;
             MonsterDrawContext context={&m_Renderer,[this](Vec2 p){return ToScreen(p);},
                 [this,&state,&monster](Vec2 p,int,int,float,float,bool) {
                     const Vec2 aim=monster.chatPattern>=0 ? monster.animationFacing : Vec2{state.player.x-p.x,state.player.z-p.z};
@@ -1467,7 +1533,7 @@ void WorldRenderer::RenderWorld(const GameState &state)
                     }
                     else DrawPixelAnimal(p,1,aim,static_cast<int>(state.time*7)%4,monster.definition.spriteHeight,monster.health<=0);
                 },state.width,state.height,state.time,Pi};
-            MonsterSystem::Draw(monster,context,monster.health<=0);
+            MonsterSystem::Draw(monster,context,monster.health<=0 && item.type!=DrawType::RaidMonster);
             if (monster.health>0 && monster.chatPattern>=0)
             {
                 const Vec2 target=monster.definition.id=="forest_predator" ? monster.position : monster.chatTarget;
@@ -2220,6 +2286,16 @@ void WorldRenderer::RenderWorld(const GameState &state)
     else if (state.quest == QuestStage::Herb) DrawQuestGlimmer(state.world.herb, 95);
     else if (state.quest == QuestStage::Elder || state.quest == QuestStage::Return || state.quest == QuestStage::Complete)
         DrawQuestGlimmer(state.world.elder, 135);
+    for (const auto &entry:state.regions)
+    {
+        const auto progress=state.regionProgress.find(entry.first);
+        if (progress==state.regionProgress.end() || !progress->second.started)
+        {
+            for (const auto &site:entry.second.sites) if (site.kind==0) DrawQuestGlimmer(site.position,110);
+        }
+        else if (const auto *goal=RegionSystem::Goal(entry.second,progress->second))
+            DrawQuestGlimmer(RegionSystem::Target(entry.second,*goal),120);
+    }
     if (state.arrowTime>0)
     {
         const auto from=ToScreen(state.arrowFrom),to=ToScreen(state.arrowTo);

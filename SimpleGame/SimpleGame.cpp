@@ -16,6 +16,8 @@
 #include "StorySystem.h"
 #include "BossIntro.h"
 #include "LivingWorld.h"
+#include "PrologueSystem.h"
+#include "RegionSystem.h"
 
 #include <Windows.h>
 #include <algorithm>
@@ -86,7 +88,7 @@ void DrawChapterIntro()
 void DrawWeather()
 {
     const auto &s=g_GameState;
-    const float cycle=std::fmod(s.worldTime,600.0f)/600;
+    const float cycle=static_cast<float>(std::fmod(s.worldTime,600.0)/600);
     const float night=std::max(0.0f,-std::sin(cycle*6.2831853f))*.32f;
     if (night>0) g_Renderer->DrawSolidRect(0,0,static_cast<float>(s.width),static_cast<float>(s.height),0,.025f,.04f,.15f,night);
     if (s.weather==3) g_Renderer->DrawSolidRect(0,0,static_cast<float>(s.width),static_cast<float>(s.height),0,.7f,.44f,.12f,.09f);
@@ -126,14 +128,16 @@ void DrawJournal()
         const auto &c=s.contracts[i];
         const std::wstring status=std::wstring(LivingWorld::ContractName(i))+L"  "+std::to_wstring(c.progress)+L"/"+
             std::to_wstring(LivingWorld::Goals[i])+(c.active ? L" 진행" : L" 미수락")+L" · 완료 "+std::to_wstring(c.completed);
-        line(153.0f-i*37.0f,status,.58f);
+        line(153.0f-i*30.0f,status,.53f);
     }
-    line(-46,L"주화 "+std::to_wstring(s.coins)+L" · 집/농장/상점/동료 "+std::to_wstring(s.baseLevels[0])+L"/"+
+    line(-8,L"추적 "+std::to_wstring(s.trackingStep)+L"/3 · 변종 시료 "+std::to_wstring(s.variantSamples)+L"/2 · 축제 단계 "+std::to_wstring(s.festivalStage),.51f);
+    line(-37,L"사건 단계 "+std::to_wstring(s.worldEventStage)+L" · 방어 처치 "+std::to_wstring(s.worldEventKills)+L"/2 · 완료 "+std::to_wstring(s.worldEventCompleted),.51f);
+    line(-65,L"주화 "+std::to_wstring(s.coins)+L" · 집/농장/상점/동료 "+std::to_wstring(s.baseLevels[0])+L"/"+
         std::to_wstring(s.baseLevels[1])+L"/"+std::to_wstring(s.baseLevels[2])+L"/"+std::to_wstring(s.baseLevels[3]));
-    line(-85,L"1 모두 수락 · 2 보고 · 3 농장 수확 · 4 교역/지난 축제",.54f);
-    line(-118,L"5 집에서 하루 휴식 · G 거점 확장 · J/ESC 닫기",.54f);
-    line(-150,L"보고·거점은 장로 옆 · 가방 [ ] 선택 O 정렬 X 폐기",.48f);
-    line(-179,L"가방 B/V 보관/꺼내기 T/Y 장비 F 창/활 · K 저장 L 복원",.48f);
+    line(-98,L"1 의뢰 · 2 보고 · 3 수확 · 4 축제/교역 · Shift+4 재연",.48f);
+    line(-125,L"5 휴식 · 6 흔적 추적 · 7 변종 조사 · 8 방어 사건 재연",.50f);
+    line(-151,L"9 분실 장비 회수 · G 거점 · J/ESC 닫기",.48f);
+    line(-179,L"가방 B/V 보관 T/Y 장비 F 창/활 · K 저장 L 복원",.48f);
     if (s.messageTime>0) line(-215,s.message.substr(0,45),.5f);
 }
 
@@ -284,6 +288,15 @@ void RenderScene()
     if (const wchar_t *hint = g_GameManager.GetHint())
         uiState.hint = hint;
     uiState.message = g_GameState.message;
+    for (const auto &entry:g_GameState.regions)
+    {
+        const auto &r=entry.second;
+        if (g_GameState.player.x<r.minX || g_GameState.player.x>r.maxX || g_GameState.player.z<r.minZ || g_GameState.player.z>r.maxZ) continue;
+        const auto progress=g_GameState.regionProgress.find(entry.first);
+        const auto *goal=progress==g_GameState.regionProgress.end() ? nullptr : RegionSystem::Goal(r,progress->second);
+        if (goal) { uiState.objective=r.name+L" · "+goal->objective; uiState.objectiveTarget=RegionSystem::Target(r,*goal); }
+        else for (const auto &site:r.sites) if (site.kind==0) { uiState.objective=L"고원 마을지기 유나에게 E 대화"; uiState.objectiveTarget=site.position; }
+    }
     if (!BossIntro::Active(g_GameState) && g_GameState.prologueTime<0) DrawGameUi(*g_Renderer, uiState);
     if (!BossIntro::Active(g_GameState) && g_GameState.combo > 1 && g_GameState.comboTime > 0)
     {
@@ -470,7 +483,7 @@ int main(int argc, char **argv)
         }
     }
     if (!debugEntrySelected && !g_CapturePath)
-    { g_GameState.prologueTime=0; g_GameState.player={g_GameState.world.spawn.x-18,g_GameState.world.spawn.z-15}; }
+    { PrologueSystem::Start(g_GameState); }
     glfwSetErrorCallback([](int code, const char *message) {
         std::cerr << "GLFW " << code << ": " << message << '\n';
     });

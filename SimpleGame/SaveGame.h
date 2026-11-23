@@ -26,14 +26,14 @@ inline bool Timer(float value)
 {
     return std::isfinite(value) && value >= 0 && value <= 1000000;
 }
-inline std::string Encode(const GameState &s)
+inline std::string EncodeLegacy(const GameState &s)
 {
     const auto &content = GameContent::Get();
     if (s.gatherNodes.size()!=content.map.gatherNodes.size() || s.animals.size()!=content.map.animals.size() ||
         s.npcs.size()!=content.map.npcs.size() || s.fieldMonsters.size()!=content.map.encounters.size()) throw std::runtime_error("world shape changed");
     std::ostringstream out;
     out.imbue(std::locale::classic());
-    out << std::setprecision(9) << "gse_save 2 " << content.map.id << ' ' << std::quoted(content.story.id) << '\n';
+    out << std::setprecision(17) << "gse_save 2 " << content.map.id << ' ' << std::quoted(content.story.id) << '\n';
     const auto *step = StorySystem::Current(s);
     out << (step ? step->chapterId : "none") << ' ' << (step ? step->id : "none") << ' ' << s.storyFinished << '\n';
     out << s.player.x << ' ' << s.player.z << ' ' << s.facing.x << ' ' << s.facing.z << ' '
@@ -86,7 +86,7 @@ inline std::string Encode(const GameState &s)
 }
 
 // Parse into a separate state. No caller state changes on any rejection.
-inline bool Decode(const std::string &bytes, const GameState &current, GameState &result)
+inline bool DecodeLegacy(const std::string &bytes, const GameState &current, GameState &result)
 {
     if (bytes.empty() || bytes.size() > 1024*1024) return false;
     std::istringstream in(bytes);
@@ -189,7 +189,7 @@ inline bool Decode(const std::string &bytes, const GameState &current, GameState
         if (!in || id!="world") return false;
         in >> s.worldTime >> s.farmTime >> s.coins >> s.festivalClaimDay >> s.regionVisits >> s.nextBaseUpgrade >> s.prologueSeen
             >> s.equippedWeapon >> s.equippedArmor >> s.weaponStyle >> s.spearCrafted >> s.bowCrafted >> s.companion.x >> s.companion.z;
-        if (!in || !Timer(s.worldTime) || !Timer(s.farmTime) || s.coins<0 || s.coins>10000000 ||
+        if (!in || !std::isfinite(s.worldTime) || s.worldTime<0 || s.worldTime>1000000000.0 || !Timer(s.farmTime) || s.coins<0 || s.coins>10000000 ||
             s.festivalClaimDay< -1 || s.festivalClaimDay>1000000 || s.regionVisits<0 || s.regionVisits>65535 ||
             s.nextBaseUpgrade<0 || s.nextBaseUpgrade>3 || s.equippedWeapon< -1 || s.equippedArmor< -1 ||
             s.equippedWeapon>(s.hunterBladeCrafted ? s.weaponTier : -1) ||
@@ -240,6 +240,10 @@ inline bool Decode(const std::string &bytes, const GameState &current, GameState
     return true;
 }
 
+}
+#include "ExpansionSave.h"
+namespace SaveGame
+{
 inline const wchar_t *Write(const GameState &state)
 {
     try
@@ -257,6 +261,14 @@ inline const wchar_t *Write(const GameState &state)
         if (!out) return L"저장 마무리 실패. 기존 저장은 보존했습니다.";
         const wchar_t *path=L"./Saves/progress.gse";
         const bool exists=std::filesystem::exists(path);
+        if (exists && !std::filesystem::exists(L"./Saves/progress.pre-v3.gse"))
+        {
+            std::ifstream previous(std::filesystem::path(path),std::ios::binary);
+            std::string magic; int version=0; previous>>magic>>version; previous.close();
+            if (magic=="gse_save" && (version==1 || version==2) &&
+                !CopyFileW(path,L"./Saves/progress.pre-v3.gse",TRUE))
+                return L"이전 형식 저장의 보존에 실패했습니다. 원래 저장을 유지합니다.";
+        }
         if (exists ? !ReplaceFileW(path,temporary.c_str(),L"./Saves/progress.bak",0,nullptr,nullptr) :
             !MoveFileExW(temporary.c_str(),path,MOVEFILE_WRITE_THROUGH))
             return L"저장 교체 실패. 기존 저장과 백업을 확인하세요.";
@@ -271,7 +283,7 @@ inline const wchar_t *Read(GameState &state)
         std::ifstream in("./Saves/progress.gse",std::ios::binary|std::ios::ate);
         if (!in) return L"저장 파일이 없습니다. K로 먼저 저장하세요.";
         const auto size=in.tellg();
-        if (size<=0 || size>1024*1024) return L"저장 크기가 잘못되었습니다. 현재 진행을 유지합니다.";
+        if (size<=0 || size>4*1024*1024) return L"저장 크기가 잘못되었습니다. 현재 진행을 유지합니다.";
         std::string bytes(static_cast<size_t>(size),'\0');
         in.seekg(0); in.read(&bytes[0],static_cast<std::streamsize>(bytes.size()));
         GameState loaded;

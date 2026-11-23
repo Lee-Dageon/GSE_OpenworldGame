@@ -89,5 +89,14 @@ source = (game / "WorldRenderer.cpp").read_text(encoding="utf-8")
 assert "glDeleteTextures(1,&m_EcologyGuardianTexture)" in source
 assert "ecology-guardian-v1.png" in source
 assert "progress.bak" in (game / "SaveGame.h").read_text(encoding="utf-8")
+item_folder=game/"Assets/PixelArt/Items"
+regional_items=json.loads((item_folder/"region-items.json").read_text(encoding="utf-8"))
+assert len(regional_items["assets"])==2
+for asset in regional_items["assets"]:
+    path=item_folder/asset["file"]
+    assert hashlib.sha256(path.read_bytes()).hexdigest()==asset["sha256"]
+    with Image.open(path) as image:
+        assert image.mode=="RGBA" and list(image.size)==asset["dimensions"] and image.getchannel("A").getextrema()==(0,255)
+assert (game/"Data/Regions/index.gse").is_file() and (game/"Data/Regions/frost_reach.gse").is_file()
 poses=sum(e["rows"]*e["columns"] for e in metadata["assets"])
-print(f"PASS static: 5 chapters/39 goals, 15 field encounters, branch merge, 39 target/local approaches, {poses} RGBA poses, save/project wiring")
+print(f"PASS static: 5 chapters/39 goals, 15 field encounters, branch merge, 39 target/local approaches, {poses+2} RGBA poses, regional files and save/project wiring")

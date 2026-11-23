@@ -10,6 +10,7 @@
 #include <string>
 #include <vector>
 #include <map>
+#include <set>
 
 enum class QuestStage
 {
@@ -115,7 +116,8 @@ struct GameState
     std::array<EscortState,2> escorts = {};
     std::array<ContractState,5> contracts = {};
     std::array<int,4> baseLevels = {};
-    float worldTime=0, farmTime=0, companionCooldown=0;
+    double worldTime=0;
+    float farmTime=0, companionCooldown=0;
     int coins=0, festivalClaimDay=-1, regionVisits=0, nextBaseUpgrade=0;
     Vec2 companion = {};
     bool journalOpen=false, prologueSeen=false;
@@ -128,9 +130,12 @@ struct GameState
     int regionLoads=0,regionUnloads=0;
     bool trackingActive=false,variantResearchActive=false;
     int trackingStep=0,trackingCompleted=0,variantSamples=0,variantResearchCompleted=0;
+    std::set<std::string> variantSurveyed;
     int festivalRound=-1,festivalStage=0,festivalScore=0,festivalFinished=-1;
     int worldEventStage=0,worldEventKills=0,worldEventCompleted=0;
     float worldEventTime=0;
+    std::vector<FieldMonster> eventMonsters;
+    int worldEventDamage=0;
     int weather=0;
     float arrowTime=0;
     Vec2 arrowFrom = {}, arrowTo = {};

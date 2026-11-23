@@ -65,7 +65,7 @@ namespace MonsterSystem
 inline bool IsEcologyGuardian(const MonsterState &monster)
 {
     const auto &id=monster.definition.id;
-    return id=="mutated_guardian" || id=="final_guardian" || id=="valley_variant";
+    return id=="mutated_guardian" || id=="final_guardian" || id=="valley_variant" || id=="storm_variant";
 }
 enum ChatPattern { Tongue, Slam, Coat, Charge, Roar };
 Vec2 ChatDirection(const MonsterState &monster);

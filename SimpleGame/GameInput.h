@@ -17,7 +17,7 @@ enum class GameCommand
     ChooseFirst, ChooseSecond, SaveProgress, LoadProgress,
     SelectPrevious, SelectNext, SortInventory, DiscardItem, DepositItem, WithdrawItem,
     EquipWeapon, EquipArmor, CraftStyles, SwitchStyle, Journal, BuildBase,
-    ChooseThird, ChooseFourth, Rest
+    ChooseThird, ChooseFourth, Rest, ChooseSixth, ChooseSeventh, ChooseEighth, ChooseNinth
 };
 
 namespace GameInput

@@ -5,6 +5,7 @@
 #include "QuestSystem.h"
 #include "CraftingSystem.h"
 #include "WorldLayout.h"
+#include "AdventureEvents.h"
 
 namespace
 {
@@ -196,6 +197,7 @@ const wchar_t *Interact(GameState &state)
         if (!LootTable::Grant(state.inventory, LootTable::Monster(state.monster.definition)))
             return L"재료 보관 한도에 도달했습니다. 전리품은 남아 있습니다.";
         ++state.completedHunts;
+        AdventureEvents::Inspect(state,"story/"+step->id,state.monster.definition.id);
         return Advance(state);
     }
     if ((step->action == GameContent::StoryAction::Investigate || step->action == GameContent::StoryAction::Report ||

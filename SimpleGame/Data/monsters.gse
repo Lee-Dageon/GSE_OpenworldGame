@@ -16,3 +16,5 @@ monster valley_variant "별빛 골짜기의 변종" 300 2.2 1.8 11 1.5 1.6 34 1.
 appearance valley_variant 185
 monster forest_predator "영역을 잃은 검치 포식자" 110 2.2 1.7 12 1.6 2.0 24 2.2 60 3 2
 appearance forest_predator 180
+monster storm_variant "눈안개 폭풍 변종" 280 2.2 1.9 12 1.6 1.4 35 1.8 110 3 2
+appearance storm_variant 190

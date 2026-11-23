@@ -18,6 +18,7 @@ region storm_front "폭풍에 무너진 길" 300 -480 620 -180 .25 .29 .30
 region dry_basin "메마른 생태 분지" 480 -130 790 230 .48 .36 .22
 region central_ruins "중앙 생태 유적" 380 480 790 780 .24 .34 .32
 region hidden_valley "별빛 골짜기" 790 620 895 890 .18 .28 .31
+region frost_reach "눈안개 고원" 940 500 1380 860 .38 .49 .51
 step south_travel unfamiliar travel 70 -60 1.5 none "남쪽 길목으로 이동하기" "목표 표시를 따라 남쪽 길목으로 이동하세요." "울타리 바깥에 낯선 발자국이 이어집니다."
 step south_tracks unfamiliar investigate 140 -110 1.3 none "남쪽 울타리 주변의 흔적 조사하기" "E  남쪽 길목의 흔적 조사" "큰 발자국은 숲에서 마을 쪽으로 향합니다. 먹이를 찾으러 내려온 것 같습니다."
 step border_hunt unfamiliar hunt 210 -70 1.5 rampaging_boar "마을을 위협하는 거대 멧돼지 사냥하기" "좌클릭 공격 · 공백 키 회피 · Q 회복" "거대 멧돼지를 쓰러뜨렸습니다. 몸에 남은 흔적을 확인하세요."

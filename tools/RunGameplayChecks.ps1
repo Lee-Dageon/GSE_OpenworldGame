@@ -1,4 +1,4 @@
-param([string[]]$Names = @('WorldCompletionCheck','EndgameCheck','StoryFlowCheck','GameContentCheck','InventoryCraftingCheck','WorldLayoutCheck','NpcWanderCheck','NpcInteractionCheck','AnimalHuntingCheck','ChatacabraCheck','HudLayoutCheck'))
+param([string[]]$Names = @('ExpansionCheck','WorldCompletionCheck','EndgameCheck','StoryFlowCheck','GameContentCheck','InventoryCraftingCheck','WorldLayoutCheck','NpcWanderCheck','NpcInteractionCheck','AnimalHuntingCheck','ChatacabraCheck','HudLayoutCheck'))
 $ErrorActionPreference='Stop'
 $repoRoot=[IO.Path]::GetFullPath((Join-Path $PSScriptRoot '..'))
 $outputRoot=Join-Path $repoRoot 'build/gameplay-checks'

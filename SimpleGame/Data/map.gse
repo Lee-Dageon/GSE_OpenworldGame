@@ -1,6 +1,6 @@
 # UTF-8, one record per line.
 gse_map 1 greenwake
-bounds -900 900
+bounds -900 1400
 spawn 0 -2.5
 lake 45 39 12
 notice_board 2 1.5

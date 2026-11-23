@@ -1,0 +1,26 @@
+gse_region 1 frost_reach "눈안개 고원: 폭풍의 씨앗"
+site frost_guide 0 980 600 "마을지기 유나" "고원에 오신 것을 환영합니다. 남은 장치가 폭풍을 만들고 있어요. 조사 의뢰를 받아 주세요."
+site frost_house 1 977 607 "눈안개 산장" "주민들이 폭풍을 피해 머무는 산장입니다."
+site frost_workshop 1 986 607 "고원 약방" "서리 약초와 폭풍 파편으로 기후 안정 부적을 만듭니다."
+site frost_records 3 1000 615 "고원 마을 기록" "기록은 폐쇄된 북쪽 관측소를 가리킵니다."
+site frost_tracks_a 2 1040 650 "얼어붙은 발자국" "발자국의 가장자리에 방전된 결정 가루가 남아 있습니다."
+site frost_tracks_b 2 1100 690 "금이 간 관측 표식" "변종은 북쪽의 장치를 피해 남쪽으로 이동했습니다."
+site frost_observatory 3 1200 740 "북쪽 관측소" "중앙 장치의 잔류 동력이 고원의 기후를 교란했습니다."
+site frost_core 3 1260 780 "폭풍 집속기" "집속기를 복구하면 마을을 덮은 폭풍을 멈출 수 있습니다."
+enemy frost_stalker storm_variant 1150 715
+enemy frost_sentinel storm_variant 1230 760
+enemy frost_wanderer storm_variant 1310 800
+gather frost_herb_a 31 990 590 2
+gather frost_herb_b 31 1060 655 2
+gather frost_shard_a 30 1110 675 2
+gather frost_shard_b 30 1280 795 2
+goal frost_record interact frost_records frost_trail_a "고원 마을 기록 조사" "관측소의 위치를 알아냈습니다. 얼어붙은 흔적을 추적하세요."
+goal frost_trail_a interact frost_tracks_a frost_trail_b "첫 번째 얼음 흔적 추적" "폭풍의 결정이 발자국에 묻어 있습니다. 다음 표식을 찾으세요."
+goal frost_trail_b interact frost_tracks_b frost_hunt "관측 표식에서 이동 경로 확인" "관측소를 떠난 폭풍 변종이 길목을 막습니다."
+goal frost_hunt hunt frost_stalker frost_collect "길목의 폭풍 변종 사냥" "변종을 쓰러뜨렸습니다. 결정 조직을 조사하세요."
+goal frost_collect collect frost_stalker frost_observe "변종 시료와 전리품 수집" "고원만의 폭풍 파편을 확보했습니다. 관측소 기록과 비교하세요."
+goal frost_observe interact frost_observatory frost_sentinel_hunt "관측소에서 잔류 동력 조사" "동력은 마지막 집속기에 모입니다. 그곳을 지키는 변종을 막아야 합니다."
+goal frost_sentinel_hunt hunt frost_sentinel frost_sentinel_collect "집속기를 지키는 변종 사냥" "마지막 방해물을 제거했습니다. 동력 시료를 수집하세요."
+goal frost_sentinel_collect collect frost_sentinel frost_repair "집속기의 변종 시료 수집" "집속기 복구에는 폭풍 파편 2개와 서리 약초 2개가 필요합니다."
+goal frost_repair craft frost_core frost_report "재료를 사용해 기후 안정 부적 제작과 집속기 복구" "부적을 장착해 방어력이 2 증가했습니다. 폭풍이 잦아듭니다. 마을에 보고하세요."
+goal frost_report report frost_guide end "유나에게 고원 안정화 보고" "눈안개 고원의 독립 이야기를 마쳤습니다. 폭풍이 멎고 마을이 회복됩니다. 주화 100과 경험치 80을 받았습니다."

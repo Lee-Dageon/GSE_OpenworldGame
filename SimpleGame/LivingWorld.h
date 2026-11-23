@@ -77,14 +77,6 @@ inline const wchar_t *HarvestFarm(GameState &s)
 inline const wchar_t *TradeOrFestival(GameState &s)
 {
     if (!InventoryActions::AtStorage(s)) return L"교역·축제는 마을 거점에서 참여하세요.";
-    // Every past festival remains claimable, so skipping days never expires rewards.
-    const int festival=Day(s)/7;
-    if (festival>s.festivalClaimDay && s.baseLevels[0]>0)
-    {
-        if (!s.inventory.Add(ItemId::Potion)) return L"물약 공간을 비우면 축제 보상을 받을 수 있습니다.";
-        ++s.festivalClaimDay; s.coins+=25;
-        return L"지난 계절 축제에 참여했습니다. 물약 1 + 주화 25 획득!";
-    }
     if (s.baseLevels[2]==0) return L"상점 거점을 만들면 주화로 사냥 재료를 교역합니다.";
     if (s.coins<10 || !s.inventory.Add(ItemId::IronOre,2)) return L"주화 10개와 철광석 보관 공간이 필요합니다.";
     s.coins-=10;

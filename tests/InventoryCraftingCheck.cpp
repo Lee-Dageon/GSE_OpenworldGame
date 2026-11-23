@@ -31,9 +31,9 @@ int main()
     assert(zoom.inventoryPage == 1 && zoom.cameraZoom == heldZoom);
     GameInput::OnScroll(zoom, -1);
     GameInput::OnScroll(zoom, -1);
-    assert(zoom.inventoryPage == 2);
+    assert(zoom.inventoryPage == 3);
     GameInput::OnScroll(zoom, 1);
-    assert(zoom.inventoryPage == 1);
+    assert(zoom.inventoryPage == 2);
     zoom.inventoryOpen = false;
     GameInput::OnScroll(zoom, std::numeric_limits<double>::infinity());
     GameInput::OnScroll(zoom, std::numeric_limits<double>::quiet_NaN());

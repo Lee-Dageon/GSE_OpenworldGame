@@ -16,6 +16,7 @@ struct RegionProgress
     std::string stepId;
     bool started=false, finished=false;
     int kills=0;
+    double lastWorldTime=0;
     std::map<std::string,RegionObjectProgress> objects;
 };
 struct RegionSite

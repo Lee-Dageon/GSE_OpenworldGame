@@ -42,10 +42,11 @@ inline Drops Monster(const MonsterDefinition &monster)
     drops[static_cast<size_t>(ItemId::BoarHide)] = monster.hideDrop;
     drops[static_cast<size_t>(ItemId::BoarTusk)] = monster.tuskDrop;
     if (monster.id == "ancient_guardian" || monster.id == "mutated_guardian" ||
-        monster.id == "final_guardian" || monster.id == "valley_variant")
+        monster.id == "final_guardian" || monster.id == "valley_variant" || monster.id=="storm_variant")
     {
         drops[static_cast<size_t>(ItemId::GuardianScale)] = 2;
         drops[static_cast<size_t>(ItemId::AncientCrystal)] = 1;
+        if (monster.id=="storm_variant") drops[static_cast<size_t>(ItemId::StormShard)]=2;
     }
     else
     {

@@ -2,6 +2,7 @@
 #include "GameConstants.h"
 #include "PlayerController.h"
 #include "WorldLayout.h"
+#include "RegionSystem.h"
 
 #include <algorithm>
 #include <cmath>
@@ -54,7 +55,8 @@ void UpdateMovement(GameState &state, float deltaTime)
     {
         const Vec2 next={state.player.x+move.x*distance/steps,state.player.z+move.z*distance/steps};
         const auto canMove=[&](Vec2 p) {
-            return !(p.x>=790 && p.z>=620 && state.endingChoice==0) && WorldLayout::CanMove(state.world,state.player,p);
+            return !((p.x>=790 && p.z>=620 || p.x>=940) && state.endingChoice==0) &&
+                !RegionSystem::Blocked(state,p) && WorldLayout::CanMove(state.world,state.player,p);
         };
         if (canMove(next)) state.player=next;
         else

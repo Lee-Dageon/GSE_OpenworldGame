@@ -243,7 +243,7 @@ static void DrawInventoryPanel(Renderer &renderer, const GameUiState &state)
             if (texture) renderer.DrawSprite(texture,
                 panel.x+(x+21)*s-state.windowWidth*.5f,
                 state.windowHeight*.5f-panel.y-(y+22)*s,36*s,36*s,
-                item >= 10 ? 1 : 0,item >= 10 ? 1 : 0,item >= 10 ? 5 : 1,item >= 10 ? 5 : 1,
+                item >= 10 && item < 30 ? 1 : 0,item >= 10 && item < 30 ? 1 : 0,item >= 10 && item < 30 ? 5 : 1,item >= 10 && item < 30 ? 5 : 1,
                 1,1,1,1,0,0,0,1,1,.5f);
         }
         const wchar_t *name = id == ItemId::GuardianScale ? L"갑각" :

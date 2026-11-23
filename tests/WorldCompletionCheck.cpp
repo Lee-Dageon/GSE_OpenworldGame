@@ -41,8 +41,9 @@ int main()
     assert(LivingWorld::Season(s)==1);
     const int herbs=s.inventory.Count(ItemId::Herb);
     LivingWorld::HarvestFarm(s); assert(s.inventory.Count(ItemId::Herb)==herbs+2);
-    LivingWorld::TradeOrFestival(s); assert(s.festivalClaimDay==0);
-    LivingWorld::TradeOrFestival(s); assert(s.festivalClaimDay==1);
+    const int iron=s.inventory.Count(ItemId::IronOre), tradeCoins=s.coins;
+    LivingWorld::TradeOrFestival(s);
+    assert(s.inventory.Count(ItemId::IronOre)==iron+2 && s.coins==tradeCoins-10);
     WorldStreaming::Update(s); assert(s.loadedChunks.size()==9);
     const int loads=s.chunkLoads;
     s.gatherNodes[0].regrowTime=50;
@@ -59,7 +60,8 @@ int main()
     auto invalid=encoded; invalid.replace(9,1,"9");
     assert(!SaveGame::Decode(invalid,s,restored));
     // V1 compatibility: remove the v2 extension and per-NPC health field.
-    auto legacy=encoded.substr(0,encoded.find("world "));
+    const auto legacyCore=SaveGame::EncodeLegacy(s);
+    auto legacy=legacyCore.substr(0,legacyCore.find("world "));
     legacy.replace(9,1,"1");
     std::istringstream rows(legacy); std::string line,old;
     bool npc=false; size_t remaining=0;

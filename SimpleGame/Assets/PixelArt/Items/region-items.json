@@ -1,0 +1,27 @@
+{
+  "version": 1,
+  "assets": [
+    {
+      "file": "storm-shard-v1.png",
+      "source": "exec-2be9a27c-0a47-40bd-b547-d40dd2e9122f.png",
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "sha256": "23a6b370b7bbc015feac736b827ccc91216a2d0147aca153f6267fe47fd9f617",
+      "prompt": "Single inventory icon: jagged ice-blue storm crystal with amber lightning and dark rock base; quarter-view pixel art; transparent background.",
+      "provider": "built-in image_gen"
+    },
+    {
+      "file": "frost-herb-v1.png",
+      "source": "exec-fcca6b97-49f0-44d5-8462-0bc0bd40e91d.png",
+      "dimensions": [
+        1254,
+        1254
+      ],
+      "sha256": "43280cd001a284569db3b9aab17940b8bd670b3bc36720eaceb358c95088b7a0",
+      "prompt": "Single inventory icon: pale turquoise winter leaves and white star flowers tied with tan cord; quarter-view pixel art; transparent background.",
+      "provider": "built-in image_gen"
+    }
+  ]
+}

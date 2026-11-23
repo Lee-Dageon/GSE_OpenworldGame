@@ -152,6 +152,12 @@
     <ClInclude Include="InventoryActions.h"><Filter>헤더 파일\Gameplay</Filter></ClInclude>
     <ClInclude Include="LivingWorld.h"><Filter>헤더 파일\Gameplay</Filter></ClInclude>
     <ClInclude Include="WorldStreaming.h"><Filter>헤더 파일\Content and World</Filter></ClInclude>
+    <ClInclude Include="RegionalState.h"><Filter>헤더 파일\Content and World</Filter></ClInclude>
+    <ClInclude Include="RegionContent.h"><Filter>헤더 파일\Content and World</Filter></ClInclude>
+    <ClInclude Include="RegionSystem.h"><Filter>헤더 파일\Gameplay</Filter></ClInclude>
+    <ClInclude Include="ExpansionSave.h"><Filter>헤더 파일\Gameplay</Filter></ClInclude>
+    <ClInclude Include="AdventureEvents.h"><Filter>헤더 파일\Gameplay</Filter></ClInclude>
+    <ClInclude Include="PrologueSystem.h"><Filter>헤더 파일\Gameplay</Filter></ClInclude>
     <ClInclude Include="Inventory.h">
       <Filter>헤더 파일\Gameplay</Filter>
     </ClInclude>
@@ -333,6 +339,8 @@
     <None Include="Data\story.gse">
       <Filter>리소스 파일\Game Data</Filter>
     </None>
+    <None Include="Data\Regions\index.gse"><Filter>리소스 파일\Game Data</Filter></None>
+    <None Include="Data\Regions\frost_reach.gse"><Filter>리소스 파일\Game Data</Filter></None>
     <None Include="Shaders\PostProcess.vs">
       <Filter>리소스 파일\Shaders</Filter>
     </None>

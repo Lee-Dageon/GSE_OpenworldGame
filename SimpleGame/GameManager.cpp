@@ -18,6 +18,8 @@
 #include "SaveGame.h"
 #include "InventoryActions.h"
 #include "LivingWorld.h"
+#include "RegionSystem.h"
+#include "PrologueSystem.h"
 
 #include <algorithm>
 #include <cmath>
@@ -134,13 +136,13 @@ void GameManager::UpdateGame(float deltaTime)
     if (m_State.prologueTime>=0)
     {
         m_State.prologueTime+=std::max(0.0f,deltaTime); m_State.time+=std::max(0.0f,deltaTime);
+        if (m_State.prologueTime>=3) PrologueSystem::LoseEquipment(m_State);
         const float phase=std::clamp(m_State.prologueTime/8,0.0f,1.0f);
         m_State.player={m_State.world.spawn.x-18*(1-phase),m_State.world.spawn.z-15*(1-phase)};
         m_State.moving=true;
         if (phase>=1)
         {
-            m_State.prologueTime=-1; m_State.prologueSeen=true; m_State.moving=false;
-            ShowMessage(L"습격으로 장비를 잃었습니다. 야영지에 도착했습니다. 미라 장로에게 E · J 의뢰/거점 안내");
+            PrologueSystem::Finish(m_State);
         }
         return;
     }
@@ -188,6 +190,7 @@ void GameManager::UpdateGame(float deltaTime)
             if (!LootTable::Grant(m_State.inventory,LootTable::Monster(field.monster.definition)))
             { ShowMessage(L"가방이 가득 찼습니다. 필드 전리품은 남아 있습니다."); return; }
             field.collected=true; field.respawnTime=120; ++m_State.completedHunts;
+            AdventureEvents::Inspect(m_State,GameContent::Get().map.encounters[index].id,field.monster.definition.id);
             m_State.lootPickupTime=1; ShowMessage(L"필드 몬스터의 전리품을 수집했습니다.");
         }
         else if (m_State.lootTime == 0 && m_State.lootAnimal >= 0)
@@ -241,6 +244,8 @@ void GameManager::UpdateGame(float deltaTime)
         WildlifeSystem::Update(animal,m_State,deltaTime);
     }
     LivingWorld::Update(m_State,deltaTime);
+    AdventureEvents::Update(m_State,deltaTime);
+    RegionSystem::Update(m_State,deltaTime);
     const float previousHealth = m_State.health;
     if ((m_State.quest == QuestStage::Hunt || StorySystem::IsHunting(m_State)) &&
         !m_State.bossIntroPending && MonsterSystem::UpdateChaseAndAttack(m_State.monster, m_State.player, m_State.dodge, deltaTime, m_State.health, m_State.defense))
@@ -287,9 +292,18 @@ void GameManager::HandleCommand(GameCommand command)
     if (m_State.journalOpen)
     {
         if (command==GameCommand::ChooseFirst) { LivingWorld::Accept(m_State); ShowMessage(L"다섯 의뢰를 동시에 수락했습니다."); }
-        else if (command==GameCommand::ChooseSecond) ShowMessage(LivingWorld::Report(m_State));
+        else if (command==GameCommand::ChooseSecond)
+        {
+            const auto *extra=AdventureEvents::Report(m_State);
+            const auto *basic=LivingWorld::Report(m_State);
+            ShowMessage(extra ? extra : basic);
+        }
         else if (command==GameCommand::ChooseThird) ShowMessage(LivingWorld::HarvestFarm(m_State));
-        else if (command==GameCommand::ChooseFourth) ShowMessage(LivingWorld::TradeOrFestival(m_State));
+        else if (command==GameCommand::ChooseFourth) ShowMessage(AdventureEvents::Festival(m_State));
+        else if (command==GameCommand::ChooseSixth) ShowMessage(AdventureEvents::StartTracking(m_State));
+        else if (command==GameCommand::ChooseSeventh) ShowMessage(AdventureEvents::StartResearch(m_State));
+        else if (command==GameCommand::ChooseEighth) ShowMessage(AdventureEvents::StartRaid(m_State));
+        else if (command==GameCommand::ChooseNinth) ShowMessage(PrologueSystem::Recover(m_State));
         else if (command==GameCommand::Rest)
         {
             if (InventoryActions::AtStorage(m_State) && m_State.baseLevels[0]>0)
@@ -353,6 +367,8 @@ void GameManager::HandleCommand(GameCommand command)
         return;
     if (command == GameCommand::Interact)
     {
+        if (const auto *message=AdventureEvents::Interact(m_State)) { ShowMessage(message); return; }
+        if (const auto *message=RegionSystem::Interact(m_State)) { ShowMessage(message); return; }
         if ((m_State.quest == QuestStage::Trophy || StorySystem::HasDrop(m_State)) &&
             MonsterSystem::IsInteractableDrop(m_State.monster, m_State.player))
         {
@@ -446,6 +462,15 @@ void GameManager::HandleCommand(GameCommand command)
             m_State.monster.health > 0;
         const float mx=m_State.monster.position.x-m_State.player.x, mz=m_State.monster.position.z-m_State.player.z;
         const float reach=m_State.weaponStyle==0 ? GameConstants::World::AnimalHitRange : InventoryActions::Range(m_State);
+        if (AdventureEvents::HitFestival(m_State,reach)) return;
+        Vec2 extraPosition = {}; int extraDamage=0;
+        if (RegionSystem::Attack(m_State,reach,std::max(1,m_State.attackPower/GameConstants::Player::DamageDivisor),extraPosition,extraDamage) ||
+            AdventureEvents::AttackRaid(m_State,reach,std::max(1,m_State.attackPower/GameConstants::Player::DamageDivisor),extraPosition,extraDamage))
+        {
+            RecordHit(extraPosition,extraDamage);
+            if (m_State.weaponStyle==2) { m_State.arrowTime=.3f; m_State.arrowFrom=m_State.player; m_State.arrowTo=extraPosition; }
+            return;
+        }
         float nearest = activeMonster ? std::min(reach*reach,mx*mx+mz*mz) : reach*reach;
         int animalIndex = -1;
         for (size_t i=0;i<m_State.animals.size();++i)
@@ -521,6 +546,10 @@ void GameManager::HandleCommand(GameCommand command)
 
 const wchar_t *GameManager::GetHint() const
 {
+    for (const auto &entry:m_State.regions)
+        if (m_State.player.x>=entry.second.minX && m_State.player.x<=entry.second.maxX &&
+            m_State.player.z>=entry.second.minZ && m_State.player.z<=entry.second.maxZ)
+            return L"E 고원 대화·조사·채집 · 목표는 주변 지도에 표시됩니다.";
     for (const auto &field:m_State.fieldMonsters)
         if (!field.collected && MonsterSystem::IsInteractableDrop(field.monster,m_State.player)) return L"E 필드 전리품 수집 · J 의뢰 일지";
     if (m_State.lootNode >= 0) return L"자원을 채집하고 있습니다...";

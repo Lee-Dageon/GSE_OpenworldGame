@@ -65,6 +65,14 @@ stage id elder|tracks|herb|hunt|trophy|return|complete next_id "목표" "힌트"
 앞의 세 역할은 순환 없이 hunt에 도달해야 한다. 사냥 이후 연결은 hunt/trophy/return/complete/hunt 순서를 유지한다.
 이는 기존 행동을 데이터로 구성하는 형식이다. 호위·분기 선택 등 새 행동에는 코드 확장이 필요하다.
 
+## 독립 지역과 저장 v3 (2026-11-23)
+
+본편 마지막 선택 이후 (980,600)의 유나에게 E로 눈안개 고원 이야기를 받는다. `Regions/index.gse`에 지역 ID·파일·경계를 적고 같은 이름의 `.gse` 파일에 site/enemy/gather/goal을 작성한다. 현재 독립 이야기는 10목표이다. 지역 payload는 근처 진입 시 실제로 읽고 이탈 시 해제하며, 상태는 영구 ID로 보존한다. 맵 경계는 -900~1400, 아이템은 기존 ID 뒤에 30 폭풍 파편·31 서리 약초를 추가해 32종이다.
+
+K/L은 저장 v3을 사용하고 v1/v2를 이행한다. 개체 추가·삭제·정렬 변경에도 ID로 결합하며 삭제된 기록도 보존한다. 처음 이전 형식 저장을 교체할 때 `Saves/progress.pre-v3.gse`에 원본을 별도 보존하고 덮어쓰지 않는다. 아이템 ID는 끝에 추가하며 기존 ID를 재사용하지 않는다. 목표 ID 자체를 바꾸는 시나리오 개편에는 별도 명시적 이행이 필요하다.
+
+일지 J의 6은 흔적 추적, 7은 변종 조사, 8은 마을 방어 사건 재연, 9는 엔딩 후 분실 장비 회수이다. 4는 단계형 축제 또는 교역이다. [현재 보완 계약](../../GSE_MD_codex/MarkDown_codex/20_contracts/planning_gap_completion.md)에 지역 형식·조작·비용·저장·검사 근거가 있다.
+
 ## 디버그 장·목표 진입
 
 현재 데이터는 5장·39목표이다. 3장은 `--debug-chapter awakened`, 4장은 `--debug-chapter unbalanced`, 5장은 `--debug-chapter exodus`로 진입한다. 예: `--debug-step final_decision`. 디버그에서는 앞선 길목 선택을 사냥으로 준비하며 실제 플레이의 이동로 분기는 숫자 2로 고른다.
