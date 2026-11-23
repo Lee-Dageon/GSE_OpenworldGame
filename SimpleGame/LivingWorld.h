@@ -88,12 +88,12 @@ inline void Approach(const WorldState &world,Vec2 &position,Vec2 target,float di
     if (length<.05f) return;
     const float step=std::min(distance,length);
     const Vec2 next={position.x+(target.x-position.x)/length*step,position.z+(target.z-position.z)/length*step};
-    if (WorldLayout::CanMove(world,position,next,.12f)) position=next;
+    if (WorldLayout::CanTravel(world,position,next,.12f)) position=next;
     else
     {
         const Vec2 x={next.x,position.z},z={position.x,next.z};
-        if (WorldLayout::CanMove(world,position,x,.12f)) position=x;
-        else if (WorldLayout::CanMove(world,position,z,.12f)) position=z;
+        if (WorldLayout::CanTravel(world,position,x,.12f)) position=x;
+        else if (WorldLayout::CanTravel(world,position,z,.12f)) position=z;
     }
 }
 inline void RewardKill(GameState &s,FieldMonster &field)
@@ -155,30 +155,30 @@ inline void Update(GameState &s,float dt)
         if (monster.attackCooldown<=0 && std::hypot(s.player.x-monster.position.x,s.player.z-monster.position.z)>5)
         {
             for (auto &npc:s.npcs)
-                if (npc.health>0 && std::hypot(npc.position.x-monster.position.x,npc.position.z-monster.position.z)<2)
+                if (npc.health>0 && std::hypot(npc.position.x-monster.position.x,npc.position.z-monster.position.z)<2 &&
+                    WorldLayout::ClearLine(monster.position,npc.position))
                 { npc.health=std::max(0.0f,npc.health-monster.definition.damage*.25f); monster.attackCooldown=2; break; }
             if (monster.attackCooldown<=0)
                 for (auto &other:s.fieldMonsters)
                     if (&other!=&field && other.monster.health>0 && other.monster.definition.id!=monster.definition.id &&
-                        std::hypot(other.monster.position.x-monster.position.x,other.monster.position.z-monster.position.z)<2)
+                        std::hypot(other.monster.position.x-monster.position.x,other.monster.position.z-monster.position.z)<2 &&
+                        WorldLayout::ClearLine(monster.position,other.monster.position))
                     {
                         other.monster.health=std::max(0,other.monster.health-3); monster.attackCooldown=2;
                         if (other.monster.health==0) { other.rewardGranted=true; other.monster.deathTime=.01f; }
                         break;
                     }
         }
-        const Vec2 before=monster.position;
         const float health=s.health;
-        MonsterSystem::UpdateChaseAndAttack(monster,s.player,s.dodge,dt,s.health,s.defense);
-        if (!WorldLayout::CanMove(s.world,before,monster.position,.12f)) monster.position=before;
+        MonsterSystem::UpdateWorldCombat(monster,s.world,s.player,s.dodge,dt,s.health,s.defense);
         if (s.health<health) { s.playerHitTime=.3f; s.playerSlowTime=.5f; }
         const float territory=std::hypot(monster.position.x-field.home.x,monster.position.z-field.home.z);
         if (territory>18 || (s.migrationChoice==2 && territory>8)) Approach(s.world,monster.position,field.home,dt*2);
         if (s.baseLevels[3]>0 && s.companionCooldown<=0 &&
-            std::hypot(s.companion.x-monster.position.x,s.companion.z-monster.position.z)<3)
+            std::hypot(s.companion.x-monster.position.x,s.companion.z-monster.position.z)<3 &&
+            WorldLayout::ClearLine(s.companion,monster.position))
         {
-            MonsterSystem::Hit(monster,s.companion,2+s.baseLevels[3]*2);
-            s.companionCooldown=1;
+            if (MonsterSystem::Hit(monster,s.companion,2+s.baseLevels[3]*2).hit) s.companionCooldown=1;
             RewardKill(s,field);
         }
     }

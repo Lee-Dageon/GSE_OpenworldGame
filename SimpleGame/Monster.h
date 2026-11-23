@@ -4,6 +4,7 @@
 #include <string>
 
 class Renderer;
+struct WorldState;
 
 struct Vec2
 {
@@ -78,5 +79,6 @@ bool IsInteractableDrop(const MonsterState &monster, Vec2 player);
 MonsterHitResult Hit(MonsterState &monster, Vec2 player, int attackPower);
 void UpdateTimers(MonsterState &monster, float deltaTime);
 bool UpdateChaseAndAttack(MonsterState &monster, Vec2 player, float dodgeTime, float deltaTime, float &playerHealth, int defense = 0);
+bool UpdateWorldCombat(MonsterState &monster, const WorldState &world, Vec2 player, float dodgeTime, float deltaTime, float &playerHealth, int defense = 0);
 void Draw(const MonsterState &monster, const MonsterDrawContext &context, bool showDrop);
 } // namespace MonsterSystem

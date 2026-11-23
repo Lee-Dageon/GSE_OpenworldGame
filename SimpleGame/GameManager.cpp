@@ -250,7 +250,7 @@ void GameManager::UpdateGame(float deltaTime)
     RegionSystem::Update(m_State,deltaTime);
     const float previousHealth = m_State.health;
     if ((m_State.quest == QuestStage::Hunt || StorySystem::IsHunting(m_State)) &&
-        !m_State.bossIntroPending && MonsterSystem::UpdateChaseAndAttack(m_State.monster, m_State.player, m_State.dodge, deltaTime, m_State.health, m_State.defense))
+        !m_State.bossIntroPending && MonsterSystem::UpdateWorldCombat(m_State.monster, m_State.world, m_State.player, m_State.dodge, deltaTime, m_State.health, m_State.defense))
     {
         if (m_State.health < previousHealth)
         {

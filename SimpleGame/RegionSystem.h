@@ -138,9 +138,7 @@ inline void Update(GameState &s,float dt)
                 continue;
             }
             MonsterSystem::UpdateTimers(e.monster,dt);
-            const auto before=e.monster.position;
-            MonsterSystem::UpdateChaseAndAttack(e.monster,s.player,s.dodge,dt,s.health,s.defense);
-            if (!WorldLayout::CanMove(s.world,before,e.monster.position)) e.monster.position=before;
+            MonsterSystem::UpdateWorldCombat(e.monster,s.world,s.player,s.dodge,dt,s.health,s.defense);
             if (std::hypot(e.monster.position.x-e.home.x,e.monster.position.z-e.home.z)>18)
                 LivingWorld::Approach(s.world,e.monster.position,e.home,dt*2);
         }

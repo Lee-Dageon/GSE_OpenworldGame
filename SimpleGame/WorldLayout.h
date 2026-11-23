@@ -30,6 +30,19 @@ inline bool CanMove(const WorldState &world,Vec2 from,Vec2 to,float radius=.18f)
     }
     return true;
 }
+inline bool CanTravel(const WorldState &world,Vec2 from,Vec2 to,float radius=.18f)
+{
+    const int steps=std::max(1,static_cast<int>(std::ceil(std::hypot(to.x-from.x,to.z-from.z)/.12f)));
+    const Vec2 origin=from;
+    for (int i=1;i<=steps;++i)
+    {
+        const float t=static_cast<float>(i)/steps;
+        const Vec2 next={origin.x+(to.x-origin.x)*t,origin.z+(to.z-origin.z)*t};
+        if (!CanMove(world,from,next,radius)) return false;
+        from=next;
+    }
+    return true;
+}
 inline bool ClearLine(Vec2 from,Vec2 to)
 {
     const int steps=std::max(1,static_cast<int>(std::ceil(std::hypot(to.x-from.x,to.z-from.z)/.15f)));

@@ -5,6 +5,7 @@
 #include "GameContent.h"
 #include "Chapter1BoarAnimation.h"
 #include "LootTable.h"
+#include "WorldLayout.h"
 
 #include <algorithm>
 #include <cmath>
@@ -453,6 +454,22 @@ bool UpdateChaseAndAttack(MonsterState &monster, Vec2 player, float dodgeTime, f
     }
 
     return false;
+}
+
+bool UpdateWorldCombat(MonsterState &monster, const WorldState &world, Vec2 player, float dodgeTime, float deltaTime, float &playerHealth, int defense)
+{
+    const Vec2 before=monster.position;
+    float nextHealth=playerHealth;
+    const bool hit=UpdateChaseAndAttack(monster,player,dodgeTime,deltaTime,nextHealth,defense);
+    // Commit damage only after the full movement and attack path passes world collision.
+    if (!WorldLayout::CanTravel(world,before,monster.position,.12f))
+    {
+        monster.position=before;
+        return false;
+    }
+    if (nextHealth<playerHealth && !WorldLayout::ClearLine(monster.position,player)) return false;
+    playerHealth=nextHealth;
+    return hit;
 }
 
 void Draw(const MonsterState &monster, const MonsterDrawContext &context, bool showDrop)

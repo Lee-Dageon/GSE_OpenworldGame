@@ -122,9 +122,7 @@ inline void Update(GameState &s,float dt)
     {
         if (f.monster.health<=0) continue;
         MonsterSystem::UpdateTimers(f.monster,dt);
-        const auto before=f.monster.position;
-        MonsterSystem::UpdateChaseAndAttack(f.monster,s.player,s.dodge,dt,s.health,s.defense);
-        if (!WorldLayout::CanMove(s.world,before,f.monster.position)) f.monster.position=before;
+        MonsterSystem::UpdateWorldCombat(f.monster,s.world,s.player,s.dodge,dt,s.health,s.defense);
     }
     if (s.worldEventKills>=2) { s.worldEventStage=3; s.message=L"마을 방어 성공 · 장로에게 J/2로 보고"; s.messageTime=6; }
     else if (s.worldEventTime>=120)
