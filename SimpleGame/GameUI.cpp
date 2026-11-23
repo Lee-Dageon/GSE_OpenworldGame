@@ -143,7 +143,7 @@ void DrawGameUi(Renderer &renderer, const GameUiState &state)
 
     std::swprintf(text, 100, L"약초 %d    전리품 %d    물약 %d", state.herbs, state.trophies, state.potions);
     label(30*s, state.windowHeight-76*s, text, .53f, .88f, .84f, .69f);
-    label(25*s, state.windowHeight-35*s, L"WASD 이동   시프트 달리기", .44f, .70f, .73f, .66f);
+    label(25*s, state.windowHeight-35*s, L"WASD 이동   시프트 달리기   H 말 호출/하차", .44f, .70f, .73f, .66f);
     rect(0, state.windowHeight-6*s, static_cast<float>(state.windowWidth), 6*s, .035f, .03f, .025f, .9f);
     rect(0, state.windowHeight-5*s, state.windowWidth*xp, 3*s, .75f, .56f, .20f, 1);
     std::swprintf(text, 100, L"경험치 %d / %d", state.experience, state.experienceToNextLevel);

@@ -4,6 +4,7 @@
 
 #include "Monster.h"
 #include "PlayerController.h"
+#include "HorseSystem.h"
 #include "QuestSystem.h"
 #include "CraftingSystem.h"
 #include "GameContent.h"
@@ -236,6 +237,8 @@ void GameManager::UpdateGame(float deltaTime)
     m_State.damageNumbers.erase(std::remove_if(m_State.damageNumbers.begin(), m_State.damageNumbers.end(),
         [](const DamageNumber &number) { return number.remaining <= 0; }), m_State.damageNumbers.end());
     PlayerController::UpdateMovement(m_State, deltaTime, dodgeAtFrameStart);
+    if (HorseSystem::Update(m_State, deltaTime))
+        ShowMessage(L"탑승했습니다! 이동속도: 달리기의 5배 · H 하차 · 공격/회피/상호작용 시 자동 하차");
     WorldStreaming::Update(m_State);
     if (WeaponMotion::Release(m_State.weaponStyle,m_State.attack,m_State.attackPending)) ResolveAttack();
     UpdateNpcs(deltaTime);
@@ -272,6 +275,7 @@ void GameManager::UpdateGame(float deltaTime)
         m_State.health = m_State.maxHealth;
         m_State.playerSlowTime = 0;
         m_State.attack = 0; m_State.attackPending = false; m_State.dodge=0;
+        m_State.horse = {};
         ShowMessage(L"구조대의 도움으로 마을에 돌아왔습니다.");
     }
 }
@@ -371,6 +375,13 @@ void GameManager::HandleCommand(GameCommand command)
     }
     if (m_State.inventoryOpen && command != GameCommand::UsePotion)
         return;
+    if (command == GameCommand::CallHorse)
+    {
+        ShowMessage(HorseSystem::Call(m_State));
+        return;
+    }
+    if (command == GameCommand::Attack || command == GameCommand::Dodge || command == GameCommand::Interact)
+        HorseSystem::Dismount(m_State);
     if (command == GameCommand::Interact)
     {
         if (m_State.attackPending || m_State.dodge>0) return;

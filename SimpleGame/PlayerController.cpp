@@ -51,9 +51,11 @@ void UpdateMovement(GameState &state, float deltaTime, float dodgeAtFrameStart)
     if (dt>rollTime && std::hypot(input.x,input.z)>.001f)
     {
         state.facing=input;
-        const float slow=state.playerSlowTime>0 ? GameConstants::Player::HitSlowSpeed : 1.0f;
+        const float slow=!state.horse.mounted && state.playerSlowTime>0 ? GameConstants::Player::HitSlowSpeed : 1.0f;
         const float weather=state.weather==3 ? .88f : state.weather==4 ? .93f : 1;
-        advance(input,(dt-rollTime)*(state.sprint ? GameConstants::Player::SprintSpeed : GameConstants::Player::WalkSpeed)*slow*weather);
+        const float speed=state.horse.mounted ? GameConstants::Horse::Speed :
+            (state.sprint ? GameConstants::Player::SprintSpeed : GameConstants::Player::WalkSpeed);
+        advance(input,(dt-rollTime)*speed*slow*weather);
     }
     state.moving=state.player.x!=previous.x || state.player.z!=previous.z;
 }
@@ -69,7 +71,7 @@ bool TryUsePotion(GameState &state)
 
 bool StartDodge(GameState &state)
 {
-    if (state.dodge>0 || state.dodgeCooldown>0 || state.inventoryOpen || state.journalOpen ||
+    if (state.horse.mounted || state.dodge>0 || state.dodgeCooldown>0 || state.inventoryOpen || state.journalOpen ||
         state.lootTime>0 || state.health<=0) return false;
     Vec2 direction=InputDirection(state);
     if (std::hypot(direction.x,direction.z)<.001f) direction=state.facing;

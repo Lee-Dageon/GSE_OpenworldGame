@@ -24,6 +24,12 @@ constexpr float HitSlowDuration = 5.0f, HitSlowSpeed = .25f;
 constexpr float WalkFps = 6.0f, SprintFps = 8.0f;
 constexpr int DamageDivisor = 2, MinimumDamage = 1;
 }
+namespace Horse
+{
+// Five times the hero's sprint is a gameplay ratio, not a universal real-world ratio.
+constexpr float Speed = Player::SprintSpeed * 5.0f;
+constexpr float MountRange = .85f, RecallDistance = 24.0f, GallopFps = 10.0f;
+}
 namespace Feedback
 {
 constexpr float HitStop = .06f, EffectDuration = .9f;

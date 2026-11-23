@@ -18,6 +18,7 @@
 #include "PixelPropFrames.h"
 #include "ChatacabraFrames.h"
 #include "PixelGeneralFrames.h"
+#include "HorseSpriteFrames.h"
 #include "InvestigationSprites.h"
 #include "WorldStreaming.h"
 #include "RegionSystem.h"
@@ -165,6 +166,15 @@ WorldRenderer::WorldRenderer(Renderer &renderer) : m_Renderer(renderer)
     m_GeneralRunTexture = m_Renderer.LoadTexture(L"./Assets/PixelArt/Characters/hero-general-v3.png");
     m_GeneralAttackTexture = m_Renderer.LoadTexture(L"./Assets/PixelArt/Characters/hero-general-attack-v1.png");
     m_GeneralRollTexture = m_Renderer.LoadTexture(L"./Assets/PixelArt/Characters/hero-general-roll-v1.png");
+    m_HorseTexture = m_Renderer.LoadTexture(L"./Assets/PixelArt/Mounts/horse-gallop-v1.png");
+    m_MountedTexture = m_Renderer.LoadTexture(L"./Assets/PixelArt/Mounts/hero-mounted-v1.png");
+    for (auto texture : {m_HorseTexture, m_MountedTexture})
+        if (texture)
+        {
+            glBindTexture(GL_TEXTURE_2D, texture);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        }
     m_PixelPlayer = m_PlayerTexture != 0;
     if (!m_PixelPlayer)
     {
@@ -329,6 +339,8 @@ WorldRenderer::WorldRenderer(Renderer &renderer) : m_Renderer(renderer)
 
 WorldRenderer::~WorldRenderer()
 {
+    for (auto texture : {m_HorseTexture, m_MountedTexture})
+        if (texture) glDeleteTextures(1, &texture);
     for (auto texture : m_AnimalHitTextures)
         if (texture != 0) glDeleteTextures(1, &texture);
     if (m_QuestGlimmerTexture != 0) glDeleteTextures(1, &m_QuestGlimmerTexture);
@@ -523,6 +535,29 @@ void WorldRenderer::DrawInvestigation(Vec2 position, int asset, bool disabled) c
         m_Renderer.DrawEffectRect(x - 3, y, 5, 9, 0, .20f, .13f, .07f, 1, 3);
         m_Renderer.DrawEffectRect(x + 3, y, 5, 9, 0, .20f, .13f, .07f, 1, 3);
     }
+}
+
+bool WorldRenderer::DrawHorse(const GameState &state, bool mounted) const
+{
+    using namespace HorseSpriteFrames;
+    const auto texture = mounted ? m_MountedTexture : m_HorseTexture;
+    if (!texture) return false;
+    const Vec2 position = mounted ? state.player : state.horse.position;
+    const Vec2 facing = mounted ? state.facing : state.horse.facing;
+    const bool moving = mounted ? state.moving : state.horse.moving;
+    const int row = Direction(facing.x, facing.z);
+    const int frame = moving ? static_cast<int>(state.time * GameConstants::Horse::GallopFps) % Columns : 0;
+    const int x = frame * Width / Columns, right = (frame + 1) * Width / Columns;
+    const int rowY = row * Height / Rows;
+    const int y = rowY + (mounted ? RiderTop[row] : HorseTop[row]);
+    const int bottom = rowY + Ground[row] + 2;
+    const float width = (right-x)*Scale, height = (bottom-y)*Scale;
+    const Vec2 foot = ToScreen(position);
+    DrawShadow(position, 78, 16);
+    m_Renderer.DrawSprite(texture, foot.x, foot.z + (rowY + Ground[row] - (y+bottom)*.5f)*Scale,
+        width, height, x, y, Width, Height, 1, 1, 1, 1, 0, 0, 0,
+        static_cast<float>(right-x), static_cast<float>(bottom-y), .5f);
+    return true;
 }
 
 void WorldRenderer::DrawGeneralPlayer(const GameState &state) const
@@ -1330,7 +1365,7 @@ void WorldRenderer::RenderWorld(const GameState &state)
     m_Renderer.SetWorldScale(WorldScale * state.height / 720.0f * BossIntro::Zoom(state));
     DrawGround();
     DrawTerrain();
-    enum class DrawType { House, Tree, Campfire, Npc, Animal, Tracks, Herb, Monster, Player, NoticeBoard, Decoration, Scenery, Investigation, StoryMarker, GatherNode, FieldMonster, Companion, Prologue, RegionalSite, RegionalEnemy, RegionalGather, RaidMonster, EventSite };
+    enum class DrawType { House, Tree, Campfire, Npc, Animal, Tracks, Herb, Monster, Player, NoticeBoard, Decoration, Scenery, Investigation, StoryMarker, GatherNode, FieldMonster, Companion, Prologue, RegionalSite, RegionalEnemy, RegionalGather, RaidMonster, EventSite, Horse };
     struct DrawItem { Vec2 position; DrawType type; int index; };
     std::vector<DrawItem> items;
     std::vector<const RegionSite *> regionalSites;
@@ -1423,6 +1458,8 @@ void WorldRenderer::RenderWorld(const GameState &state)
         InvestigationSprites::Find(StorySystem::Current(state)->id) < 0)
         items.push_back({StorySystem::Target(state),DrawType::StoryMarker,0});
     items.push_back({state.player, DrawType::Player, 0});
+    if (state.horse.visible && !state.horse.mounted)
+        items.push_back({state.horse.position, DrawType::Horse, 0});
     for (size_t index = 0; index < state.gatherNodes.size(); ++index)
     {
         const auto &node = state.gatherNodes[index];
@@ -1992,9 +2029,19 @@ void WorldRenderer::RenderWorld(const GameState &state)
             m_Renderer.SetSpriteFlash(0);
             break;
         }
+        case DrawType::Horse:
+            DrawHorse(state, false);
+            break;
         case DrawType::Player:
         {
             const Vec2 foot = ToScreen(state.player);
+            if (state.horse.mounted)
+            {
+                m_Renderer.SetSpriteFlash(DamageFeedback::Fade(state.playerHitTime, DamageFeedback::FlashDuration));
+                const bool drawn = DrawHorse(state, true);
+                m_Renderer.SetSpriteFlash(0);
+                if (drawn) break;
+            }
             if (state.lootTime > 0 && m_SearchTexture != 0)
             {
                 const float dx = state.facing.x - state.facing.z, dy = (state.facing.x + state.facing.z) * .5f;
@@ -2011,7 +2058,7 @@ void WorldRenderer::RenderWorld(const GameState &state)
             {
                 const int direction=RollAnimation::Direction(state.dodgeDirection);
                 const auto region=RollAnimation::Frames[direction][RollAnimation::Frame(state.dodge)];
-                const float scale=RollAnimation::Scale[direction];
+                const float scale=RollAnimation::Scale[direction]*.8f;
                 DrawShadow(state.player,38,8);
                 m_Renderer.SetSpriteFlash(DamageFeedback::Fade(state.playerHitTime,DamageFeedback::FlashDuration));
                 m_Renderer.DrawSprite(m_GeneralRollTexture,

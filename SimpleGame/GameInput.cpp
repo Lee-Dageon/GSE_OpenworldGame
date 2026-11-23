@@ -30,6 +30,7 @@ GameCommand OnKeyDown(GameState &state, unsigned char key, bool shiftHeld)
 
     switch (normalizedKey)
     {
+    case 'h': return repeated ? GameCommand::None : GameCommand::CallHorse;
     case '[': return repeated ? GameCommand::None : GameCommand::SelectPrevious;
     case ']': return repeated ? GameCommand::None : GameCommand::SelectNext;
     case 'o': return repeated ? GameCommand::None : GameCommand::SortInventory;

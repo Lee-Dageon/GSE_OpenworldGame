@@ -104,6 +104,13 @@ struct GameState
     std::array<bool, 256> keys = {};
     bool sprint = false, moving = false;
     Vec2 player = {0.0f, -2.5f}, facing = {0.707f, 0.707f};
+    struct HorseState
+    {
+        Vec2 position = {}, facing = {.707f, .707f};
+        bool visible = false, called = false, mounted = false, moving = false;
+        float stalledTime = 0;
+        NavigationRoute route;
+    } horse;
     MonsterState monster = {};
     std::vector<NpcState> npcs;
     std::vector<AnimalState> animals;
