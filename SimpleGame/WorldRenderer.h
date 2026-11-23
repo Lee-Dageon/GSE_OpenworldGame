@@ -82,6 +82,7 @@ class WorldRenderer
     unsigned int m_GeneralWalkTexture = 0, m_GeneralRunTexture = 0;
     unsigned int m_GeneralAttackTexture = 0;
     unsigned int m_HorseTexture = 0, m_MountedTexture = 0;
+    unsigned int m_HorseIdleTexture = 0;
     unsigned int m_SwordSlashTexture = 0;
     unsigned int m_ElderTexture = 0;
     unsigned int m_NoticeBoardTexture = 0;

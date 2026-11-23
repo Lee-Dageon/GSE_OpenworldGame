@@ -27,6 +27,13 @@ int main()
     assert(mounted && state.horse.mounted && !state.horse.called);
     HorseSystem::Dismount(state);
     assert(!state.horse.mounted && state.horse.visible && !state.horse.called);
+    const Vec2 waitingPosition = state.horse.position, waitingFacing = state.horse.facing;
+    state.facing = {-waitingFacing.x, -waitingFacing.z};
+    state.player.x += 2;
+    HorseSystem::Update(state, 1);
+    assert(!state.horse.moving && !state.horse.called);
+    assert(Navigation::Distance(state.horse.position, waitingPosition) == 0);
+    assert(Navigation::Distance(state.horse.facing, waitingFacing) == 0); // Player turning does not turn the parked horse.
 
     // Compare real controller displacement on a collision-free corridor.
     bool corridor = false;

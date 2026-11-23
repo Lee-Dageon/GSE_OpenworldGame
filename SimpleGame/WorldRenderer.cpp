@@ -168,7 +168,8 @@ WorldRenderer::WorldRenderer(Renderer &renderer) : m_Renderer(renderer)
     m_GeneralRollTexture = m_Renderer.LoadTexture(L"./Assets/PixelArt/Characters/hero-general-roll-v1.png");
     m_HorseTexture = m_Renderer.LoadTexture(L"./Assets/PixelArt/Mounts/horse-gallop-v1.png");
     m_MountedTexture = m_Renderer.LoadTexture(L"./Assets/PixelArt/Mounts/hero-mounted-v1.png");
-    for (auto texture : {m_HorseTexture, m_MountedTexture})
+    m_HorseIdleTexture = m_Renderer.LoadTexture(L"./Assets/PixelArt/Mounts/horse-idle-v1.png");
+    for (auto texture : {m_HorseTexture, m_MountedTexture, m_HorseIdleTexture})
         if (texture)
         {
             glBindTexture(GL_TEXTURE_2D, texture);
@@ -339,7 +340,7 @@ WorldRenderer::WorldRenderer(Renderer &renderer) : m_Renderer(renderer)
 
 WorldRenderer::~WorldRenderer()
 {
-    for (auto texture : {m_HorseTexture, m_MountedTexture})
+    for (auto texture : {m_HorseTexture, m_MountedTexture, m_HorseIdleTexture})
         if (texture) glDeleteTextures(1, &texture);
     for (auto texture : m_AnimalHitTextures)
         if (texture != 0) glDeleteTextures(1, &texture);
@@ -540,21 +541,24 @@ void WorldRenderer::DrawInvestigation(Vec2 position, int asset, bool disabled) c
 bool WorldRenderer::DrawHorse(const GameState &state, bool mounted) const
 {
     using namespace HorseSpriteFrames;
-    const auto texture = mounted ? m_MountedTexture : m_HorseTexture;
-    if (!texture) return false;
     const Vec2 position = mounted ? state.player : state.horse.position;
     const Vec2 facing = mounted ? state.facing : state.horse.facing;
     const bool moving = mounted ? state.moving : state.horse.moving;
+    const bool idle = !mounted && !moving && m_HorseIdleTexture != 0;
+    const auto texture = mounted ? m_MountedTexture : idle ? m_HorseIdleTexture : m_HorseTexture;
+    if (!texture) return false;
     const int row = Direction(facing.x, facing.z);
-    const int frame = moving ? static_cast<int>(state.time * GameConstants::Horse::GallopFps) % Columns : 0;
+    const int frame = idle ? static_cast<int>(state.time * IdleFps) % Columns :
+        moving ? static_cast<int>(state.time * GameConstants::Horse::GallopFps) % Columns : 0;
     const int x = frame * Width / Columns, right = (frame + 1) * Width / Columns;
     const int rowY = row * Height / Rows;
-    const int y = rowY + (mounted ? RiderTop[row] : HorseTop[row]);
-    const int bottom = rowY + Ground[row] + 2;
+    const int ground = rowY + (idle ? IdleGround[row] : Ground[row]);
+    const int y = rowY + (mounted ? RiderTop[row] : idle ? IdleTop[row] : HorseTop[row]);
+    const int bottom = ground + 2;
     const float width = (right-x)*Scale, height = (bottom-y)*Scale;
     const Vec2 foot = ToScreen(position);
     DrawShadow(position, 78, 16);
-    m_Renderer.DrawSprite(texture, foot.x, foot.z + (rowY + Ground[row] - (y+bottom)*.5f)*Scale,
+    m_Renderer.DrawSprite(texture, foot.x, foot.z + (ground - (y+bottom)*.5f)*Scale,
         width, height, x, y, Width, Height, 1, 1, 1, 1, 0, 0, 0,
         static_cast<float>(right-x), static_cast<float>(bottom-y), .5f);
     return true;

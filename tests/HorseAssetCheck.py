@@ -13,11 +13,13 @@ def values(name):
     return [int(value) for value in re.search(rf"{name}\[Rows\] = \{{([^}}]+)\}}", HEADER)[1].split(",")]
 
 
-ground = values("Ground")
-for filename, top_name in (("horse-gallop-v1.png", "HorseTop"), ("hero-mounted-v1.png", "RiderTop")):
+for filename, top_name, ground_name in (("horse-gallop-v1.png", "HorseTop", "Ground"),
+                                       ("hero-mounted-v1.png", "RiderTop", "Ground"),
+                                       ("horse-idle-v1.png", "IdleTop", "IdleGround")):
     image = Image.open(ROOT / "SimpleGame/Assets/PixelArt/Mounts" / filename)
     assert image.mode == "RGBA" and image.size == (887, 1774), filename
     top = values(top_name)
+    ground = values(ground_name)
     directions = []
     for row in range(8):
         phases = []
@@ -31,7 +33,7 @@ for filename, top_name in (("horse-gallop-v1.png", "HorseTop"), ("hero-mounted-v
                 filename, row, frame, "opaque sprite touches its render bounds")
             assert (cell[:, :, 3] == 0).any(), "missing transparent gutter"
             phases.append(cell.tobytes())
-        assert len(set(phases)) == 4, (filename, row, "repeated gallop phase")
+        assert len(set(phases)) == 4, (filename, row, "repeated animation phase")
         directions.append(phases[0])
     assert len(set(directions)) == 8, (filename, "repeated direction")
     print(f"PASS {filename}: 32 distinct frames, RGBA, render bounds, transparent gutters")
